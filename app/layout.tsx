@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import '../common/styles/globals.scss';
-import Header from '../common/components/layouts/Header/Header';
-import Footer from '../common/components/layouts/Footer/Footer';
-import SmoothScroll from '../common/components/utils/SmoothScroll';
+import '@/common/styles/globals.scss';
+import Header from '@/common/components/layouts/Header/Header';
+import Footer from '@/common/components/layouts/Footer/Footer';
+import SmoothScroll from '@/common/components/utils/SmoothScroll';
 
 export const metadata: Metadata = {
   title: '순복음인천초대교회',

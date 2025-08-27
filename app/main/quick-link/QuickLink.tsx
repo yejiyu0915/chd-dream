@@ -1,4 +1,4 @@
-import q from './QuickLink.module.scss';
+import q from '@/app/main/quick-link/QuickLink.module.scss';
 
 export default function QuickLink() {
   return (

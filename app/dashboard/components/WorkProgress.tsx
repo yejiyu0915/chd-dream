@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import styles from '../Dashboard.module.scss';
+import styles from '@/app/dashboard/Dashboard.module.scss';
 
 // 작업 항목 타입 정의 (Depth4, 5 제거)
 interface WorkItem {
@@ -17,7 +16,7 @@ interface WorkItem {
 
 export default function WorkProgress() {
   // 작업 항목 데이터 (Depth4, 5 제거)
-  const [workItems, setWorkItems] = useState<WorkItem[]>([
+  const workItems: WorkItem[] = [
     {
       depth1: 'common',
       depth2: 'Header',
@@ -308,7 +307,7 @@ export default function WorkProgress() {
       completionDate: '',
       notes: '카카오 맵 연동 필요',
     },
-  ]);
+  ];
 
   // 진행상황에 따른 스타일 클래스 반환
   const getProgressClass = (progress: WorkItem['progress']) => {
@@ -353,26 +352,6 @@ export default function WorkProgress() {
     today.setHours(0, 0, 0, 0); // 오늘 날짜의 시작
 
     return completionDate <= today;
-  };
-
-  // 새로운 작업 항목 추가 함수
-  const addWorkItem = () => {
-    const newItem: WorkItem = {
-      depth1: '',
-      depth2: '',
-      depth3: '',
-      link: '',
-      startDate: new Date().toISOString().split('T')[0], // 오늘 날짜
-      progress: 'not-started',
-      completionDate: '',
-      notes: '',
-    };
-    setWorkItems([...workItems, newItem]);
-  };
-
-  // 작업 항목 삭제 함수 (인덱스 기반)
-  const removeWorkItem = (index: number) => {
-    setWorkItems(workItems.filter((_, i) => i !== index));
   };
 
   return (

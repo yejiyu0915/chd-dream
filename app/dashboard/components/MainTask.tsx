@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import styles from '../Dashboard.module.scss';
+import styles from '@/app/dashboard/Dashboard.module.scss';
 
 // 주요 Task 타입 정의 (id 제거)
 interface MainTask {
@@ -16,7 +15,7 @@ interface MainTask {
 
 export default function MainTask() {
   // 주요 Task 데이터 (id 제거, 배열 인덱스 기반)
-  const [mainTasks, setMainTasks] = useState<MainTask[]>([
+  const mainTasks: MainTask[] = [
     {
       text: '메인 페이지 완성',
       priority: 'high',
@@ -53,7 +52,7 @@ export default function MainTask() {
       openDate: '2025-10 중순 예정',
       notes: '10월 중순 페이지 우선 적용',
     },
-  ]);
+  ];
 
   // 우선순위에 따른 스타일 클래스 반환
   const getPriorityClass = (priority: MainTask['priority']) => {
@@ -124,25 +123,6 @@ export default function MainTask() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return completionDate <= today;
-  };
-
-  // 새로운 Task 추가 함수
-  const addMainTask = () => {
-    const newTask: MainTask = {
-      text: '',
-      priority: 'mid',
-      dueDate: new Date().toISOString().split('T')[0],
-      progress: 'not-started',
-      completionDate: '',
-      openDate: '',
-      notes: '',
-    };
-    setMainTasks([...mainTasks, newTask]);
-  };
-
-  // Task 삭제 함수 (인덱스 기반)
-  const removeMainTask = (index: number) => {
-    setMainTasks(mainTasks.filter((_, i) => i !== index));
   };
 
   return (

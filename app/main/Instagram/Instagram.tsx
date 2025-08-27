@@ -1,4 +1,4 @@
-import i from './Instagram.module.scss';
+import i from '@/app/main/Instagram/Instagram.module.scss';
 
 export default function Instagram() {
   return (

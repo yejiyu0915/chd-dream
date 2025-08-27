@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import styles from '../Dashboard.module.scss';
+import styles from '@/app/dashboard/Dashboard.module.scss';
 
 // SB 타입 정의
 interface SB {
@@ -11,12 +10,12 @@ interface SB {
 
 export default function SB() {
   // SB 데이터
-  const [sbs, setSbs] = useState<SB[]>([
+  const sbs: SB[] = [
     {
       id: '1',
       text: 'chd-dream_SB_v0.1_250819.pptx',
     },
-  ]);
+  ];
 
   return (
     <section className={styles.section}>

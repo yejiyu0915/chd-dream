@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import kv from './KV.module.scss';
+import kv from '@/app/main/KV/KV.module.scss';
 
 export default function KV() {
   return (

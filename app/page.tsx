@@ -1,10 +1,10 @@
-import m from './main/main.module.scss';
-import KV from './main/KV/KV';
-import Intro from './main/intro/Intro';
-import Sermon from './main/sermon/Sermon';
-import CLog from './main/c-log/CLog';
-import QuickLink from './main/quick-link/QuickLink';
-import Instagram from './main/Instagram/Instagram';
+import m from '@/app/main/main.module.scss';
+import KV from '@/app/main/KV/KV';
+import Intro from '@/app/main/intro/Intro';
+import Sermon from '@/app/main/sermon/Sermon';
+import CLog from '@/app/main/c-log/CLog';
+import QuickLink from '@/app/main/quick-link/QuickLink';
+import Instagram from '@/app/main/Instagram/Instagram';
 
 export default function Main() {
   return (

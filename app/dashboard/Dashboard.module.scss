@@ -1,13 +1,3 @@
-// 대시보드 페이지에서 헤더와 푸터 숨기기
-:global(header),
-:global(footer) {
-  display: none !important;
-}
-
-:global(.wrapper) {
-  padding: 0 !important;
-}
-
 // 대시보드 전체 컨테이너
 .dashboard {
   min-height: 100vh;

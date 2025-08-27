@@ -1,6 +1,7 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import Icon from '@/common/components/utils/Icons';
-import s from './Sermon.module.scss';
+import s from '@/app/main/sermon/Sermon.module.scss';
 
 export default function Sermon() {
   return (
@@ -47,7 +48,13 @@ export default function Sermon() {
             </ul>
           </div>
           <div className={s.sermon__pastor}>
-            <img src="/main/pastor.jpg" alt="설교 목사" className={s.sermon__pastorImage} />
+            <Image
+              src="/main/pastor.jpg"
+              alt="설교 목사"
+              width={120}
+              height={120}
+              className={s.sermon__pastorImage}
+            />
             <p className={s.sermon__pastorName}>
               <span className={s.sermon__pastorNameDesc}>담임 목사</span> 김영구
             </p>

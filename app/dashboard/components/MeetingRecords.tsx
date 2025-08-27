@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import styles from '../Dashboard.module.scss';
+import styles from '@/app/dashboard/Dashboard.module.scss';
 
 // 미팅 기록 타입 정의
 interface MeetingRecord {
@@ -18,7 +18,7 @@ export default function MeetingRecords() {
   const [expandedMeetings, setExpandedMeetings] = useState<Set<string>>(new Set());
 
   // 미팅 기록 데이터
-  const [meetings, setMeetings] = useState<MeetingRecord[]>([
+  const meetings: MeetingRecord[] = [
     {
       id: '1',
       date: '2025-08-24',
@@ -35,7 +35,7 @@ export default function MeetingRecords() {
       summary: '홈페이지 컨텐츠 논의',
       actionItems: [],
     },
-  ]);
+  ];
 
   // 개별 미팅 아코디언 토글 함수
   const toggleMeetingAccordion = (meetingId: string) => {

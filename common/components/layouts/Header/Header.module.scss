@@ -1,4 +1,4 @@
-@use '../../../styles/mixins/function' as *;
+@use '@/common/styles/mixins/function' as *;
 @mixin smooth-transition {
   transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
 }

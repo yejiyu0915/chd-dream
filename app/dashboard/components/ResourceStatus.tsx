@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import styles from '../Dashboard.module.scss';
+import styles from '@/app/dashboard/Dashboard.module.scss';
 
 // 자료수급 타입 정의 (id 제거)
 interface ResourceStatus {
@@ -16,7 +15,7 @@ interface ResourceStatus {
 
 export default function ResourceStatus() {
   // 자료수급 데이터 (id 제거, 배열 인덱스 기반)
-  const [resources, setResources] = useState<ResourceStatus[]>([
+  const resources: ResourceStatus[] = [
     {
       resourceName: '교회 심볼 로고 (고해상도)',
       priority: 'high',
@@ -134,7 +133,7 @@ export default function ResourceStatus() {
       provider: '전도사님',
       notes: '',
     },
-  ]);
+  ];
 
   // 우선순위에 따른 스타일 클래스 반환
   const getPriorityClass = (priority: ResourceStatus['priority']) => {
@@ -201,25 +200,6 @@ export default function ResourceStatus() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return receivedDate <= today;
-  };
-
-  // 새로운 자료 추가 함수
-  const addResource = () => {
-    const newResource: ResourceStatus = {
-      resourceName: '',
-      priority: 'mid',
-      requiredDate: new Date().toISOString().split('T')[0],
-      status: 'pending',
-      receivedDate: '',
-      provider: '',
-      notes: '',
-    };
-    setResources([...resources, newResource]);
-  };
-
-  // 자료 삭제 함수 (인덱스 기반)
-  const removeResource = (index: number) => {
-    setResources(resources.filter((_, i) => i !== index));
   };
 
   return (

@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import Icon from '../../../components/utils/Icons';
-import f from './Footer.module.scss';
+import Icon from '@/common/components/utils/Icons';
+import f from '@/common/components/layouts/Footer/Footer.module.scss';
 
 export default function Footer() {
   return (

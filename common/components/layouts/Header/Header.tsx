@@ -1,8 +1,8 @@
 'use client';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import Icon from '../../../components/utils/Icons';
-import h from './Header.module.scss';
+import Icon from '@/common/components/utils/Icons';
+import h from '@/common/components/layouts/Header/Header.module.scss';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
