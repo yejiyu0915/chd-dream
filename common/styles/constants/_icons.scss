@@ -1,0 +1,42 @@
+.icon {
+  --icon-size: 1;
+  --icon-margin: 0.5;
+  display: inline-block;
+  width: calc(var(--icon-size) * 1em);
+  height: calc(var(--icon-size) * 1em);
+  margin-inline: calc(var(--icon-margin) * 1em);
+  position: relative;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: middle;
+
+  // 각 아이콘별 배경 이미지 설정
+  &--info {
+    background-image: url('/common/ico_info.svg');
+  }
+
+  &--arrow-up-right {
+    background-image: url('/common/ico_arrow_up-right.svg');
+  }
+
+  &--map {
+    background-image: url('/common/ico_map.svg');
+  }
+
+  &--external-link {
+    background-image: url('/common/ico_external-link.svg');
+  }
+
+  &--book-open {
+    background-image: url('/common/ico_book-open.svg');
+  }
+
+  &--book {
+    background-image: url('/common/ico_book.svg');
+  }
+
+  &--phone {
+    background-image: url('/common/ico_phone.svg');
+  }
+}

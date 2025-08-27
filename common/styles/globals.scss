@@ -1,0 +1,54 @@
+@use 'constants/fonts' as *;
+@use 'constants/reset' as *;
+@use 'constants/colors' as *;
+@use 'constants/typography' as *;
+@use 'constants/icons' as *;
+@use 'constants/layouts' as *;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Lenis 부드러운 스크롤을 위한 스타일
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+.wrapper {
+  /* 컨테이너 쿼리 사용을 위한 스타일 지정 */
+  container-type: inline-size; // 컨테이너 쿼리 활성화 (가로 크기 기준)
+  container-name: wrapper; // 컨테이너 이름 지정
+
+  /* 컨테이너 쿼리 예시: 필요에 따라 하위 요소에서 사용 */
+  /* 
+  @container wrapper (min-width: 600px) {
+    .some-child {
+      font-size: 2rem;
+    }
+  }
+  */
+}

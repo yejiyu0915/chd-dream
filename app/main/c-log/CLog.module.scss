@@ -1,0 +1,104 @@
+@use '../../../common/styles/mixins/function' as *;
+
+.cLog {
+  background-color: #fff;
+  &__inner {
+    padding-block: 160px;
+  }
+  &__title {
+    font-size: 60px;
+    font-weight: 700;
+    color: #000;
+  }
+  &__desc {
+    margin-block: 20px 60;
+    font-size: 30px;
+  }
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: fit-content;
+    padding-inline: 36px;
+    border-radius: 20px;
+    background-color: #000;
+    font-size: 24px;
+    color: #fff;
+    line-height: 72px;
+    &Icon {
+      --icon-size: 1.25;
+      --icon-margin: 0.1;
+      top: -0.05em;
+      mix-blend-mode: difference;
+    }
+  }
+  &__content {
+    margin-block-start: -200px;
+    padding-inline-start: 160px;
+  }
+  &__list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0 60px;
+    margin-block-start: 40px;
+    padding-inline: 200px;
+    &Item {
+      border-radius: 20px 20px 0 0;
+      &:nth-child(1) {
+        padding-block-start: 100px;
+      }
+      &:nth-child(2) {
+        padding-block-start: 0;
+      }
+      &:nth-child(3) {
+        padding-block-start: 200px;
+      }
+      &:nth-child(4) {
+        padding-block-start: 50px;
+      }
+      &:nth-child(5) {
+        margin-block-start: -50px;
+        padding-block-start: 0;
+      }
+      &:nth-child(6) {
+        padding-block-start: 100px;
+      }
+    }
+    &Link {
+      display: block;
+      border-radius: 20px 20px 0 0;
+      overflow: hidden;
+    }
+    &Image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 20px;
+    }
+    &Content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-block-start: 20px;
+    }
+    &Title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #000;
+      line-height: 1.4;
+      @include ellipsis(2);
+    }
+    &Info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+    }
+    &Category {
+      font-weight: 700;
+    }
+    &Date {
+      color: #888;
+    }
+  }
+}

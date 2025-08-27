@@ -1,0 +1,17 @@
+@use '../mixins/function' as *;
+
+:root {
+  --inner-padding: 40px;
+}
+
+.inner {
+  width: 100%;
+  margin: 0 auto;
+  padding-inline: var(--inner-padding);
+  position: relative;
+
+  // 반응형 패딩
+  @include mobile {
+    --inner-padding: 20px;
+  }
+}

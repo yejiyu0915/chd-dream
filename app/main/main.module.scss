@@ -1,0 +1,25 @@
+$main: '.main';
+
+.main {
+  &__content {
+    width: 100%;
+    padding-block-start: 95vh;
+    position: relative;
+    z-index: 2;
+    pointer-events: none;
+    * {
+      pointer-events: auto;
+    }
+    &Empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.1);
+      font-size: 24px;
+      font-weight: 500;
+      color: #000;
+    }
+  }
+}

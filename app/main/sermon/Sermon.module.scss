@@ -1,0 +1,111 @@
+.sermon {
+  width: 100%;
+  border-radius: 60px 60px 0 0;
+  background-color: #fff;
+  letter-spacing: -0.05em;
+  &__inner {
+    padding: 240px calc(var(--inner-padding) * 4) 160px;
+  }
+  &__content {
+    display: flex;
+    gap: 100px;
+  }
+  &__text {
+    flex: 1;
+    margin-inline-start: 160px;
+    padding-inline-start: 60px;
+    padding-block-start: 120px;
+    border-left: 5px solid #000;
+  }
+  &__eyebrow {
+    font-size: 28px;
+    font-weight: 500;
+    color: #888;
+    &Icon {
+      --icon-size: 1.25;
+      --icon-margin: 0.25;
+      top: -0.1em;
+      mix-blend-mode: difference;
+      filter: brightness(0.7);
+    }
+  }
+  &__title {
+    margin-block-start: 28px;
+    font-size: 64px;
+    font-weight: 700;
+    letter-spacing: -0.055em;
+    line-height: 1.3;
+  }
+  &__verse {
+    margin-block-start: 32px;
+    font-size: 32px;
+    font-weight: 500;
+  }
+  &__desc {
+    margin-block-start: 48px;
+    padding-inline-start: 64px;
+    font-size: 24px;
+    color: #888;
+    line-height: 1.6;
+  }
+  &__link {
+    flex: 0 0 400px;
+    padding-block-start: 182px;
+    &List {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      font-size: 28px;
+    }
+    a {
+      display: block;
+      height: 80px;
+      padding-inline: 32px;
+      border-radius: 20px;
+      background-color: rgba(0, 0, 0, 0.05);
+      line-height: 80px;
+      &.thisWeek {
+        background-color: #000;
+        color: #fff;
+      }
+    }
+    &Text {
+      width: 100%;
+      height: 100%;
+    }
+    &Icon {
+      --icon-size: 1.1;
+      top: -0.08em;
+      mix-blend-mode: difference;
+    }
+  }
+  &__pastor {
+    flex: 0 0 240px;
+    &Name {
+      margin-block-start: 24px;
+      font-size: 24px;
+      font-weight: 500;
+      &Desc {
+        padding-inline-end: 12px;
+        position: relative;
+        top: 0.1em;
+        font-size: 16px;
+        color: #999;
+        vertical-align: top;
+      }
+    }
+  }
+  &__footnote {
+    margin-block-start: 40px;
+    font-size: 18px;
+    color: #999;
+    line-height: 1.6;
+    text-align: right;
+    &Icon {
+      --icon-size: 1.25;
+      --icon-margin: 0.25;
+      top: -0.02em;
+      filter: brightness(0.7);
+    }
+  }
+}

@@ -1,0 +1,58 @@
+@use 'sass:math';
+
+@function decimal-round($point) {
+  @return math.div(math.round($point * 10000), 10000);
+}
+
+@function check-var($value) {
+  @if (type-of($value) == 'number') {
+    @return $value;
+  } @else {
+    @return var($value);
+  }
+}
+
+@mixin ellipsis($line: 1) {
+  @if ($line==1) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word; // 공백 없을때 글자 짤림 방지
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: $line;
+  }
+}
+
+@mixin tablet {
+  @container wrapper (max-width: 1024px) {
+    @content;
+  }
+}
+@mixin mobile {
+  @container wrapper (max-width: 768px) {
+    @content;
+  }
+}
+@mixin mobile-ex {
+  @container wrapper (max-width: 480px) {
+    @content;
+  }
+}
+
+@function px-to-vw($px, $viewport: 1920) {
+  // $px가 number 타입이 아닐 경우 에러 처리
+  @if (type-of($px) != 'number') {
+    @error 'px-to-vw 함수의 $px 인자는 숫자여야 합니다.';
+  }
+  // $viewport가 0이거나 음수일 경우 에러 처리
+  @if ($viewport <= 0) {
+    @error 'px-to-vw 함수의 $viewport 인자는 0보다 커야 합니다.';
+  }
+  // vw 값 계산 (소수점 4자리까지 반올림)
+  $vw-value: math.div($px, $viewport) * 100;
+  @return decimal-round($vw-value) + vw;
+}

@@ -1,0 +1,131 @@
+// 전역 리셋
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+// HTML 기본 설정
+html {
+  line-height: 1;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// 바디 기본 설정
+body {
+  font-family: var(--font-family);
+  color: var(--text-color);
+  background-color: var(--background-color);
+  max-width: 100vw;
+  overflow-x: hidden;
+  word-break: keep-all;
+}
+
+// 제목 요소 리셋
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+}
+
+// 리스트 스타일 리셋
+ul,
+ol {
+  list-style: none;
+}
+
+// 링크 스타일 리셋
+a {
+  color: inherit;
+  text-decoration: none;
+  background-color: transparent;
+}
+
+// 버튼 스타일 리셋
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+// 입력 요소 리셋
+input,
+textarea,
+select {
+  font: inherit;
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
+// 이미지 리셋
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-style: none;
+}
+
+// 테이블 리셋
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+// 인용문 리셋
+blockquote,
+q {
+  quotes: none;
+
+  &::before,
+  &::after {
+    content: '';
+    content: none;
+  }
+}
+
+// 코드 요소 리셋
+code,
+pre {
+  font-family: var(--font-family-mono);
+}
+
+// 수평선 리셋
+hr {
+  border: none;
+  height: 1px;
+  background-color: var(--border-color);
+  margin: var(--spacing-md) 0;
+}
+
+// 포커스 스타일
+:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+// 스크린 리더용 접근성
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
