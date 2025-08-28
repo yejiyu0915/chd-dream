@@ -7,7 +7,7 @@
   z-index: 2;
   background-color: #111;
   color: #fff;
-  &__top {
+  .top {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
@@ -15,7 +15,7 @@
       height: 300px;
     }
   }
-  &__box {
+  .box {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -23,17 +23,17 @@
     border-radius: 20px;
     background-color: var(--footer-box-bg);
   }
-  &__title {
+  .title {
     font-size: 24px;
     font-weight: 400;
   }
-  &__group {
+  .group {
     display: flex;
     flex-direction: column;
     gap: 16px;
     padding-inline-end: 40px;
   }
-  &__sitemap {
+  .sitemap {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
@@ -43,7 +43,7 @@
       padding-inline-start: 20px;
     }
   }
-  &__sns {
+  .sns {
     display: flex;
     gap: 16px;
     height: 100%;
@@ -62,15 +62,15 @@
         color: #fff;
       }
     }
-    &Naver {
+    .naver {
       // --footer-sns-bg: #21c531;
       --footer-sns-bg: rgba(33, 197, 49, 0.3);
     }
-    &Youtube {
+    .youtube {
       // --footer-sns-bg: #ff0033;
       --footer-sns-bg: rgba(255, 0, 51, 0.3);
     }
-    &Instagram {
+    .instagram {
       // --footer-sns-bg: linear-gradient(135deg, #f9ce34 0%, #ee2a7b 40%, #6228d7 70%, #4f5bd5 100%);
       --footer-sns-bg: linear-gradient(
         135deg,
@@ -80,13 +80,13 @@
         rgba(79, 91, 213, 0.3) 100%
       );
     }
-    &Icon {
+    .icon {
       --icon-size: 1.25;
       --icon-margin: 0.2;
       top: -0.1em;
     }
   }
-  &__info {
+  .info {
     --footer-box-bg: rgba(255, 255, 255, 0.1);
     dt {
       margin-block: 12px;
@@ -98,13 +98,13 @@
       line-height: 1.6;
     }
   }
-  &__contact {
+  .contact {
     --footer-box-bg: rgba(255, 255, 255, 0.15);
     p {
       font-size: 18px;
       line-height: 1.6;
     }
-    &Link {
+    .link {
       display: flex;
       gap: 12px;
       width: 100%;
@@ -116,25 +116,25 @@
       padding-inline-end: 12px;
       border-radius: 12px;
       background-color: #fff;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 700;
       color: #000;
       text-align: center;
       line-height: 56px;
     }
-    &Icon {
+    .icon {
       --icon-size: 1.25;
       --icon-margin: 0.25;
       top: -0.03em;
       mix-blend-mode: difference;
     }
   }
-  &__copyright {
+  .copyright {
     padding-block: 20px 4px;
     font-size: 14px;
     color: rgba(255, 255, 255, 0.5);
   }
-  &__text {
+  .text {
     font-size: 7cqw;
     font-weight: 700;
     letter-spacing: -0.025em;
