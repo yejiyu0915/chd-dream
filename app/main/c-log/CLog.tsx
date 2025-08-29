@@ -20,9 +20,14 @@ export default function CLog() {
         }
         const data = await response.json();
         setCLogData(data); // 데이터 상태 업데이트
-      } catch (err: any) {
+      } catch (err: unknown) {
+        // any 타입을 unknown으로 변경
         // console.error('데이터 가져오기 실패:', err); // 콘솔에 에러 로그 출력 (주석 처리)
-        setError(err.message || '데이터를 가져오는 데 실패했습니다.'); // 에러 상태 업데이트
+        let errorMessage = '데이터를 가져오는 데 실패했습니다.';
+        if (err instanceof Error) {
+          errorMessage = err.message;
+        }
+        setError(errorMessage); // 에러 상태 업데이트
       } finally {
         setIsLoading(false); // 로딩 상태 종료
       }
