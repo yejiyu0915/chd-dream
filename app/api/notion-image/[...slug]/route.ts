@@ -19,9 +19,9 @@ export async function GET(request: NextRequest) {
 
     if (!imageResponse.ok) {
       const errorBody = await imageResponse.text();
-      console.error(
-        `[Image Proxy DEBUG] Failed to fetch image from Notion: ${imageResponse.status} ${imageResponse.statusText}, Content-Type: ${imageResponse.headers.get('content-type')}, Body: ${errorBody}`
-      );
+      // console.error(
+      //   `[Image Proxy DEBUG] Failed to fetch image from Notion: ${imageResponse.status} ${imageResponse.statusText}, Content-Type: ${imageResponse.headers.get('content-type')}, Body: ${errorBody}`
+      // ); // 주석 처리
       return new NextResponse('Failed to fetch image', { status: 500 });
     }
 
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error proxying Notion image:', error);
+    // console.error('Error proxying Notion image:', error); // 주석 처리
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
 import { Client } from '@notionhq/client';
+import type { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints'; // PageObjectResponse 임포트
 
 // Notion 클라이언트 초기화
 const notion = new Client({
@@ -17,20 +18,20 @@ export interface CLogItem {
 
 // Notion 데이터베이스에서 C-log 데이터 가져오기
 export async function getCLogData(): Promise<CLogItem[]> {
-  console.log('[C-LOG DEBUG] getCLogData 함수 실행 시작...');
+  // console.log('[C-LOG DEBUG] getCLogData 함수 실행 시작...'); // 주석 처리
 
   // 환경변수 체크
   if (!process.env.NOTION_TOKEN || !process.env.NOTION_CLOG_ID) {
-    console.error(
-      '[C-LOG DEBUG] 🚨 Notion API 토큰 또는 데이터베이스 ID가 .env.local 파일에 설정되지 않았습니다.'
-    );
+    // console.error(
+    //   '[C-LOG DEBUG] 🚨 Notion API 토큰 또는 데이터베이스 ID가 .env.local 파일에 설정되지 않았습니다.'
+    // ); // 주석 처리
     // 빈 배열을 반환하여 페이지 자체는 깨지지 않도록 합니다.
     return [];
   }
 
-  console.log(
-    `[C-LOG DEBUG] 데이터베이스 ID (${process.env.NOTION_CLOG_ID})로 API 호출을 시도합니다.`
-  );
+  // console.log(
+  //   `[C-LOG DEBUG] 데이터베이스 ID (${process.env.NOTION_CLOG_ID})로 API 호출을 시도합니다.`
+  // ); // 주석 처리
 
   try {
     const response = await notion.databases.query({
@@ -44,11 +45,11 @@ export async function getCLogData(): Promise<CLogItem[]> {
       page_size: 6, // 메인 화면에 표시할 아이템 수
     });
 
-    console.log(
-      `[C-LOG DEBUG] Notion API가 성공적으로 응답했습니다. 가져온 페이지 수: ${response.results.length}개`
-    );
+    // console.log(
+    //   `[C-LOG DEBUG] Notion API가 성공적으로 응답했습니다. 가져온 페이지 수: ${response.results.length}개`
+    // ); // 주석 처리
 
-    const cLogItems: CLogItem[] = response.results.map((page: any) => {
+    const cLogItems: CLogItem[] = response.results.map((page: PageObjectResponse) => {
       const properties = page.properties;
 
       // console.log('[Notion DEBUG] page properties:', properties); // 전체 properties 로그 (주석 처리)
@@ -59,9 +60,8 @@ export async function getCLogData(): Promise<CLogItem[]> {
 
       if (page.cover) {
         if (page.cover.type === 'external') {
-          imageUrlToUse = page.cover.external.url; // 외부 이미지 URL 직접 사용
+          imageUrlToUse = page.cover.external.url;
         } else if (page.cover.type === 'file') {
-          // Notion 내부 파일 이미지이므로 프록시 API 사용
           imageUrlToUse = `/api/notion-image?url=${encodeURIComponent(page.cover.file.url)}`;
         }
       }
@@ -85,11 +85,10 @@ export async function getCLogData(): Promise<CLogItem[]> {
       };
     });
 
-    console.log(`[C-LOG DEBUG] ${cLogItems.length}개의 페이지를 성공적으로 파싱했습니다.`);
+    // console.log(`[C-LOG DEBUG] ${cLogItems.length}개의 페이지를 성공적으로 파싱했습니다.`); // 주석 처리
     return cLogItems;
   } catch (error) {
-    console.error('[C-LOG DEBUG] 🚨 Notion API 호출 중 심각한 오류가 발생했습니다:', error);
-    // 에러 발생 시 빈 배열을 반환합니다.
+    // console.error('[C-LOG DEBUG] 🚨 Notion API 호출 중 심각한 오류가 발생했습니다:', error); // 주석 처리
     return [];
   }
 }

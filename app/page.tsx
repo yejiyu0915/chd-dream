@@ -7,7 +7,7 @@ import QuickLink from '@/app/main/quick-link/QuickLink';
 import Instagram from '@/app/main/Instagram/Instagram';
 
 export default function Main() {
-  console.log('[DEBUG] Main 페이지 렌더링 시작...');
+  // console.log('[DEBUG] Main 페이지 렌더링 시작...'); // 주석 처리
   return (
     <main className={m.main}>
       <KV />

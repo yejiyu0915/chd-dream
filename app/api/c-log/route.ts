@@ -5,7 +5,8 @@ export async function GET() {
   try {
     const data = await getCLogData();
     return NextResponse.json(data);
-  } catch (error) {
+  } catch {
+    // error 변수 제거
     // getCLogData 내부의 에러 로그가 이미 터미널에 찍힙니다.
     // 여기서는 클라이언트에 보낼 에러 메시지를 설정합니다.
     return NextResponse.json(
