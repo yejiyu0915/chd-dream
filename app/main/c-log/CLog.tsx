@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import Icon from '@/common/components/utils/Icons';
-import c from '@/app/main/c-log/CLog.module.scss';
+import c from './CLog.module.scss';
 
 export default function CLog() {
   return (

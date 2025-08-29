@@ -36,6 +36,24 @@
     margin-block-start: -200px;
     padding-inline-start: 160px;
   }
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    font-size: 24px;
+    color: #888;
+  }
+  .error {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    font-size: 24px;
+    color: #ff4444;
+    text-align: center;
+  }
   .list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

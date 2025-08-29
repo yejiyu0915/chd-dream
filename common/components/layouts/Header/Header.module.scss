@@ -36,25 +36,6 @@
     opacity: 0;
     visibility: hidden;
   }
-
-  &.scroll {
-    .overlay {
-      height: 74px;
-      opacity: 1;
-      visibility: visible;
-    }
-  }
-
-  &.hover {
-    --header-color: #000;
-    .overlay {
-      opacity: 1;
-      visibility: visible;
-    }
-    .menu .item .menuLink {
-      font-weight: 600;
-    }
-  }
   .inner {
     display: flex;
     flex-direction: column;
@@ -93,17 +74,17 @@
   }
   .menu {
     position: relative;
-    .menuList {
+    &__list {
       display: flex;
       list-style: none;
       margin: 0;
       padding: 0;
     }
-    .item {
+    &__item {
       position: relative;
       list-style: none;
 
-      .menuLink {
+      .menu__link {
         display: flex;
         align-items: center;
         gap: 8px;
@@ -134,134 +115,9 @@
         }
       }
 
-      // 서브메뉴 스타일
-      .subMenu {
-        position: fixed;
-        top: 253px; // overlay 높이에 맞춤
-        left: 0;
-        width: 100vw;
-        height: auto;
-        // min-height: 400px;
-        max-height: 600px;
-        background: #fff;
-        z-index: 98;
-        opacity: 0;
-        visibility: hidden;
-        box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.03);
-
-        &.show {
-          opacity: 1;
-          visibility: visible;
-        }
-
-        .subMenuContainer {
-          max-width: 900px;
-          margin: 0 auto;
-          padding: 32px var(--inner-padding) 40px;
-          height: 100%;
-          display: flex;
-        }
-
-        .subMenuContent {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 40px;
-          width: 100%;
-          height: 100%;
-        }
-
-        .subMenuLeft {
-          .subMenuColumns {
-            display: flex;
-            gap: 40px;
-          }
-
-          .subMenuList {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            min-width: 160px;
-          }
-
-          .subMenuItem {
-            .subMenuLink {
-              display: block;
-              padding: 8px 20px;
-              color: #333;
-              text-decoration: none;
-              font-size: 18px;
-              font-weight: 400;
-              letter-spacing: -0.02em;
-              border-radius: 6px;
-              @include smooth-transition;
-              position: relative;
-
-              &:hover {
-                font-weight: 700;
-                color: #000;
-                text-decoration: underline;
-                text-underline-offset: 4px;
-
-                &::before {
-                  content: '·';
-                  position: absolute;
-                  left: 8px;
-                  top: 50%;
-                  transform: translateY(-50%);
-                  color: #000;
-                  font-size: 24px;
-                }
-              }
-            }
-          }
-        }
-
-        .subMenuRight {
-          border-left: 1px solid #f0f0f0;
-          padding-left: 20px;
-          .subMenuVisual {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 12px;
-            padding-top: 8px;
-
-            .visualImage {
-              width: 100%;
-              height: 200px;
-              border-radius: 12px;
-              overflow: hidden;
-              background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-
-              img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                object-position: center;
-              }
-            }
-
-            .visualContent {
-              z-index: 1;
-              position: relative;
-
-              p {
-                font-size: 14px;
-                color: #666;
-                letter-spacing: -0.02em;
-                line-height: 1.5;
-              }
-            }
-          }
-        }
-      }
-
       // 활성 상태 스타일
       &.active {
-        .menuLink {
+        .menu__link {
           color: var(--header-color);
           opacity: 1;
 
@@ -273,8 +129,130 @@
 
       // 호버 시 하단 바 표시
       &:hover {
-        .menuLink::after {
+        .menu__link::after {
           width: 100%;
+        }
+      }
+    }
+  }
+
+  // 서브메뉴 스타일
+  .subMenu {
+    position: fixed;
+    top: 253px; // overlay 높이에 맞춤
+    left: 0;
+    width: 100vw;
+    height: auto;
+    // min-height: 400px;
+    max-height: 600px;
+    background: #fff;
+    z-index: 98;
+    opacity: 0;
+    visibility: hidden;
+    box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.03);
+
+    &.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    &__container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px var(--inner-padding) 40px;
+      height: 100%;
+      display: flex;
+    }
+
+    &__content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      width: 100%;
+      height: 100%;
+    }
+
+    &__columns {
+      display: flex;
+      gap: 40px;
+    }
+
+    &__list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-width: 160px;
+    }
+
+    &__link {
+      display: block;
+      padding: 8px 20px;
+      color: #333;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      border-radius: 6px;
+      @include smooth-transition;
+      position: relative;
+
+      &:hover {
+        font-weight: 700;
+        color: #000;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+
+        &::before {
+          content: '·';
+          position: absolute;
+          left: 8px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #000;
+          font-size: 24px;
+        }
+      }
+    }
+
+    &__right {
+      border-left: 1px solid #f0f0f0;
+      padding-left: 20px;
+    }
+
+    &__visual {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+      padding-top: 8px;
+
+      &Image {
+        width: 100%;
+        height: 200px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+        }
+      }
+
+      &Content {
+        z-index: 1;
+        position: relative;
+
+        p {
+          font-size: 14px;
+          color: #666;
+          letter-spacing: -0.02em;
+          line-height: 1.5;
         }
       }
     }
@@ -293,9 +271,25 @@
     }
   }
 
+  &.hover {
+    --header-color: #000;
+    .overlay {
+      opacity: 1;
+      visibility: visible;
+    }
+    .menu .item .menuLink {
+      font-weight: 600;
+    }
+  }
+
   // 스크롤 시 적용될 스타일
   &.scroll {
     --header-color: #000;
+    .overlay {
+      height: 74px;
+      opacity: 1;
+      visibility: visible;
+    }
     .inner {
       max-width: 100%;
       padding-block: 0;
@@ -318,16 +312,15 @@
       }
     }
     .menu {
-      .item {
-        .menuLink {
+      &__item {
+        .menu__link {
           font-weight: 600;
           line-height: 74px;
         }
-
-        .subMenu {
-          top: 74px; // 스크롤 시 헤더 높이 (로고 36px + 메뉴 50px + 패딩 12px*2)
-        }
       }
+    }
+    .subMenu {
+      top: 74px; // 스크롤 시 헤더 높이 (로고 36px + 메뉴 50px + 패딩 12px*2)
     }
     .util {
       top: 50%;

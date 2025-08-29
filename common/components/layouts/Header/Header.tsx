@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import Icon from '@/common/components/utils/Icons';
 import h from '@/common/components/layouts/Header/Header.module.scss';
@@ -165,23 +166,23 @@ export default function Header() {
             </Link>
           </div>
           <div className={h.menu}>
-            <ul className={h.menuList}>
+            <ul className={h.menu__list}>
               {menuData.map((menuItem, index) => (
                 <li
                   key={index}
-                  className={`${h.item} ${activeMenu === menuItem.name ? h.active : ''}`}
+                  className={`${h.menu__item} ${activeMenu === menuItem.name ? h.active : ''}`}
                   onMouseEnter={() => handleMenuMouseEnter(menuItem.name)}
                   onMouseLeave={handleMenuMouseLeave}
                 >
-                  <Link href={menuItem.href || '#'} className={h.menuLink}>
+                  <Link href={menuItem.href || '#'} className={h.menu__link}>
                     {menuItem.name}
                   </Link>
                   {menuItem.subMenu && (
                     <div className={`${h.subMenu} ${activeMenu === menuItem.name ? h.show : ''}`}>
-                      <div className={h.subMenuContainer}>
-                        <div className={h.subMenuContent}>
-                          <div className={h.subMenuLeft}>
-                            <div className={h.subMenuColumns}>
+                      <div className={h.subMenu__container}>
+                        <div className={h.subMenu__content}>
+                          <div className={h.subMenu__left}>
+                            <div className={h.subMenu__columns}>
                               {(() => {
                                 const columns = [];
                                 const itemsPerColumn = 3;
@@ -189,10 +190,10 @@ export default function Header() {
                                 for (let i = 0; i < menuItem.subMenu.length; i += itemsPerColumn) {
                                   const columnItems = menuItem.subMenu.slice(i, i + itemsPerColumn);
                                   columns.push(
-                                    <ul key={i} className={h.subMenuList}>
+                                    <ul key={i} className={h.subMenu__list}>
                                       {columnItems.map((subItem, subIndex) => (
-                                        <li key={subIndex} className={h.subMenuItem}>
-                                          <Link href={subItem.href} className={h.subMenuLink}>
+                                        <li key={subIndex} className={h.subMenu__item}>
+                                          <Link href={subItem.href} className={h.subMenu__link}>
                                             {subItem.name}
                                           </Link>
                                         </li>
@@ -205,15 +206,18 @@ export default function Header() {
                               })()}
                             </div>
                           </div>
-                          <div className={h.subMenuRight}>
-                            <div className={h.subMenuVisual}>
-                              <div className={h.visualImage}>
-                                <img
+                          <div className={h.subMenu__right}>
+                            <div className={h.subMenu__visual}>
+                              <div className={h.subMenu__visualImage}>
+                                {/* <Image
                                   src={menuItem.content?.image || '/main/default.jpg'}
                                   alt={menuItem.content?.title || menuItem.name}
-                                />
+                                  fill
+                                  style={{ objectFit: 'cover' }}
+                                  priority
+                                /> */}
                               </div>
-                              <div className={h.visualContent}>
+                              <div className={h.subMenu__visualContent}>
                                 <p>
                                   {menuItem.content?.description ||
                                     '하나님의 사랑으로 함께하는 교회'}
