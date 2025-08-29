@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import Icon from '@/common/components/utils/Icons';
@@ -10,7 +12,7 @@ export default function Sermon() {
         <div className={s.content}>
           <div className={s.text}>
             <h2 className={s.eyebrow}>
-              <Icon.bookOpen className={s.eyebrow__icon} /> 이번 주 말씀 | 2025.08.26
+              <Icon name="book-open" className={s.eyebrow__icon} /> 이번 주 말씀 | 2025.08.26
             </h2>
             <p className={s.title}>주 안에서 서로 사랑하라</p>
             <p className={s.verse}>요 13:34</p>
@@ -25,7 +27,7 @@ export default function Sermon() {
                 <Link href="/" className={s.thisWeek}>
                   <span className={s.link__text}>
                     오늘의 말씀 보러가기
-                    <Icon.externalLink className={s.link__icon} />
+                    <Icon name="external-link" className={s.link__icon} />
                   </span>
                 </Link>
               </li>
@@ -33,7 +35,7 @@ export default function Sermon() {
                 <Link href="/">
                   <span className={s.link__text}>
                     지난 말씀 보러가기
-                    <Icon.arrowUpRight className={s.link__icon} />
+                    <Icon name="arrow-up-right" className={s.link__icon} />
                   </span>
                 </Link>
               </li>
@@ -41,7 +43,7 @@ export default function Sermon() {
                 <Link href="/">
                   <span className={s.link__text}>
                     네이버 밴드
-                    <Icon.externalLink className={s.link__icon} />
+                    <Icon name="external-link" className={s.link__icon} />
                   </span>
                 </Link>
               </li>
@@ -61,8 +63,8 @@ export default function Sermon() {
           </div>
         </div>
         <p className={s.footnote}>
-          <Icon.info className={s.footnote__icon} /> 말씀 영상은 네이버 밴드 가입 승인 후 확인하실
-          수 있습니다. (문의: 부속실)
+          <Icon name="info" className={s.footnote__icon} /> 말씀 영상은 네이버 밴드 가입 승인 후
+          확인하실 수 있습니다. (문의: 부속실)
         </p>
       </div>
     </section>

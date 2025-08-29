@@ -237,7 +237,7 @@ export default function Header() {
             <ul>
               <li>
                 <Link href="/location">
-                  <Icon.map className={h.icon} /> 오시는 길
+                  <Icon name="map" className={h.icon} /> 오시는 길
                 </Link>
               </li>
             </ul>

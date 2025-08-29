@@ -28,17 +28,17 @@ export default function Footer() {
             <ul className={f.sns}>
               <li className={f.naver}>
                 <Link href="/">
-                  Band <Icon.externalLink className={f.icon} />
+                  Band <Icon name="external-link" className={f.icon} />
                 </Link>
               </li>
               <li className={f.youtube}>
                 <Link href="/">
-                  Youtube <Icon.externalLink className={f.icon} />
+                  Youtube <Icon name="external-link" className={f.icon} />
                 </Link>
               </li>
               <li className={f.instagram}>
                 <Link href="/">
-                  Instagram <Icon.externalLink className={f.icon} />
+                  Instagram <Icon name="external-link" className={f.icon} />
                 </Link>
               </li>
             </ul>
@@ -49,10 +49,10 @@ export default function Footer() {
               <p>순복음인천초대교회는 언제나 열려있습니다.</p>
               <div className={f.link}>
                 <Link href="tel:032-463-9004">
-                  <Icon.phone className={f.icon} /> CONTACT #1
+                  <Icon name="phone" className={f.icon} /> CONTACT #1
                 </Link>
                 <Link href="tel:032-472-9004">
-                  <Icon.phone className={f.icon} /> CONTACT #2
+                  <Icon name="phone" className={f.icon} /> CONTACT #2
                 </Link>
               </div>
             </div>
