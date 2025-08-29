@@ -7,13 +7,21 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
+    // Notion 외부 이미지 도메인 추가 (Notion 내부 URL은 필요 없음)
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
+        hostname: 'www.notion.so',
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'prod-files-secure.s3.us-west-2.amazonaws.com',
+        port: '',
+        pathname: '/**',
+      },
+      // 필요하다면 다른 외부 이미지 도메인도 여기에 추가하세요.
     ],
   },
   // Browser-sync 관련 요청 무시

@@ -1,21 +1,15 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { CLogItem as CLogItemType } from '@/lib/notion';
 import c from './CLog.module.scss';
 
-interface CLogItemProps {
-  id: string;
-  title: string;
-  category: string;
-  date: string;
-  imageUrl: string;
-  imageAlt: string;
-}
-
-export default function CLogItem({ id, title, category, date, imageUrl, imageAlt }: CLogItemProps) {
+export default function CLogItem({ id, title, category, date, imageUrl, imageAlt }: CLogItemType) {
   return (
     <li className={c.list__item}>
       <Link href={`/c-log/${id}`} className={c.list__link}>
-        <Image src={imageUrl} alt={imageAlt} width={400} height={300} className={c.list__image} />
+        {imageUrl && (
+          <Image src={imageUrl} alt={imageAlt} width={400} height={300} className={c.list__image} />
+        )}
         <div className={c.list__content}>
           <p className={c.list__title}>{title}</p>
           <div className={c.list__info}>

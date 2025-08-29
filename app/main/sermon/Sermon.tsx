@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+// import Image from 'next/image';
 import Icon from '@/common/components/utils/Icons';
 import s from '@/app/main/sermon/Sermon.module.scss';
 
@@ -50,13 +50,13 @@ export default function Sermon() {
             </ul>
           </div>
           <div className={s.pastor}>
-            <Image
+            {/* <Image
               src="/main/pastor.jpg"
               alt="설교 목사"
               className={s.pastor__image}
               width={240}
               height={240}
-            />
+            /> */}
             <p className={s.pastor__name}>
               <span className={s.pastor__nameDesc}>담임 목사</span> 김영구
             </p>
