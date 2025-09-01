@@ -11,7 +11,7 @@
     color: #000;
   }
   .desc {
-    margin-block: 20px 60px;
+    margin-block: 0 60px;
     font-size: 30px;
   }
   .link {
@@ -63,7 +63,7 @@
     &__item {
       border-radius: 20px 20px 0 0;
       &:nth-child(1) {
-        padding-block-start: 100px;
+        padding-block-start: 90px;
       }
       &:nth-child(2) {
         padding-block-start: 0;
@@ -129,6 +129,108 @@
       border-radius: 4px;
       background-color: #eee;
       color: #222;
+      line-height: 2;
+    }
+  }
+
+  // Skeleton UI styles
+  .skeletonList {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 60px;
+    margin-block-start: 40px;
+    padding-inline: 200px;
+
+    .skeleton__item {
+      border-radius: 20px 20px 0 0;
+      &:nth-child(1) {
+        padding-block-start: 100px;
+      }
+      &:nth-child(2) {
+        padding-block-start: 0;
+      }
+      &:nth-child(3) {
+        padding-block-start: 200px;
+      }
+      &:nth-child(4) {
+        padding-block-start: 50px;
+      }
+      &:nth-child(5) {
+        margin-block-start: -50px;
+        padding-block-start: 0;
+      }
+      &:nth-child(6) {
+        padding-block-start: 100px;
+      }
+    }
+
+    .skeleton__link {
+      display: block;
+      border-radius: 20px 20px 0 0;
+      overflow: hidden;
+    }
+
+    .skeleton__imagePlaceholder {
+      width: 100%;
+      height: 0;
+      padding-bottom: 75%; /* 4:3 aspect ratio for skeleton image */
+      border-radius: 20px;
+    }
+
+    .skeleton__content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-block-start: 20px;
+    }
+
+    .skeleton__title {
+      font-size: 32px;
+      font-weight: 700;
+      color: transparent; // Make text transparent
+      line-height: 1.4;
+    }
+
+    .skeleton__info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+    }
+
+    .skeleton__tags {
+      display: flex;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 300;
+    }
+
+    .skeleton__text {
+      height: 1.2em;
+      margin-block-end: 0.5em;
+    }
+
+    .skeleton__tag {
+      height: 1.5em;
+      width: 60px;
+      border-radius: 4px;
+    }
+  }
+
+  .skeleton {
+    background-color: #e0e0e0;
+    background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 37%, #e0e0e0 63%);
+    background-size: 400% 100%;
+    animation: skeleton-loading 1.4s ease infinite;
+    border-radius: 8px;
+  }
+
+  @keyframes skeleton-loading {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
     }
   }
 }

@@ -26,7 +26,6 @@ interface MenuItem {
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isFixed, setIsFixed] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isMenuHovered, setIsMenuHovered] = useState(false);
 
@@ -80,10 +79,8 @@ export default function Header() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
-      const windowHeight = window.innerHeight;
 
-      setIsScrolled(scrollTop > 200);
-      setIsFixed(scrollTop >= windowHeight); // windowHeight 이후부터 fixed 클래스 적용
+      setIsScrolled(scrollTop > 200); // 스크롤 여부에 따라 isScrolled 상태 업데이트
     };
 
     // 초기 스크롤 위치 체크 (새로고침 시에도 적용)
@@ -111,7 +108,7 @@ export default function Header() {
   return (
     <>
       <header
-        className={`${h.header} ${isScrolled ? h.scroll : ''} ${isFixed ? h.fixed : ''} ${isMenuHovered ? h.hover : ''}`}
+        className={`${h.header} ${h.fixed} ${isScrolled ? h.scroll : ''} ${isMenuHovered ? h.hover : ''}`}
       >
         <div className={h.overlay}></div>
         <div className={h.inner}>

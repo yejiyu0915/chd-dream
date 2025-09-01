@@ -332,20 +332,4 @@
       }
     }
   }
-
-  // 스크롤 후 transition 제거 (setTimeout으로 제어)
-  &.fixed {
-    transition: none;
-    .inner,
-    .logo,
-    .logo a,
-    .logo svg,
-    .logo span,
-    .menu .item .menuLink,
-    .util {
-      opacity: 1 !important;
-      transition: none !important;
-      animation: none !important;
-    }
-  }
 }
