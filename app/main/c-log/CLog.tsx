@@ -87,6 +87,15 @@ export default function CLog() {
                           <span className={c.list__category}>{item.category}</span>
                           <span className={c.list__date}>{item.date}</span>
                         </div>
+                        {item.tags && item.tags.length > 0 && (
+                          <div className={c.list__tag}>
+                            {item.tags.map((tag) => (
+                              <span key={tag} className={c.list__tagItem}>
+                                #{tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </a>
                   </li>
