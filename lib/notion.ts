@@ -85,7 +85,7 @@ export async function getCLogData(): Promise<CLogItem[]> {
             imageUrlToUse =
               ((page as PageObjectResponse).cover as any).external.url || '/no-image.svg'; // as any 사용
           } else if ((page as PageObjectResponse).cover?.type === 'file') {
-            imageUrlToUse = `/api/notion-image?url=${encodeURIComponent(((page as PageObjectResponse).cover as any).file.url || '')}`;
+            imageUrlToUse = `/api/notion-image?pageId=${page.id}&type=cover`; // Notion 이미지 URL을 직접 전달하는 대신 pageId와 type=cover 전달
           }
         }
 
@@ -235,6 +235,90 @@ export async function getNewsData(): Promise<NewsItem[]> {
       .filter(Boolean) as NewsItem[];
 
     return newsItems;
+  } catch (_error: unknown) {
+    void _error;
+    return [];
+  }
+}
+
+// KV Slider 데이터 타입 정의
+export interface KVSliderItem {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  imageAlt: string;
+  link: string;
+}
+
+// Notion 데이터베이스에서 최신 KV Slider 데이터 가져오기
+export async function getKVSliderData(): Promise<KVSliderItem[]> {
+  if (!process.env.NOTION_TOKEN || !process.env.NOTION_KV_ID) {
+    // NOTION_KVSLIDER_ID를 NOTION_KV_ID로 변경
+    return [];
+  }
+
+  try {
+    // TODO: Notion API에서 KV Slider 데이터 가져오기 로직 구현
+    const response: QueryDatabaseResponse = await notion.databases.query({
+      database_id: process.env.NOTION_KV_ID, // NOTION_KVSLIDER_ID를 NOTION_KV_ID로 변경
+      filter: {
+        property: 'Status',
+        select: {
+          equals: 'Published',
+        },
+      },
+      sorts: [
+        {
+          property: 'Date',
+          direction: 'descending',
+        },
+      ],
+    });
+
+    const kvSliderItems: KVSliderItem[] = response.results
+      .map((page) => {
+        if (!('properties' in page)) return null;
+        const properties = (page as PageObjectResponse).properties;
+
+        const titleProperty = properties.Title as any;
+        const descriptionProperty = properties.Summary as any; // Notion의 Summary 필드 사용
+        const linkProperty = properties.Link as any; // Notion의 URL 필드
+        const imageProperty = properties.Image as any; // Notion의 Files & media 필드
+
+        let imageUrlToUse = '/main/kv.jpg'; // 기본 이미지
+        let imageAltToUse = titleProperty?.title?.[0]?.plain_text || '이미지';
+
+        if ((page as PageObjectResponse).cover) {
+          if ((page as PageObjectResponse).cover?.type === 'external') {
+            imageUrlToUse =
+              ((page as PageObjectResponse).cover as any).external.url || '/main/kv.jpg';
+          } else if ((page as PageObjectResponse).cover?.type === 'file') {
+            imageUrlToUse = `/api/notion-image?pageId=${page.id}&type=cover`; // Notion 이미지 URL을 직접 전달하는 대신 pageId와 type=cover 전달
+          }
+        } else if (imageProperty?.files?.[0]) {
+          // Files & media 속성 처리
+          const file = imageProperty.files[0];
+          if (file.type === 'external') {
+            imageUrlToUse = file.external.url;
+          } else if (file.type === 'file') {
+            imageUrlToUse = `/api/notion-image?pageId=${page.id}&propertyId=${imageProperty.id}`; // Notion 이미지 URL을 직접 전달하는 대신 pageId와 propertyId 전달
+          }
+          imageAltToUse = file.name || '이미지';
+        }
+
+        return {
+          id: page.id,
+          title: titleProperty?.title?.[0]?.plain_text || '제목 없음',
+          description: descriptionProperty?.rich_text?.[0]?.plain_text || '설명 없음',
+          image: imageUrlToUse,
+          imageAlt: imageAltToUse,
+          link: linkProperty?.url || '/',
+        };
+      })
+      .filter(Boolean) as KVSliderItem[];
+
+    return kvSliderItems;
   } catch (_error: unknown) {
     void _error;
     return [];

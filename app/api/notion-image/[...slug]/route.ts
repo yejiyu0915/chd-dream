@@ -1,41 +1,79 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { Client } from '@notionhq/client'; // Notion Client 임포트
+// import type { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
+// import type { GetPagePropertyResponse } from '@notionhq/client/build/src/api-endpoints';
 
-export async function GET(request: NextRequest) {
+// Notion 클라이언트 초기화
+const notion = new Client({ auth: process.env.NOTION_TOKEN });
+
+export async function GET(
+  request: Request,
+  { params: _params }: { params: { slug: string[] } } // params를 _params로 변경
+) {
   const { searchParams } = new URL(request.url);
-  const imageUrl = searchParams.get('url');
+  const pageId = searchParams.get('pageId') || '';
+  const imageType = searchParams.get('type'); // 'cover' 또는 'property'
+  const propertyId = searchParams.get('propertyId');
 
-  if (!imageUrl) {
-    return new NextResponse('Image URL is missing', { status: 400 });
-  }
+  let imageUrlToFetch: string | null = null;
+  let cacheControlHeader = 'public, max-age=31536000, immutable'; // 기본 캐시 설정
 
   try {
-    const imageResponse = await fetch(imageUrl, {
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36', // 요청 헤더 추가
-        Referer: 'https://www.notion.so', // Notion Referer 헤더 추가
-      },
-    });
-
-    if (!imageResponse.ok) {
-      const errorBody = await imageResponse.text();
-      // console.error(
-      //   `[Image Proxy DEBUG] Failed to fetch image from Notion: ${imageResponse.status} ${imageResponse.statusText}, Content-Type: ${imageResponse.headers.get('content-type')}, Body: ${errorBody}`
-      // ); // 주석 처리
-      return new NextResponse('Failed to fetch image', { status: 500 });
+    if (!pageId) {
+      return new Response('Page ID is missing.', { status: 400 });
     }
 
-    const contentType = imageResponse.headers.get('content-type');
-    const arrayBuffer = await imageResponse.arrayBuffer();
+    // 페이지 정보 가져오기
+    const page = await notion.pages.retrieve({
+      page_id: pageId,
+    });
+    const pageProperties = page.properties as any;
 
-    return new NextResponse(Buffer.from(arrayBuffer), {
+    if (imageType === 'cover') {
+      const cover = (page as any).cover;
+      if (cover) {
+        if (cover.type === 'external') {
+          imageUrlToFetch = cover.external.url;
+        } else if (cover.type === 'file') {
+          imageUrlToFetch = cover.file.url;
+          cacheControlHeader = 'no-store, no-cache, must-revalidate'; // Notion secure files for 1 minute
+        }
+      }
+    } else if (imageType === 'property' && propertyId) {
+      const property = pageProperties[propertyId];
+      if (property && property.type === 'files' && property.files.length > 0) {
+        const file = property.files[0];
+        if (file.type === 'external') {
+          imageUrlToFetch = file.external.url;
+        } else if (file.type === 'file') {
+          imageUrlToFetch = file.file.url;
+          cacheControlHeader = 'no-store, no-cache, must-revalidate'; // Notion secure files for 1 minute
+        }
+      }
+    } else {
+      return new Response('Invalid image type or missing property ID.', { status: 400 });
+    }
+
+    if (!imageUrlToFetch) {
+      return new Response('Image URL not found.', { status: 404 });
+    }
+
+    const response = await fetch(imageUrlToFetch);
+
+    if (!response.ok) {
+      return new Response('Failed to fetch image from Notion.', { status: 500 });
+    }
+
+    const imageBuffer = await response.arrayBuffer();
+
+    return new Response(imageBuffer, {
       headers: {
-        'Content-Type': contentType || 'application/octet-stream',
-        'Cache-Control': 'public, max-age=31536000, immutable', // 이미지 캐싱 설정
+        'Content-Type': response.headers.get('Content-Type') || 'application/octet-stream',
+        'Cache-Control': cacheControlHeader,
       },
     });
-  } catch (error) {
-    // console.error('Error proxying Notion image:', error); // 주석 처리
-    return new NextResponse('Internal Server Error', { status: 500 });
+  } catch (_error: unknown) {
+    // error를 _error: unknown으로 변경
+    void _error; // 사용되지 않는 변수 경고 해결
+    return new Response('Internal Server Error.', { status: 500 });
   }
 }

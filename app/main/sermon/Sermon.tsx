@@ -72,6 +72,7 @@ export default function Sermon({ sermonData }: SermonProps) {
               className={s.pastor__image}
               width={240}
               height={240}
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
             <p className={s.pastor__name}>
               <span className={s.pastor__nameDesc}>담임 목사</span> 김영구
