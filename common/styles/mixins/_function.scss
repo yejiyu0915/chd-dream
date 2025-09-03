@@ -1,11 +1,13 @@
 @use 'sass:math';
+@use 'sass:meta'; // sass:meta 모듈 추가
 
 @function decimal-round($point) {
   @return math.div(math.round($point * 10000), 10000);
 }
 
 @function check-var($value) {
-  @if (type-of($value) == 'number') {
+  @if (meta.type-of($value) == 'number') {
+    // type-of를 meta.type-of로 변경
     @return $value;
   } @else {
     @return var($value);
@@ -43,16 +45,71 @@
   }
 }
 
-@function px-to-vw($px, $viewport: 1920) {
-  // $px가 number 타입이 아닐 경우 에러 처리
-  @if (type-of($px) != 'number') {
-    @error 'px-to-vw 함수의 $px 인자는 숫자여야 합니다.';
+@function clamp-cqi($min, $max, $container-width) {
+  @if $min < 0 {
+    @return #{calc(check-var($max) / check-var($container-width) * 100cqi)};
+  } @else {
+    @return clamp(
+      #{calc(check-var($min) * 1px)},
+      #{calc(check-var($max) / check-var($container-width) * 100cqi)},
+      #{calc(check-var($max) * 1px)}
+    );
   }
-  // $viewport가 0이거나 음수일 경우 에러 처리
-  @if ($viewport <= 0) {
-    @error 'px-to-vw 함수의 $viewport 인자는 0보다 커야 합니다.';
+}
+
+@function cqi($value, $min: null) {
+  @if ($min != null) {
+    @return clamp-cqi($min, $value, --cont-w);
+  } @else {
+    @if (meta.type-of($value) == 'number') {
+      // type-of를 meta.type-of로 변경
+      @if ($value < 0) {
+        @return clamp-cqi($value, $value, --cont-w);
+      }
+      @return clamp-cqi(1, $value, --cont-w);
+    }
+    @return clamp-cqi(1, $value, --cont-w);
   }
-  // vw 값 계산 (소수점 4자리까지 반올림)
-  $vw-value: math.div($px, $viewport) * 100;
-  @return decimal-round($vw-value) + vw;
+}
+
+$font-weight: (
+  'dl': 200,
+  'l': 300,
+  'r': 400,
+  'm': 500,
+  'sb': 600,
+  'b': 700,
+  'eb': 800,
+  'black': 900,
+);
+
+@mixin font($font, $line: null, $ls: null, $min: null, $weight: null, $color: null) {
+  @if ($min != null) {
+    font-size: clamp-cqi($min, $font, --cont-w);
+  } @else {
+    font-size: clamp-cqi(11, $font, --cont-w);
+  }
+
+  @if ($weight != null) {
+    @if (meta.type-of($weight) == 'number') {
+      // type-of를 meta.type-of로 변경
+      font-weight: $weight;
+    } @else {
+      @if (map-has-key($font-weight, $weight)) {
+        font-weight: map-get($font-weight, $weight);
+      }
+    }
+  }
+
+  @if ($ls != null) {
+    letter-spacing: calc($ls * 1em);
+  }
+
+  @if ($line != null) {
+    line-height: calc(check-var($line) / check-var($font));
+  }
+
+  @if ($color != null) {
+    color: $color;
+  }
 }

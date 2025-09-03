@@ -34,6 +34,7 @@ const eslintConfig = [
         },
       ],
       'no-console': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn', // no-explicit-any 규칙을 warn으로 변경
     },
   },
   eslintConfigPrettier,

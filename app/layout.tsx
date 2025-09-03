@@ -3,6 +3,7 @@ import '@/common/styles/globals.scss';
 import Header from '@/common/components/layouts/Header/Header';
 import Footer from '@/common/components/layouts/Footer/Footer';
 import SmoothScroll from '@/common/components/utils/SmoothScroll';
+import Providers from './providers';
 
 export const metadata: Metadata = {
   title: '순복음인천초대교회',
@@ -17,13 +18,15 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-        <SmoothScroll>
-          <div className="wrapper">
-            <Header />
-            {children}
-            <Footer />
-          </div>
-        </SmoothScroll>
+        <Providers>
+          <SmoothScroll>
+            <div className="wrapper">
+              <Header />
+              {children}
+              <Footer />
+            </div>
+          </SmoothScroll>
+        </Providers>
       </body>
     </html>
   );
