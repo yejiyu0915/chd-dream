@@ -1,30 +1,46 @@
-'use client';
+'use client'; // 다시 클라이언트 컴포넌트로 지정
 
 import Link from 'next/link';
-// import Image from 'next/image';
+import Image from 'next/image';
 import Icon from '@/common/components/utils/Icons';
 import s from '@/app/main/sermon/Sermon.module.scss';
+import { SermonItem } from '@/lib/notion'; // SermonItem 임포트
 
-export default function Sermon() {
+interface SermonProps {
+  sermonData: SermonItem | null;
+}
+
+export default function Sermon({ sermonData }: SermonProps) {
+  // props로 sermonData 받도록 변경
+  // 설교 데이터가 없는 경우를 위한 폴백
+  if (!sermonData) {
+    return (
+      <section className={s.sermon}>
+        <div className={s.inner}>
+          <p className={s.emptyState}>이번 주 설교 데이터를 불러올 수 없습니다.</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className={s.sermon}>
       <div className={s.inner}>
         <div className={s.content}>
           <div className={s.text}>
             <h2 className={s.eyebrow}>
-              <Icon name="book-open" className={s.eyebrow__icon} /> 이번 주 말씀 | 2025.08.26
+              <Icon name="book-open" className={s.eyebrow__icon} /> 이번 주 말씀 | {sermonData.date}
             </h2>
-            <p className={s.title}>주 안에서 서로 사랑하라</p>
-            <p className={s.verse}>요 13:34</p>
-            <p className={s.desc}>
-              새 계명을 너희에게 주노니 서로 사랑하라 내가 너희를 사랑한것 같이 너희도 서로
-              사랑하라.
-            </p>
+            <p className={s.title}>{sermonData.title}</p>
+            <p className={s.verse}>{sermonData.summary}</p>
+            <p className={s.desc}>{sermonData.verse}</p>
           </div>
           <div className={s.link}>
             <ul className={s.link__list}>
               <li className={s.link__item}>
-                <Link href="/" className={s.thisWeek}>
+                <Link href={`/sermon/${sermonData.id}`} className={s.thisWeek}>
+                  {' '}
+                  {/* 동적 링크 추가 */}
                   <span className={s.link__text}>
                     오늘의 말씀 보러가기
                     <Icon name="external-link" className={s.link__icon} />
@@ -50,13 +66,13 @@ export default function Sermon() {
             </ul>
           </div>
           <div className={s.pastor}>
-            {/* <Image
+            <Image
               src="/main/pastor.jpg"
               alt="설교 목사"
               className={s.pastor__image}
               width={240}
               height={240}
-            /> */}
+            />
             <p className={s.pastor__name}>
               <span className={s.pastor__nameDesc}>담임 목사</span> 김영구
             </p>
