@@ -29,7 +29,7 @@ export default function MainTask() {
       text: 'Notion API 연결',
       priority: 'high',
       dueDate: '2025-09-24',
-      progress: 'not-started',
+      progress: 'in-progress',
       completionDate: '',
       openDate: '2026-01-01',
       notes: '캘린더 기능 가능 여부 확인 필요',
