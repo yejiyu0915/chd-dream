@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { CLogItem as CLogItemType } from '@/lib/notion';
-import c from './CLog.module.scss';
+import c from '@/app/main/c-log/CLog.module.scss';
 
 export default function CLogItem({ id, title, category, date, imageUrl, imageAlt }: CLogItemType) {
   return (

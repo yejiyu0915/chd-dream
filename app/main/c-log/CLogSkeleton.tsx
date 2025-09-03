@@ -1,6 +1,5 @@
-// app/main/c-log/components/CLogSkeleton.tsx
 import React from 'react';
-import c from '../CLog.module.scss'; // CLog.module.scss에서 스타일 가져오기
+import c from '@/app/main/c-log/CLog.module.scss'; // CLog.module.scss에서 스타일 가져오기
 
 export default function CLogSkeleton() {
   return (

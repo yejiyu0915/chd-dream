@@ -29,6 +29,13 @@ export interface SermonItem {
   verse: string; // Notion의 Verse (s.desc)
 }
 
+// 뉴스 데이터 타입 정의
+export interface NewsItem {
+  id: string;
+  title: string;
+  date: string;
+}
+
 // Notion 데이터베이스에서 C-log 데이터 가져오기
 export async function getCLogData(): Promise<CLogItem[]> {
   // 환경변수 체크
@@ -78,7 +85,6 @@ export async function getCLogData(): Promise<CLogItem[]> {
             imageUrlToUse =
               ((page as PageObjectResponse).cover as any).external.url || '/no-image.svg'; // as any 사용
           } else if ((page as PageObjectResponse).cover?.type === 'file') {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             imageUrlToUse = `/api/notion-image?url=${encodeURIComponent(((page as PageObjectResponse).cover as any).file.url || '')}`;
           }
         }
@@ -174,5 +180,63 @@ export async function getSermonData(): Promise<SermonItem | null> {
     // error 변수 타입을 unknown으로 변경
     void _error; // _error 변수가 사용되지 않음을 명시
     return null;
+  }
+}
+
+// Notion 데이터베이스에서 최신 뉴스 데이터 가져오기
+export async function getNewsData(): Promise<NewsItem[]> {
+  if (!process.env.NOTION_TOKEN || !process.env.NOTION_NEWS_ID) {
+    return [];
+  }
+
+  try {
+    const response: QueryDatabaseResponse = await notion.databases.query({
+      database_id: process.env.NOTION_NEWS_ID,
+      filter: {
+        property: 'Status',
+        select: {
+          equals: 'Published',
+        },
+      },
+      sorts: [
+        {
+          property: 'Date',
+          direction: 'descending',
+        },
+      ],
+      page_size: 2, // 최대 2개의 뉴스 항목 가져옴
+    });
+
+    const newsItems: NewsItem[] = response.results
+      .map((page) => {
+        if (!('properties' in page)) return null;
+        const properties = (page as PageObjectResponse).properties;
+
+        const titleProperty = properties.Title as any;
+        const dateProperty = properties.Date as any;
+
+        const date = dateProperty?.date?.start
+          ? new Date(dateProperty.date.start)
+              .toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })
+              .replace(/\. /g, '.')
+              .replace(/\.$/, '')
+          : '날짜 없음';
+
+        return {
+          id: page.id,
+          title: titleProperty?.title?.[0]?.plain_text || '제목 없음',
+          date: date,
+        };
+      })
+      .filter(Boolean) as NewsItem[];
+
+    return newsItems;
+  } catch (_error: unknown) {
+    void _error;
+    return [];
   }
 }
