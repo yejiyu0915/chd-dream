@@ -108,7 +108,7 @@ export default function Header() {
   return (
     <>
       <header
-        className={`${h.header} ${h.fixed} ${isScrolled ? h.scroll : ''} ${isMenuHovered ? h.hover : ''}`}
+        className={`${h.header} ${isScrolled ? h.scroll : ''} ${isMenuHovered ? h.hover : ''}`}
       >
         <div className={h.overlay}></div>
         <div className={h.inner}>
