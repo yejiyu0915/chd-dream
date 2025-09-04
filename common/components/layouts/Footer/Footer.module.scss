@@ -2,82 +2,81 @@
 
 .footer {
   width: 100%;
-  padding-block: 40px;
+  padding-block: vw(40);
   position: relative;
   z-index: 2;
-  background-color: #111;
-  color: #fff;
+  background-color: var(--bg-dark);
+  color: var(--text-white);
   .top {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: vw(16);
     > div {
-      height: 300px;
+      height: vw(300);
     }
   }
   .box {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 20px;
-    border-radius: 20px;
+    padding: vw(20);
+    border-radius: vw(20);
     background-color: var(--footer-box-bg);
   }
   .title {
-    font-size: 24px;
-    font-weight: 400;
+    @include font-vw(24, $weight: 400);
   }
   .group {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding-inline-end: 40px;
+    gap: vw(16);
+    padding-inline-end: vw(40);
   }
   .sitemap {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    padding: 20px 0;
-    border-top: 3px solid rgba(255, 255, 255, 0.5);
+    gap: vw(16);
+    padding: vw(20) 0;
+    border-top: vw(3) solid var(--footer-border-top);
     li {
-      padding-inline-start: 20px;
+      padding-inline-start: vw(20);
+      @include font-vw(16);
     }
   }
   .sns {
     display: flex;
-    gap: 16px;
+    gap: vw(16);
     height: 100%;
     li {
       flex: 1;
       background: var(--footer-sns-bg);
-      border-radius: 20px;
+      border-radius: vw(20);
       a {
         display: block;
         width: 100%;
         height: 100%;
-        padding: 20px;
-        border-radius: 20px;
+        padding: vw(20);
+        border-radius: vw(20);
         overflow: hidden;
-        font-size: 16px;
-        color: #fff;
+        @include font-vw(16, $color: var(--text-white));
       }
     }
     .naver {
       // --footer-sns-bg: #21c531;
-      --footer-sns-bg: rgba(33, 197, 49, 0.3);
+      --footer-sns-bg: var(--footer-sns-bg-green);
     }
     .youtube {
       // --footer-sns-bg: #ff0033;
-      --footer-sns-bg: rgba(255, 0, 51, 0.3);
+      --footer-sns-bg: var(--footer-sns-bg-red);
     }
     .instagram {
       // --footer-sns-bg: linear-gradient(135deg, #f9ce34 0%, #ee2a7b 40%, #6228d7 70%, #4f5bd5 100%);
       --footer-sns-bg: linear-gradient(
         135deg,
-        rgba(249, 206, 52, 0.3) 0%,
-        rgba(238, 42, 123, 0.3) 40%,
-        rgba(98, 40, 215, 0.3) 70%,
-        rgba(79, 91, 213, 0.3) 100%
+        var(--footer-sns-bg-instagram-start) 0%,
+        var(--footer-sns-bg-instagram-mid1) 40%,
+        var(--footer-sns-bg-instagram-mid2) 70%,
+        var(--footer-sns-bg-instagram-end) 100%
       );
     }
     .icon {
@@ -87,40 +86,33 @@
     }
   }
   .info {
-    --footer-box-bg: rgba(255, 255, 255, 0.1);
     dt {
-      margin-block: 12px;
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.5);
+      margin-block: vw(12);
+      @include font-vw(14, $color: var(--footer-text-muted));
     }
     dd {
-      font-size: 20px;
-      line-height: 1.6;
+      @include font-vw(20, 32);
     }
   }
   .contact {
-    --footer-box-bg: rgba(255, 255, 255, 0.15);
+    --footer-box-bg: var(--footer-box-bg-hover);
     p {
-      font-size: 18px;
-      line-height: 1.6;
+      @include font-vw(18, 30);
     }
     .link {
       display: flex;
-      gap: 12px;
+      gap: vw(12);
       width: 100%;
     }
     a {
       flex: 1;
       display: block;
-      margin-block: 10px;
-      padding-inline-end: 12px;
-      border-radius: 12px;
-      background-color: #fff;
-      font-size: 16px;
-      font-weight: 700;
-      color: #000;
+      margin-block: vw(10);
+      padding-inline-end: vw(12);
+      border-radius: vw(12);
+      background-color: var(--background);
+      @include font-vw(16, 56, $weight: 700, $color: var(--foreground));
       text-align: center;
-      line-height: 56px;
     }
     .icon {
       --icon-size: 1.25;
@@ -130,9 +122,8 @@
     }
   }
   .copyright {
-    padding-block: 20px 4px;
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.5);
+    padding-block: vw(20) vw(4);
+    @include font-vw(14, $color: var(--footer-text-muted));
   }
   .text {
     font-size: 7cqw;

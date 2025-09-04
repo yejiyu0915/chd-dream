@@ -1,6 +1,51 @@
 :root {
-  --primary-color: #007bff;
-  --text-color: #000;
-  --background-color: #fff;
-  --border-color: #e5e5e5;
+  // 기본 배경 및 전경 색상
+  --background: #fff; // 흰색
+  --foreground: #000; // 검은색
+
+  // 텍스트 색상
+  --text-primary: #333;
+  --text-secondary: #666;
+  --text-muted: #888;
+  --text-light: #999;
+  --text-white: #fff; // 흰색 텍스트
+
+  // 경계선 색상
+  --border: #e0e0e0;
+  --border-light: #f0f0f0;
+
+  // 강조 및 주요 색상
+  --primary: #000; // 주로 검은색이 강조색으로 사용됨
+  --primary-foreground: #fff; // primary 배경에 사용될 흰색 텍스트
+
+  // 배경 및 요소 색상
+  --bg-dark: #111;
+  --bg-light: #f5f5f5;
+  --bg-hover: rgba(0, 0, 0, 0.05);
+  --bg-card: #eee; // CLogSkeleton에서 사용된 배경색
+  --bg-card-foreground: #222; // CLogSkeleton에서 사용된 텍스트색
+
+  // 푸터 관련 색상
+  --footer-border-top: rgba(255, 255, 255, 0.1);
+  --footer-sns-bg-green: rgba(33, 197, 49, 0.3); // 녹색 계열 (기존 #21c531)
+  --footer-sns-bg-red: rgba(255, 0, 51, 0.3); // 빨간색 계열 (기존 #ff0033)
+  --footer-sns-bg-instagram-start: rgba(249, 206, 52, 0.3);
+  --footer-sns-bg-instagram-mid1: rgba(238, 42, 123, 0.3);
+  --footer-sns-bg-instagram-mid2: rgba(98, 40, 215, 0.3);
+  --footer-sns-bg-instagram-end: rgba(79, 91, 213, 0.3);
+  --footer-box-bg: rgba(255, 255, 255, 0.1);
+  --footer-box-bg-hover: rgba(255, 255, 255, 0.15);
+  --footer-text-muted: rgba(255, 255, 255, 0.5);
+
+  // 로고 색상 (SVG에서 추출)
+  --logo-yellow: #fdcf00;
+
+  // 기타
+  --accent-red: #ff4444; // CLog에서 사용된 빨간색
+  --gradient-light-start: #f8f9fa; // Header 그라데이션 시작
+  --gradient-light-end: #e9ecef; // Header 그라데이션 끝
+  --gradient-dark-start: rgba(0, 0, 0, 0.7); // KV 그라데이션 시작
+  --gradient-dark-end: rgba(0, 0, 0, 0.4); // KV 그라데이션 끝
+  --skeleton-loading-start: #e0e0e0;
+  --skeleton-loading-mid: #f0f0f0;
 }
