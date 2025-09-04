@@ -64,6 +64,10 @@ export async function getCLogData(): Promise<CLogItem[]> {
         },
       ],
       page_size: 6, // 메인 화면에 표시할 아이템 수
+      // 캐싱을 위한 revalidate 옵션 추가 (60초마다 재검증)
+      next: {
+        revalidate: 60,
+      },
     });
 
     const cLogItems: CLogItem[] = response.results
@@ -140,6 +144,10 @@ export async function getSermonData(): Promise<SermonItem | null> {
         },
       ],
       page_size: 1, // 최신 설교 하나만 가져옴
+      // 캐싱을 위한 revalidate 옵션 추가 (60초마다 재검증)
+      next: {
+        revalidate: 60,
+      },
     });
 
     if (response.results.length === 0) {
@@ -205,6 +213,11 @@ export async function getNewsData(): Promise<NewsItem[]> {
         },
       ],
       page_size: 2, // 최대 2개의 뉴스 항목 가져옴
+      // 캐싱을 위한 revalidate 옵션 추가 (60초마다 재검증)
+      // Add revalidate option for caching (revalidate every 60 seconds)
+      next: {
+        revalidate: 60,
+      },
     });
 
     const newsItems: NewsItem[] = response.results
@@ -274,6 +287,10 @@ export async function getKVSliderData(): Promise<KVSliderItem[]> {
           direction: 'descending',
         },
       ],
+      // 캐싱을 위한 revalidate 옵션 추가 (60초마다 재검증)
+      next: {
+        revalidate: 60,
+      },
     });
 
     const kvSliderItems: KVSliderItem[] = response.results
