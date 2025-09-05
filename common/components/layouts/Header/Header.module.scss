@@ -454,6 +454,71 @@
           @include font-vw(20);
         }
       }
+      .menu {
+        position: relative;
+        margin-inline-end: calc(var(--inner-padding) / 2);
+        padding-inline-end: calc(var(--inner-padding) / 2);
+        &__item {
+          .menu__link {
+            padding-inline: vw(24);
+            @include font-vw(16);
+            line-height: vw(64);
+          }
+        }
+        &::after {
+          content: '';
+          position: absolute;
+          right: 0;
+          top: 50%;
+          width: 1px;
+          height: vw(24);
+          background: var(--foreground);
+          transform: translateY(-50%);
+        }
+      }
+      .subMenu {
+        top: vw(64);
+        &__container {
+          max-width: vw(720);
+          padding: vw(24) var(--inner-padding) vw(32);
+        }
+
+        &__content {
+          gap: vw(32);
+        }
+
+        &__columns {
+          gap: vw(32);
+        }
+
+        &__list {
+          min-width: vw(120);
+        }
+
+        &__link {
+          padding: vw(8) vw(20);
+          @include font-vw(15);
+
+          &:hover {
+            &::before {
+              @include font-vw(20);
+            }
+          }
+        }
+
+        &__right {
+          padding-left: vw(12);
+        }
+
+        &__visual {
+          gap: vw(12);
+          padding-top: vw(8);
+
+          &Image {
+            height: vw(160);
+          }
+        }
+      }
       .util {
         position: static;
         transform: translateY(0);
@@ -470,6 +535,7 @@
       }
     }
   }
+
   @include mq(mo) {
     // 모바일에서 PC 메뉴 숨기기
     .menu {
@@ -480,6 +546,10 @@
       display: none;
     }
   }
+}
+
+.mobileMenuOverlay {
+  display: none;
 }
 
 @include mq(mo) {
