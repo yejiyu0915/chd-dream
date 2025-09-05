@@ -1,6 +1,5 @@
 'use client';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import Icon from '@/common/components/utils/Icons';
 import h from '@/common/components/layouts/Header/Header.module.scss';
@@ -28,6 +27,11 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isMenuHovered, setIsMenuHovered] = useState(false);
+  const [mounted, setMounted] = useState(false); // Add mounted state
+
+  // 모바일 메뉴 상태
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeMobileMenu, setActiveMobileMenu] = useState<string | null>(null);
 
   // 메뉴 데이터 정의
   const menuData: MenuItem[] = [
@@ -88,9 +92,16 @@ export default function Header() {
 
     window.addEventListener('scroll', handleScroll);
 
-    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    setMounted(true);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거 및 스크롤 복원
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      // 스크롤 완전 복원
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
     };
   }, []);
 
@@ -105,14 +116,43 @@ export default function Header() {
     setIsMenuHovered(false);
   };
 
+  // 모바일 메뉴 핸들러
+  const handleMobileMenuToggle = () => {
+    const newIsOpen = !isMobileMenuOpen;
+    setIsMobileMenuOpen(newIsOpen);
+
+    // 스크롤 막기/해제
+    if (newIsOpen) {
+      // 현재 스크롤 위치 저장
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+    } else {
+      // 스크롤 위치 복원
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      setActiveMobileMenu(null);
+    }
+  };
+
+  const handleMobileMenuClick = (menuName: string) => {
+    setActiveMobileMenu(activeMobileMenu === menuName ? null : menuName);
+  };
+
   return (
     <>
       <header
-        className={`${h.header} ${h.fixed} ${isScrolled ? h.scroll : ''} ${isMenuHovered ? h.hover : ''}`}
+        className={`${h.header} ${isScrolled ? h.scroll : ''} ${isMenuHovered ? h.hover : ''} ${mounted ? h.mounted : ''}`}
       >
         <div className={h.overlay}></div>
         <div className={h.inner}>
-          <div className={h.logo}>
+          <div className={h.logo} style={{ opacity: mounted ? 1 : 0 }}>
             <Link href="/">
               <svg
                 width="257"
@@ -162,7 +202,7 @@ export default function Header() {
               <span>순복음인천초대교회</span>
             </Link>
           </div>
-          <div className={h.menu}>
+          <div className={h.menu} style={{ opacity: mounted ? 1 : 0 }}>
             <ul className={h.menu__list}>
               {menuData.map((menuItem, index) => (
                 <li
@@ -230,17 +270,107 @@ export default function Header() {
               ))}
             </ul>
           </div>
-          <div className={h.util}>
+          <div className={h.util} style={{ opacity: mounted ? 1 : 0 }}>
             <ul>
               <li>
                 <Link href="/location">
                   <Icon name="map" className={h.icon} /> 오시는 길
                 </Link>
               </li>
+              <li className={h.mobileMenuToggle}>
+                <button
+                  type="button"
+                  onClick={handleMobileMenuToggle}
+                  className={h.hamburgerButton}
+                  aria-label="메뉴 열기/닫기"
+                >
+                  <Icon
+                    name={isMobileMenuOpen ? 'close' : 'hamburger'}
+                    className={h.hamburgerIcon}
+                  />
+                </button>
+              </li>
             </ul>
           </div>
         </div>
       </header>
+
+      {/* 모바일 메뉴 오버레이 */}
+      <div className={`${h.mobileMenuOverlay} ${isMobileMenuOpen ? h.open : ''}`}>
+        <div className={h.mobileMenuContent}>
+          <nav className={h.mobileNav}>
+            <ul className={h.mobileMenuList}>
+              {menuData.map((menuItem, index) => (
+                <li key={index} className={h.mobileMenuItem}>
+                  <button
+                    type="button"
+                    className={`${h.mobileMenuButton} ${activeMobileMenu === menuItem.name ? h.active : ''}`}
+                    onClick={() => handleMobileMenuClick(menuItem.name)}
+                  >
+                    <span>{menuItem.name}</span>
+                    <Icon name="accordion" className={h.mobileMenuIcon} />
+                  </button>
+
+                  {menuItem.subMenu && (
+                    <div
+                      className={`${h.mobileSubMenu} ${activeMobileMenu === menuItem.name ? h.show : ''}`}
+                    >
+                      <div className={h.mobileSubMenuContent}>
+                        <div className={h.mobileSubMenuTop}>
+                          <ul className={h.mobileSubMenuList}>
+                            {menuItem.subMenu.map((subItem, subIndex) => (
+                              <li key={subIndex} className={h.mobileSubMenuItem}>
+                                <Link
+                                  href={subItem.href}
+                                  className={h.mobileSubMenuLink}
+                                  onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                  {subItem.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className={h.mobileSubMenuBottom}>
+                          <div className={h.mobileSubMenuVisual}>
+                            <div className={h.mobileVisualImage}>{/* 이미지 영역 */}</div>
+                            <div className={h.mobileVisualContent}>
+                              <p>
+                                {menuItem.content?.description || '하나님의 사랑으로 함께하는 교회'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* SNS 링크 영역 */}
+          <div className={h.mobileSns}>
+            <ul className={h.mobileSnsList}>
+              <li className={h.mobileSnsItem}>
+                <Link href="/" className={h.mobileSnsLink}>
+                  Band <Icon name="external-link" className={h.mobileSnsIcon} />
+                </Link>
+              </li>
+              <li className={h.mobileSnsItem}>
+                <Link href="/" className={h.mobileSnsLink}>
+                  Youtube <Icon name="external-link" className={h.mobileSnsIcon} />
+                </Link>
+              </li>
+              <li className={h.mobileSnsItem}>
+                <Link href="/" className={h.mobileSnsLink}>
+                  Instagram <Icon name="external-link" className={h.mobileSnsIcon} />
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

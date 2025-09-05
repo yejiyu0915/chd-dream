@@ -1,6 +1,8 @@
 @use 'sass:math';
 @use 'sass:meta'; // sass:meta 모듈 추가
+@use 'sass:map'; // sass:map 모듈 추가
 
+/* --------------------- Setting --------------------- */
 @function decimal-round($point) {
   @return math.div(math.round($point * 10000), 10000);
 }
@@ -14,6 +16,7 @@
   }
 }
 
+/* --------------------- 말줄임 --------------------- */
 @mixin ellipsis($line: 1) {
   @if ($line==1) {
     overflow: hidden;
@@ -29,22 +32,45 @@
   }
 }
 
-@mixin tablet {
-  @container wrapper (max-width: 1024px) {
-    @content;
-  }
-}
-@mixin mobile {
-  @container wrapper (max-width: 768px) {
-    @content;
-  }
-}
-@mixin mobile-ex {
-  @container wrapper (max-width: 480px) {
-    @content;
+/* --------------------- 반응형 --------------------- */
+$media-queries: (
+  fhd: 1920px,
+  pc: 1440px,
+  pc-sm: 1280px,
+  ta: 1024px,
+  mo: 768px,
+  mo-sm: 480px,
+);
+
+@mixin mq($breakpoint) {
+  @if $breakpoint == fhd {
+    @container wrapper (min-width: #{map.get($media-queries, fhd)}) {
+      @content;
+    }
+  } @else if $breakpoint == pc {
+    @container wrapper (max-width: #{map.get($media-queries, pc)}) {
+      @content;
+    }
+  } @else if $breakpoint == pc-sm {
+    @container wrapper (max-width: #{map.get($media-queries, pc-sm)}) {
+      @content;
+    }
+  } @else if $breakpoint == ta {
+    @container wrapper (max-width: #{map.get($media-queries, ta)}) {
+      @content;
+    }
+  } @else if $breakpoint == mo {
+    @container wrapper (max-width: #{map.get($media-queries, mo)}) {
+      @content;
+    }
+  } @else if $breakpoint == mo-sm {
+    @container wrapper (max-width: #{map.get($media-queries, mo-sm)}) {
+      @content;
+    }
   }
 }
 
+/* --------------------- 클램프 --------------------- */
 @function clamp-cqi($min, $max, $container-width) {
   @if $min < 0 {
     @return #{calc(check-var($max) / check-var($container-width) * 100cqi)};
@@ -72,18 +98,7 @@
   }
 }
 
-$font-weight: (
-  'dl': 200,
-  'l': 300,
-  'r': 400,
-  'm': 500,
-  'sb': 600,
-  'b': 700,
-  'eb': 800,
-  'black': 900,
-);
-
-@mixin font($font, $line: null, $ls: null, $min: null, $weight: null, $color: null) {
+@mixin font-cqi($font, $line: null, $ls: null, $min: null, $weight: null, $color: null) {
   @if ($min != null) {
     font-size: clamp-cqi($min, $font, --cont-w);
   } @else {
@@ -91,14 +106,41 @@ $font-weight: (
   }
 
   @if ($weight != null) {
-    @if (meta.type-of($weight) == 'number') {
-      // type-of를 meta.type-of로 변경
-      font-weight: $weight;
-    } @else {
-      @if (map-has-key($font-weight, $weight)) {
-        font-weight: map-get($font-weight, $weight);
-      }
-    }
+    font-weight: check-var($weight);
+  }
+
+  @if ($ls != null) {
+    letter-spacing: calc($ls * 1em);
+  }
+
+  @if ($line != null) {
+    line-height: calc(check-var($line) / check-var($font));
+  }
+
+  @if ($color != null) {
+    color: $color;
+  }
+}
+
+/* --------------------- vw 값을 기준으로 반응형 크기 계산 함수 --------------------- */
+// vw 값을 기준으로 반응형 크기 계산 함수
+// vw($value): 1920px 기준의 vw 값으로, 최솟값은 $value px로 보장
+@function vw($value) {
+  @return max(#{calc(check-var($value) * 1px)}, #{calc(check-var($value) / var(--cont-w) * 100vw)});
+}
+
+@mixin font-vw($font, $line: null, $ls: null, $min: null, $weight: null, $color: null) {
+  @if ($min != null) {
+    font-size: max(
+      #{calc(check-var($min) * 1px)},
+      #{calc(check-var($font) / var(--cont-w) * 100vw)}
+    );
+  } @else {
+    font-size: vw($font);
+  }
+
+  @if ($weight != null) {
+    font-weight: check-var($weight);
   }
 
   @if ($ls != null) {

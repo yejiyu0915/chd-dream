@@ -15,11 +15,11 @@
       content: '';
       position: absolute;
       z-index: 1;
-      bottom: 320px;
+      bottom: vw(320);
       left: calc(var(--inner-padding) * 4);
       width: calc(100% - var(--inner-padding) * 8);
-      height: 3px;
-      background-color: #fff;
+      height: vw(3);
+      background-color: var(--text-white);
     }
   }
   .overlay {
@@ -28,7 +28,11 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.7) 30%, rgba(0, 0, 0, 0.4) 100%);
+    background: linear-gradient(
+      0deg,
+      var(--gradient-dark-start) 30%,
+      var(--gradient-dark-end) 100%
+    );
     z-index: 1; // Ensure overlay is above background image
   }
   .slider {
@@ -36,9 +40,9 @@
     height: 100%;
 
     .swiper-pagination-bullet {
-      width: 10px;
-      height: 10px;
-      background-color: #fff;
+      width: vw(10);
+      height: vw(10);
+      background-color: var(--text-white);
       opacity: 0.5;
       transition: opacity 0.3s ease;
       border-radius: 50%;
@@ -47,38 +51,25 @@
         opacity: 1;
       }
     }
-
-    // Remove default Swiper navigation styles
-    // .swiper-button-prev,
-    // .swiper-button-next {
-    //   color: #fff;
-    //   width: 40px;
-    //   height: 40px;
-    //   &::after {
-    //     font-size: 20px;
-    //   }
-    // }
-
-    // Custom navigation button styles
     .buttonWrap {
       display: flex;
-      gap: 8px;
+      gap: vw(8);
       position: absolute;
-      bottom: 180px;
-      left: calc((var(--inner-padding) * 4) - 8px);
+      bottom: vw(180);
+      left: calc((var(--inner-padding) * 4) - vw(8));
       z-index: 10;
       width: auto;
     }
     .buttonPrev,
     .buttonNext {
       position: static;
-      color: #fff;
+      color: var(--text-white);
       cursor: pointer;
 
       i {
         --icon-size: 1.5;
         --icon-margin: 0;
-        font-size: 36px;
+        @include font-vw(36);
       }
     }
     .buttonNext {
@@ -112,19 +103,17 @@
     position: relative;
     &__text {
       position: absolute;
-      bottom: 250px;
+      bottom: vw(250);
       left: 0;
       z-index: 1;
       width: 100%;
       padding-inline: calc(var(--inner-padding) * 4);
-      color: #fff;
+      color: var(--text-white);
     }
     &__title {
       display: flex;
       align-items: center;
-      font-size: 72px;
-      font-weight: 700;
-      letter-spacing: -0.025em;
+      @include font-vw(72, $weight: 700, $ls: -0.025);
       opacity: 0;
       transform: translateY(50%);
       transition:
@@ -136,10 +125,9 @@
       }
     }
     &__desc {
-      margin-block-start: 32px;
-      padding-block-start: 24px;
-      font-size: 24px;
-      font-weight: 500;
+      margin-block-start: vw(32);
+      padding-block-start: vw(24);
+      @include font-vw(24, $weight: 500);
       opacity: 0;
       transform: translateY(50%);
       transition:
@@ -149,29 +137,28 @@
   }
   .news {
     display: flex;
-    gap: 24px;
+    gap: vw(24);
     position: absolute;
     z-index: 1;
-    bottom: 135px;
+    bottom: vw(135);
     right: calc(var(--inner-padding) * 4);
-    width: 300px;
-    height: 150px;
-    font-size: 18px;
-    color: #fff;
-    line-height: 1.5;
+    width: vw(300);
+    height: vw(150);
+    @include font-vw(18, $line: 28);
+    color: var(--text-white);
     &__title {
       font-weight: 700;
     }
     &__list {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: vw(16);
       &Title {
         @include ellipsis(2);
       }
       &Date {
-        margin-block-start: 4px;
-        font-size: 14px;
+        margin-block-start: vw(4);
+        @include font-vw(14);
       }
     }
     &__link {

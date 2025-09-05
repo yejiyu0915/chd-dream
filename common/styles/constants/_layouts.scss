@@ -9,9 +9,13 @@
   margin: 0 auto;
   padding-inline: var(--inner-padding);
   position: relative;
+}
 
-  // 반응형 패딩
-  @include mobile {
+body * {
+  @include mq(fhd) {
+    --inner-padding: 2.0833vw;
+  }
+  @include mq(mo) {
     --inner-padding: 20px;
   }
 }
