@@ -36,9 +36,10 @@
 $media-queries: (
   fhd: 1920px,
   pc: 1440px,
-  ta: 1280px,
+  pc-sm: 1280px,
+  ta: 1024px,
   mo: 768px,
-  mo-ex: 480px,
+  mo-sm: 480px,
 );
 
 @mixin mq($breakpoint) {
@@ -50,6 +51,10 @@ $media-queries: (
     @container wrapper (max-width: #{map.get($media-queries, pc)}) {
       @content;
     }
+  } @else if $breakpoint == pc-sm {
+    @container wrapper (max-width: #{map.get($media-queries, pc-sm)}) {
+      @content;
+    }
   } @else if $breakpoint == ta {
     @container wrapper (max-width: #{map.get($media-queries, ta)}) {
       @content;
@@ -58,8 +63,8 @@ $media-queries: (
     @container wrapper (max-width: #{map.get($media-queries, mo)}) {
       @content;
     }
-  } @else if $breakpoint == mo-ex {
-    @container wrapper (max-width: #{map.get($media-queries, mo-ex)}) {
+  } @else if $breakpoint == mo-sm {
+    @container wrapper (max-width: #{map.get($media-queries, mo-sm)}) {
       @content;
     }
   }

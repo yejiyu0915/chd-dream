@@ -345,25 +345,70 @@
     &,
     &.scroll {
       --header-color: var(--foreground);
-      height: vw(60);
+      height: vw(74);
       .overlay {
-        height: vw(60);
+        height: vw(74);
         opacity: 1;
         visibility: visible;
       }
       .inner {
         max-width: 100%;
         padding-block: 0;
-        @include scroll-animation;
       }
       .logo {
         position: absolute;
         left: var(--inner-padding);
         top: 50%;
         transform: translateY(-50%);
-        @include scroll-animation;
         a {
           flex-direction: row;
+        }
+        svg {
+          width: vw(36);
+        }
+        span {
+          @include font-vw(24);
+        }
+      }
+      .menu {
+        &__item {
+          .menu__link {
+            font-weight: 600;
+            line-height: vw(74);
+          }
+        }
+      }
+      .subMenu {
+        top: vw(74); // 스크롤 시 헤더 높이 (로고 36px + 메뉴 50px + 패딩 12px*2)
+      }
+      .util {
+        top: 50%;
+        transform: translateY(-50%);
+        font-weight: 600;
+        .icon {
+          filter: invert(1);
+        }
+      }
+    }
+  }
+
+  @include mq(pc-sm) {
+    &,
+    &.scroll {
+      height: vw(64);
+      .overlay {
+        height: vw(64);
+      }
+      .inner {
+        flex-direction: row;
+        justify-content: space-between;
+        max-width: 100%;
+      }
+      .logo {
+        position: static;
+        margin-right: auto;
+        transform: translateY(0);
+        a {
           gap: vw(16);
         }
         svg {
@@ -374,17 +419,29 @@
         }
       }
       .menu {
+        position: relative;
+        margin-inline-end: calc(var(--inner-padding) / 2);
+        padding-inline-end: calc(var(--inner-padding) / 2);
         &__item {
           .menu__link {
             padding-inline: vw(24);
             @include font-vw(16);
-            font-weight: 600;
-            line-height: vw(60);
+            line-height: vw(64);
           }
+        }
+        &::after {
+          content: '';
+          position: absolute;
+          right: 0;
+          top: 50%;
+          width: 1px;
+          height: vw(24);
+          background: var(--foreground);
+          transform: translateY(-50%);
         }
       }
       .subMenu {
-        top: vw(60);
+        top: vw(64);
         &__container {
           max-width: vw(720);
           padding: vw(24) var(--inner-padding) vw(32);
@@ -427,14 +484,9 @@
         }
       }
       .util {
-        top: 50%;
-        transform: translateY(-50%);
+        position: static;
+        transform: translateY(0);
         @include font-vw(16);
-        font-weight: 600;
-        @include scroll-animation;
-        .icon {
-          filter: invert(1);
-        }
       }
     }
   }

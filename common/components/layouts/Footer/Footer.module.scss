@@ -246,7 +246,7 @@
       @include font-vw(10);
     }
   }
-  @include mq(mo-ex) {
+  @include mq(mo-sm) {
     .group {
       height: auto !important;
     }
