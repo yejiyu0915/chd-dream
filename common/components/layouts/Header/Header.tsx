@@ -1,6 +1,5 @@
 'use client';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import Icon from '@/common/components/utils/Icons';
 import h from '@/common/components/layouts/Header/Header.module.scss';
@@ -28,6 +27,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isMenuHovered, setIsMenuHovered] = useState(false);
+  const [mounted, setMounted] = useState(false); // Add mounted state
 
   // 메뉴 데이터 정의
   const menuData: MenuItem[] = [
@@ -88,6 +88,8 @@ export default function Header() {
 
     window.addEventListener('scroll', handleScroll);
 
+    setMounted(true); // Set mounted to true after initial render
+
     // 컴포넌트 언마운트 시 이벤트 리스너 제거
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -108,11 +110,11 @@ export default function Header() {
   return (
     <>
       <header
-        className={`${h.header} ${isScrolled ? h.scroll : ''} ${isMenuHovered ? h.hover : ''}`}
+        className={`${h.header} ${isScrolled ? h.scroll : ''} ${isMenuHovered ? h.hover : ''} ${mounted ? h.mounted : ''}`}
       >
         <div className={h.overlay}></div>
         <div className={h.inner}>
-          <div className={h.logo}>
+          <div className={h.logo} style={{ opacity: mounted ? 1 : 0 }}>
             <Link href="/">
               <svg
                 width="257"
@@ -162,7 +164,7 @@ export default function Header() {
               <span>순복음인천초대교회</span>
             </Link>
           </div>
-          <div className={h.menu}>
+          <div className={h.menu} style={{ opacity: mounted ? 1 : 0 }}>
             <ul className={h.menu__list}>
               {menuData.map((menuItem, index) => (
                 <li
@@ -230,7 +232,7 @@ export default function Header() {
               ))}
             </ul>
           </div>
-          <div className={h.util}>
+          <div className={h.util} style={{ opacity: mounted ? 1 : 0 }}>
             <ul>
               <li>
                 <Link href="/location">
