@@ -1,6 +1,8 @@
 @use '@/common/styles/mixins/function' as *;
 
 .footer {
+  --footer-border-radius: 20;
+  --footer-gap: 16;
   width: 100%;
   padding-block: vw(40);
   position: relative;
@@ -10,7 +12,7 @@
   .top {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: vw(16);
+    gap: vw(--footer-gap);
     > div {
       height: vw(300);
     }
@@ -20,7 +22,7 @@
     flex-direction: column;
     justify-content: space-between;
     padding: vw(20);
-    border-radius: vw(20);
+    border-radius: vw(--footer-border-radius);
     background-color: var(--footer-box-bg);
   }
   .title {
@@ -29,13 +31,13 @@
   .group {
     display: flex;
     flex-direction: column;
-    gap: vw(16);
+    gap: vw(--footer-gap);
     padding-inline-end: vw(40);
   }
   .sitemap {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: vw(16);
+    gap: vw(--footer-gap);
     padding: vw(20) 0;
     border-top: vw(3) solid var(--footer-border-top);
     li {
@@ -45,18 +47,18 @@
   }
   .sns {
     display: flex;
-    gap: vw(16);
+    gap: vw(--footer-gap);
     height: 100%;
     li {
       flex: 1;
       background: var(--footer-sns-bg);
-      border-radius: vw(20);
+      border-radius: vw(--footer-border-radius);
       a {
         display: block;
         width: 100%;
         height: 100%;
         padding: vw(20);
-        border-radius: vw(20);
+        border-radius: vw(--footer-border-radius);
         overflow: hidden;
         @include font-vw(16, $color: var(--text-white));
       }
@@ -107,7 +109,7 @@
     a {
       flex: 1;
       display: block;
-      margin-block: vw(10);
+      margin-block-start: vw(10);
       padding-inline-end: vw(12);
       border-radius: vw(12);
       background-color: var(--background);
@@ -130,5 +132,134 @@
     font-weight: 700;
     letter-spacing: -0.025em;
     line-height: 1;
+  }
+
+  @include mq(pc) {
+    .top {
+      grid-template-columns: repeat(2, 1fr);
+      > div {
+        height: vw(240);
+      }
+    }
+    .box {
+      padding: vw(16);
+    }
+    .title {
+      @include font-vw(18);
+    }
+    .group {
+      grid-column: span 2;
+      padding-inline-end: 0;
+    }
+    .sitemap {
+      padding: 0 0 vw(16);
+      border-top: none;
+      border-bottom: 1px solid var(--footer-border-top);
+      li {
+        padding-inline-start: vw(16);
+      }
+    }
+    .sns {
+      li {
+        a {
+          padding: vw(16);
+        }
+      }
+    }
+    .info {
+      dt {
+        margin-block: vw(4);
+        @include font-vw(12);
+      }
+      dd {
+        @include font-vw(16);
+      }
+    }
+    .contact {
+      p {
+        @include font-vw(16);
+      }
+      .link {
+        gap: vw(8);
+      }
+      a {
+        margin-block-start: vw(8);
+        @include font-vw(14);
+      }
+    }
+    .copyright {
+      padding-block: vw(16) vw(8);
+    }
+    .text {
+      font-size: 6cqw;
+    }
+  }
+  @include mq(mo) {
+    --footer-border-radius: 10;
+    --footer-gap: 12;
+    .top {
+      grid-template-columns: repeat(1, 1fr);
+      > div {
+        height: vw(200);
+      }
+    }
+    .box {
+      padding: vw(12);
+    }
+    .title {
+      @include font-vw(16);
+    }
+    .group {
+      grid-column: span 1;
+      height: vw(100) !important;
+    }
+    .sitemap {
+      display: none;
+    }
+    .sns {
+      li {
+        a {
+          padding: vw(10) 0 vw(10) vw(10);
+          @include font-vw(14);
+        }
+      }
+    }
+    .info {
+      dt {
+        @include font-vw(10);
+      }
+      dd {
+        @include font-vw(14);
+      }
+    }
+    .contact {
+      p {
+        @include font-vw(14);
+      }
+      a {
+        margin-block-start: vw(8);
+        @include font-vw(12);
+      }
+    }
+    .copyright {
+      padding-block: vw(8) vw(8);
+      @include font-vw(10);
+    }
+  }
+  @include mq(mo-ex) {
+    .group {
+      height: auto !important;
+    }
+    .sns {
+      flex-direction: column;
+    }
+    .contact {
+      .link {
+        flex-direction: column;
+      }
+      a:nth-child(n + 2) {
+        margin-block-start: 0;
+      }
+    }
   }
 }

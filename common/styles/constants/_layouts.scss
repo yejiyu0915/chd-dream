@@ -12,10 +12,10 @@
 }
 
 body * {
-  @include fhd {
+  @include mq(fhd) {
     --inner-padding: 2.0833vw;
   }
-  @include mobile {
+  @include mq(mo) {
     --inner-padding: 20px;
   }
 }
