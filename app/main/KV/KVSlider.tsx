@@ -8,6 +8,9 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Parallax, Pagination, Navigation, EffectFade } from 'swiper/modules';
 // import { getKVSliderData, KVSliderItem } from '@/lib/notion'; // 데이터 가져오기 로직은 서버 컴포넌트로 이동, 임포트 제거
 import { KVSliderItem } from '@/lib/notion'; // KVSliderItem만 임포트
+import { useRef, useEffect } from 'react'; // Import necessary hooks
+import { Swiper as SwiperCore } from 'swiper/types'; // SwiperCore 타입 임포트
+import { useMobileMenu } from '@/app/contexts/MobileMenuContext'; // useMobileMenu 훅 임포트
 
 // Swiper styles
 import 'swiper/css';
@@ -18,10 +21,42 @@ import 'swiper/css/parallax'; // Import parallax effect styles
 
 interface KVSliderProps {
   kvSliderItems: KVSliderItem[]; // props로 kvSliderItems 받도록 변경
+  // isMobileMenuOpen: boolean; // isMobileMenuOpen prop 제거
 }
 
 export default function KVSlider({ kvSliderItems }: KVSliderProps) {
-  // async 키워드 제거, props로 받음
+  // isMobileMenuOpen prop 제거
+  const sliderRef = useRef<HTMLDivElement>(null); // 슬라이더 컨테이너를 위한 ref 생성
+  const swiperRef = useRef<SwiperCore | null>(null); // Swiper 인스턴스를 저장하기 위한 ref
+  const { isMobileMenuOpen } = useMobileMenu(); // MobileMenuContext에서 isMobileMenuOpen 가져오기
+
+  // isVisible 상태 변경에 따라 Swiper 자동 재생을 제어하는 useEffect
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!sliderRef.current || !swiperRef.current) return;
+
+      const kvElement = sliderRef.current;
+      const { height } = kvElement.getBoundingClientRect();
+
+      const currentScrollY = window.scrollY;
+      const isKvVisible = currentScrollY < height;
+
+      // 모바일 메뉴가 열려있지 않고 (not isMobileMenuOpen) KV가 보일 때만 자동 재생 시작
+      if (isKvVisible && !isMobileMenuOpen) {
+        swiperRef.current.autoplay.start();
+      } else {
+        swiperRef.current.autoplay.stop();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // 컴포넌트 마운트 시 초기 상태 설정
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isMobileMenuOpen]); // isMobileMenuOpen 상태 변경 시에도 useEffect 재실행
+
   // 데이터가 없는 경우를 위한 폴백
   if (kvSliderItems.length === 0) {
     return (
@@ -32,9 +67,12 @@ export default function KVSlider({ kvSliderItems }: KVSliderProps) {
   }
 
   return (
-    <div className={kv.background}>
+    <div className={kv.background} ref={sliderRef}>
+      {' '}
+      {/* ref를 슬라이더 컨테이너에 연결 */}
       <Swiper
         modules={[Autoplay, Pagination, Navigation, Parallax, EffectFade]} // Add EffectFade here
+        onSwiper={(swiper) => (swiperRef.current = swiper)} // Swiper 인스턴스를 swiperRef에 저장
         spaceBetween={0}
         slidesPerView={1}
         effect="fade" // Add fade effect
@@ -43,7 +81,7 @@ export default function KVSlider({ kvSliderItems }: KVSliderProps) {
         autoplay={{
           delay: 8000,
           disableOnInteraction: false,
-        }}
+        }} // autoplay는 항상 활성화 상태로 두고, isVisible에 따라 수동으로 제어
         pagination={{ clickable: true }}
         navigation={{
           prevEl: `.${kv.buttonPrev}`,

@@ -8,7 +8,12 @@ import Instagram from '@/app/main/Instagram/Instagram';
 import { getSermonData, getKVSliderData, KVSliderItem } from '@/lib/notion'; // getSermonData, getKVSliderData, KVSliderItem 임포트
 // import { getNewsData } from '@/lib/notion'; // getNewsData 임포트 제거
 
+// interface MainProps {
+//   isMobileMenuOpen: boolean; // isMobileMenuOpen prop 추가
+// }
+
 export default async function Main() {
+  // isMobileMenuOpen prop 제거
   // 서버 컴포넌트로 변경 및 async 추가
   const sermonData = await getSermonData(); // 설교 데이터 가져오기
   const kvSliderItems: KVSliderItem[] = await getKVSliderData(); // KV Slider 데이터 가져오기

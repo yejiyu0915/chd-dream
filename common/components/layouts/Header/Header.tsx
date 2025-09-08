@@ -1,8 +1,9 @@
 'use client';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react'; // useRef 임포트
 import Icon from '@/common/components/utils/Icons';
 import h from '@/common/components/layouts/Header/Header.module.scss';
+import { useMobileMenu } from '@/app/contexts/MobileMenuContext'; // useMobileMenu 훅 임포트
 
 // 메뉴 데이터 타입 정의
 interface SubMenuItem {
@@ -23,14 +24,25 @@ interface MenuItem {
   content?: MenuContent;
 }
 
+// Header 컴포넌트 props 타입 정의 제거
+// interface HeaderProps {
+//   isMobileMenuOpen: boolean;
+//   onToggleMobileMenu: (isOpen: boolean) => void;
+// }
+
 export default function Header() {
+  // props 제거
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isMenuHovered, setIsMenuHovered] = useState(false);
   const [mounted, setMounted] = useState(false); // Add mounted state
+  const scrollYRef = useRef(0); // 스크롤 위치 저장을 위한 ref
 
-  // 모바일 메뉴 상태
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // MobileMenuContext에서 상태 가져오기
+  const { isMobileMenuOpen, toggleMobileMenu } = useMobileMenu();
+
+  // 모바일 메뉴 상태 (props로 받으므로 제거)
+  // const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeMobileMenu, setActiveMobileMenu] = useState<string | null>(null);
 
   // 메뉴 데이터 정의
@@ -97,13 +109,34 @@ export default function Header() {
     // 컴포넌트 언마운트 시 이벤트 리스너 제거 및 스크롤 복원
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      // 스크롤 완전 복원
+      // 컴포넌트 언마운트 시 body 스타일 복원
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.width = '';
       document.body.style.overflow = '';
+      document.body.classList.remove('mobile-menu-open'); // 클래스 제거
     };
   }, []);
+
+  // isMobileMenuOpen 상태 변경에 따른 body 스타일 및 스크롤 제어
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      scrollYRef.current = window.scrollY; // 현재 스크롤 위치 저장
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollYRef.current}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+      document.body.classList.add('mobile-menu-open');
+    } else {
+      // 메뉴 닫힘 시 스크롤 위치 복원
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      document.body.classList.remove('mobile-menu-open');
+      window.scrollTo(0, scrollYRef.current);
+    }
+  }, [isMobileMenuOpen]);
 
   // 메뉴 마우스 이벤트 핸들러
   const handleMenuMouseEnter = (menuName: string) => {
@@ -118,27 +151,24 @@ export default function Header() {
 
   // 모바일 메뉴 핸들러
   const handleMobileMenuToggle = () => {
-    const newIsOpen = !isMobileMenuOpen;
-    setIsMobileMenuOpen(newIsOpen);
+    toggleMobileMenu(); // Context의 toggleMobileMenu 호출
 
-    // 스크롤 막기/해제
-    if (newIsOpen) {
-      // 현재 스크롤 위치 저장
-      const scrollY = window.scrollY;
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = '100%';
-      document.body.style.overflow = 'hidden';
-    } else {
-      // 스크롤 위치 복원
-      const scrollY = document.body.style.top;
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      document.body.style.overflow = '';
-      window.scrollTo(0, parseInt(scrollY || '0') * -1);
-      setActiveMobileMenu(null);
-    }
+    // 스크롤 막기/해제 로직은 useEffect로 이동했으므로 여기서는 제거
+    // if (!isMobileMenuOpen) {
+    //   const scrollY = window.scrollY;
+    //   document.body.style.position = 'fixed';
+    //   document.body.style.top = `-${scrollY}px`;
+    //   document.body.style.width = '100%';
+    //   document.body.style.overflow = 'hidden';
+    // } else {
+    //   const scrollY = document.body.style.top;
+    //   document.body.style.position = '';
+    //   document.body.style.top = '';
+    //   document.body.style.width = '';
+    //   document.body.style.overflow = '';
+    //   window.scrollTo(0, parseInt(scrollY || '0') * -1);
+    //   setActiveMobileMenu(null);
+    // }
   };
 
   const handleMobileMenuClick = (menuName: string) => {
@@ -148,7 +178,7 @@ export default function Header() {
   return (
     <>
       <header
-        className={`${h.header} ${isScrolled ? h.scroll : ''} ${isMenuHovered ? h.hover : ''} ${mounted ? h.mounted : ''}`}
+        className={`${h.header} ${isScrolled ? h.scroll : ''} ${isMenuHovered ? h.hover : ''} ${isMobileMenuOpen ? h.mobileOpen : ''} ${mounted ? h.mounted : ''}`}
       >
         <div className={h.overlay}></div>
         <div className={h.inner}>
@@ -274,7 +304,7 @@ export default function Header() {
             <ul>
               <li>
                 <Link href="/location">
-                  <Icon name="map" className={h.icon} /> 오시는 길
+                  <Icon name="map" className={h.icon} /> <span className="only-pc">오시는 길</span>
                 </Link>
               </li>
               <li className={h.mobileMenuToggle}>
@@ -323,7 +353,7 @@ export default function Header() {
                                 <Link
                                   href={subItem.href}
                                   className={h.mobileSubMenuLink}
-                                  onClick={() => setIsMobileMenuOpen(false)}
+                                  onClick={toggleMobileMenu} // Context의 toggleMobileMenu 호출
                                 >
                                   {subItem.name}
                                 </Link>
@@ -354,17 +384,20 @@ export default function Header() {
             <ul className={h.mobileSnsList}>
               <li className={h.mobileSnsItem}>
                 <Link href="/" className={h.mobileSnsLink}>
-                  Band <Icon name="external-link" className={h.mobileSnsIcon} />
+                  <span className="sr-only">Band</span>{' '}
+                  <Icon name="sns-band" className={h.mobileSnsIcon} />
                 </Link>
               </li>
               <li className={h.mobileSnsItem}>
                 <Link href="/" className={h.mobileSnsLink}>
-                  Youtube <Icon name="external-link" className={h.mobileSnsIcon} />
+                  <span className="sr-only">Youtube</span>{' '}
+                  <Icon name="sns-youtube" className={h.mobileSnsIcon} />
                 </Link>
               </li>
               <li className={h.mobileSnsItem}>
                 <Link href="/" className={h.mobileSnsLink}>
-                  Instagram <Icon name="external-link" className={h.mobileSnsIcon} />
+                  <span className="sr-only">Instagram</span>{' '}
+                  <Icon name="sns-instagram" className={h.mobileSnsIcon} />
                 </Link>
               </li>
             </ul>

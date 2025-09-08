@@ -19,3 +19,11 @@ body * {
     --inner-padding: 20px;
   }
 }
+
+.only {
+  @include mq(mo) {
+    &-pc {
+      display: none;
+    }
+  }
+}
