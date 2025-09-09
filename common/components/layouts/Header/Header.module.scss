@@ -184,6 +184,7 @@
       display: flex;
       flex-direction: column;
       min-width: vw(160);
+      gap: vw(8);
     }
 
     &__link {
@@ -420,6 +421,9 @@
       }
       .subMenu {
         top: vw(74); // 스크롤 시 헤더 높이 (로고 36px + 메뉴 50px + 패딩 12px*2)
+        &__list {
+          gap: vw(2);
+        }
       }
       .util {
         top: 50%;
@@ -623,6 +627,7 @@
 }
 
 .mobileMenuOverlay {
+  display: none;
   visibility: hidden;
   opacity: 0;
   pointer-events: none; // 클릭 이벤트 비활성화
@@ -635,6 +640,7 @@
 @include mq(mo) {
   // 모바일 메뉴 오버레이
   .mobileMenuOverlay {
+    display: block;
     position: fixed;
     top: vw(56);
     left: 0;
