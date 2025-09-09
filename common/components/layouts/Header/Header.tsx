@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react'; // useRef 임포트
 import Icon from '@/common/components/utils/Icons';
 import h from '@/common/components/layouts/Header/Header.module.scss';
-import { useMobileMenu } from '@/app/contexts/MobileMenuContext'; // useMobileMenu 훅 임포트
+import { useMobileMenu } from '@/common/components/layouts/Header/MobileMenuContext'; // useMobileMenu 훅 임포트
 
 // 메뉴 데이터 타입 정의
 interface SubMenuItem {
@@ -39,7 +39,7 @@ export default function Header() {
   const scrollYRef = useRef(0); // 스크롤 위치 저장을 위한 ref
 
   // MobileMenuContext에서 상태 가져오기
-  const { isMobileMenuOpen, toggleMobileMenu } = useMobileMenu();
+  const { isMobileMenuOpen, toggleMobileMenu, stopLenis, startLenis } = useMobileMenu();
 
   // 모바일 메뉴 상태 (props로 받으므로 제거)
   // const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -122,19 +122,17 @@ export default function Header() {
   useEffect(() => {
     if (isMobileMenuOpen) {
       scrollYRef.current = window.scrollY; // 현재 스크롤 위치 저장
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollYRef.current}px`;
-      document.body.style.width = '100%';
-      document.body.style.overflow = 'hidden';
       document.body.classList.add('mobile-menu-open');
+      stopLenis(); // 모바일 메뉴가 열릴 때 Lenis 스크롤 멈추기
     } else {
       // 메뉴 닫힘 시 스크롤 위치 복원
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      document.body.style.overflow = '';
+      // requestAnimationFrame을 사용하여 DOM 조작을 최적화하고 깜빡임 현상 완화
+      const currentScrollY = scrollYRef.current; // 저장된 스크롤 위치 가져오기
       document.body.classList.remove('mobile-menu-open');
-      window.scrollTo(0, scrollYRef.current);
+
+      // CSS 트랜지션이 완료될 시간을 기다린 후 스크롤 복원 (setTimeout 제거)
+      window.scrollTo(0, currentScrollY);
+      startLenis(); // 모바일 메뉴가 닫힐 때 Lenis 스크롤 다시 시작
     }
   }, [isMobileMenuOpen]);
 
@@ -327,7 +325,7 @@ export default function Header() {
 
       {/* 모바일 메뉴 오버레이 */}
       <div className={`${h.mobileMenuOverlay} ${isMobileMenuOpen ? h.open : ''}`}>
-        <div className={h.mobileMenuContent}>
+        <div className={h.mobileMenuContent} data-lenis-prevent>
           <nav className={h.mobileNav}>
             <ul className={h.mobileMenuList}>
               {menuData.map((menuItem, index) => (

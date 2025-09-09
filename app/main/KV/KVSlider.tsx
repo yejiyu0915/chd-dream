@@ -10,7 +10,7 @@ import { Autoplay, Parallax, Pagination, Navigation, EffectFade } from 'swiper/m
 import { KVSliderItem } from '@/lib/notion'; // KVSliderItem만 임포트
 import { useRef, useEffect } from 'react'; // Import necessary hooks
 import { Swiper as SwiperCore } from 'swiper/types'; // SwiperCore 타입 임포트
-import { useMobileMenu } from '@/app/contexts/MobileMenuContext'; // useMobileMenu 훅 임포트
+import { useMobileMenu } from '@/common/components/layouts/Header/MobileMenuContext'; // useMobileMenu 훅 임포트
 
 // Swiper styles
 import 'swiper/css';

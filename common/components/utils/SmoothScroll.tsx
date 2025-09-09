@@ -5,9 +5,10 @@ import Lenis from '@studio-freight/lenis';
 
 interface SmoothScrollProps {
   children: React.ReactNode;
+  setLenisInstance: (lenis: Lenis | null) => void; // Lenis 인스턴스를 설정하는 함수 추가
 }
 
-export default function SmoothScroll({ children }: SmoothScrollProps) {
+export default function SmoothScroll({ children, setLenisInstance }: SmoothScrollProps) {
   useEffect(() => {
     // Lenis 인스턴스 생성
     const lenis = new Lenis({
@@ -22,6 +23,8 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
       infinite: false, // 무한 스크롤 비활성화
     });
 
+    setLenisInstance(lenis); // Lenis 인스턴스를 Context에 전달
+
     // RAF (RequestAnimationFrame) 함수
     function raf(time: number) {
       lenis.raf(time);
@@ -34,8 +37,9 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
     // 컴포넌트 언마운트 시 정리
     return () => {
       lenis.destroy();
+      setLenisInstance(null); // 언마운트 시 인스턴스 제거
     };
-  }, []);
+  }, [setLenisInstance]);
 
   return <>{children}</>;
 }

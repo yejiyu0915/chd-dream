@@ -576,6 +576,7 @@
         .icon {
           --icon-size: 1.6;
           filter: none;
+          transform: translateY(0.1em);
         }
         .mobileMenuToggle {
           display: block !important;
@@ -627,7 +628,9 @@
   opacity: 0;
   pointer-events: none; // 클릭 이벤트 비활성화
   z-index: 1001; // 헤더보다 높은 z-index로 설정
-  transition: none; // 모바일 메뉴 오버레이는 트랜지션 없이 즉시 표시/숨김
+  transition:
+    opacity 0.3s ease-in-out,
+    visibility 0s linear 0.3s; // 모바일 메뉴 오버레이 트랜지션 수정
 }
 
 @include mq(mo) {
@@ -637,13 +640,15 @@
     top: vw(56);
     left: 0;
     width: 100vw;
-    height: calc(100vh - vw(56));
+    height: calc(100vh - vw(56)); // 높이를 원래대로 복원
+    // max-height: calc(100vh - vw(56)); // 최대 높이 제거
+    // overflow-y: auto; // 세로 스크롤 제거
     background: var(--background);
     z-index: 1001; // 헤더보다 높은 z-index로 설정 (명시적으로 재설정)
     // opacity: 0;
     // visibility: hidden;
     // display: none; // 기본적으로 숨김
-    touch-action: none; // 터치 스크롤 방지
+    touch-action: auto; // 터치 스크롤 허용
     -webkit-overflow-scrolling: touch;
     transition: none; // 모바일에서는 트랜지션 제거
 
@@ -657,7 +662,9 @@
       height: 100%;
       display: flex;
       flex-direction: column;
-      padding: var(--inner-padding) var(--inner-padding) 0;
+      padding: var(--inner-padding) var(--inner-padding) calc(var(--inner-padding) * 2);
+      overflow-y: auto; // 내용이 넘칠 경우 스크롤 허용
+      touch-action: auto; // 터치 스크롤 허용
     }
 
     .mobileMenuList {
