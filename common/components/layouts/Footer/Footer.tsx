@@ -1,8 +1,19 @@
 import Link from 'next/link';
 import Icon from '@/common/components/utils/Icons';
 import f from '@/common/components/layouts/Footer/Footer.module.scss';
+import { contactInfo, snsLinks, menuData } from '@/common/data/info';
 
 export default function Footer() {
+  const snsClassMap: { [key: string]: string } = {
+    band: f.band,
+    youtube: f.youtube,
+    instagram: f.instagram,
+  };
+
+  const getSnsClassName = (name: string) => {
+    return snsClassMap[name.toLowerCase()] || '';
+  };
+
   return (
     <footer className={f.footer}>
       <div className="inner">
@@ -12,35 +23,23 @@ export default function Footer() {
               <li>
                 <Link href="/">Home</Link>
               </li>
+              {menuData.map((menuItem, index) => (
+                <li key={index}>
+                  <Link href={menuItem.href || '#'}>{menuItem.name}</Link>
+                </li>
+              ))}
               <li>
-                <Link href="/">교회 소개</Link>
-              </li>
-              <li>
-                <Link href="/">예배 안내</Link>
-              </li>
-              <li>
-                <Link href="/">교회 소식</Link>
-              </li>
-              <li>
-                <Link href="/">오시는 길</Link>
+                <Link href="/location">오시는 길</Link>
               </li>
             </ul>
             <ul className={f.sns}>
-              <li className={f.naver}>
-                <Link href="/">
-                  Band <Icon name="external-link" className={f.icon} />
-                </Link>
-              </li>
-              <li className={f.youtube}>
-                <Link href="/">
-                  Youtube <Icon name="external-link" className={f.icon} />
-                </Link>
-              </li>
-              <li className={f.instagram}>
-                <Link href="/">
-                  Instagram <Icon name="external-link" className={f.icon} />
-                </Link>
-              </li>
+              {snsLinks.map((snsLink, index) => (
+                <li key={index} className={getSnsClassName(snsLink.name)}>
+                  <Link href={snsLink.href}>
+                    {snsLink.name} <Icon name="external-link" className={f.icon} />
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div className={`${f.contact} ${f.box}`}>
@@ -48,10 +47,10 @@ export default function Footer() {
             <div className={f.content}>
               <p>순복음인천초대교회는 언제나 열려있습니다.</p>
               <div className={f.link}>
-                <Link href="tel:032-463-9004">
+                <Link href={`tel:${contactInfo.phone1}`}>
                   <Icon name="phone" className={f.icon} /> CONTACT #1
                 </Link>
-                <Link href="tel:032-472-9004">
+                <Link href={`tel:${contactInfo.phone2}`}>
                   <Icon name="phone" className={f.icon} /> CONTACT #2
                 </Link>
               </div>
@@ -61,13 +60,9 @@ export default function Footer() {
             <strong className={f.title}>Info</strong>
             <dl className={f.content}>
               <dt>ADDRESS</dt>
-              <dd>
-                인천광역시 남동구 호구포로 818 퍼스트하임프라자 6층
-                <br />
-                (구월동 1264번지)
-              </dd>
+              <dd>{contactInfo.address}</dd>
               <dt>FAX</dt>
-              <dd>032-465-9004</dd>
+              <dd>{contactInfo.fax}</dd>
             </dl>
           </div>
         </div>

@@ -1,4 +1,4 @@
-'use client'; // 클라이언트 컴포넌트 지시문
+'use client';
 
 import React from 'react';
 import Header from '@/common/components/layouts/Header/Header';
@@ -11,11 +11,9 @@ interface LayoutContentProps {
 }
 
 export default function LayoutContent({ children }: LayoutContentProps) {
-  const { setLenisInstance } = useMobileMenu(); // MobileMenuContext에서 setLenisInstance 가져오기
+  const { setLenisInstance } = useMobileMenu();
   return (
     <SmoothScroll setLenisInstance={setLenisInstance}>
-      {' '}
-      // SmoothScroll 컴포넌트 다시 활성화 {/* setLenisInstance prop 전달 */}
       <div className="wrapper">
         <Header />
         {children}

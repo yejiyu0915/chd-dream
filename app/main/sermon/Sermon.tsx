@@ -1,18 +1,16 @@
-'use client'; // 다시 클라이언트 컴포넌트로 지정
+'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
 import Icon from '@/common/components/utils/Icons';
 import s from '@/app/main/sermon/Sermon.module.scss';
-import { SermonItem } from '@/lib/notion'; // SermonItem 임포트
+import { SermonItem } from '@/lib/notion';
 
 interface SermonProps {
   sermonData: SermonItem | null;
 }
 
 export default function Sermon({ sermonData }: SermonProps) {
-  // props로 sermonData 받도록 변경
-  // 설교 데이터가 없는 경우를 위한 폴백
   if (!sermonData) {
     return (
       <section className={s.sermon}>

@@ -2,7 +2,7 @@
 @mixin smooth-transition {
   transition:
     all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1),
-    background-color 0.4s cubic-bezier(0.215, 0.61, 0.355, 1); // background-color 추가
+    background-color 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
 @mixin scroll-animation {
@@ -589,11 +589,9 @@
       }
     }
     // .header.mobileOpen 일 때 헤더의 배경색 변경
-    &.scroll,
-    &.mobileOpen {
+    &.scroll {
       --header-color: var(--foreground);
-      background-color: var(--background); // 스크롤 또는 모바일 메뉴 오픈 시 배경색
-      transition: none; // 모바일에서는 헤더 배경색 변화를 즉시 적용
+      background-color: var(--background);
       .overlay {
         opacity: 1;
         visibility: visible;
@@ -640,14 +638,9 @@
     top: vw(56);
     left: 0;
     width: 100vw;
-    height: calc(100vh - vw(56)); // 높이를 원래대로 복원
-    // max-height: calc(100vh - vw(56)); // 최대 높이 제거
-    // overflow-y: auto; // 세로 스크롤 제거
+    height: calc(100vh - vw(56));
     background: var(--background);
     z-index: 1001; // 헤더보다 높은 z-index로 설정 (명시적으로 재설정)
-    // opacity: 0;
-    // visibility: hidden;
-    // display: none; // 기본적으로 숨김
     touch-action: auto; // 터치 스크롤 허용
     -webkit-overflow-scrolling: touch;
     transition: none; // 모바일에서는 트랜지션 제거

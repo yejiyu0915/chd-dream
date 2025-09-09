@@ -63,16 +63,13 @@
         @include font-vw(16, $color: var(--text-white));
       }
     }
-    .naver {
-      // --footer-sns-bg: #21c531;
+    .band {
       --footer-sns-bg: var(--footer-sns-bg-green);
     }
     .youtube {
-      // --footer-sns-bg: #ff0033;
       --footer-sns-bg: var(--footer-sns-bg-red);
     }
     .instagram {
-      // --footer-sns-bg: linear-gradient(135deg, #f9ce34 0%, #ee2a7b 40%, #6228d7 70%, #4f5bd5 100%);
       --footer-sns-bg: linear-gradient(
         135deg,
         var(--footer-sns-bg-instagram-start) 0%,
@@ -244,7 +241,7 @@
       }
     }
     .copyright {
-      padding-block: vw(8) vw(8);
+      padding-block: vw(32) vw(8);
       @include font-vw(10);
     }
   }

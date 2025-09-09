@@ -5,25 +5,17 @@ import Sermon from '@/app/main/sermon/Sermon';
 import CLog from '@/app/main/c-log/CLog';
 import QuickLink from '@/app/main/quick-link/QuickLink';
 import Instagram from '@/app/main/Instagram/Instagram';
-import { getSermonData, getKVSliderData, KVSliderItem } from '@/lib/notion'; // getSermonData, getKVSliderData, KVSliderItem 임포트
-// import { getNewsData } from '@/lib/notion'; // getNewsData 임포트 제거
-
-// interface MainProps {
-//   isMobileMenuOpen: boolean; // isMobileMenuOpen prop 추가
-// }
+import { getSermonData, getKVSliderData, KVSliderItem } from '@/lib/notion';
 
 export default async function Main() {
-  // isMobileMenuOpen prop 제거
-  // 서버 컴포넌트로 변경 및 async 추가
-  const sermonData = await getSermonData(); // 설교 데이터 가져오기
-  const kvSliderItems: KVSliderItem[] = await getKVSliderData(); // KV Slider 데이터 가져오기
-  // const newsData = await getNewsData(); // 뉴스 데이터 가져오는 로직 제거
+  const sermonData = await getSermonData();
+  const kvSliderItems: KVSliderItem[] = await getKVSliderData();
 
   return (
     <main className={m.main}>
-      <KV kvSliderItems={kvSliderItems} /> {/* kvSliderItems prop으로 전달 */}
+      <KV kvSliderItems={kvSliderItems} />
       <div className={m.main__content}>
-        <Sermon sermonData={sermonData} /> {/* sermonData prop으로 전달 */}
+        <Sermon sermonData={sermonData} />
         <Intro />
         <CLog />
         <QuickLink />
