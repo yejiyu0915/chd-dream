@@ -37,7 +37,7 @@
     border-bottom: vw(1) solid var(--border);
     opacity: 0;
     visibility: hidden;
-    @include smooth-transition; // 데스크톱 스크롤/호버 시 트랜지션 유지
+    // @include smooth-transition; // 데스크톱 스크롤/호버 시 트랜지션 유지
   }
   .inner {
     display: flex;
@@ -589,7 +589,8 @@
       }
     }
     // .header.mobileOpen 일 때 헤더의 배경색 변경
-    &.scroll {
+    &.scroll,
+    &.mobileOpen {
       --header-color: var(--foreground);
       background-color: var(--background);
       .overlay {

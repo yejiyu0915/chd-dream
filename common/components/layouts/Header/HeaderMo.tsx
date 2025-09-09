@@ -13,17 +13,26 @@ export default function HeaderMo() {
   const [activeMobileMenu, setActiveMobileMenu] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('useEffect triggered, isMobileMenuOpen:', isMobileMenuOpen);
     if (isMobileMenuOpen) {
       scrollYRef.current = window.scrollY;
       document.body.classList.add('mobile-menu-open');
+      console.log(
+        'Class "mobile-menu-open" added to body. Current body classes:',
+        document.body.classList.value
+      );
       stopLenis();
     } else {
       const currentScrollY = scrollYRef.current;
       document.body.classList.remove('mobile-menu-open');
+      console.log(
+        'Class "mobile-menu-open" removed from body. Current body classes:',
+        document.body.classList.value
+      );
       window.scrollTo(0, currentScrollY);
       startLenis();
     }
-  }, [isMobileMenuOpen]);
+  }, [isMobileMenuOpen, stopLenis, startLenis]);
 
   const handleMobileMenuClick = (menuName: string) => {
     setActiveMobileMenu(activeMobileMenu === menuName ? null : menuName);
