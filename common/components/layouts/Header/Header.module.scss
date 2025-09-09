@@ -92,7 +92,7 @@
         align-items: center;
         gap: vw(8);
         padding-inline: vw(36);
-        @include font-vw(20, 56, $weight: 500, $color: var(--header-color));
+        @include font-vw(20, 72, $weight: 500, $color: var(--header-color));
         text-decoration: none;
         @include smooth-transition;
         position: relative;
@@ -736,7 +736,7 @@
       .mobileSubMenuItem {
         .mobileSubMenuLink {
           display: block;
-          padding: vw(14) vw(32);
+          padding: vw(16) vw(32);
           border-top: 1px solid #e9e9e9;
           background-color: #f9f9f9;
           @include font-vw(16, $color: var(--text-primary));
