@@ -344,13 +344,14 @@
         bottom: vw(260);
       }
       &__title {
-        @include font-vw(48);
+        @include font-vw(36);
         i {
-          flex: 0 0 vw(48);
+          flex: 0 0 vw(36);
         }
       }
       &__desc {
         @include font-vw(16);
+        @include ellipsis(1);
       }
     }
     .news {
@@ -365,7 +366,7 @@
     }
 
     .progressBarContainer {
-      bottom: vw(306);
+      bottom: vw(300);
     }
 
     .controls {

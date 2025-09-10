@@ -143,7 +143,6 @@ export default function KVSlider({ kvSliderItems }: KVSliderProps) {
         autoplay={{
           delay: autoplayDelay,
           disableOnInteraction: false,
-          pauseOnMouseEnter: true, // 마우스 오버 시 일시정지 (편의 기능)
         }}
         pagination={{
           el: `.${kv.pagination}`,
