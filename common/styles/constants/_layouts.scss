@@ -21,9 +21,18 @@ body * {
 }
 
 .only {
+  &-pc {
+    display: initial;
+  }
+  &-mo {
+    display: none;
+  }
   @include mq(mo) {
     &-pc {
       display: none;
+    }
+    &-mo {
+      display: initial;
     }
   }
 }

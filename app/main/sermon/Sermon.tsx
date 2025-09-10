@@ -27,7 +27,9 @@ export default function Sermon({ sermonData }: SermonProps) {
         <div className={s.content}>
           <div className={s.text}>
             <h2 className={s.eyebrow}>
-              <Icon name="book-open" className={s.eyebrow__icon} /> 이번 주 말씀 | {sermonData.date}
+              <Icon name="book-open" className={s.eyebrow__icon} /> 이번 주
+              말씀&nbsp;&nbsp;|&nbsp;&nbsp;
+              {sermonData.date}
             </h2>
             <p className={s.title}>{sermonData.title}</p>
             <p className={s.verse}>{sermonData.summary}</p>
@@ -69,7 +71,7 @@ export default function Sermon({ sermonData }: SermonProps) {
               alt="설교 목사"
               className={s.pastor__image}
               width={240}
-              height={240}
+              height={308}
               sizes="(max-width: 768px) 100vw, 50vw"
             />
             <p className={s.pastor__name}>

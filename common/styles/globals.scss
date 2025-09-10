@@ -47,4 +47,5 @@ html.lenis {
   container-type: inline-size; // 컨테이너 쿼리 활성화 (가로 크기 기준)
   container-name: wrapper; // 컨테이너 이름 지정
   --cont-w: 1920;
+  min-width: 280px;
 }

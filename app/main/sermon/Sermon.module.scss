@@ -1,25 +1,28 @@
 @use '@/common/styles/mixins/function' as *;
 .sermon {
   width: 100%;
-  border-radius: vw(60) vw(60) 0 0;
+  border-radius: calc(var(--inner-padding) * 1.5) calc(var(--inner-padding) * 1.5) 0 0;
   background-color: var(--background);
   letter-spacing: -0.05em;
   .inner {
-    padding: vw(240) calc(var(--inner-padding) * 4) vw(160);
+    padding: calc(var(--inner-padding) * 6) calc(var(--inner-padding) * 4)
+      calc(var(--inner-padding) * 4);
+    position: relative;
   }
   .content {
     display: flex;
-    gap: vw(100);
+    flex-wrap: wrap;
+    gap: cqi(100);
   }
   .text {
     flex: 1;
-    margin-inline-start: vw(160);
-    padding-inline-start: vw(60);
-    padding-block-start: vw(120);
-    border-left: vw(5) solid var(--primary);
+    margin-inline-start: cqi(160);
+    padding-inline-start: calc(var(--inner-padding) * 1.5);
+    padding-block-start: cqi(120);
+    border-left: cqi(5) solid var(--primary);
   }
   .eyebrow {
-    @include font-vw(28, $weight: 500);
+    @include font-cqi(28, $min: 16, $weight: 500);
     color: var(--text-muted);
     &__icon {
       --icon-size: 1.25;
@@ -30,35 +33,35 @@
     }
   }
   .title {
-    margin-block-start: vw(28);
-    @include font-vw(64, 84, $weight: 700, $ls: -0.055);
+    margin-block-start: cqi(28);
+    @include font-cqi(64, 84, $min: 36, $weight: 700, $ls: -0.055);
   }
   .verse {
-    margin-block-start: vw(32);
-    @include font-vw(32, $weight: 500);
+    margin-block-start: cqi(32);
+    @include font-cqi(32, $min: 18, $weight: 500);
   }
   .desc {
-    margin-block-start: vw(48);
-    padding-inline-start: vw(64);
-    @include font-vw(24, 38);
+    margin-block-start: cqi(48);
+    padding-inline-start: cqi(64);
+    @include font-cqi(24, 38, $min: 16);
     color: var(--text-muted);
   }
   .link {
-    flex: 0 0 vw(400);
-    padding-block-start: vw(182);
+    flex: 0 0 cqi(400);
+    padding-block-start: cqi(182);
     &__list {
       display: flex;
       flex-direction: column;
-      gap: vw(16);
-      @include font-vw(28);
+      gap: cqi(16);
+      @include font-cqi(28, $min: 16);
     }
     a {
       display: block;
-      height: vw(80);
-      padding-inline: vw(32);
-      border-radius: vw(20);
+      height: cqi(80);
+      padding-inline: cqi(32);
+      border-radius: cqi(20);
       background-color: var(--bg-hover);
-      line-height: vw(80);
+      line-height: cqi(80);
       &.thisWeek {
         background-color: var(--primary);
         color: var(--primary-foreground);
@@ -75,17 +78,17 @@
     }
   }
   .pastor {
-    flex: 0 0 vw(240);
+    flex: 0 0 cqi(240);
     &__name {
-      margin-block-start: vw(24);
-      @include font-vw(24, $weight: 500);
+      margin-block-start: cqi(24);
+      @include font-cqi(24, $min: 16, $weight: 500);
       &Desc {
-        padding-inline-end: vw(12);
+        padding-inline-end: cqi(12);
         position: relative;
-        top: 0.3em;
-        @include font-vw(16);
+        top: 0.15em;
+        @include font-cqi(16, $min: 12);
         color: var(--text-light);
-        vertical-align: top;
+        vertical-align: text-top;
       }
     }
     img {
@@ -93,8 +96,8 @@
     }
   }
   .footnote {
-    margin-block-start: vw(40);
-    @include font-vw(18, $line: 1.6);
+    margin-block-start: cqi(40);
+    @include font-cqi(18, 28, $min: 14);
     color: var(--text-light);
     text-align: right;
     &__icon {
@@ -102,6 +105,210 @@
       --icon-margin: 0.25;
       top: -0.02em;
       filter: brightness(0.7);
+    }
+  }
+
+  @include mq(fhd) {
+    .content {
+      gap: vw(100);
+    }
+    .text {
+      margin-inline-start: vw(160);
+      padding-block-start: vw(120);
+      border-left-width: vw(5);
+    }
+    .eyebrow {
+      @include font-vw(28);
+    }
+    .title {
+      margin-block-start: vw(28);
+      @include font-vw(64);
+    }
+    .verse {
+      margin-block-start: vw(32);
+      @include font-vw(32);
+    }
+    .desc {
+      margin-block-start: vw(48);
+      padding-inline-start: vw(64);
+      @include font-vw(24);
+    }
+    .link {
+      flex: 0 0 vw(400);
+      padding-block-start: vw(182);
+      &__list {
+        gap: vw(16);
+        @include font-vw(28);
+      }
+      a {
+        height: vw(80);
+        padding-inline: vw(32);
+        border-radius: vw(20);
+        line-height: vw(80);
+      }
+    }
+    .pastor {
+      flex: 0 0 vw(240);
+      &__name {
+        margin-block-start: vw(24);
+        @include font-vw(24);
+        &Desc {
+          padding-inline-end: vw(12);
+          @include font-vw(16);
+        }
+      }
+    }
+    .footnote {
+      margin-block-start: vw(40);
+      @include font-vw(18);
+    }
+  }
+  @include mq(pc) {
+    border-radius: var(--inner-padding) var(--inner-padding) 0 0;
+    .inner {
+      padding-block-start: calc(var(--inner-padding) * 4);
+    }
+    .text {
+      margin-inline-start: 0;
+    }
+  }
+  @include mq(pc-sm) {
+    .inner {
+      padding: calc(var(--inner-padding) * 4) var(--inner-padding) calc(var(--inner-padding) * 2)
+        calc(var(--inner-padding) * 2);
+    }
+    .content {
+      gap: vw(60);
+    }
+    .text {
+      flex: 0 0 100%;
+      padding-block: vw(36) vw(24);
+      padding-inline-start: vw(50);
+      border-left-width: vw(3);
+    }
+    .eyebrow {
+      @include font-vw(18);
+    }
+    .title {
+      margin-block-start: vw(24);
+      @include font-vw(48);
+    }
+    .verse {
+      margin-block-start: vw(24);
+      @include font-vw(28);
+    }
+    .desc {
+      margin-block-start: vw(32);
+      padding-inline-start: vw(48);
+      @include font-vw(18);
+    }
+    .link {
+      flex: 1;
+      padding-block-start: 0;
+      &__list {
+        gap: vw(12);
+        @include font-vw(20);
+      }
+      a {
+        height: vw(64);
+        padding-inline: vw(32);
+        border-radius: vw(12);
+        line-height: vw(64);
+      }
+    }
+    .pastor {
+      flex: 0 0 vw(180);
+      &__name {
+        margin-block-start: vw(20);
+        @include font-vw(20);
+        &Desc {
+          padding-inline-end: vw(8);
+          top: 0.2em;
+          @include font-vw(14);
+        }
+      }
+    }
+    .footnote {
+      margin-block-start: 0;
+      @include font-vw(14);
+      text-align: left;
+      &__icon {
+        top: -0.1em;
+      }
+    }
+  }
+  @include mq(mo) {
+    .content {
+      gap: vw(32) vw(20);
+    }
+    .text {
+      padding-block: vw(24) vw(12);
+      padding-inline-start: vw(36);
+      border-left-width: vw(3);
+    }
+    .eyebrow {
+      @include font-vw(14);
+    }
+    .title {
+      margin-block-start: vw(12);
+      @include font-vw(32);
+    }
+    .verse {
+      margin-block-start: vw(16);
+      @include font-vw(20);
+    }
+    .desc {
+      margin-block-start: vw(12);
+      padding-inline-start: 0;
+      @include font-vw(14);
+    }
+    .link {
+      &__list {
+        gap: vw(8);
+        @include font-vw(16);
+      }
+      a {
+        height: vw(48);
+        padding-inline: vw(24);
+        border-radius: vw(10);
+        line-height: vw(48);
+      }
+    }
+    .pastor {
+      flex: 0 0 vw(140);
+      &__name {
+        margin-block-start: vw(12);
+        @include font-vw(16);
+        &Desc {
+          padding-inline-end: vw(6);
+          top: 0.18em;
+          @include font-vw(12);
+        }
+      }
+    }
+    .footnote {
+      margin-block-start: vw(12);
+      @include font-vw(12);
+    }
+  }
+  @include mq(mo-sm) {
+    .content {
+      gap: vw(20);
+    }
+    .link {
+      flex: 0 0 100%;
+    }
+    .pastor {
+      flex: 0 0 vw(100);
+      margin-left: auto;
+    }
+    .footnote {
+      width: calc(100% - vw(160));
+      padding-inline: vw(20);
+      position: absolute;
+      left: calc(var(--inner-padding) * 2);
+      bottom: vw(40);
+      text-indent: -2em;
     }
   }
 }

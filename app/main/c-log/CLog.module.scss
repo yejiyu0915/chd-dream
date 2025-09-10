@@ -10,7 +10,7 @@
     color: var(--foreground);
   }
   .desc {
-    margin-block: 0 vw(60);
+    margin-block: vw(30) vw(60);
     @include font-vw(30);
   }
   .link {
@@ -58,7 +58,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 0 vw(60);
     margin-block-start: vw(40);
-    padding-inline: vw(200);
+    padding-inline: vw(200) vw(100);
     &__item {
       border-radius: vw(20) vw(20) 0 0;
       &:nth-child(1) {
@@ -118,6 +118,7 @@
     &__tag {
       display: flex;
       gap: vw(10);
+      margin-block-start: vw(10);
       @include font-vw(16, $weight: 300);
     }
     &__tagItem {
@@ -229,6 +230,256 @@
     }
     100% {
       background-position: -200% 0;
+    }
+  }
+
+  @include mq(pc) {
+    .inner {
+      padding-block: cqi(160);
+    }
+    .title {
+      @include font-cqi(60);
+    }
+    .desc {
+      margin-block: cqi(30) cqi(60);
+      @include font-cqi(30);
+    }
+    .link {
+      gap: cqi(10);
+      padding-inline: cqi(36);
+      border-radius: cqi(20);
+      @include font-cqi(24, $min: 18);
+      line-height: cqi(72);
+    }
+    .content {
+      margin-block-start: cqi(-200);
+      padding-inline-start: cqi(160);
+    }
+    .loading {
+      min-height: cqi(400);
+      @include font-cqi(24, $min: 18);
+    }
+    .error {
+      min-height: cqi(400);
+      @include font-cqi(24, $min: 18);
+    }
+    .list {
+      gap: 0 cqi(60);
+      margin-block-start: cqi(40);
+      padding-inline: cqi(200) 0;
+      &__item {
+        border-radius: cqi(20) cqi(20) 0 0;
+        &:nth-child(1) {
+          padding-block-start: cqi(90);
+        }
+        &:nth-child(2) {
+          padding-block-start: 0;
+        }
+        &:nth-child(3) {
+          padding-block-start: cqi(200);
+        }
+        &:nth-child(4) {
+          padding-block-start: cqi(50);
+        }
+        &:nth-child(5) {
+          margin-block-start: cqi(-50);
+          padding-block-start: 0;
+        }
+        &:nth-child(6) {
+          padding-block-start: cqi(100);
+        }
+      }
+      &__link {
+        border-radius: cqi(20) cqi(20) 0 0;
+      }
+      &__image {
+        border-radius: cqi(20);
+      }
+      &__content {
+        gap: cqi(10);
+        margin-block-start: cqi(20);
+      }
+      &__title {
+        @include font-cqi(32, $min: 24);
+      }
+      &__info {
+        gap: cqi(10);
+        @include font-cqi(18, $min: 14);
+      }
+      &__tag {
+        gap: cqi(10);
+        margin-block-start: cqi(10);
+        @include font-cqi(16, $min: 12);
+      }
+      &__tagItem {
+        padding-inline: cqi(12);
+        border-radius: cqi(4);
+      }
+    }
+
+    // Skeleton UI styles
+    .skeletonList {
+      gap: cqi(60);
+      margin-block-start: cqi(40);
+      padding-inline: cqi(200) 0;
+
+      .skeleton__item {
+        border-radius: cqi(20) cqi(20) 0 0;
+        &:nth-child(1) {
+          padding-block-start: cqi(100);
+        }
+        &:nth-child(2) {
+          padding-block-start: 0;
+        }
+        &:nth-child(3) {
+          padding-block-start: cqi(200);
+        }
+        &:nth-child(4) {
+          padding-block-start: cqi(50);
+        }
+        &:nth-child(5) {
+          margin-block-start: cqi(-50);
+          padding-block-start: 0;
+        }
+        &:nth-child(6) {
+          padding-block-start: cqi(100);
+        }
+      }
+
+      .skeleton__link {
+        border-radius: cqi(20) cqi(20) 0 0;
+      }
+
+      .skeleton__imagePlaceholder {
+        border-radius: cqi(20);
+      }
+
+      .skeleton__content {
+        gap: cqi(10);
+        margin-block-start: cqi(20);
+      }
+
+      .skeleton__title {
+        @include font-cqi(32, $min: 24);
+      }
+
+      .skeleton__info {
+        gap: cqi(10);
+        @include font-cqi(18, $min: 14);
+      }
+
+      .skeleton__tags {
+        gap: cqi(10);
+        @include font-cqi(16, $min: 12);
+      }
+
+      .skeleton__tag {
+        width: cqi(60);
+        border-radius: cqi(4);
+      }
+    }
+
+    .skeleton {
+      border-radius: cqi(8);
+    }
+  }
+
+  @include mq(pc-sm) {
+    .content {
+      margin-block-start: 0;
+      padding-inline-start: 0;
+    }
+  }
+  @include mq(ta) {
+    .inner {
+      padding-block: calc(var(--inner-padding) * 4);
+    }
+    .title {
+      @include font-vw(48);
+    }
+    .desc {
+      margin-block: vw(16) vw(32);
+      @include font-vw(24);
+    }
+    .link {
+      gap: vw(8);
+      padding-inline: vw(24);
+      border-radius: vw(12);
+      @include font-vw(18);
+      line-height: vw(48);
+    }
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: vw(400);
+      @include font-vw(24);
+      color: var(--text-muted);
+    }
+    .error {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: vw(400);
+      @include font-vw(24);
+      color: var(--accent-red);
+      text-align: center;
+    }
+    .list {
+      gap: 0 vw(24);
+      padding-inline-start: 0;
+      &__item {
+        border-radius: vw(12) vw(12) 0 0;
+        &:nth-child(1) {
+          padding-block-start: vw(60);
+        }
+        &:nth-child(2) {
+          padding-block-start: 0;
+        }
+        &:nth-child(3) {
+          padding-block-start: vw(120);
+        }
+        &:nth-child(4) {
+          padding-block-start: vw(30);
+        }
+        &:nth-child(5) {
+          margin-block-start: vw(-30);
+          padding-block-start: 0;
+        }
+        &:nth-child(6) {
+          padding-block-start: vw(60);
+        }
+      }
+      &__link {
+        border-radius: vw(12) vw(12) 0 0;
+      }
+      &__image {
+        border-radius: vw(12);
+      }
+      &__content {
+        gap: vw(8);
+        margin-block-start: vw(12);
+      }
+      &__title {
+        @include font-vw(24);
+      }
+      &__info {
+        gap: vw(8);
+        @include font-vw(16);
+      }
+      &__tag {
+        gap: vw(6);
+        margin-block-start: vw(8);
+        @include font-vw(12);
+      }
+      &__tagItem {
+        padding-inline: vw(8);
+        border-radius: vw(4);
+      }
+    }
+    .skeletonList {
+      padding-inline: 0;
     }
   }
 }
