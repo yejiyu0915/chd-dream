@@ -564,9 +564,11 @@
         }
         svg {
           width: vw(24);
+          transform: translateY(-0.05em);
         }
         span {
           @include font-vw(18);
+          transform: translateY(0.05em);
         }
       }
       .menu {
@@ -662,7 +664,7 @@
       height: 100%;
       display: flex;
       flex-direction: column;
-      padding: var(--inner-padding) var(--inner-padding) calc(var(--inner-padding) * 2);
+      padding: 0 var(--inner-padding) calc(var(--inner-padding) * 2);
       overflow-y: auto; // 내용이 넘칠 경우 스크롤 허용
       touch-action: auto; // 터치 스크롤 허용
     }
@@ -686,7 +688,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: vw(16) vw(20);
+      padding: vw(16) 0;
       background: none;
       border: none;
       cursor: pointer;
@@ -790,7 +792,7 @@
       .mobileSnsList {
         list-style: none;
         margin: 0;
-        padding: 0 0 0 vw(20);
+        padding: 0;
         display: flex;
         gap: vw(16);
       }
