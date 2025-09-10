@@ -4,6 +4,7 @@
   background-color: var(--background);
   .inner {
     padding-block: vw(160);
+    position: relative;
   }
   .title {
     @include font-vw(60, $weight: 700);
@@ -56,7 +57,7 @@
   .list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0 vw(60);
+    gap: vw(60);
     margin-block-start: vw(40);
     padding-inline: vw(200) vw(100);
     &__item {
@@ -99,6 +100,7 @@
       margin-block-start: vw(20);
     }
     &__title {
+      margin-block-end: 1em;
       @include font-vw(32, 45, $weight: 700);
       color: var(--foreground);
       @include ellipsis(2);
@@ -182,7 +184,8 @@
     }
 
     .skeleton__title {
-      @include font-vw(32, $line: 1.4, $weight: 700);
+      margin-block-end: 1em;
+      @include font-vw(32, $line: 45, $weight: 700);
       color: transparent; // Make text transparent
     }
 
@@ -264,7 +267,7 @@
       @include font-cqi(24, $min: 18);
     }
     .list {
-      gap: 0 cqi(60);
+      gap: cqi(60);
       margin-block-start: cqi(40);
       padding-inline: cqi(200) 0;
       &__item {
@@ -427,7 +430,7 @@
       text-align: center;
     }
     .list {
-      gap: 0 vw(24);
+      gap: vw(24);
       padding-inline-start: 0;
       &__item {
         border-radius: vw(12) vw(12) 0 0;
@@ -479,7 +482,217 @@
       }
     }
     .skeletonList {
+      gap: vw(24);
       padding-inline: 0;
+      .skeleton__item {
+        border-radius: vw(12) vw(12) 0 0;
+        &:nth-child(1) {
+          padding-block-start: vw(60);
+        }
+        &:nth-child(2) {
+          padding-block-start: 0;
+        }
+        &:nth-child(3) {
+          padding-block-start: vw(120);
+        }
+        &:nth-child(4) {
+          padding-block-start: vw(30);
+        }
+        &:nth-child(5) {
+          margin-block-start: vw(-30);
+          padding-block-start: 0;
+        }
+        &:nth-child(6) {
+          padding-block-start: vw(60);
+        }
+      }
+
+      .skeleton__link {
+        border-radius: vw(12) vw(12) 0 0;
+      }
+
+      .skeleton__imagePlaceholder {
+        border-radius: vw(12);
+      }
+
+      .skeleton__content {
+        gap: vw(8);
+        margin-block-start: vw(12);
+      }
+
+      .skeleton__title {
+        @include font-vw(24);
+      }
+
+      .skeleton__info {
+        gap: vw(8);
+        @include font-vw(16);
+      }
+
+      .skeleton__tags {
+        gap: vw(6);
+        @include font-vw(14);
+      }
+
+      .skeleton__text {
+        height: 1.2em;
+      }
+
+      .skeleton__tag {
+        height: 1em;
+        width: vw(40);
+        border-radius: vw(4);
+      }
+    }
+  }
+  @include mq(mo) {
+    .title {
+      @include font-vw(36);
+    }
+    .desc {
+      margin-block: vw(16) vw(24);
+      @include font-vw(18);
+    }
+    .link {
+      gap: vw(6);
+      padding-inline: vw(16) vw(8);
+      position: absolute;
+      right: var(--inner-padding);
+      top: calc(var(--inner-padding) * 4);
+      border-radius: vw(10);
+      border: 1px solid var(--foreground);
+      background-color: var(--background);
+      @include font-vw(16);
+      color: var(--foreground);
+      font-weight: 600;
+      line-height: vw(40);
+    }
+    .list {
+      grid-template-columns: repeat(2, 1fr);
+      gap: vw(36) vw(24);
+      margin-block-start: vw(36);
+      &__item {
+        border-radius: vw(10) vw(10) 0 0;
+        &:nth-child(n) {
+          margin: 0;
+          padding: 0;
+        }
+      }
+      &__link {
+        border-radius: vw(10) vw(10) 0 0;
+      }
+      &__image {
+        border-radius: vw(10);
+        aspect-ratio: 4 / 3;
+      }
+      &__content {
+        gap: vw(8);
+        margin-block-start: vw(12);
+      }
+      &__title {
+        @include font-vw(20);
+      }
+      &__info {
+        gap: vw(8);
+        @include font-vw(15);
+      }
+      &__category {
+        font-weight: 500;
+      }
+      &__tag {
+        gap: vw(6);
+        margin-block-start: vw(4);
+        @include font-vw(12);
+      }
+      &__tagItem {
+        padding-inline: vw(8);
+        border-radius: vw(4);
+      }
+    }
+    .skeletonList {
+      grid-template-columns: repeat(2, 1fr);
+      gap: vw(36) vw(24);
+      margin-block-start: vw(36);
+      .skeleton__item {
+        border-radius: vw(10) vw(10) 0 0;
+        &:nth-child(n) {
+          margin: 0;
+          padding: 0;
+        }
+      }
+
+      .skeleton__link {
+        border-radius: vw(10) vw(10) 0 0;
+      }
+
+      .skeleton__imagePlaceholder {
+        border-radius: vw(10);
+      }
+
+      .skeleton__title {
+        @include font-vw(20);
+      }
+
+      .skeleton__info {
+        @include font-vw(15);
+      }
+
+      .skeleton__tags {
+        @include font-vw(12);
+      }
+
+      .skeleton__tag {
+        height: 0.8em;
+        width: vw(36);
+      }
+    }
+  }
+  @include mq(mo-sm) {
+    .title {
+      @include font-vw(32);
+    }
+    .desc {
+      @include font-vw(16);
+    }
+    .link {
+      padding-inline: vw(12) vw(4);
+      @include font-vw(14);
+      line-height: vw(32);
+    }
+    .list {
+      gap: vw(24) vw(16);
+      margin-block-start: vw(24);
+      &__title {
+        margin-block-end: 0.25em;
+        @include font-vw(16);
+      }
+      &__info {
+        flex-direction: column;
+        align-items: flex-start;
+        @include font-vw(12);
+      }
+      &__category {
+        max-width: 10ch;
+        @include ellipsis(1);
+      }
+      &__tag {
+        @include font-vw(10);
+      }
+    }
+    .skeletonList {
+      gap: vw(24) vw(16);
+      margin-block-start: vw(24);
+      .skeleton__title {
+        @include font-vw(16);
+      }
+      .skeleton__info {
+        flex-direction: column;
+        align-items: flex-start;
+        @include font-vw(12);
+      }
+      .skeleton__tags {
+        @include font-vw(10);
+      }
     }
   }
 }
