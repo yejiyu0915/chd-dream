@@ -15,7 +15,7 @@ export default function QuickLink() {
                 <Link href="/">
                   <p className={q.list__title}>예배 안내</p>
                   <p className={q.list__desc}>
-                    주일 예배, 학생부 예배, 평일 기도회 등 예배 일정을 안내합니다.
+                    주일 예배, 학생부 예배, 평일 기도회 일정을 안내합니다.
                   </p>
                   <Icon name="arrow-up-right" className={q.list__icon} />
                 </Link>

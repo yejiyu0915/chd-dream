@@ -356,7 +356,7 @@
     }
     .news {
       gap: vw(8);
-      bottom: vw(70);
+      bottom: vw(80);
       @include font-vw(14);
       &__list {
         &Date {
