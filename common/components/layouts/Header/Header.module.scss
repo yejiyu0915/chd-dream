@@ -277,8 +277,8 @@
       display: none;
       justify-content: center;
       align-items: center;
-      width: vw(24);
-      height: vw(24);
+      width: vw(28);
+      height: vw(28);
       background: none;
       border: none;
       cursor: pointer;
@@ -287,8 +287,8 @@
       .hamburgerIcon {
         --icon-size: 2;
         --icon-margin: 0;
-        width: vw(24);
-        height: vw(24);
+        width: vw(28);
+        height: vw(28);
         color: var(--header-color);
         filter: invert(1);
       }
@@ -553,14 +553,14 @@
     &,
     &.scroll {
       --header-color: var(--background);
-      height: vw(56);
+      height: vw(72);
       background-color: transparent; // 모바일 기본 헤더 배경 투명
       .overlay {
         opacity: 0;
         visibility: hidden;
         transition: none; // 모바일에서는 헤더 내부 overlay 즉시 숨김
         animation: none;
-        height: vw(56);
+        height: vw(72);
       }
       .logo {
         a {
@@ -583,9 +583,9 @@
       .util {
         @include font-vw(15);
         .icon {
-          --icon-size: 1.6;
+          --icon-size: 1.8;
           filter: none;
-          transform: translateY(0.1em);
+          transform: translateY(0.05em);
         }
         .mobileMenuToggle {
           display: block !important;
@@ -607,7 +607,7 @@
         visibility: visible;
         transition: none;
         animation: none;
-        height: vw(56);
+        height: vw(72);
       }
       .util {
         .icon {
@@ -647,10 +647,10 @@
   .mobileMenuOverlay {
     display: block;
     position: fixed;
-    top: vw(56);
+    top: vw(72);
     left: 0;
     width: 100vw;
-    height: calc(100vh - vw(56));
+    height: calc(100vh - vw(72));
     background: var(--background);
     z-index: 1001; // 헤더보다 높은 z-index로 설정 (명시적으로 재설정)
     touch-action: auto; // 터치 스크롤 허용
@@ -797,7 +797,7 @@
         margin: 0;
         padding: 0;
         display: flex;
-        gap: vw(8);
+        gap: vw(12);
       }
 
       .mobileSnsItem {
@@ -817,8 +817,8 @@
 
       .mobileSnsIcon {
         --icon-margin: 0;
-        width: vw(24);
-        height: vw(24);
+        width: vw(28);
+        height: vw(28);
       }
     }
   }
