@@ -3,9 +3,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Icon from '@/common/components/utils/Icons';
 import c from '@/app/main/c-log/CLog.module.scss';
-import { CLogItem } from '@/lib/notion'; // CLogItem 인터페이스 import
-import { useQuery } from '@tanstack/react-query'; // useQuery 훅 import
-import CLogSkeleton from '@/app/main/c-log/CLogSkeleton'; // CLogSkeleton 컴포넌트 import
+import { CLogItem } from '@/lib/notion';
+import { useQuery } from '@tanstack/react-query';
+import CLogSkeleton from '@/app/main/c-log/CLogSkeleton';
 
 export default function CLog() {
   const fetchCLogItems = async (): Promise<CLogItem[]> => {
@@ -32,7 +32,7 @@ export default function CLog() {
         <div className={`${c.inner} inner`}>
           <h2 className={c.title}>C-log</h2>
           <p className={c.desc}>교회의 다양한 이야기를 소개합니다.</p>
-          <Link href="/c-log" className={c.link}>
+          <Link href="/info/c-log" className={c.link}>
             전체 글 보기 <Icon name="arrow-up-right" className={c.link__icon} />
           </Link>
           <div className={c.content}>
@@ -66,7 +66,7 @@ export default function CLog() {
       <div className={`${c.inner} inner`}>
         <h2 className={c.title}>C-log</h2>
         <p className={c.desc}>교회의 다양한 이야기를 소개합니다.</p>
-        <Link href="/c-log" className={c.link}>
+        <Link href="/info/c-log" className={c.link}>
           전체 글 보기 <Icon name="arrow-up-right" className={c.link__icon} />
         </Link>
         <div className={c.content}>

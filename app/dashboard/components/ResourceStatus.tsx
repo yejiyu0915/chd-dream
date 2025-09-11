@@ -59,7 +59,7 @@ export default function ResourceStatus() {
       status: 'received',
       receivedDate: '2025-08-28',
       provider: '전도사님',
-      notes: 'https://youtube.com/channel/UCMxS1A66oRGM6038-6m52uA?si=qufi-JPol_Nf1mQ_',
+      notes: 'https://youtube.com/channel/UCMxS1A66oRGM6038-6m52uA',
     },
     {
       resourceName: 'Instagram 계정',
@@ -68,7 +68,7 @@ export default function ResourceStatus() {
       status: 'received',
       receivedDate: '2025-08-28',
       provider: '전도사님',
-      notes: 'https://www.instagram.com/chd_dream?igsh=MWNrN3cwYWFkMDNkZw==',
+      notes: 'https://www.instagram.com/chd_dream',
     },
     {
       resourceName: '네이버 밴드(사진용)',

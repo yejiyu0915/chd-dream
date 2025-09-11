@@ -113,8 +113,9 @@ hr {
 
 // 포커스 스타일
 :focus {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
+  // outline: 2px dashed #999;
+  // outline-offset: 2px;
+  outline: none;
 }
 
 // 스크린 리더용 접근성

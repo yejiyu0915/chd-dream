@@ -12,43 +12,43 @@ export default function QuickLink() {
           <div className={q.list}>
             <div className={q.list__row}>
               <div className={`${q.list__item} ${q.list__itemLg}`}>
-                <Link href="/">
+                <Link href="/worship/schedule">
                   <p className={q.list__title}>예배 안내</p>
                   <p className={q.list__desc}>
-                    주일 예배, 학생부 예배, 평일 기도회 등 예배 일정을 안내합니다.
+                    주일 예배, 학생부 예배, 평일 기도회 일정을 안내합니다.
                   </p>
-                  <Icon name="arrow-up-right" className={q.list__icon} />
+                  <Icon name="arrow-up-right" />
                 </Link>
               </div>
               <div className={q.list__item}>
-                <Link href="/">
+                <Link href="/info/video">
                   <p className={q.list__title}>교회 영상</p>
                   <p className={q.list__desc}>교회 행사 영상을 확인할 수 있습니다.</p>
-                  <Icon name="arrow-up-right" className={q.list__icon} />
+                  <Icon name="arrow-up-right" />
                 </Link>
               </div>
             </div>
             <div className={q.list__row}>
               <div className={q.list__item}>
-                <Link href="/">
+                <Link href="/info/schedule">
                   <p className={q.list__title}>교회 일정</p>
                   <p className={q.list__desc}>교회의 주요 일정을 확인할 수 있습니다.</p>
-                  <Icon name="arrow-up-right" className={q.list__icon} />
+                  <Icon name="arrow-up-right" />
                 </Link>
               </div>
               <div className={`${q.list__item} ${q.list__itemLg}`}>
-                <Link href="/">
+                <Link href="/location">
                   <p className={q.list__title}>오시는 길</p>
                   <p className={q.list__desc}>
                     교회 주소 및 교회까지 오시는 대중교통 정보를 확인할 수 있습니다.
                   </p>
-                  <Icon name="arrow-up-right" className={q.list__icon} />
+                  <Icon name="arrow-up-right" />
                 </Link>
               </div>
             </div>
           </div>
           <div className={q.pic}>
-            <Image src="/main/quick-link.jpg" alt="순복음인천초대교회" width={500} height={500} />
+            <Image src="/main/quick-link.jpg" alt="순복음인천초대교회" width={400} height={500} />
           </div>
         </div>
       </div>

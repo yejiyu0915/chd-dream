@@ -40,6 +40,8 @@ $media-queries: (
   ta: 1024px,
   mo: 768px,
   mo-sm: 480px,
+  mo-xs: 320px,
+  landscape: 1024px, // Landscape breakpoint
 );
 
 @mixin mq($breakpoint) {
@@ -65,6 +67,14 @@ $media-queries: (
     }
   } @else if $breakpoint == mo-sm {
     @container wrapper (max-width: #{map.get($media-queries, mo-sm)}) {
+      @content;
+    }
+  } @else if $breakpoint == mo-xs {
+    @container wrapper (max-width: #{map.get($media-queries, mo-xs)}) {
+      @content;
+    }
+  } @else if $breakpoint == landscape {
+    @container wrapper (min-width: #{map.get($media-queries, landscape)}) and (orientation: landscape) {
       @content;
     }
   }

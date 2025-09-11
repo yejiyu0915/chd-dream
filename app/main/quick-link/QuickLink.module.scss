@@ -1,6 +1,6 @@
 @use '@/common/styles/mixins/function' as *;
 .quickLink {
-  padding-block: vw(100);
+  padding-block: vw(200);
   background-color: var(--bg-light);
 }
 .content {
@@ -25,16 +25,9 @@
   }
   &__item {
     flex: 1;
-    padding: vw(24) vw(32);
     border-radius: vw(20);
     background-color: var(--background);
-    background-repeat: no-repeat;
-    background-size: vw(80);
-    background-position: right vw(-10) top vw(-20);
-    transition:
-      flex 0.3s ease-in-out,
-      background-image 0.3s ease-in-out;
-    filter: saturate(0);
+    transition: flex 0.3s ease-in-out;
     &Lg {
       flex: 0 0 65%;
     }
@@ -44,27 +37,28 @@
       justify-content: space-between;
       width: 100%;
       height: 100%;
+      padding: vw(28) vw(32);
       position: relative;
     }
     i {
       --icon-size: 2;
       --icon-margin: 0;
       position: absolute;
-      right: 0;
-      bottom: 0;
+      right: vw(32);
+      bottom: vw(28);
       border-radius: vw(10);
       background-color: var(--primary);
-      @include font-vw(16);
+      @include font-vw(16, $min: 14);
       transition: transform 0.3s ease-in-out;
     }
   }
   &__title {
-    @include font-vw(32, $weight: 700);
+    @include font-vw(32, $weight: 700, $min: 24);
   }
   &__desc {
     opacity: 0;
-    padding-inline-end: vw(32);
-    @include font-vw(18, $line: 1.5);
+    padding-inline-end: vw(40);
+    @include font-vw(18, 24, $min: 16);
     color: var(--text-white);
     transform: translateY(100%);
     transition:
@@ -76,7 +70,6 @@
   }
   &__item:hover {
     background-color: var(--bg-dark);
-    background-image: url('/common/logo.svg');
     color: var(--text-white);
     i {
       mix-blend-mode: difference;
@@ -102,5 +95,135 @@
     width: auto;
     height: vw(500);
     object-fit: cover;
+  }
+}
+
+@include mq(pc) {
+  .content {
+    padding-inline: var(--inner-padding);
+  }
+}
+
+@include mq(pc-sm) {
+  .quickLink {
+    padding-block: vw(100);
+  }
+  .content {
+    gap: vw(24);
+    padding-inline: 0;
+  }
+  .list {
+    gap: vw(12);
+    &__row {
+      flex-direction: column;
+      &:hover {
+        flex-grow: 1;
+      }
+    }
+    &__item {
+      border-radius: vw(12);
+      &Lg,
+      &Lg:hover {
+        flex: 1;
+      }
+      a {
+        padding: vw(24);
+      }
+      i {
+        right: vw(24);
+        bottom: vw(24);
+      }
+    }
+    &__title {
+      @include font-vw(24);
+    }
+    &__desc {
+      padding-inline-end: vw(20);
+      @include font-vw(14);
+    }
+  }
+  .pic {
+    flex: 0 0 40%;
+    border-radius: vw(12);
+  }
+}
+
+@include mq(mo) {
+  .quickLink {
+    padding-block: vw(60);
+  }
+  .content {
+    flex-direction: column;
+  }
+  .list {
+    display: block;
+    &__row {
+      flex-direction: row;
+    }
+    &__item {
+      margin-block-end: vw(12);
+      border-radius: vw(10);
+      a {
+        padding: vw(20) vw(20) vw(16);
+      }
+      i {
+        border-radius: vw(4);
+        right: 0;
+        bottom: 0;
+      }
+    }
+    &__title {
+      @include font-vw(18);
+    }
+    &__desc {
+      opacity: 0.75;
+      margin-block-start: vw(24);
+      padding-inline-end: vw(60);
+      @include font-vw(13);
+      color: var(--text-black);
+      transform: translateY(0);
+      transition: none;
+    }
+    &__item:hover {
+      .list__desc {
+        transition: none;
+      }
+    }
+  }
+  .pic {
+    flex: 1;
+    border-radius: vw(10);
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+}
+
+@include mq(mo-sm) {
+  .list {
+    &__item {
+      a {
+        padding: vw(20);
+      }
+      i {
+        --icon-size: 1.2;
+      }
+    }
+    &__title {
+      @include font-vw(16);
+    }
+    &__desc {
+      display: none;
+    }
+  }
+}
+
+@include mq(mo-xs) {
+  .list {
+    &__row {
+      flex-direction: column;
+      gap: 0;
+    }
   }
 }

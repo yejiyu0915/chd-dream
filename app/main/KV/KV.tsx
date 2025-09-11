@@ -8,7 +8,6 @@ interface KVProps {
 }
 
 export default function KV({ kvSliderItems }: KVProps) {
-  // props로 kvSliderItems 받도록 변경
   return (
     <div className={kv.kv}>
       <KVSlider kvSliderItems={kvSliderItems} /> {/* kvSliderItems prop으로 전달 */}

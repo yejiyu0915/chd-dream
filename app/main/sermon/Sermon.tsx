@@ -1,18 +1,16 @@
-'use client'; // 다시 클라이언트 컴포넌트로 지정
+'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
 import Icon from '@/common/components/utils/Icons';
 import s from '@/app/main/sermon/Sermon.module.scss';
-import { SermonItem } from '@/lib/notion'; // SermonItem 임포트
+import { SermonItem } from '@/lib/notion';
 
 interface SermonProps {
   sermonData: SermonItem | null;
 }
 
 export default function Sermon({ sermonData }: SermonProps) {
-  // props로 sermonData 받도록 변경
-  // 설교 데이터가 없는 경우를 위한 폴백
   if (!sermonData) {
     return (
       <section className={s.sermon}>
@@ -29,7 +27,9 @@ export default function Sermon({ sermonData }: SermonProps) {
         <div className={s.content}>
           <div className={s.text}>
             <h2 className={s.eyebrow}>
-              <Icon name="book-open" className={s.eyebrow__icon} /> 이번 주 말씀 | {sermonData.date}
+              <Icon name="book-open" className={s.eyebrow__icon} /> 이번 주
+              말씀&nbsp;&nbsp;|&nbsp;&nbsp;
+              {sermonData.date}
             </h2>
             <p className={s.title}>{sermonData.title}</p>
             <p className={s.verse}>{sermonData.summary}</p>
@@ -38,7 +38,7 @@ export default function Sermon({ sermonData }: SermonProps) {
           <div className={s.link}>
             <ul className={s.link__list}>
               <li className={s.link__item}>
-                <Link href={`/sermon/${sermonData.id}`} className={s.thisWeek}>
+                <Link href={sermonData.link} className={s.thisWeek} target="_blank">
                   {' '}
                   {/* 동적 링크 추가 */}
                   <span className={s.link__text}>
@@ -48,7 +48,7 @@ export default function Sermon({ sermonData }: SermonProps) {
                 </Link>
               </li>
               <li className={s.link__item}>
-                <Link href="/">
+                <Link href="/worship/sermon">
                   <span className={s.link__text}>
                     지난 말씀 보러가기
                     <Icon name="arrow-up-right" className={s.link__icon} />
@@ -56,7 +56,7 @@ export default function Sermon({ sermonData }: SermonProps) {
                 </Link>
               </li>
               <li className={s.link__item}>
-                <Link href="/">
+                <Link href="https://band.us/band/5843149" target="_blank">
                   <span className={s.link__text}>
                     네이버 밴드
                     <Icon name="external-link" className={s.link__icon} />
@@ -71,7 +71,7 @@ export default function Sermon({ sermonData }: SermonProps) {
               alt="설교 목사"
               className={s.pastor__image}
               width={240}
-              height={240}
+              height={308}
               sizes="(max-width: 768px) 100vw, 50vw"
             />
             <p className={s.pastor__name}>

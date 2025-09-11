@@ -59,4 +59,24 @@
   &--accordion {
     background-image: url('/common/ico_arrow_down.svg');
   }
+
+  &--sns {
+    &-band {
+      background-image: url('/common/ico_sns-band.svg');
+    }
+    &-youtube {
+      background-image: url('/common/ico_sns-youtube.svg');
+    }
+    &-instagram {
+      background-image: url('/common/ico_sns-instagram.svg');
+    }
+  }
+
+  &--play {
+    background-image: url('/common/ico_play.svg');
+  }
+
+  &--pause {
+    background-image: url('/common/ico_pause.svg');
+  }
 }

@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import '@/common/styles/globals.scss';
-import Header from '@/common/components/layouts/Header/Header';
-import Footer from '@/common/components/layouts/Footer/Footer';
-import SmoothScroll from '@/common/components/utils/SmoothScroll';
 import Providers from './providers';
+import { MobileMenuProvider } from '@/common/components/layouts/Header/MobileMenuContext';
+import LayoutContent from '@/common/components/layouts/LayoutContent';
 
 export const metadata: Metadata = {
   title: '순복음인천초대교회',
@@ -19,13 +18,9 @@ export default function RootLayout({
     <html lang="ko">
       <body>
         <Providers>
-          <SmoothScroll>
-            <div className="wrapper">
-              <Header />
-              {children}
-              <Footer />
-            </div>
-          </SmoothScroll>
+          <MobileMenuProvider>
+            <LayoutContent>{children}</LayoutContent>
+          </MobileMenuProvider>
         </Providers>
       </body>
     </html>

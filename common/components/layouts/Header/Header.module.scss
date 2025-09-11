@@ -1,6 +1,8 @@
 @use '@/common/styles/mixins/function' as *;
 @mixin smooth-transition {
-  transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  transition:
+    all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1),
+    background-color 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
 @mixin scroll-animation {
@@ -22,19 +24,20 @@
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 100;
+  z-index: 1000;
 
   .overlay {
     position: fixed;
     left: 0;
     top: 0;
-    z-index: 99;
+    z-index: 998; // 헤더 내부에서 로고/메뉴보다 아래에 있도록 유지
     width: 100%;
     height: vw(253);
     background-color: var(--background);
     border-bottom: vw(1) solid var(--border);
     opacity: 0;
     visibility: hidden;
+    // @include smooth-transition; // 데스크톱 스크롤/호버 시 트랜지션 유지
   }
   .inner {
     display: flex;
@@ -48,7 +51,7 @@
     padding-inline: var(--inner-padding);
     margin-inline: auto;
     position: relative;
-    z-index: 100;
+    z-index: 999;
     @include smooth-transition;
   }
   .logo {
@@ -65,6 +68,7 @@
       height: auto;
       color: var(--header-color);
       @include smooth-transition;
+      transform: translateY(-0.05em);
     }
     span {
       @include font-vw(28, $weight: 700);
@@ -89,7 +93,7 @@
         align-items: center;
         gap: vw(8);
         padding-inline: vw(36);
-        @include font-vw(20, 56, $weight: 500, $color: var(--header-color));
+        @include font-vw(20, 72, $weight: 500, $color: var(--header-color));
         text-decoration: none;
         @include smooth-transition;
         position: relative;
@@ -143,7 +147,7 @@
     // min-height: vw(400);
     max-height: vw(600);
     background: var(--background);
-    z-index: 98;
+    z-index: 999;
     opacity: 0;
     visibility: hidden;
     box-shadow: 0 vw(5) vw(5) 0 rgba(0, 0, 0, 0.03);
@@ -181,6 +185,7 @@
       display: flex;
       flex-direction: column;
       min-width: vw(160);
+      gap: vw(8);
     }
 
     &__link {
@@ -265,12 +270,11 @@
 
     // 햄버거 버튼 스타일
     .mobileMenuToggle {
-      margin-left: vw(20);
       display: none; // 기본적으로 숨김
     }
 
     .hamburgerButton {
-      display: flex;
+      display: none;
       justify-content: center;
       align-items: center;
       width: vw(24);
@@ -282,10 +286,10 @@
 
       .hamburgerIcon {
         --icon-size: 2;
-        width: vw(28);
-        height: vw(28);
+        --icon-margin: 0;
+        width: vw(24);
+        height: vw(24);
         color: var(--header-color);
-        @include smooth-transition;
         filter: invert(1);
       }
     }
@@ -390,12 +394,14 @@
       .inner {
         max-width: 100%;
         padding-block: 0;
+        animation: none;
       }
       .logo {
         position: absolute;
         left: var(--inner-padding);
         top: 50%;
         transform: translateY(-50%);
+        animation: none;
         a {
           flex-direction: row;
         }
@@ -416,13 +422,20 @@
       }
       .subMenu {
         top: vw(74); // 스크롤 시 헤더 높이 (로고 36px + 메뉴 50px + 패딩 12px*2)
+        &__list {
+          gap: vw(2);
+        }
       }
       .util {
         top: 50%;
         transform: translateY(-50%);
         font-weight: 600;
+        animation: none;
         .icon {
           filter: invert(1);
+        }
+        .hamburgerButton {
+          display: flex;
         }
       }
     }
@@ -530,60 +543,133 @@
         ul {
           display: flex;
           align-items: center;
-          gap: vw(16);
+          gap: vw(12);
         }
       }
     }
   }
 
   @include mq(mo) {
-    // 모바일에서 PC 메뉴 숨기기
-    .menu {
-      display: none;
+    &,
+    &.scroll {
+      --header-color: var(--background);
+      height: vw(56);
+      background-color: transparent; // 모바일 기본 헤더 배경 투명
+      .overlay {
+        opacity: 0;
+        visibility: hidden;
+        transition: none; // 모바일에서는 헤더 내부 overlay 즉시 숨김
+        animation: none;
+        height: vw(56);
+      }
+      .logo {
+        a {
+          gap: vw(8);
+        }
+        svg {
+          width: vw(24);
+        }
+        span {
+          @include font-vw(18);
+          transform: translateY(0.05em);
+        }
+      }
+      .menu {
+        display: none;
+      }
+      .subMenu {
+        display: none;
+      }
+      .util {
+        @include font-vw(15);
+        .icon {
+          --icon-size: 1.6;
+          filter: none;
+          transform: translateY(0.1em);
+        }
+        .mobileMenuToggle {
+          display: block !important;
+        }
+        .hamburgerButton {
+          .hamburgerIcon {
+            filter: none;
+          }
+        }
+      }
     }
-
-    .subMenu {
-      display: none;
+    // .header.mobileOpen 일 때 헤더의 배경색 변경
+    &.scroll,
+    &.mobileOpen {
+      --header-color: var(--foreground);
+      background-color: var(--background);
+      .overlay {
+        opacity: 1;
+        visibility: visible;
+        transition: none;
+        animation: none;
+        height: vw(56);
+      }
+      .util {
+        .icon {
+          filter: invert(1);
+        }
+        .hamburgerButton {
+          .hamburgerIcon {
+            filter: invert(1);
+          }
+        }
+      }
+    }
+    &.mounted {
+      .logo,
+      .menu,
+      .util {
+        opacity: 1;
+        transition: none;
+      }
     }
   }
 }
 
 .mobileMenuOverlay {
   display: none;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none; // 클릭 이벤트 비활성화
+  z-index: 1001; // 헤더보다 높은 z-index로 설정
+  transition:
+    opacity 0.3s ease-in-out,
+    visibility 0s linear 0.3s; // 모바일 메뉴 오버레이 트랜지션 수정
 }
 
 @include mq(mo) {
   // 모바일 메뉴 오버레이
   .mobileMenuOverlay {
+    display: block;
     position: fixed;
-    top: 0;
+    top: vw(56);
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh - vw(56));
     background: var(--background);
-    z-index: 99;
-    opacity: 0;
-    visibility: hidden;
-    display: none; // 기본적으로 숨김
-    touch-action: none; // 터치 스크롤 방지
+    z-index: 1001; // 헤더보다 높은 z-index로 설정 (명시적으로 재설정)
+    touch-action: auto; // 터치 스크롤 허용
     -webkit-overflow-scrolling: touch;
-    @include smooth-transition;
+    transition: none; // 모바일에서는 트랜지션 제거
 
     &.open {
-      display: block;
       opacity: 1;
       visibility: visible;
+      pointer-events: auto; // 클릭 이벤트 활성화
     }
 
     .mobileMenuContent {
       height: 100%;
       display: flex;
       flex-direction: column;
-      padding: vw(80) var(--inner-padding) vw(120);
-    }
-
-    .mobileNav {
-      flex: 1;
+      padding: 0 var(--inner-padding) calc(var(--inner-padding) * 2);
+      overflow-y: auto; // 내용이 넘칠 경우 스크롤 허용
+      touch-action: auto; // 터치 스크롤 허용
     }
 
     .mobileMenuList {
@@ -593,7 +679,7 @@
     }
 
     .mobileMenuItem {
-      border-bottom: vw(1) solid var(--border-light);
+      border-bottom: 1px solid var(--border);
 
       &:last-child {
         border-bottom: none;
@@ -605,11 +691,11 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: vw(20) 0;
+      padding: vw(16) 0;
       background: none;
       border: none;
       cursor: pointer;
-      @include font-vw(20, $weight: 500, $color: var(--foreground));
+      @include font-vw(18, $weight: 700, $color: var(--foreground));
       text-align: left;
 
       &.active {
@@ -619,25 +705,26 @@
 
     .mobileMenuIcon {
       --icon-size: 1.8;
-      width: vw(24);
-      height: vw(24);
+      --icon-margin: 0;
+      width: vw(28);
+      height: vw(28);
       color: var(--foreground);
-      @include smooth-transition;
+      transition: transform 0.3s ease-in-out;
       filter: invert(1);
+    }
 
-      .mobileMenuButton.active & {
-        transform: rotate(180deg);
-        color: var(--primary);
-      }
+    .mobileMenuButton.active .mobileMenuIcon {
+      transform: rotate(180deg);
+      color: var(--primary);
     }
 
     .mobileSubMenu {
       max-height: 0;
       overflow: hidden;
-      @include smooth-transition;
+      transition: max-height 0.3s linear;
 
       &.show {
-        max-height: vw(400);
+        max-height: vw(600);
       }
     }
 
@@ -645,7 +732,7 @@
       display: flex;
       flex-direction: column;
       gap: vw(24);
-      padding: vw(20) 0 vw(40);
+      padding-block-end: vw(40);
     }
 
     .mobileSubMenuTop {
@@ -655,13 +742,15 @@
         padding: 0;
         display: flex;
         flex-direction: column;
-        gap: vw(8);
+        border-left: 3px solid #000;
       }
 
       .mobileSubMenuItem {
         .mobileSubMenuLink {
           display: block;
-          padding: vw(12) 0;
+          padding: vw(16) vw(32);
+          border-top: 1px solid #e9e9e9;
+          background-color: #f9f9f9;
           @include font-vw(16, $color: var(--text-primary));
           text-decoration: none;
           @include smooth-transition;
@@ -676,6 +765,7 @@
 
     .mobileSubMenuBottom {
       .mobileSubMenuVisual {
+        padding-inline-start: vw(32);
         .mobileVisualImage {
           width: 100%;
           height: vw(120);
@@ -699,7 +789,7 @@
 
     // SNS 링크 영역
     .mobileSns {
-      border-top: vw(1) solid var(--border-light);
+      border-top: 1px solid var(--border-light);
       padding-top: vw(20);
 
       .mobileSnsList {
@@ -707,7 +797,7 @@
         margin: 0;
         padding: 0;
         display: flex;
-        gap: vw(24);
+        gap: vw(8);
       }
 
       .mobileSnsItem {
@@ -726,16 +816,10 @@
       }
 
       .mobileSnsIcon {
-        width: vw(14);
-        height: vw(14);
+        --icon-margin: 0;
+        width: vw(24);
+        height: vw(24);
       }
-    }
-  }
-
-  // 햄버거 버튼 표시
-  .util {
-    .mobileMenuToggle {
-      display: block !important;
     }
   }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import c from '@/app/main/c-log/CLog.module.scss'; // CLog.module.scss에서 스타일 가져오기
+import c from '@/app/main/c-log/CLog.module.scss';
 
 export default function CLogSkeleton() {
   return (

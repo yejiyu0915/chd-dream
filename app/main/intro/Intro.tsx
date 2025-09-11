@@ -15,14 +15,6 @@ export default function Intro() {
       </div>
       <div className={`${i.content} inner`}>
         <div className={i.text}>추가 내용</div>
-        {/* <ul className={i.intro__list}>
-          <li className={i.intro__item}>
-            <p className={i.intro__itemTitle}>오직 말씀</p>
-            <p className={i.intro__itemDesc}>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
-            </p>
-          </li>
-        </ul> */}
       </div>
     </section>
   );
