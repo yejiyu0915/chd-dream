@@ -667,7 +667,7 @@
       height: 100%;
       display: flex;
       flex-direction: column;
-      padding: 0 var(--inner-padding) calc(var(--inner-padding) * 6);
+      padding: 0 var(--inner-padding) calc(var(--inner-padding) * 2);
       overflow-y: auto; // 내용이 넘칠 경우 스크롤 허용
       touch-action: auto; // 터치 스크롤 허용
     }
@@ -790,7 +790,7 @@
     // SNS 링크 영역
     .mobileSns {
       border-top: 1px solid var(--border-light);
-      padding-top: vw(20);
+      padding-block: vw(20) vw(120);
 
       .mobileSnsList {
         list-style: none;
