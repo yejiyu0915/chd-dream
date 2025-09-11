@@ -68,6 +68,7 @@
       height: auto;
       color: var(--header-color);
       @include smooth-transition;
+      transform: translateY(-0.05em);
     }
     span {
       @include font-vw(28, $weight: 700);
@@ -273,7 +274,7 @@
     }
 
     .hamburgerButton {
-      display: flex;
+      display: none;
       justify-content: center;
       align-items: center;
       width: vw(24);
@@ -433,6 +434,9 @@
         .icon {
           filter: invert(1);
         }
+        .hamburgerButton {
+          display: flex;
+        }
       }
     }
   }
@@ -564,7 +568,6 @@
         }
         svg {
           width: vw(24);
-          transform: translateY(-0.05em);
         }
         span {
           @include font-vw(18);
@@ -794,7 +797,7 @@
         margin: 0;
         padding: 0;
         display: flex;
-        gap: vw(16);
+        gap: vw(8);
       }
 
       .mobileSnsItem {

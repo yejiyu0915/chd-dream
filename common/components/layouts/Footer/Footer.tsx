@@ -35,7 +35,7 @@ export default function Footer() {
             <ul className={f.sns}>
               {snsLinks.map((snsLink, index) => (
                 <li key={index} className={getSnsClassName(snsLink.name)}>
-                  <Link href={snsLink.href}>
+                  <Link href={snsLink.href} target="_blank">
                     {snsLink.name} <Icon name="external-link" className={f.icon} />
                   </Link>
                 </li>

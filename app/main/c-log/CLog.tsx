@@ -32,7 +32,7 @@ export default function CLog() {
         <div className={`${c.inner} inner`}>
           <h2 className={c.title}>C-log</h2>
           <p className={c.desc}>교회의 다양한 이야기를 소개합니다.</p>
-          <Link href="/c-log" className={c.link}>
+          <Link href="/info/c-log" className={c.link}>
             전체 글 보기 <Icon name="arrow-up-right" className={c.link__icon} />
           </Link>
           <div className={c.content}>
@@ -66,7 +66,7 @@ export default function CLog() {
       <div className={`${c.inner} inner`}>
         <h2 className={c.title}>C-log</h2>
         <p className={c.desc}>교회의 다양한 이야기를 소개합니다.</p>
-        <Link href="/c-log" className={c.link}>
+        <Link href="/info/c-log" className={c.link}>
           전체 글 보기 <Icon name="arrow-up-right" className={c.link__icon} />
         </Link>
         <div className={c.content}>

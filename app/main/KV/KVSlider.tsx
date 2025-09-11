@@ -149,6 +149,9 @@ export default function KVSlider({ kvSliderItems }: KVSliderProps) {
           clickable: true,
           bulletClass: kv.bullet,
           bulletActiveClass: kv.bulletActive,
+          // renderBullet: function (index, className) {
+          //   return `<span class="${className}" role="button" tabindex="0"></span>`;
+          // },
         }}
         navigation={{
           prevEl: `.${kv.buttonPrev}`,
@@ -194,11 +197,11 @@ export default function KVSlider({ kvSliderItems }: KVSliderProps) {
             {' '}
             {/* Fragment로 묶기 */}
             <div className={kv.buttonWrap}>
-              <div className={kv.buttonPrev}>
-                <Icon name="nav-prev" />
-              </div>
-              <div className={kv.buttonNext}>
+              <div className={kv.buttonNext} role="button" tabIndex={0}>
                 <Icon name="nav-next" />
+              </div>
+              <div className={kv.buttonPrev} role="button" tabIndex={0}>
+                <Icon name="nav-prev" />
               </div>
             </div>
             {/* 새로운 controls div 추가 */}

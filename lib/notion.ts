@@ -116,6 +116,7 @@ export interface SermonItem {
   title: string;
   summary: string; // Notion의 Summary (s.verse)
   verse: string; // Notion의 Verse (s.desc)
+  link: string;
 }
 
 // 뉴스 데이터 타입 정의
@@ -198,6 +199,7 @@ const mapPageToSermonItem: ItemMapper<SermonItem> = (page) => {
   const dateProperty = properties.Date as any;
   const summaryProperty = properties.Summary as any;
   const verseProperty = properties.Verse as any;
+  const linkProperty = properties.Link as any;
 
   return {
     id: page.id,
@@ -205,6 +207,7 @@ const mapPageToSermonItem: ItemMapper<SermonItem> = (page) => {
     title: getPlainText(titleProperty) || '제목 없음',
     summary: getPlainText(summaryProperty) || '요약 없음',
     verse: getPlainText(verseProperty) || '본문 없음',
+    link: linkProperty?.url || '/',
   };
 };
 

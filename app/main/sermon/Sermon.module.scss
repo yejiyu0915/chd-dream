@@ -76,6 +76,11 @@
       top: -0.08em;
       mix-blend-mode: difference;
     }
+    a:not(.thisWeek):hover {
+      .link__icon {
+        filter: invert(1);
+      }
+    }
   }
   .pastor {
     flex: 0 0 cqi(240);

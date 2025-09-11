@@ -25,7 +25,6 @@
   }
   &__item {
     flex: 1;
-    padding: vw(28) vw(32);
     border-radius: vw(20);
     background-color: var(--background);
     transition: flex 0.3s ease-in-out;
@@ -38,14 +37,15 @@
       justify-content: space-between;
       width: 100%;
       height: 100%;
+      padding: vw(28) vw(32);
       position: relative;
     }
     i {
       --icon-size: 2;
       --icon-margin: 0;
       position: absolute;
-      right: 0;
-      bottom: 0;
+      right: vw(32);
+      bottom: vw(28);
       border-radius: vw(10);
       background-color: var(--primary);
       @include font-vw(16, $min: 14);
@@ -121,11 +121,17 @@
       }
     }
     &__item {
-      padding: vw(24);
       border-radius: vw(12);
       &Lg,
       &Lg:hover {
         flex: 1;
+      }
+      a {
+        padding: vw(24);
+      }
+      i {
+        right: vw(24);
+        bottom: vw(24);
       }
     }
     &__title {
@@ -155,11 +161,15 @@
       flex-direction: row;
     }
     &__item {
-      padding: vw(20) vw(20) vw(16);
       margin-block-end: vw(12);
       border-radius: vw(10);
+      a {
+        padding: vw(20) vw(20) vw(16);
+      }
       i {
         border-radius: vw(4);
+        right: 0;
+        bottom: 0;
       }
     }
     &__title {
@@ -193,7 +203,9 @@
 @include mq(mo-sm) {
   .list {
     &__item {
-      padding: vw(20);
+      a {
+        padding: vw(20);
+      }
       i {
         --icon-size: 1.2;
       }

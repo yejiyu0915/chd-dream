@@ -20,9 +20,8 @@ export const menuData: MenuItem[] = [
   {
     name: '교회 소개',
     subMenu: [
-      { name: '교회 연혁', href: '/about/history' },
-      { name: '담임 목사 소개', href: '/about/pastor' },
       { name: '교회 비전', href: '/about/vision' },
+      { name: '담임 목사 소개', href: '/about/pastor' },
       { name: '교구 소개', href: '/about/group' },
       { name: '섬기는 분들', href: '/about/servant' },
     ],
@@ -83,7 +82,11 @@ export interface SnsLink {
 }
 
 export const snsLinks: SnsLink[] = [
-  { name: 'Band', href: '/', icon: 'sns-band' },
-  { name: 'Youtube', href: '/', icon: 'sns-youtube' },
-  { name: 'Instagram', href: '/', icon: 'sns-instagram' },
+  { name: 'Band', href: 'https://band.us/band/5843149', icon: 'sns-band' },
+  {
+    name: 'Youtube',
+    href: 'https://youtube.com/channel/UCMxS1A66oRGM6038-6m52uA',
+    icon: 'sns-youtube',
+  },
+  { name: 'Instagram', href: 'https://www.instagram.com/chd_dream', icon: 'sns-instagram' },
 ];
