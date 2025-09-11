@@ -667,9 +667,14 @@
       height: 100%;
       display: flex;
       flex-direction: column;
-      padding: 0 var(--inner-padding) calc(var(--inner-padding) * 2);
+      min-height: calc(100% + vw(140));
+      margin-bottom: vw(140);
+      padding: 0 var(--inner-padding);
       overflow-y: auto; // 내용이 넘칠 경우 스크롤 허용
       touch-action: auto; // 터치 스크롤 허용
+      nav {
+        padding-block-end: vw(200);
+      }
     }
 
     .mobileMenuList {

@@ -90,20 +90,19 @@ export default function HeaderMo() {
               </li>
             ))}
           </ul>
+          <div className={h.mobileSns}>
+            <ul className={h.mobileSnsList}>
+              {snsLinks.map((snsLink, index) => (
+                <li key={index} className={h.mobileSnsItem}>
+                  <Link href={snsLink.href} className={h.mobileSnsLink} target="_blank">
+                    <span className="sr-only">{snsLink.name}</span>{' '}
+                    <Icon name={snsLink.icon} className={h.mobileSnsIcon} />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </nav>
-
-        <div className={h.mobileSns}>
-          <ul className={h.mobileSnsList}>
-            {snsLinks.map((snsLink, index) => (
-              <li key={index} className={h.mobileSnsItem}>
-                <Link href={snsLink.href} className={h.mobileSnsLink} target="_blank">
-                  <span className="sr-only">{snsLink.name}</span>{' '}
-                  <Icon name={snsLink.icon} className={h.mobileSnsIcon} />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
       </div>
     </div>
   );
