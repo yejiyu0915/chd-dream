@@ -10,6 +10,8 @@ import { KVSliderItem } from '@/lib/notion';
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Swiper as SwiperCore } from 'swiper/types';
 import { useMobileMenu } from '@/common/components/layouts/Header/MobileMenuContext';
+import { useQuery, useQueryClient } from '@tanstack/react-query'; // useQueryClient 임포트 추가
+// import KVSliderSkeleton from '@/app/main/KV/KVSliderSkeleton'; // KVSliderSkeleton 임포트 제거
 
 // Swiper styles
 import 'swiper/css';
@@ -25,23 +27,59 @@ const checkIfKvVisible = (element: HTMLElement | null): boolean => {
   return window.scrollY < height;
 };
 
-interface KVSliderProps {
-  kvSliderItems: KVSliderItem[];
-}
-
-export default function KVSlider({ kvSliderItems }: KVSliderProps) {
+export default function KVSlider() {
   const sliderRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<SwiperCore | null>(null);
   const { isMobileMenuOpen } = useMobileMenu();
   const [progressWidth, setProgressWidth] = useState(0); // 프로그레스 바 너비 상태
   const [isPlaying, setIsPlaying] = useState(true); // 재생/일시정지 상태 추가
-  const [kvIsVisible, setKvIsVisible] = useState(true); // KV 섹션 가시성 상태 추가
   const autoplayDelay = 8000; // Autoplay delay
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const queryClient = useQueryClient(); // QueryClient 인스턴스 가져오기
+  const lastModifiedHeaderValue = useRef<string | null>(null); // Last-Modified 헤더 값을 저장할 ref
 
   // 자동 재생 및 프로그레스 바 활성화 상태를 추적하는 Ref
   const isAutoplayAndProgressActiveRef = useRef(false);
 
+  // KV Slider 데이터 가져오기 (React Query) - Hooks는 항상 최상단에서 호출
+  const fetchKVSliderData = async (): Promise<KVSliderItem[]> => {
+    const headers: HeadersInit = {};
+    if (lastModifiedHeaderValue.current) {
+      headers['If-Modified-Since'] = lastModifiedHeaderValue.current;
+    }
+
+    const response = await fetch('/api/kv-slider', { headers }); // API 라우트에서 데이터 가져오기
+
+    if (response.status === 304) {
+      // 304 Not Modified 응답이면 캐시된 데이터를 반환
+      return (queryClient.getQueryData(['kvSliderItems']) as KVSliderItem[]) || [];
+    }
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Last-Modified 헤더 값 저장
+    const newLastModified = response.headers.get('Last-Modified');
+    if (newLastModified) {
+      lastModifiedHeaderValue.current = newLastModified;
+    }
+
+    return response.json();
+  };
+
+  const {
+    data: kvSliderItems,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<KVSliderItem[], Error>({
+    queryKey: ['kvSliderItems'],
+    queryFn: fetchKVSliderData,
+    // refetchInterval: 60 * 1000, // 1분(60초)마다 데이터를 자동으로 다시 가져옵니다. -> 새로고침 시에만 반영되도록 제거
+  });
+
+  // useCallback 훅들도 Hooks 규칙을 따르도록 최상단에 선언
   const startProgressBar = useCallback(() => {
     setProgressWidth(0); // 시작 시 0으로 초기화
     if (intervalRef.current) {
@@ -49,7 +87,6 @@ export default function KVSlider({ kvSliderItems }: KVSliderProps) {
     }
     intervalRef.current = setInterval(() => {
       setProgressWidth((prevWidth) => {
-        // 100% 대신 50%를 기준으로 진행률 계산
         const targetWidth = 50; // 목표 너비를 50%로 설정
         const increment = targetWidth / (autoplayDelay / 100); // 100ms마다 증가할 값
         const newWidth = prevWidth + increment;
@@ -69,21 +106,40 @@ export default function KVSlider({ kvSliderItems }: KVSliderProps) {
     }
   }, []);
 
+  const handlePlayPauseToggle = useCallback(() => {
+    if (!swiperRef.current) return;
+
+    if (isPlaying) {
+      swiperRef.current.autoplay?.stop();
+      stopProgressBar();
+      isAutoplayAndProgressActiveRef.current = false; // 수동으로 멈출 때 플래그 업데이트
+    } else {
+      swiperRef.current.autoplay?.start();
+      startProgressBar();
+      isAutoplayAndProgressActiveRef.current = true; // 수동으로 재생할 때 플래그 업데이트
+    }
+    setIsPlaying(!isPlaying);
+  }, [isPlaying, startProgressBar, stopProgressBar]);
+
+  // useEffect 훅도 최상단에 선언
   useEffect(() => {
     const handleScroll = () => {
       const currentKvIsVisible = checkIfKvVisible(sliderRef.current);
-      setKvIsVisible(currentKvIsVisible);
 
       const shouldBeActive = currentKvIsVisible && !isMobileMenuOpen && isPlaying;
 
       if (shouldBeActive && !isAutoplayAndProgressActiveRef.current) {
         // 비활성화 상태에서 활성화되어야 할 때만 실행
-        swiperRef.current?.autoplay.start();
+        if (swiperRef.current?.autoplay) {
+          swiperRef.current.autoplay.start();
+        }
         startProgressBar();
         isAutoplayAndProgressActiveRef.current = true;
       } else if (!shouldBeActive && isAutoplayAndProgressActiveRef.current) {
         // 활성화 상태에서 비활성화되어야 할 때만 실행
-        swiperRef.current?.autoplay.stop();
+        if (swiperRef.current?.autoplay) {
+          swiperRef.current.autoplay.stop();
+        }
         stopProgressBar();
         isAutoplayAndProgressActiveRef.current = false;
       }
@@ -97,25 +153,37 @@ export default function KVSlider({ kvSliderItems }: KVSliderProps) {
       stopProgressBar();
       isAutoplayAndProgressActiveRef.current = false; // 컴포넌트 언마운트 시 초기화
     };
-  }, [isMobileMenuOpen, isPlaying, startProgressBar, stopProgressBar]); // isPlaying 의존성 추가
+  }, [isMobileMenuOpen, isPlaying, startProgressBar, stopProgressBar]);
 
-  // 재생/일시정지 버튼 클릭 핸들러
-  const handlePlayPauseToggle = useCallback(() => {
-    if (!swiperRef.current) return;
+  // Hooks 호출이 모두 완료된 후에 조건부 렌더링 처리
+  if (isLoading && !kvSliderItems) {
+    return (
+      <div
+        className={kv.background}
+        style={{
+          backgroundColor: 'var(--foreground)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100%',
+        }}
+      ></div>
+    );
+  }
 
-    if (isPlaying) {
-      swiperRef.current.autoplay.stop();
-      stopProgressBar();
-      isAutoplayAndProgressActiveRef.current = false; // 수동으로 멈출 때 플래그 업데이트
-    } else {
-      swiperRef.current.autoplay.start();
-      startProgressBar();
-      isAutoplayAndProgressActiveRef.current = true; // 수동으로 재생할 때 플래그 업데이트
+  if (isError) {
+    let errorMessage = '슬라이드 데이터를 가져오는 데 실패했습니다.';
+    if (error) {
+      errorMessage = error.message;
     }
-    setIsPlaying(!isPlaying);
-  }, [isPlaying, startProgressBar, stopProgressBar]);
+    return (
+      <div className={kv.background}>
+        <p className={kv.emptyState}>에러: {errorMessage}</p>
+      </div>
+    );
+  }
 
-  if (kvSliderItems.length === 0) {
+  if (!kvSliderItems || kvSliderItems.length === 0) {
     return (
       <div className={kv.background}>
         <p className={kv.emptyState}>슬라이드 데이터를 불러올 수 없습니다.</p>
@@ -125,12 +193,16 @@ export default function KVSlider({ kvSliderItems }: KVSliderProps) {
 
   return (
     <div className={kv.background} ref={sliderRef}>
+      {/* isFetching 중일 때 작은 로딩 인디케이터를 추가할 수 있습니다. */}
+      {/* {isFetching && <div className={kv.fetchingIndicator}>업데이트 중...</div>} */}
       <Swiper
         modules={[Autoplay, Pagination, Navigation, Parallax, EffectFade]}
         onSwiper={(swiper) => {
           swiperRef.current = swiper;
           // 초기 재생 상태에 따라 프로그레스 바 시작
-          if (isPlaying) {
+          if (isPlaying && swiperRef.current?.autoplay) {
+            // autoplay 존재 여부 확인 추가
+            swiperRef.current.autoplay.start(); // onSwiper에서 직접 시작
             startProgressBar();
             isAutoplayAndProgressActiveRef.current = true; // 초기 활성화 시 플래그 업데이트
           }
@@ -149,9 +221,6 @@ export default function KVSlider({ kvSliderItems }: KVSliderProps) {
           clickable: true,
           bulletClass: kv.bullet,
           bulletActiveClass: kv.bulletActive,
-          // renderBullet: function (index, className) {
-          //   return `<span class="${className}" role="button" tabindex="0"></span>`;
-          // },
         }}
         navigation={{
           prevEl: `.${kv.buttonPrev}`,
@@ -164,7 +233,10 @@ export default function KVSlider({ kvSliderItems }: KVSliderProps) {
         className={kv.slider}
         onSlideChange={() => {
           if (swiperRef.current) {
-            swiperRef.current.autoplay.start();
+            if (swiperRef.current.autoplay) {
+              // autoplay 존재 여부 확인 추가
+              swiperRef.current.autoplay.start();
+            }
             setIsPlaying(true);
             startProgressBar();
             isAutoplayAndProgressActiveRef.current = true; // 슬라이드 변경 시 활성화
@@ -195,7 +267,6 @@ export default function KVSlider({ kvSliderItems }: KVSliderProps) {
         {kvSliderItems.length > 1 && (
           <>
             {' '}
-            {/* Fragment로 묶기 */}
             <div className={kv.buttonWrap}>
               <div className={kv.buttonNext} role="button" tabIndex={0}>
                 <Icon name="nav-next" />
@@ -204,22 +275,20 @@ export default function KVSlider({ kvSliderItems }: KVSliderProps) {
                 <Icon name="nav-prev" />
               </div>
             </div>
-            {/* 새로운 controls div 추가 */}
             <div className={kv.controls}>
-              <div className={kv.pagination}></div> {/* 페이지네이션 엘리먼트 */}
+              <div className={kv.pagination}></div>
               <button
                 type="button"
                 onClick={handlePlayPauseToggle}
                 className={kv.playPauseButton}
                 aria-label={isPlaying ? '일시정지' : '재생'}
               >
-                <Icon name={isPlaying ? 'pause' : 'play'} /> {/* 아이콘 변경 */}
+                <Icon name={isPlaying ? 'pause' : 'play'} />
               </button>
             </div>
           </>
         )}
       </Swiper>
-      {/* 프로그레스 바 마크업 */}
       <div className={kv.progressBarContainer}>
         <div className={kv.progressBar} style={{ width: `${progressWidth}%` }}></div>
       </div>

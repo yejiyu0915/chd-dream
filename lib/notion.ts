@@ -98,6 +98,44 @@ export async function getPublishedNotionData<T extends GenericItem>(
   });
 }
 
+/**
+ * Notion 데이터베이스의 마지막 수정 시간을 가져옵니다.
+ * 이 함수는 데이터베이스 자체의 메타데이터를 조회하여,
+ * 데이터베이스 내용의 변경 여부를 빠르게 확인하는 데 사용됩니다.
+ * @param databaseIdEnvVar Notion 데이터베이스 ID 환경 변수 이름
+ * @returns 마지막 수정 시간 (ISO 8601 형식 문자열) 또는 null
+ */
+export async function getNotionDatabaseLastEditedTime(
+  databaseIdEnvVar: string
+): Promise<string | null> {
+  const notionDatabaseId = process.env[databaseIdEnvVar];
+  if (!process.env.NOTION_TOKEN || !notionDatabaseId) {
+    console.error(`Notion 토큰 또는 데이터베이스 ID (${databaseIdEnvVar})가 누락되었습니다.`);
+    return null;
+  }
+
+  try {
+    const database = await notion.databases.retrieve({
+      database_id: notionDatabaseId,
+      // 이 정보는 매우 빠르게 변경될 수 있으므로 캐시 시간을 짧게 설정
+      next: {
+        revalidate: 1,
+      },
+    });
+
+    if ('last_edited_time' in database) {
+      return database.last_edited_time;
+    }
+    return null;
+  } catch (error: unknown) {
+    console.error(
+      `Notion 데이터베이스 마지막 수정 시간 가져오기 중 오류 발생 (${databaseIdEnvVar}):`,
+      error
+    );
+    return null;
+  }
+}
+
 // C-log 데이터 타입 정의
 export interface CLogItem {
   id: string;

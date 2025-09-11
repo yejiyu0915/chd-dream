@@ -57,3 +57,49 @@ html.lenis {
   --cont-w: 1920;
   min-width: 280px;
 }
+
+/* ----- 전역 로딩 스피너 스타일 ----- */
+.loaderContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--foreground);
+  z-index: 9999;
+  animation: fadeIn 3s ease-in forwards;
+}
+
+.loaderContainer.fadeOut {
+  animation: fadeOut 1s 2s ease-out forwards;
+  pointer-events: none;
+}
+
+.loadingLogo {
+  width: cqi(60);
+  height: auto;
+  margin-bottom: 0;
+  filter: invert(1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
