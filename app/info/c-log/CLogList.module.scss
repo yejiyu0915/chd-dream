@@ -99,7 +99,7 @@
     border-radius: vw(20);
     background-color: var(--bg-card);
     color: var(--text-muted);
-    @include font-vw(18, $weight: 500);
+    @include font-vw(16);
     cursor: pointer;
     transition: all 0.2s ease;
 
@@ -116,6 +116,29 @@
       margin-inline-start: vw(8);
       color: var(--text-muted-foreground);
       @include font-vw(16);
+    }
+  }
+}
+
+.categoryFilter {
+  margin-block-end: vw(36);
+  padding-inline: var(--inner-padding);
+  z-index: 1;
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: vw(16);
+  }
+  &__button {
+    padding: vw(2) vw(16) vw(2) vw(30);
+    border-left: 1px solid var(--border);
+    color: var(--foreground);
+    @include font-vw(24);
+    cursor: pointer;
+    &.active {
+      border-left-color: var(--primary);
+      border-left-width: vw(3);
+      font-weight: 700;
     }
   }
 }
@@ -211,8 +234,9 @@
   }
 
   .loadMoreButton {
-    padding: vw(20) vw(40);
-    border-radius: vw(30);
+    margin-block-start: vw(60);
+    padding: vw(20) vw(80);
+    border-radius: vw(20);
     background-color: var(--primary);
     color: var(--primary-foreground);
     @include font-vw(20, $weight: 700);

@@ -25,7 +25,7 @@ export default function CLogTagFilter({
             onClick={() => onSelectTag(null)}
             className={`${c.tagFilter__button} ${!selectedTag ? c.active : ''}`}
           >
-            전체보기 <span className={c.tagFilter__count}>({tagCounts['전체보기'] || 0})</span>
+            ALL TAG <span className={c.tagFilter__count}>({tagCounts['전체보기'] || 0})</span>
           </button>
         </li>
         {tags.map((tag) => (
@@ -35,7 +35,7 @@ export default function CLogTagFilter({
               onClick={() => onSelectTag(tag)}
               className={`${c.tagFilter__button} ${selectedTag === tag ? c.active : ''}`}
             >
-              {tag} <span className={c.tagFilter__count}>({tagCounts[tag] || 0})</span>
+              # {tag} <span className={c.tagFilter__count}>({tagCounts[tag] || 0})</span>
             </button>
           </li>
         ))}

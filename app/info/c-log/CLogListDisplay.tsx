@@ -135,7 +135,7 @@ export default function CLogListDisplay({
                         {item.tags &&
                           item.tags.map((tag) => (
                             <span key={tag} className={c.list__tagItem}>
-                              {tag}
+                              #{tag}
                             </span>
                           ))}
                       </div>

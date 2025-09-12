@@ -52,7 +52,7 @@
       }
     }
     .pageTitle {
-      @include font-vw(70, $weight: 200);
+      @include font-vw(70, $weight: 600);
       color: var(--foreground);
       text-align: center;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
