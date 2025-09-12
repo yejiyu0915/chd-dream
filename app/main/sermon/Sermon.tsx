@@ -111,7 +111,7 @@ export default function Sermon() {
                 <Link href={sermonData.link} className={s.thisWeek} target="_blank">
                   {' '}
                   <span className={s.link__text}>
-                    오늘의 말씀 보러가기
+                    오늘의 말씀 <span className="only-pc">보러가기</span>
                     <Icon name="external-link" className={s.link__icon} />
                   </span>
                 </Link>
@@ -119,7 +119,7 @@ export default function Sermon() {
               <li className={s.link__item}>
                 <Link href="/worship/sermon">
                   <span className={s.link__text}>
-                    지난 말씀 보러가기
+                    지난 말씀 <span className="only-pc">보러가기</span>
                     <Icon name="arrow-up-right" className={s.link__icon} />
                   </span>
                 </Link>

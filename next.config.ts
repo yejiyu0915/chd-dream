@@ -27,6 +27,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com', // Cloudinary 이미지 호스트 추가
+        port: '',
+        pathname: '/**',
+      },
       // 필요하다면 다른 외부 이미지 도메인도 여기에 추가하세요.
     ],
   },
