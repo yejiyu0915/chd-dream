@@ -2,11 +2,11 @@ import { Client } from '@notionhq/client';
 import type {
   PageObjectResponse,
   QueryDatabaseResponse,
-  DatabaseObjectResponse,
-  BlockObjectResponse,
-  PartialPageObjectResponse,
-  PartialDatabaseObjectResponse,
-  PartialBlockObjectResponse,
+  // DatabaseObjectResponse,
+  // BlockObjectResponse,
+  // PartialPageObjectResponse,
+  // PartialDatabaseObjectResponse,
+  // PartialBlockObjectResponse,
 } from '@notionhq/client/build/src/api-endpoints';
 
 const notion = new Client({
@@ -36,7 +36,7 @@ export async function getNotionData<T extends GenericItem>(
   // 환경 변수에서 Notion 토큰과 데이터베이스 ID 가져오기
   const notionDatabaseId = process.env[databaseIdEnvVar];
   if (!process.env.NOTION_TOKEN || !notionDatabaseId) {
-    console.error(`Notion 토큰 또는 데이터베이스 ID (${databaseIdEnvVar})가 누락되었습니다.`);
+    // console.error(`Notion 토큰 또는 데이터베이스 ID (${databaseIdEnvVar})가 누락되었습니다.`);
     return [];
   }
 
@@ -58,8 +58,8 @@ export async function getNotionData<T extends GenericItem>(
       .map((page) => {
         if (
           !('properties' in page) ||
-          page.object !== 'page' ||
-          !(page as PageObjectResponse).properties
+          page.object !== 'page'
+          // !(page as PageObjectResponse).properties
         ) {
           return null; // properties가 없거나 페이지 객체가 아니거나 properties가 없는 경우 스킵
         }
@@ -68,8 +68,9 @@ export async function getNotionData<T extends GenericItem>(
       .filter(Boolean) as T[]; // null 값 필터링 및 타입 단언
 
     return items;
-  } catch (error: unknown) {
-    console.error(`Notion 데이터 가져오기 중 오류 발생 (${databaseIdEnvVar}):`, error);
+  } catch (_error: unknown) {
+    void _error; // _error가 사용되지 않는다는 린트 경고를 피하기 위해 추가
+    // console.error(`Notion 데이터 가져오기 중 오류 발생 (${databaseIdEnvVar}):`, _error);
     return [];
   }
 }
@@ -110,7 +111,7 @@ export async function getNotionDatabaseLastEditedTime(
 ): Promise<string | null> {
   const notionDatabaseId = process.env[databaseIdEnvVar];
   if (!process.env.NOTION_TOKEN || !notionDatabaseId) {
-    console.error(`Notion 토큰 또는 데이터베이스 ID (${databaseIdEnvVar})가 누락되었습니다.`);
+    // console.error(`Notion 토큰 또는 데이터베이스 ID (${databaseIdEnvVar})가 누락되었습니다.`);
     return null;
   }
 
@@ -127,11 +128,12 @@ export async function getNotionDatabaseLastEditedTime(
       return database.last_edited_time;
     }
     return null;
-  } catch (error: unknown) {
-    console.error(
-      `Notion 데이터베이스 마지막 수정 시간 가져오기 중 오류 발생 (${databaseIdEnvVar}):`,
-      error
-    );
+  } catch (_error: unknown) {
+    void _error; // _error가 사용되지 않는다는 린트 경고를 피하기 위해 추가
+    // console.error(
+    //   `Notion 데이터베이스 마지막 수정 시간 가져오기 중 오류 발생 (${databaseIdEnvVar}):`,
+    //   _error
+    // );
     return null;
   }
 }
@@ -174,45 +176,59 @@ export interface KVSliderItem {
   link: string;
 }
 
+type NotionProperty = {
+  type: string;
+  [key: string]: any;
+};
+
 // Notion 속성에서 일반 텍스트를 추출하는 헬퍼 함수
-function getPlainText(property: any): string | null {
-  if (property?.title?.[0]?.plain_text) {
+function getPlainText(property: NotionProperty | undefined): string | null {
+  if (!property) return null;
+
+  if (property.type === 'title' && 'title' in property && property.title[0]?.plain_text) {
     return property.title[0].plain_text;
-  } else if (property?.rich_text?.[0]?.plain_text) {
+  } else if (
+    property.type === 'rich_text' &&
+    'rich_text' in property &&
+    property.rich_text[0]?.plain_text
+  ) {
     return property.rich_text[0].plain_text;
+  } else if (property.type === 'url' && 'url' in property && property.url) {
+    return property.url;
   }
   return null;
 }
 
 // Notion 날짜 속성에서 포맷된 날짜 문자열을 추출하는 헬퍼 함수
-function getFormattedDate(property: any): string {
-  if (property?.date?.start) {
-    return new Date(property.date.start)
-      .toLocaleDateString('ko-KR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      })
-      .replace(/\. /g, '.')
-      .replace(/\.$/, '');
+function getFormattedDate(property: NotionProperty | undefined): string {
+  if (!property || property.type !== 'date' || !('date' in property) || !property.date?.start) {
+    return '날짜 없음';
   }
-  return '날짜 없음';
+  return new Date(property.date.start)
+    .toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    })
+    .replace(/\. /g, '.')
+    .replace(/\.$/, '');
 }
 
 // CLogItem 매핑 함수
 const mapPageToCLogItem: ItemMapper<CLogItem> = (page) => {
   const properties = page.properties;
 
-  const titleProperty = properties.Title as any;
-  const categoryProperty = properties.Category as any;
-  const dateProperty = properties.Date as any;
-  const tagsProperty = properties.Tags as any;
+  // 속성 이름을 정확히 명시하고 타입 가드를 활용합니다.
+  const titleProperty = properties.Title as NotionProperty | undefined;
+  const categoryProperty = properties.Category as NotionProperty | undefined;
+  const dateProperty = properties.Date as NotionProperty | undefined;
+  const tagsProperty = properties.Tags as NotionProperty | undefined;
 
   let imageUrlToUse = '/no-image.svg';
 
   if (page.cover) {
     if (page.cover.type === 'external') {
-      imageUrlToUse = (page.cover as any).external.url || '/no-image.svg';
+      imageUrlToUse = page.cover.external.url || '/no-image.svg';
     } else if (page.cover.type === 'file') {
       imageUrlToUse = `/api/notion-image?pageId=${page.id}&type=cover`;
     }
@@ -221,11 +237,17 @@ const mapPageToCLogItem: ItemMapper<CLogItem> = (page) => {
   return {
     id: page.id,
     title: getPlainText(titleProperty) || '제목 없음',
-    category: categoryProperty?.select?.name || '기타',
+    category:
+      (categoryProperty && 'select' in categoryProperty && categoryProperty.select?.name) || '기타',
     date: getFormattedDate(dateProperty),
     imageUrl: imageUrlToUse,
     imageAlt: getPlainText(titleProperty) || 'C-log 이미지',
-    tags: (tagsProperty?.multi_select || []).map((tag: { name: string }) => tag.name),
+    tags: (tagsProperty &&
+    'multi_select' in tagsProperty &&
+    Array.isArray(tagsProperty.multi_select)
+      ? tagsProperty.multi_select
+      : []
+    ).map((tag: { name: string }) => tag.name),
   };
 };
 
@@ -233,11 +255,11 @@ const mapPageToCLogItem: ItemMapper<CLogItem> = (page) => {
 const mapPageToSermonItem: ItemMapper<SermonItem> = (page) => {
   const properties = page.properties;
 
-  const titleProperty = properties.Title as any;
-  const dateProperty = properties.Date as any;
-  const summaryProperty = properties.Summary as any;
-  const verseProperty = properties.Verse as any;
-  const linkProperty = properties.Link as any;
+  const titleProperty = properties.Title as NotionProperty | undefined;
+  const dateProperty = properties.Date as NotionProperty | undefined;
+  const summaryProperty = properties.Summary as NotionProperty | undefined;
+  const verseProperty = properties.Verse as NotionProperty | undefined;
+  const linkProperty = properties.Link as NotionProperty | undefined;
 
   return {
     id: page.id,
@@ -245,7 +267,10 @@ const mapPageToSermonItem: ItemMapper<SermonItem> = (page) => {
     title: getPlainText(titleProperty) || '제목 없음',
     summary: getPlainText(summaryProperty) || '요약 없음',
     verse: getPlainText(verseProperty) || '본문 없음',
-    link: linkProperty?.url || '/',
+    link:
+      linkProperty && 'url' in linkProperty && typeof linkProperty.url === 'string'
+        ? linkProperty.url
+        : '/',
   };
 };
 
@@ -253,8 +278,8 @@ const mapPageToSermonItem: ItemMapper<SermonItem> = (page) => {
 const mapPageToNewsItem: ItemMapper<NewsItem> = (page) => {
   const properties = page.properties;
 
-  const titleProperty = properties.Title as any;
-  const dateProperty = properties.Date as any;
+  const titleProperty = properties.Title as NotionProperty | undefined;
+  const dateProperty = properties.Date as NotionProperty | undefined;
 
   return {
     id: page.id,
@@ -267,26 +292,26 @@ const mapPageToNewsItem: ItemMapper<NewsItem> = (page) => {
 const mapPageToKVSliderItem: ItemMapper<KVSliderItem> = (page) => {
   const properties = page.properties;
 
-  const titleProperty = properties.Title as any;
-  const descriptionProperty = properties.Summary as any;
-  const linkProperty = properties.Link as any;
-  const imageProperty = properties.Image as any;
+  const titleProperty = properties.Title as NotionProperty | undefined;
+  const descriptionProperty = properties.Summary as NotionProperty | undefined;
+  const linkProperty = properties.Link as NotionProperty | undefined;
+  const imageProperty = properties.Image as NotionProperty | undefined;
 
   let imageUrlToUse = '/main/kv.jpg';
   let imageAltToUse = getPlainText(titleProperty) || '이미지';
 
   if (page.cover) {
     if (page.cover.type === 'external') {
-      imageUrlToUse = (page.cover as any).external.url || '/main/kv.jpg';
+      imageUrlToUse = page.cover.external.url || '/main/kv.jpg';
     } else if (page.cover.type === 'file') {
       imageUrlToUse = `/api/notion-image?pageId=${page.id}&type=cover`;
     }
-  } else if (imageProperty?.files?.[0]) {
+  } else if (imageProperty && 'files' in imageProperty && imageProperty.files?.[0]) {
     const file = imageProperty.files[0];
     if (file.type === 'external') {
       imageUrlToUse = file.external.url;
     } else if (file.type === 'file') {
-      imageUrlToUse = `/api/notion-image?pageId=${page.id}&propertyId=${imageProperty.id}`; // propertyId 추가
+      imageUrlToUse = `/api/notion-image?pageId=${page.id}&propertyId=${imageProperty.id}`; // propertyId는 string이므로 as any 제거
     }
     imageAltToUse = file.name || '이미지';
   }
@@ -297,13 +322,16 @@ const mapPageToKVSliderItem: ItemMapper<KVSliderItem> = (page) => {
     description: getPlainText(descriptionProperty) || '설명 없음',
     image: imageUrlToUse,
     imageAlt: imageAltToUse,
-    link: linkProperty?.url || '/',
+    link:
+      linkProperty && 'url' in linkProperty && typeof linkProperty.url === 'string'
+        ? linkProperty.url
+        : '/',
   };
 };
 
 // Notion 데이터베이스에서 C-log 데이터 가져오기
 export async function getCLogData(): Promise<CLogItem[]> {
-  return getPublishedNotionData<CLogItem>('NOTION_CLOG_ID', mapPageToCLogItem, 6);
+  return getPublishedNotionData<CLogItem>('NOTION_CLOG_ID', mapPageToCLogItem);
 }
 
 // Notion 데이터베이스에서 최신 설교 데이터 가져오기
@@ -324,4 +352,9 @@ export async function getNewsData(): Promise<NewsItem[]> {
 // Notion 데이터베이스에서 최신 KV Slider 데이터 가져오기
 export async function getKVSliderData(): Promise<KVSliderItem[]> {
   return getPublishedNotionData<KVSliderItem>('NOTION_KV_ID', mapPageToKVSliderItem);
+}
+
+// Notion 데이터베이스에서 메인 페이지용 C-log 데이터 (6개) 가져오기
+export async function getCLogMainData(): Promise<CLogItem[]> {
+  return getPublishedNotionData<CLogItem>('NOTION_CLOG_ID', mapPageToCLogItem, 6);
 }

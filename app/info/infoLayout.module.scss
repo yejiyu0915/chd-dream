@@ -1,0 +1,107 @@
+@use '@/common/styles/mixins/function' as *;
+
+.infoLayout {
+  .titleSection {
+    height: vw(400);
+    background: var(--background);
+    position: relative;
+
+    .inner {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      height: 100%;
+      position: relative;
+      z-index: 1;
+      // &::before {
+      //   content: '';
+      //   position: absolute;
+      //   top: 0;
+      //   left: 50%;
+      //   transform: translate(-50%, -40%);
+      //   width: vw(200);
+      //   height: vw(200);
+      //   border-radius: 50%;
+      //   border: vw(10) double var(--foreground);
+      //   background-color: transparent;
+      // }
+    }
+    .title {
+      padding-block: vw(50);
+      position: relative;
+      // &::before {
+      //   content: '';
+      //   position: absolute;
+      //   bottom: 0;
+      //   left: 50%;
+      //   transform: translateX(-50%);
+      //   width: vw(200);
+      //   height: vw(2);
+      //   background-color: var(--border-light);
+      // }
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, 45%);
+        width: vw(10);
+        height: vw(10);
+        border-radius: 50%;
+        background-color: var(--foreground);
+      }
+    }
+    .pageTitle {
+      @include font-vw(70, $weight: 200);
+      color: var(--foreground);
+      text-align: center;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .pageDesc {
+      margin-block-start: vw(36);
+      @include font-vw(24, $color: var(--foreground));
+      text-align: center;
+      opacity: 0.9;
+    }
+  }
+
+  .breadcrumb {
+    position: absolute;
+    top: vw(100);
+    z-index: 2;
+    width: 100%;
+    padding-inline: var(--inner-padding);
+    &__list {
+      display: flex;
+      align-items: center;
+      padding-inline-start: vw(12);
+      border-left: vw(3) solid var(--foreground);
+    }
+    &__item {
+      display: flex;
+      align-items: center;
+      &::after {
+        content: '';
+        display: block;
+        width: vw(4);
+        height: vw(4);
+        margin-inline: vw(10);
+        border-radius: 50%;
+        background-color: var(--text-muted);
+      }
+      &:last-child::after {
+        display: none;
+      }
+    }
+    &__link {
+      color: var(--text-muted);
+      &:hover {
+        color: var(--primary);
+      }
+    }
+    &__active {
+      font-weight: 700;
+      color: var(--foreground);
+    }
+  }
+}

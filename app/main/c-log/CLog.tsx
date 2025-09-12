@@ -18,7 +18,7 @@ export default function CLog() {
       headers['If-Modified-Since'] = lastModifiedHeaderValue.current;
     }
 
-    const response = await fetch('/api/c-log', { headers });
+    const response = await fetch('/api/c-log-main', { headers }); // API 엔드포인트 변경
 
     if (response.status === 304) {
       // 304 Not Modified 응답이면 캐시된 데이터를 반환
@@ -46,8 +46,17 @@ export default function CLog() {
   } = useQuery<CLogItem[], Error>({
     queryKey: ['cLogItems'],
     queryFn: fetchCLogItems,
+    staleTime: 0, // 메인 페이지는 항상 최신 데이터를 가져오도록 staleTime 설정
     // refetchInterval: 60 * 1000, // 1분(60초)마다 데이터를 자동으로 다시 가져옵니다. -> 새로고침 시에만 반영되도록 제거
   });
+
+  // 디버깅을 위한 console.log 추가 (임시)
+  // console.log('Main CLog Debug:', {
+  //   cLogData,
+  //   isLoading,
+  //   isError,
+  //   error,
+  // });
 
   if (isLoading) {
     return (
@@ -60,6 +69,7 @@ export default function CLog() {
           </Link>
           <div className={c.content}>
             <ul className={c.skeletonList}>
+              {/* 메인 페이지는 6개만 표시하므로 6개 스켈레톤 렌더링 */}
               {Array.from({ length: 6 }).map((_, index) => (
                 <CLogSkeleton key={index} />
               ))}
