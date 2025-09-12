@@ -404,12 +404,15 @@
         animation: none;
         a {
           flex-direction: row;
+          transition: none;
         }
         svg {
           width: vw(36);
+          transition: none;
         }
         span {
           @include font-vw(24);
+          transition: none;
         }
       }
       .menu {
