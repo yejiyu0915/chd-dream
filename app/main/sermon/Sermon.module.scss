@@ -244,12 +244,15 @@
     }
   }
   @include mq(mo) {
+    .inner {
+      padding: calc(var(--inner-padding) * 4) var(--inner-padding) calc(var(--inner-padding) * 2);
+    }
     .content {
       gap: vw(32) vw(20);
     }
     .text {
       padding-block: vw(24) vw(12);
-      padding-inline-start: vw(36);
+      padding-inline-start: var(--inner-padding);
       border-left-width: vw(3);
     }
     .eyebrow {
@@ -279,6 +282,9 @@
         border-radius: vw(10);
         line-height: vw(48);
       }
+      &__icon {
+        --icon-margin: 0.2;
+      }
     }
     .pastor {
       flex: 0 0 vw(140);
@@ -299,22 +305,25 @@
   }
   @include mq(mo-sm) {
     .content {
-      gap: vw(20);
+      gap: vw(40) vw(20);
     }
     .link {
-      flex: 0 0 100%;
+      a {
+        padding-inline-end: 0;
+      }
     }
     .pastor {
       flex: 0 0 vw(100);
-      margin-left: auto;
     }
     .footnote {
-      width: calc(100% - vw(160));
-      padding-inline: vw(20);
-      position: absolute;
-      left: calc(var(--inner-padding) * 2);
-      bottom: vw(40);
-      text-indent: -2em;
+      margin-block-start: vw(40);
+    }
+  }
+  @include mq(mo-xs) {
+    .link {
+      a {
+        padding-inline-start: vw(16);
+      }
     }
   }
 }
