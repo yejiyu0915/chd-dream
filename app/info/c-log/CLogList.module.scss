@@ -28,6 +28,7 @@
       height: 100%;
       object-fit: cover;
       border-radius: vw(20);
+      aspect-ratio: 4/3;
     }
     &__content {
       display: flex;
@@ -86,7 +87,7 @@
 }
 
 .tagFilter {
-  margin-block-end: vw(60);
+  margin-block-end: vw(40);
   padding-inline: var(--inner-padding);
   z-index: 1;
   &__list {
@@ -135,10 +136,57 @@
     color: var(--foreground);
     @include font-vw(24);
     cursor: pointer;
+
     &.active {
       border-left-color: var(--primary);
       border-left-width: vw(3);
       font-weight: 700;
+    }
+  }
+}
+
+.filterGroup {
+  display: flex;
+  justify-content: flex-end; /* 오른쪽 정렬 */
+  margin-block-end: vw(40);
+  padding-inline: var(--inner-padding);
+
+  .sortFilter,
+  .viewModeFilter {
+    display: flex;
+    gap: vw(2);
+    &__button {
+      display: flex;
+      align-items: center;
+      gap: vw(8);
+      padding: vw(8);
+      border-bottom: vw(2) solid transparent;
+      @include font-vw(18);
+      cursor: pointer;
+      &.active {
+        font-weight: 700;
+        border-bottom-color: var(--primary);
+      }
+      i {
+        --icon-size: 1.3;
+        --icon-margin: 0;
+        filter: invert(1);
+      }
+    }
+  }
+  .viewModeFilter {
+    position: relative;
+    margin-inline-start: vw(24);
+    padding-inline-start: vw(24);
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: vw(2);
+      height: vw(20);
+      background-color: var(--border-light);
+      transform: translateY(-50%);
     }
   }
 }
@@ -171,6 +219,7 @@
       height: 100%;
       object-fit: cover;
       border-radius: vw(20);
+      aspect-ratio: 4/3;
     }
     &__content {
       display: flex;

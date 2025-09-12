@@ -12,6 +12,7 @@ interface CLogListDisplayProps {
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
+  viewMode: 'grid' | 'list'; // viewMode prop 추가
 }
 
 const PC_ITEMS_PER_LOAD = 6; // PC 버전에서 한 번에 불러올 아이템 개수
@@ -22,6 +23,7 @@ export default function CLogListDisplay({
   isLoading,
   isError,
   error,
+  viewMode: _viewMode, // viewMode prop을 _viewMode로 변경하여 사용되지 않음을 명시
 }: CLogListDisplayProps) {
   const [itemsPerPage, setItemsPerPage] = useState(PC_ITEMS_PER_LOAD);
   const [visibleItemCount, setVisibleItemCount] = useState(itemsPerPage);
@@ -108,6 +110,8 @@ export default function CLogListDisplay({
 
   return (
     <div className={c.cLogListDisplay}>
+      {' '}
+      {/* viewMode prop에 따라 클래스 추가 가능 */}
       <div className={`detail-inner`}>
         {cLogData && cLogData.length > 0 ? (
           <>

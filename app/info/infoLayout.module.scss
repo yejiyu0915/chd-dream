@@ -27,7 +27,7 @@
       // }
     }
     .title {
-      padding-block: vw(50);
+      padding-block: vw(60);
       position: relative;
       // &::before {
       //   content: '';
@@ -74,8 +74,14 @@
     &__list {
       display: flex;
       align-items: center;
-      padding-inline-start: vw(12);
-      border-left: vw(3) solid var(--foreground);
+      position: relative;
+      &::before {
+        content: '';
+        width: 1em;
+        height: 1em;
+        margin-inline-end: 1em;
+        background-color: var(--border);
+      }
     }
     &__item {
       display: flex;

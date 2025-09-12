@@ -79,4 +79,19 @@
   &--pause {
     background-image: url('/common/ico_pause.svg');
   }
+
+  &--sort {
+    &-asc {
+      background-image: url('/common/ico_sort-ascending.svg');
+    }
+    &-desc {
+      background-image: url('/common/ico_sort-descending.svg');
+    }
+    &-grid {
+      background-image: url('/common/ico_sort-grid.svg');
+    }
+    &-list {
+      background-image: url('/common/ico_sort-list.svg');
+    }
+  }
 }
