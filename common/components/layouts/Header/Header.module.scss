@@ -314,9 +314,9 @@
   // 스크롤 시 적용될 스타일
   &.scroll {
     --header-color: var(--foreground);
-    height: vw(74);
+    height: vw(--header-height);
     .overlay {
-      height: vw(74);
+      height: vw(--header-height);
       opacity: 1;
       visibility: visible;
     }
@@ -345,12 +345,12 @@
       &__item {
         .menu__link {
           font-weight: 600;
-          line-height: vw(74);
+          line-height: vw(--header-height);
         }
       }
     }
     .subMenu {
-      top: vw(74); // 스크롤 시 헤더 높이 (로고 36px + 메뉴 50px + 패딩 12px*2)
+      top: vw(--header-height); // 스크롤 시 헤더 높이 (로고 36px + 메뉴 50px + 패딩 12px*2)
     }
     .util {
       top: 50%;
@@ -385,9 +385,9 @@
     &,
     &.scroll {
       --header-color: var(--foreground);
-      height: vw(74);
+      height: vw(--header-height);
       .overlay {
-        height: vw(74);
+        height: vw(--header-height);
         opacity: 1;
         visibility: visible;
       }
@@ -419,12 +419,12 @@
         &__item {
           .menu__link {
             font-weight: 600;
-            line-height: vw(74);
+            line-height: vw(--header-height);
           }
         }
       }
       .subMenu {
-        top: vw(74); // 스크롤 시 헤더 높이 (로고 36px + 메뉴 50px + 패딩 12px*2)
+        top: vw(--header-height); // 스크롤 시 헤더 높이 (로고 36px + 메뉴 50px + 패딩 12px*2)
         &__list {
           gap: vw(2);
         }
@@ -447,9 +447,9 @@
   @include mq(pc-sm) {
     &,
     &.scroll {
-      height: vw(64);
+      // height: vw(64);
       .overlay {
-        height: vw(64);
+        // height: vw(64);
       }
       .inner {
         flex-direction: row;
@@ -478,7 +478,7 @@
           .menu__link {
             padding-inline: vw(24);
             @include font-vw(16);
-            line-height: vw(64);
+            // line-height: vw(64);
           }
         }
         &::after {
@@ -493,7 +493,7 @@
         }
       }
       .subMenu {
-        top: vw(64);
+        // top: vw(64);
         &__container {
           max-width: vw(720);
           padding: vw(24) var(--inner-padding) vw(32);
@@ -556,14 +556,14 @@
     &,
     &.scroll {
       --header-color: var(--background);
-      height: vw(72);
+      // height: vw(72);
       background-color: transparent; // 모바일 기본 헤더 배경 투명
       .overlay {
         opacity: 0;
         visibility: hidden;
         transition: none; // 모바일에서는 헤더 내부 overlay 즉시 숨김
         animation: none;
-        height: vw(72);
+        // height: vw(72);
       }
       .logo {
         a {
@@ -610,7 +610,7 @@
         visibility: visible;
         transition: none;
         animation: none;
-        height: vw(72);
+        // height: vw(72);
       }
       .util {
         .icon {
@@ -650,10 +650,10 @@
   .mobileMenuOverlay {
     display: block;
     position: fixed;
-    top: vw(72);
+    top: vw(--header-height);
     left: 0;
     width: 100vw;
-    height: calc(100vh - vw(72));
+    height: calc(100vh - vw(--header-height));
     background: var(--background);
     z-index: 1001; // 헤더보다 높은 z-index로 설정 (명시적으로 재설정)
     touch-action: auto; // 터치 스크롤 허용

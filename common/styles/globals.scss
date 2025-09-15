@@ -4,6 +4,8 @@
 @use 'constants/typography' as *;
 @use 'constants/icons' as *;
 @use 'constants/layouts' as *;
+@use 'constants/spinner' as *; // 스피너 스타일 use로 임포트
+@use '@/common/styles/mixins/function' as *;
 
 html,
 body {
@@ -56,6 +58,14 @@ html.lenis {
   container-name: wrapper; // 컨테이너 이름 지정
   --cont-w: 1920;
   min-width: 280px;
+  * {
+    @include mq(pc-sm) {
+      --header-height: 64;
+    }
+    @include mq(mo) {
+      --header-height: 72;
+    }
+  }
 }
 
 /* ----- 전역 로딩 스피너 스타일 ----- */
@@ -101,5 +111,81 @@ html.lenis {
   }
   to {
     opacity: 0;
+  }
+}
+
+.breadcrumb {
+  --breadcrumb-height: calc(var(--header-height) + 28);
+  position: absolute;
+  top: vw(--breadcrumb-height);
+  z-index: 2;
+  width: 100%;
+  padding-inline: var(--inner-padding);
+  &__list {
+    display: flex;
+    align-items: center;
+    position: relative;
+    &::before {
+      content: '';
+      width: 1em;
+      height: 1em;
+      margin-inline-end: 1em;
+      background-color: var(--border);
+    }
+  }
+  &__item {
+    display: flex;
+    align-items: center;
+    &::after {
+      content: '';
+      display: block;
+      width: vw(4);
+      height: vw(4);
+      margin-inline: vw(10);
+      border-radius: 50%;
+      background-color: var(--text-muted);
+    }
+    &:last-child::after {
+      display: none;
+    }
+  }
+  &__link {
+    color: var(--text-muted);
+    &:hover {
+      color: var(--primary);
+    }
+  }
+  &__active {
+    font-weight: 700;
+    color: var(--foreground);
+  }
+  @include mq(pc-sm) {
+    --breadcrumb-height: calc(var(--header-height) + 24);
+    &__list {
+      @include font-vw(14);
+      &::before {
+        display: none;
+      }
+    }
+    &__item {
+      &::after {
+        width: vw(3);
+        height: vw(3);
+        margin-inline: vw(8);
+      }
+    }
+  }
+  @include mq(mo) {
+    --breadcrumb-height: calc(var(--header-height) + 20);
+    &__list {
+      @include font-vw(12);
+    }
+    &__item {
+      &::after {
+        width: vw(2);
+        height: vw(2);
+        margin-inline: vw(6);
+      }
+    }
   }
 }

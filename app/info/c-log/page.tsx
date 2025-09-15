@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { CLogItem } from '@/lib/notion';
 import { useQuery } from '@tanstack/react-query';
 import CLogTagFilter from './CLogTagFilter';
@@ -9,12 +9,44 @@ import CLogCategoryFilter from './CLogCategoryFilter'; // CLogCategoryFilter 컴
 import CLogSortFilter from './CLogSortFilter'; // CLogSortFilter 컴포넌트 임포트
 import CLogViewModeFilter from './CLogViewModeFilter'; // CLogViewModeFilter 컴포넌트 임포트
 import c from '@/app/info/c-log/CLogList.module.scss';
+import { useRouter, useSearchParams } from 'next/navigation'; // useRouter와 useSearchParams 임포트
 
 export default function CLogListPage() {
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null); // 선택된 카테고리 상태 추가
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc'); // 정렬 순서 상태 (기본: 최신순)
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid'); // View 모드 상태 (기본: 그리드 뷰)
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // URL 파라미터에서 초기 상태 설정
+  const initialCategory = searchParams.get('category')
+    ? decodeURIComponent(searchParams.get('category') as string)
+    : null;
+  const initialTag = searchParams.get('tag')
+    ? decodeURIComponent(searchParams.get('tag') as string)
+    : null;
+  const initialSortOrder: 'asc' | 'desc' = (searchParams.get('sort') as 'asc' | 'desc') || 'desc';
+  const initialViewMode: 'grid' | 'list' = (searchParams.get('view') as 'grid' | 'list') || 'grid';
+
+  const [selectedTag, setSelectedTag] = useState<string | null>(initialTag);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>(initialSortOrder);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>(initialViewMode);
+
+  // URL 파라미터 변경 시 상태 업데이트
+  useEffect(() => {
+    const currentCategory = searchParams.get('category')
+      ? decodeURIComponent(searchParams.get('category') as string)
+      : null;
+    const currentTag = searchParams.get('tag')
+      ? decodeURIComponent(searchParams.get('tag') as string)
+      : null;
+    const currentSortOrder: 'asc' | 'desc' = (searchParams.get('sort') as 'asc' | 'desc') || 'desc';
+    const currentViewMode: 'grid' | 'list' =
+      (searchParams.get('view') as 'grid' | 'list') || 'grid';
+
+    setSelectedCategory((prev) => (prev !== currentCategory ? currentCategory : prev));
+    setSelectedTag((prev) => (prev !== currentTag ? currentTag : prev));
+    setSortOrder((prev) => (prev !== currentSortOrder ? currentSortOrder : prev));
+    setViewMode((prev) => (prev !== currentViewMode ? currentViewMode : prev));
+  }, [searchParams]);
 
   const fetchCLogItems = async (): Promise<CLogItem[]> => {
     const response = await fetch('/api/c-log');
@@ -121,24 +153,32 @@ export default function CLogListPage() {
     });
   }, [dataForTags, tagCounts]); // dataForTags와 tagCounts를 의존성 배열에 추가
 
+  const updateURLParams = (params: Record<string, string | null>) => {
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    Object.entries(params).forEach(([key, value]) => {
+      if (value) {
+        newSearchParams.set(key, encodeURIComponent(value));
+      } else {
+        newSearchParams.delete(key);
+      }
+    });
+    router.push(`?${newSearchParams.toString()}`);
+  };
+
   const handleTagSelect = (tag: string | null) => {
-    setSelectedTag(tag);
+    updateURLParams({ tag: tag });
   };
 
   const handleCategorySelect = (category: string | null) => {
-    // 카테고리 선택 핸들러 추가
-    setSelectedCategory(category);
-    setSelectedTag(null); // 카테고리가 변경되면 태그 선택 초기화
+    updateURLParams({ category: category, tag: null }); // 카테고리 변경 시 태그 초기화
   };
 
   const handleSortChange = (order: 'asc' | 'desc') => {
-    // 정렬 순서 변경 핸들러
-    setSortOrder(order);
+    updateURLParams({ sort: order });
   };
 
   const handleViewModeChange = (mode: 'grid' | 'list') => {
-    // View 모드 변경 핸들러
-    setViewMode(mode);
+    updateURLParams({ view: mode });
   };
 
   return (

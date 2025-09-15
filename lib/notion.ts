@@ -48,9 +48,9 @@ export async function getNotionData<T extends GenericItem>(
       sorts: options?.sorts,
       page_size: options?.pageSize,
       // Next.js 캐싱을 위한 revalidate 옵션 적용 (기본 60초)
-      next: {
-        revalidate: options?.revalidateSeconds ?? 60,
-      },
+      // next: {
+      //   revalidate: options?.revalidateSeconds ?? 60,
+      // },
     });
 
     // 쿼리 결과를 매퍼 함수를 사용하여 원하는 타입으로 변환
@@ -119,9 +119,9 @@ export async function getNotionDatabaseLastEditedTime(
     const database = await notion.databases.retrieve({
       database_id: notionDatabaseId,
       // 이 정보는 매우 빠르게 변경될 수 있으므로 캐시 시간을 짧게 설정
-      next: {
-        revalidate: 1,
-      },
+      // next: {
+      //   revalidate: 1,
+      // },
     });
 
     if ('last_edited_time' in database) {
@@ -147,6 +147,8 @@ export interface CLogItem {
   imageUrl: string;
   imageAlt: string;
   tags: string[];
+  link?: string; // link 속성 추가
+  description?: string; // description 속성 추가
 }
 
 // 설교 데이터 타입 정의
@@ -223,6 +225,8 @@ const mapPageToCLogItem: ItemMapper<CLogItem> = (page) => {
   const categoryProperty = properties.Category as NotionProperty | undefined;
   const dateProperty = properties.Date as NotionProperty | undefined;
   const tagsProperty = properties.Tags as NotionProperty | undefined;
+  const linkProperty = properties.Link as NotionProperty | undefined; // Link 속성 추가
+  const descriptionProperty = properties.Description as NotionProperty | undefined; // Description 속성 추가
 
   let imageUrlToUse = '/no-image.svg';
 
@@ -248,6 +252,8 @@ const mapPageToCLogItem: ItemMapper<CLogItem> = (page) => {
       ? tagsProperty.multi_select
       : []
     ).map((tag: { name: string }) => tag.name),
+    link: getPlainText(linkProperty) || undefined, // link 매핑
+    description: getPlainText(descriptionProperty) || undefined, // description 매핑
   };
 };
 

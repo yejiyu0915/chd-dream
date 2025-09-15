@@ -4,10 +4,11 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { CLogItem } from '@/lib/notion';
-import CLogSkeleton from '@/app/main/c-log/CLogSkeleton';
+import Spinner from '@/common/components/utils/Spinner'; // Spinner 컴포넌트 임포트
 import c from '@/app/info/c-log/CLogList.module.scss'; // infoLayout.module.scss 사용
+import Icon from '@/common/components/utils/Icons';
 
-interface CLogListDisplayProps {
+interface CLogListProps {
   cLogData: CLogItem[] | undefined;
   isLoading: boolean;
   isError: boolean;
@@ -18,13 +19,13 @@ interface CLogListDisplayProps {
 const PC_ITEMS_PER_LOAD = 6; // PC 버전에서 한 번에 불러올 아이템 개수
 const MO_ITEMS_PER_LOAD = 4; // 모바일 버전에서 한 번에 불러올 아이템 개수
 
-export default function CLogListDisplay({
+export default function CLogList({
   cLogData,
   isLoading,
   isError,
   error,
   viewMode: _viewMode, // viewMode prop을 _viewMode로 변경하여 사용되지 않음을 명시
-}: CLogListDisplayProps) {
+}: CLogListProps) {
   const [itemsPerPage, setItemsPerPage] = useState(PC_ITEMS_PER_LOAD);
   const [visibleItemCount, setVisibleItemCount] = useState(itemsPerPage);
 
@@ -71,7 +72,7 @@ export default function CLogListDisplay({
   const hasMoreItems = cLogData && visibleItemCount < cLogData.length;
 
   // 디버깅을 위한 console.log 추가 (임시)
-  // console.log('CLogListDisplay Debug:', {
+  // console.log('CLogList Debug:', {
   //   cLogDataLength: cLogData?.length,
   //   visibleItemCount,
   //   itemsPerPage,
@@ -80,15 +81,11 @@ export default function CLogListDisplay({
 
   if (isLoading) {
     return (
-      <div className={c.cLogListDisplay}>
-        <div className={c.inner}>
-          {/* <h2>C-log 로딩 중...</h2> */}
-          <ul className={c.list}>
-            {/* 로딩 시 실제 데이터 개수 대신 itemsPerPage 만큼 스켈레톤 렌더링 */}
-            {Array.from({ length: itemsPerPage }).map((_, index) => (
-              <CLogSkeleton key={index} />
-            ))}
-          </ul>
+      <div className={c.cLogList}>
+        <div className={c.loadingState}>
+          {' '}
+          {/* 로딩 상태를 위한 새로운 wrapper */}
+          <Spinner size="lg" /> {/* Spinner 컴포넌트 사용 */}
         </div>
       </div>
     );
@@ -100,7 +97,7 @@ export default function CLogListDisplay({
       errorMessage = error.message;
     }
     return (
-      <div className={c.cLogListDisplay}>
+      <div className={c.cLogList}>
         <div className={c.inner}>
           <p className={c.error}>에러: {errorMessage}</p>
         </div>
@@ -109,13 +106,14 @@ export default function CLogListDisplay({
   }
 
   return (
-    <div className={c.cLogListDisplay}>
+    <div className={c.cLogList}>
       {' '}
       {/* viewMode prop에 따라 클래스 추가 가능 */}
       <div className={`detail-inner`}>
         {cLogData && cLogData.length > 0 ? (
           <>
-            <ul className={c.list}>
+            {/* viewMode prop에 따라 c.list--grid 또는 c.list--list 클래스 추가 */}
+            <ul className={`${c[`list--${_viewMode}`]}`}>
               {cLogData.slice(0, visibleItemCount).map((item) => (
                 <li key={item.id} className={c.list__item}>
                   <Link href={item.link || '#'} className={c.list__link}>
@@ -152,6 +150,7 @@ export default function CLogListDisplay({
               <div className={c.loadMoreWrapper}>
                 <button type="button" onClick={handleLoadMore} className={c.loadMoreButton}>
                   더보기
+                  <Icon name="arrow-down" />
                 </button>
               </div>
             )}

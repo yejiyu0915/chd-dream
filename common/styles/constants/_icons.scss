@@ -16,8 +16,22 @@
     background-image: url('/common/ico_info.svg');
   }
 
-  &--arrow-up-right {
-    background-image: url('/common/ico_arrow_up-right.svg');
+  &--arrow {
+    &-up-right {
+      background-image: url('/common/ico_arrow_up-right.svg');
+    }
+    &-up {
+      background-image: url('/common/ico_arrow_up.svg');
+    }
+    &-down {
+      background-image: url('/common/ico_arrow_down.svg');
+    }
+    &-next {
+      background-image: url('/common/ico_arrow_next.svg');
+    }
+    &-prev {
+      background-image: url('/common/ico_arrow_prev.svg');
+    }
   }
 
   &--map {

@@ -1,40 +1,38 @@
 @use '@/common/styles/mixins/function' as *;
 
+$list: '.list';
+.cLogListMain {
+  --list-radius: 20;
+  .cLogListInner {
+    padding-block: vw(80) vw(160);
+    @include mq(pc-sm) {
+      --list-radius: 12;
+      padding-block: vw(48) vw(120);
+    }
+    @include mq(mo) {
+      --list-radius: 10;
+      padding-block: vw(48) vw(80);
+    }
+  }
+}
+
 .cLogList {
   background-color: var(--background);
-  .inner {
-    padding-block: vw(160);
-    position: relative;
-  }
-  h2 {
-    @include font-vw(60, $weight: 700);
-    color: var(--foreground);
-    margin-block-end: vw(60);
-  }
-  .list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: vw(100) vw(40);
+  #{$list} {
     &__item {
-      border-radius: vw(20) vw(20) 0 0;
+      border-radius: vw(--list-radius) vw(--list-radius) 0 0;
     }
     &__link {
       display: block;
-      border-radius: vw(20) vw(20) 0 0;
+      border-radius: vw(--list-radius) vw(--list-radius) 0 0;
       overflow: hidden;
     }
     &__image {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: vw(20);
+      border-radius: vw(--list-radius);
       aspect-ratio: 4/3;
-    }
-    &__content {
-      display: flex;
-      flex-direction: column;
-      gap: vw(10);
-      margin-block-start: vw(20);
     }
     &__title {
       margin-block-end: 1em;
@@ -56,6 +54,7 @@
     }
     &__tag {
       display: flex;
+      flex-wrap: wrap;
       gap: vw(10);
       margin-block-start: vw(10);
       @include font-vw(16, $weight: 300);
@@ -67,7 +66,154 @@
       color: var(--bg-card-foreground);
       line-height: 2;
     }
+
+    &--grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: vw(100) vw(40);
+
+      #{$list}__content {
+        display: flex;
+        flex-direction: column;
+        gap: vw(10);
+        margin-block-start: vw(20);
+      }
+    }
+
+    &--list {
+      display: block; // 리스트 뷰일 때는 블록 요소로 변경
+
+      #{$list}__item {
+        width: 100%;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: vw(32);
+        margin-bottom: vw(32);
+
+        &:last-child {
+          border-bottom: none;
+          margin-bottom: 0;
+          padding-bottom: 0;
+        }
+      }
+      #{$list}__link {
+        display: flex;
+        flex-direction: row; // 리스트 뷰는 가로 정렬
+        gap: vw(20);
+
+        #{$list}__image {
+          width: vw(240); // 리스트 뷰 이미지 크기 조절
+        }
+
+        #{$list}__content {
+          flex-grow: 1;
+          display: flex;
+          flex-direction: column;
+        }
+
+        #{$list}__title {
+          margin-block-end: auto;
+        }
+
+        #{$list}__info {
+          order: -1;
+          margin-block-start: 0.5em;
+          margin-block-end: vw(10);
+        }
+      }
+    }
+
+    @include mq(pc-sm) {
+      &__title {
+        @include font-vw(24);
+      }
+      &__info {
+        gap: vw(8);
+        @include font-vw(16);
+      }
+      &__tag {
+        gap: vw(8);
+        margin-block-start: vw(8);
+        @include font-vw(12);
+      }
+      &__tagItem {
+        padding-inline: vw(8);
+      }
+
+      &--grid {
+        gap: vw(36) vw(24);
+
+        #{$list}__content {
+          gap: vw(8);
+          margin-block-start: vw(12);
+        }
+      }
+
+      &--list {
+        #{$list}__item {
+          padding-bottom: vw(24);
+          margin-bottom: vw(24);
+        }
+        #{$list}__link {
+          gap: vw(16);
+
+          #{$list}__image {
+            width: vw(200);
+          }
+
+          #{$list}__info {
+            margin-block-end: vw(8);
+          }
+        }
+      }
+    }
+
+    @include mq(mo) {
+      &__title {
+        @include font-vw(16);
+      }
+      &__info {
+        gap: vw(6);
+        @include font-vw(12);
+      }
+      &__tag {
+        gap: vw(6);
+        margin-block-start: vw(6);
+      }
+      &__tagItem {
+        padding-inline: vw(6);
+      }
+
+      &--grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: vw(24) vw(16);
+
+        #{$list}__content {
+          gap: vw(6);
+          margin-block-start: vw(8);
+        }
+      }
+
+      &--list {
+        #{$list}__item {
+          padding-bottom: vw(16);
+          margin-bottom: vw(16);
+        }
+        #{$list}__link {
+          gap: vw(12);
+
+          #{$list}__image {
+            width: cqi(400);
+            min-width: vw(100);
+          }
+
+          #{$list}__info {
+            margin-block-end: vw(6);
+          }
+        }
+      }
+    }
   }
+
   .loading,
   .error {
     display: flex;
@@ -78,63 +224,194 @@
     color: var(--text-muted);
     text-align: center;
   }
-}
+  .emptyMessage {
+    @include font-vw(24);
+    color: var(--text-muted);
+    text-align: center;
+    padding-block: vw(100);
+  }
 
-.cLogListMain {
-  .cLogListInner {
-    padding-block: vw(80) vw(160);
+  .loadingState {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: vw(200); // 로딩 스피너가 보일 최소 높이
+  }
+  .loadMore {
+    &Wrapper {
+      display: flex;
+      justify-content: center;
+      margin-block-start: vw(60);
+    }
+    &Button {
+      margin-block-start: vw(60);
+      padding: vw(20) vw(60) vw(20) vw(80);
+      border-radius: vw(20);
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      @include font-vw(20, $weight: 700);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      i {
+        --icon-size: 1.75;
+        --icon-margin: 0.1;
+        transform: translateY(-0.05em);
+      }
+    }
+    @include mq(pc-sm) {
+      &Wrapper {
+        display: flex;
+        justify-content: center;
+        margin-block-start: vw(36);
+      }
+      &Button {
+        margin-block-start: vw(36);
+        padding: vw(12) vw(36) vw(12) vw(48);
+        border-radius: vw(12);
+        @include font-vw(16);
+      }
+    }
+    @include mq(mo) {
+      &Wrapper {
+        margin-block-start: vw(18);
+      }
+      &Button {
+        margin-block-start: vw(18);
+        padding: vw(9) vw(24) vw(9) vw(36);
+        border-radius: vw(10);
+        @include font-vw(14);
+      }
+    }
   }
 }
 
 .tagFilter {
-  margin-block-end: vw(40);
-  padding-inline: var(--inner-padding);
-  z-index: 1;
+  margin-block-start: vw(30);
+
   &__list {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap; // 태그는 기본적으로 줄바꿈
     gap: vw(10);
   }
+
+  &__item {
+    flex-shrink: 0;
+  }
+
   &__button {
-    padding: vw(12) vw(24);
+    @include font-vw(20, $weight: 500);
+    padding: vw(10) vw(20);
     border-radius: vw(20);
     background-color: var(--bg-card);
-    color: var(--text-muted);
-    @include font-vw(16);
+    color: var(--bg-card-foreground);
     cursor: pointer;
     transition: all 0.2s ease;
 
-    &:hover {
-      background-color: var(--primary);
-      color: var(--primary-foreground);
-    }
     &.active {
       background-color: var(--primary);
       color: var(--primary-foreground);
     }
 
     &__count {
-      margin-inline-start: vw(8);
-      color: var(--text-muted-foreground);
+      margin-inline-start: vw(5);
+      color: var(--text-muted);
       @include font-vw(16);
+    }
+  }
+
+  @include mq(pc-sm) {
+    margin-block-start: 0;
+    margin-block-end: vw(24);
+    &__list {
+      gap: vw(8);
+    }
+    &__button {
+      padding: vw(10) vw(16);
+      border-radius: vw(12);
+      @include font-vw(14);
+      &__count {
+        margin-inline-start: vw(4);
+        @include font-vw(14);
+      }
+    }
+  }
+
+  @include mq(mo) {
+    margin-block: vw(18);
+    padding-inline: var(--inner-padding); // 모바일에서 패딩 유지
+    position: relative; // 토글 버튼과 오버레이를 위한 위치 기준
+    &__expandableContainer {
+      position: relative;
+      overflow: hidden; // 내용물 숨김 처리
+      transition: height 0.3s ease-out;
+    }
+    &__list {
+      gap: vw(6);
+      margin-block-end: vw(10);
+      padding-inline-end: vw(10);
+      &.is-collapsed {
+        max-height: vw(30); // 한 줄 높이만 보이도록 제한.
+        overflow: hidden;
+      }
+      &.is-expanded {
+        max-height: none; // 모든 내용 보이도록
+      }
+    }
+    &__button {
+      padding: vw(8) vw(12);
+      border-radius: vw(10);
+      @include font-vw(12);
+      &__count {
+        margin-inline-start: vw(2);
+        @include font-vw(12);
+      }
+    }
+
+    &__toggleButton {
+      position: absolute;
+      top: vw(15); /* 태그 필터의 대략적인 중앙 높이로 조정 */
+      right: 0;
+      transform: translateY(-50%); /* Y축 가운데 정렬 */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: vw(30); /* 너비 조정 */
+      height: vw(30); /* 높이 조정 */
+      background-color: transparent; /* 배경색 제거 */
+      border: none; /* 테두리 제거 */
+      border-radius: 0; /* 둥근 모서리 제거 */
+      cursor: pointer;
+      z-index: 3;
+      box-shadow: none; /* 그림자 제거 */
+      i {
+        --icon-size: 1.5;
+        --icon-margin: 0;
+        filter: invert(1);
+      }
     }
   }
 }
 
+// 카테고리 필터 스크롤 및 화살표, 그라데이션 스타일
 .categoryFilter {
   margin-block-end: vw(36);
   padding-inline: var(--inner-padding);
   z-index: 1;
   &__list {
     display: flex;
-    flex-wrap: wrap;
-    gap: vw(16);
+    flex-wrap: wrap; // 기본적으로는 줄바꿈 허용
+    gap: vw(10);
   }
+
+  &__item {
+    flex-shrink: 0; // 스크롤 스냅 항목은 크기 줄어들지 않도록
+  }
+
   &__button {
     padding: vw(2) vw(16) vw(2) vw(30);
     border-left: 1px solid var(--border);
     color: var(--foreground);
-    @include font-vw(24);
+    @include font-vw(24, $weight: 500);
     cursor: pointer;
 
     &.active {
@@ -143,12 +420,106 @@
       font-weight: 700;
     }
   }
+  @include mq(pc-sm) {
+    margin-block-end: vw(24);
+    &__list {
+      gap: vw(12);
+      // @media 대신 mq(mo) 믹스인 사용
+      flex-wrap: nowrap; // 모바일에서는 줄바꿈 방지
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch; // iOS 부드러운 스크롤
+      scroll-snap-type: x mandatory;
+      padding-bottom: vw(10); // 스크롤바 공간 확보 또는 숨김 처리
+      margin-bottom: vw(-10); // 스크롤바 공간 확보 또는 숨김 처리
+      /* 스크롤바 숨기기 (선택 사항) */
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+    &__item {
+      scroll-snap-align: start;
+      padding-right: vw(10); // 항목 사이의 간격 유지
+      &:last-child {
+        padding-right: vw(20); // 마지막 항목의 패딩 조정 (스크롤 스냅 끝점)
+      }
+    }
+    &__button {
+      padding: vw(2) vw(12) vw(2) vw(24);
+      @include font-vw(20);
+
+      &.active {
+        border-left-width: vw(2);
+      }
+    }
+  }
+  @include mq(mo) {
+    margin-block-end: vw(18);
+    &__list {
+      gap: vw(10);
+      scroll-snap-align: start;
+      padding-right: vw(10); // 항목 사이의 간격 유지
+    }
+    &__button {
+      padding: vw(2) 0 vw(2) vw(18);
+      @include font-vw(16);
+    }
+
+    // 카테고리 필터 스크롤 및 화살표, 그라데이션 스타일
+    &__wrapper {
+      position: relative;
+      display: flex; // 화살표와 목록을 가로로 정렬
+      align-items: center;
+      width: 100%;
+      overflow: hidden; // 그라데이션과 화살표를 위해 오버플로우 숨김
+    }
+
+    &__list {
+      flex-grow: 1; // 남은 공간을 채우도록
+      padding-inline: 0; // wrapper에서 패딩을 줬으므로 여기서는 제거
+    }
+
+    &__arrow {
+      position: absolute;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: vw(24);
+      height: vw(24);
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+      &--right {
+        top: 0;
+        right: 0;
+        transform: translateY(-10%);
+      }
+
+      i {
+        --icon-size: 1.5; // 아이콘 크기
+        --icon-margin: 0;
+        filter: invert(1);
+      }
+    }
+
+    &__gradient {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: vw(60); // 그라데이션 너비
+      height: 100%;
+      background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);
+      pointer-events: none; // 클릭 이벤트 방지
+      z-index: 5;
+    }
+  }
 }
 
 .filterGroup {
   display: flex;
   justify-content: flex-end; /* 오른쪽 정렬 */
-  margin-block-end: vw(40);
+  margin-block: vw(60) vw(40);
   padding-inline: var(--inner-padding);
 
   .sortFilter,
@@ -189,107 +560,40 @@
       transform: translateY(-50%);
     }
   }
-}
 
-.cLogListDisplay {
-  // CLogListDisplay.tsx에서 사용될 리스트 스타일 (이전에 cLogList 였던 내용)
-  .inner {
-    padding-inline: var(--inner-padding);
-    position: relative;
-  }
-  h2 {
-    @include font-vw(60, $weight: 700);
-    color: var(--foreground);
-    margin-block-end: vw(60);
-  }
-  .list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: vw(100) vw(40);
-    &__item {
-      border-radius: vw(20) vw(20) 0 0;
+  @include mq(pc-sm) {
+    margin-block: vw(40) vw(24);
+
+    .sortFilter,
+    .viewModeFilter {
+      &__button {
+        gap: vw(4);
+        padding: vw(4);
+        @include font-vw(16);
+      }
     }
-    &__link {
-      display: block;
-      border-radius: vw(20) vw(20) 0 0;
-      overflow: hidden;
+    .viewModeFilter {
+      margin-inline-start: vw(16);
+      padding-inline-start: vw(16);
+      &::before {
+        height: vw(16);
+      }
     }
-    &__image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: vw(20);
-      aspect-ratio: 4/3;
-    }
-    &__content {
-      display: flex;
-      flex-direction: column;
-      gap: vw(10);
-      margin-block-start: vw(20);
-    }
-    &__title {
-      margin-block-end: 1em;
-      @include font-vw(32, 45, $weight: 700);
-      color: var(--foreground);
-      @include ellipsis(2);
-    }
-    &__info {
-      display: flex;
-      align-items: center;
-      gap: vw(10);
-      @include font-vw(18);
-    }
-    &__category {
-      font-weight: 700;
-    }
-    &__date {
-      color: var(--text-muted);
-    }
-    &__tag {
-      display: flex;
-      gap: vw(10);
-      margin-block-start: vw(10);
-      @include font-vw(16, $weight: 300);
-    }
-    &__tagItem {
-      padding-inline: vw(12);
-      border-radius: vw(4);
-      background-color: var(--bg-card);
-      color: var(--bg-card-foreground);
-      line-height: 2;
-    }
-  }
-  .loading,
-  .error {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: vw(400);
-    @include font-vw(24);
-    color: var(--text-muted);
-    text-align: center;
-  }
-  .emptyMessage {
-    @include font-vw(24);
-    color: var(--text-muted);
-    text-align: center;
-    padding-block: vw(100);
   }
 
-  .loadMoreWrapper {
-    display: flex;
-    justify-content: center;
-    margin-block-start: vw(60);
-  }
-
-  .loadMoreButton {
-    margin-block-start: vw(60);
-    padding: vw(20) vw(80);
-    border-radius: vw(20);
-    background-color: var(--primary);
-    color: var(--primary-foreground);
-    @include font-vw(20, $weight: 700);
-    cursor: pointer;
-    transition: all 0.2s ease;
+  @include mq(mo) {
+    .sortFilter,
+    .viewModeFilter {
+      &__button {
+        @include font-vw(14);
+      }
+    }
+    .viewModeFilter {
+      margin-inline-start: vw(12);
+      padding-inline-start: vw(12);
+      &::before {
+        height: vw(12);
+      }
+    }
   }
 }

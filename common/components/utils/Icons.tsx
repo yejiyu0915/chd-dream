@@ -7,6 +7,7 @@ interface IconProps {
   name: string;
   className?: string;
   onClick?: () => void;
+  size?: 'sm' | 'md' | 'lg'; // size prop 추가
 }
 
 export default function Icon({ name, className, onClick }: IconProps) {

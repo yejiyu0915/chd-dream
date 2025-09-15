@@ -35,14 +35,14 @@ export default function InfoLayout({ children }: InfoLayoutProps) {
   return (
     <main className={c.infoLayout}>
       <div className={c.titleSection}>
-        <nav className={c.breadcrumb} aria-label="breadcrumb">
-          <ol className={c.breadcrumb__list}>
+        <nav className="breadcrumb" aria-label="breadcrumb">
+          <ol className="breadcrumb__list">
             {breadcrumbs.map((crumb, index) => (
-              <li key={crumb.href} className={c.breadcrumb__item}>
+              <li key={crumb.href} className="breadcrumb__item">
                 {index === breadcrumbs.length - 1 ? (
-                  <span className={c.breadcrumb__active}>{crumb.name}</span>
+                  <span className="breadcrumb__active">{crumb.name}</span>
                 ) : (
-                  <Link href={crumb.href} className={c.breadcrumb__link}>
+                  <Link href={crumb.href} className="breadcrumb__link">
                     {crumb.name}
                   </Link>
                 )}
