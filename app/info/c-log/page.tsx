@@ -65,6 +65,9 @@ export default function CLogListPage() {
     queryKey: ['cLogListItems'],
     queryFn: fetchCLogItems,
     staleTime: 0, // 데이터가 항상 stale 상태로 간주되어 매번 최신 데이터를 가져옴
+    onError: (err) => {
+      console.error('C-log 데이터 fetch 중 오류 발생:', err);
+    },
   });
 
   // 카테고리 개수 계산

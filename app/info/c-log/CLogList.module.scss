@@ -168,6 +168,9 @@ $list: '.list';
     }
 
     @include mq(mo) {
+      &__item {
+        min-width: vw(112);
+      }
       &__title {
         @include font-vw(16);
       }
@@ -348,7 +351,7 @@ $list: '.list';
     &__list {
       gap: vw(6);
       margin-block-end: vw(10);
-      padding-inline-end: vw(10);
+      padding-inline-end: vw(24);
       &.is-collapsed {
         max-height: vw(30); // 한 줄 높이만 보이도록 제한.
         overflow: hidden;
@@ -582,6 +585,7 @@ $list: '.list';
   }
 
   @include mq(mo) {
+    margin-block-start: 0;
     .sortFilter,
     .viewModeFilter {
       &__button {

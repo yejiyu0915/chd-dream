@@ -2,6 +2,8 @@ import { Client } from '@notionhq/client';
 import type {
   PageObjectResponse,
   QueryDatabaseResponse,
+  GetPageResponse,
+  BlockObjectResponse,
   // DatabaseObjectResponse,
   // BlockObjectResponse,
   // PartialPageObjectResponse,
@@ -9,7 +11,7 @@ import type {
   // PartialBlockObjectResponse,
 } from '@notionhq/client/build/src/api-endpoints';
 
-const notion = new Client({
+export const notion = new Client({
   auth: process.env.NOTION_TOKEN,
 });
 
@@ -147,7 +149,7 @@ export interface CLogItem {
   imageUrl: string;
   imageAlt: string;
   tags: string[];
-  link?: string; // link 속성 추가
+  slug: string; // slug 속성 추가
   description?: string; // description 속성 추가
 }
 
@@ -225,7 +227,7 @@ const mapPageToCLogItem: ItemMapper<CLogItem> = (page) => {
   const categoryProperty = properties.Category as NotionProperty | undefined;
   const dateProperty = properties.Date as NotionProperty | undefined;
   const tagsProperty = properties.Tags as NotionProperty | undefined;
-  const linkProperty = properties.Link as NotionProperty | undefined; // Link 속성 추가
+  const slugProperty = properties.Slug as NotionProperty | undefined; // Slug 속성 추가
   const descriptionProperty = properties.Description as NotionProperty | undefined; // Description 속성 추가
 
   let imageUrlToUse = '/no-image.svg';
@@ -237,6 +239,8 @@ const mapPageToCLogItem: ItemMapper<CLogItem> = (page) => {
       imageUrlToUse = `/api/notion-image?pageId=${page.id}&type=cover`;
     }
   }
+
+  const slug = getPlainText(slugProperty) || ''; // slug 추출
 
   return {
     id: page.id,
@@ -252,7 +256,8 @@ const mapPageToCLogItem: ItemMapper<CLogItem> = (page) => {
       ? tagsProperty.multi_select
       : []
     ).map((tag: { name: string }) => tag.name),
-    link: getPlainText(linkProperty) || undefined, // link 매핑
+    slug: slug, // slug 매핑
+    link: `/info/c-log/${slug}`, // link 속성을 slug 기반으로 생성
     description: getPlainText(descriptionProperty) || undefined, // description 매핑
   };
 };
@@ -363,4 +368,92 @@ export async function getKVSliderData(): Promise<KVSliderItem[]> {
 // Notion 데이터베이스에서 메인 페이지용 C-log 데이터 (6개) 가져오기
 export async function getCLogMainData(): Promise<CLogItem[]> {
   return getPublishedNotionData<CLogItem>('NOTION_CLOG_ID', mapPageToCLogItem, 6);
+}
+
+export async function getNotionPageAndContentBySlug(
+  databaseIdEnvVar: string,
+  slug: string
+): Promise<{ page: PageObjectResponse; blocks: BlockObjectResponse[] } | null> {
+  const notionDatabaseId = process.env[databaseIdEnvVar];
+  if (!process.env.NOTION_TOKEN || !notionDatabaseId) {
+    return null;
+  }
+
+  try {
+    // 1. 슬러그로 페이지 찾기
+    const response: QueryDatabaseResponse = await notion.databases.query({
+      database_id: notionDatabaseId,
+      filter: {
+        property: 'Slug', // Notion 데이터베이스의 slug 속성 이름
+        rich_text: {
+          equals: slug,
+        },
+      },
+      page_size: 1, // 슬러그는 고유해야 하므로 하나만 가져옵니다.
+    });
+
+    if (response.results.length === 0) {
+      return null; // 해당 슬러그를 가진 페이지가 없습니다.
+    }
+
+    const page = response.results[0];
+
+    if (!('properties' in page) || page.object !== 'page') {
+      return null; // 유효한 페이지 객체가 아닙니다.
+    }
+
+    // 2. 페이지의 모든 블록 가져오기
+    const blocks: BlockObjectResponse[] = [];
+    let cursor: string | null = null;
+    do {
+      const blockResponse = await notion.blocks.children.list({
+        block_id: page.id,
+        start_cursor: cursor || undefined,
+      });
+      blocks.push(...(blockResponse.results as BlockObjectResponse[]));
+      cursor = blockResponse.next_cursor;
+    } while (cursor);
+
+    return { page: page as PageObjectResponse, blocks };
+  } catch (_error: unknown) {
+    void _error;
+    // console.error(`Notion 페이지 및 콘텐츠 가져오기 중 오류 발생:`, _error);
+    return null;
+  }
+}
+
+export async function getPrevNextCLogPosts(currentSlug: string): Promise<{
+  prev: { title: string; slug: string } | null;
+  next: { title: string; slug: string } | null;
+}> {
+  const clogItems = await getCLogData(); // 모든 C-log 데이터 가져오기 (날짜 내림차순 정렬)
+
+  let prevPost: { title: string; slug: string } | null = null;
+  let nextPost: { title: string; slug: string } | null = null;
+
+  for (let i = 0; i < clogItems.length; i++) {
+    const item = clogItems[i];
+    const itemSlug = item.link?.split('/').pop();
+
+    if (itemSlug === currentSlug) {
+      // 현재 게시글을 찾았을 때 이전/다음 게시글 설정
+      if (i > 0) {
+        const prevItem = clogItems[i - 1];
+        prevPost = {
+          title: prevItem.title,
+          slug: prevItem.link?.split('/').pop() || '',
+        };
+      }
+      if (i < clogItems.length - 1) {
+        const nextItem = clogItems[i + 1];
+        nextPost = {
+          title: nextItem.title,
+          slug: nextItem.link?.split('/').pop() || '',
+        };
+      }
+      break; // 현재 게시글을 찾았으므로 루프 종료
+    }
+  }
+
+  return { prev: prevPost, next: nextPost };
 }

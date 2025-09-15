@@ -102,7 +102,10 @@ function CLogListPage() {
     var _e = react_query_1.useQuery({
         queryKey: ['cLogListItems'],
         queryFn: fetchCLogItems,
-        staleTime: 0
+        staleTime: 0,
+        onError: function (err) {
+            console.error('C-log 데이터 fetch 중 오류 발생:', err);
+        }
     }), allCLogData = _e.data, isLoading = _e.isLoading, isError = _e.isError, error = _e.error;
     // 카테고리 개수 계산
     var categoryCounts = react_1.useMemo(function () {

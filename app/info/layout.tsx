@@ -32,31 +32,36 @@ export default function InfoLayout({ children }: InfoLayoutProps) {
   const currentPageTitle =
     breadcrumbs.length > 1 ? breadcrumbs[breadcrumbs.length - 1].name : 'Home';
 
+  // C-log 상세 페이지 여부 확인
+  const isCLogDetailPage = /\/info\/c-log\/[^/]+$/.test(pathname);
+
   return (
     <main className={c.infoLayout}>
-      <div className={c.titleSection}>
-        <nav className="breadcrumb" aria-label="breadcrumb">
-          <ol className="breadcrumb__list">
-            {breadcrumbs.map((crumb, index) => (
-              <li key={crumb.href} className="breadcrumb__item">
-                {index === breadcrumbs.length - 1 ? (
-                  <span className="breadcrumb__active">{crumb.name}</span>
-                ) : (
-                  <Link href={crumb.href} className="breadcrumb__link">
-                    {crumb.name}
-                  </Link>
-                )}
-              </li>
-            ))}
-          </ol>
-        </nav>
-        <div className={`${c.inner} inner`}>
-          <div className={c.title}>
-            <h1 className={c.pageTitle}>{currentPageTitle}</h1>
-            <p className={c.pageDesc}>교회의 다양한 이야기를 소개합니다.</p>
+      {!isCLogDetailPage && (
+        <div className={c.titleSection}>
+          <nav className="breadcrumb" aria-label="breadcrumb">
+            <ol className="breadcrumb__list">
+              {breadcrumbs.map((crumb, index) => (
+                <li key={crumb.href} className="breadcrumb__item">
+                  {index === breadcrumbs.length - 1 ? (
+                    <span className="breadcrumb__active">{crumb.name}</span>
+                  ) : (
+                    <Link href={crumb.href} className="breadcrumb__link">
+                      {crumb.name}
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </nav>
+          <div className={`${c.inner} inner`}>
+            <div className={c.title}>
+              <h1 className={c.pageTitle}>{currentPageTitle}</h1>
+              <p className={c.pageDesc}>교회의 다양한 이야기를 소개합니다.</p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
       {children}
     </main>
   );
