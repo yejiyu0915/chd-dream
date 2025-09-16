@@ -103,7 +103,9 @@ export default function CLogDetailClientContent({
         {/* 목차 (제거됨) */}
         {/* 상세 내용 */}
         <div className={styles.notionContent}>
-          {rawContentBlocks.map((block) => renderNotionBlock(block))}
+          {rawContentBlocks.map((block) => (
+            <div key={block.id}>{renderNotionBlock(block)}</div>
+          ))}
         </div>
       </div>
 

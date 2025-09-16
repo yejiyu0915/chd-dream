@@ -1,4 +1,10 @@
 import type { NextConfig } from 'next';
+import createMDX from '@next/mdx';
+import remarkGfm from 'remark-gfm';
+import rehypePrettyCode from 'rehype-pretty-code';
+import rehypeSlug from 'rehype-slug';
+import rehypeExtractToc from '@stefanprobst/rehype-extract-toc';
+import rehypeSanitize from 'rehype-sanitize';
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -54,6 +60,19 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
 };
 
-export default nextConfig;
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: [remarkGfm],
+    rehypePlugins: [
+      rehypeSlug,
+      rehypeExtractToc,
+      [rehypePrettyCode, { theme: 'github-dark' }],
+      rehypeSanitize,
+    ],
+  },
+});
+
+export default withMDX(nextConfig);

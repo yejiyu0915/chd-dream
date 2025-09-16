@@ -19,7 +19,7 @@ interface CLogDetailPageProps {
 // generateStaticParams 함수는 app/info/c-log/layout.tsx로 이동했습니다.
 
 export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
-  const slug = (await params.slug) as string; // params.slug를 await하여 언래핑
+  const slug = params.slug as string; // params.slug를 언래핑
 
   if (!slug) {
     notFound();
