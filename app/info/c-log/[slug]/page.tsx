@@ -20,6 +20,7 @@ import {
 import { NotionToMarkdown } from 'notion-to-md'; // NotionToMarkdown 임포트
 // import CLogDetailClientContent from './_components/CLogDetailClientContent'; // CLogDetailClientContent 임포트 제거
 import Link from 'next/link'; // Link 임포트
+import styles from './CLogDetail.module.scss'; // CSS Module 임포트
 
 interface CLogDetailPageProps {
   params: { slug: string };
@@ -134,7 +135,7 @@ export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
           <hr className="my-8" />
 
           {/* MDX 본문 */}
-          <div className="prose prose-neutral dark:prose-invert prose-headings:scroll-mt-[var(--header-height)] max-w-none">
+          <div className={styles.mdxContent}>
             <MDXRemote
               source={markdown} // mdxSource 대신 markdown 직접 전달
               options={{
