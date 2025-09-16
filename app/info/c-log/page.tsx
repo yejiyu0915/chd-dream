@@ -10,10 +10,17 @@ import CLogSortFilter from './CLogSortFilter'; // CLogSortFilter 컴포넌트 �
 import CLogViewModeFilter from './CLogViewModeFilter'; // CLogViewModeFilter 컴포넌트 임포트
 import c from '@/app/info/c-log/CLogList.module.scss';
 import { useRouter, useSearchParams } from 'next/navigation'; // useRouter와 useSearchParams 임포트
+import { usePageTitle } from '@/app/info/title-context'; // usePageTitle 훅 임포트
 
 export default function CLogListPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { setPageTitle } = usePageTitle(); // setPageTitle 함수 가져오기
+
+  // 페이지 제목 설정
+  useEffect(() => {
+    setPageTitle('C-Log'); // C-Log 리스트 페이지 제목 설정
+  }, [setPageTitle]);
 
   // URL 파라미터에서 초기 상태 설정
   const initialCategory = searchParams.get('category')
@@ -65,8 +72,8 @@ export default function CLogListPage() {
     queryKey: ['cLogListItems'],
     queryFn: fetchCLogItems,
     staleTime: 0, // 데이터가 항상 stale 상태로 간주되어 매번 최신 데이터를 가져옴
-    onError: (err) => {
-      console.error('C-log 데이터 fetch 중 오류 발생:', err);
+    onError: (_err) => {
+      // console.error('C-log 데이터 fetch 중 오류 발생:', err);
     },
   });
 

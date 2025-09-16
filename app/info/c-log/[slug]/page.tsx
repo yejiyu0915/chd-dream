@@ -149,6 +149,16 @@ export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
 
           <hr className="my-16" />
 
+          {/* 목록으로 돌아가기 버튼 */}
+          <div className="mb-8 text-center">
+            <Link
+              href="/info/c-log"
+              className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            >
+              목록으로
+            </Link>
+          </div>
+
           {/* 이전/다음 포스트 네비게이션 */}
           <div className="flex justify-between mt-8">
             {prevPost ? (
@@ -171,7 +181,7 @@ export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
         </section>
         <aside className="relative hidden md:block">
           {/* 목차 */}
-          {data?.toc && data.toc.length > 0 && (
+          {/* {data?.toc && data.toc.length > 0 && (
             <div className="sticky top-[var(--sticky-top)]">
               <div className="bg-muted/60 space-y-4 rounded-lg p-6 backdrop-blur-sm">
                 <h3 className="text-lg font-semibold">목차</h3>
@@ -189,7 +199,7 @@ export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
                 </nav>
               </div>
             </div>
-          )}
+          )} */}
         </aside>
       </div>
     </div>
