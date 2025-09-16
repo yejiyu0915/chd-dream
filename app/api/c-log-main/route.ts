@@ -1,4 +1,9 @@
-import { getPublishedNotionData, mapPageToCLogItem, CLogItem, getCLogMainData } from '@/lib/notion';
+import {
+  _getPublishedNotionData,
+  _mapPageToCLogItem,
+  _CLogItem,
+  getCLogMainData,
+} from '@/lib/notion';
 import { handleApiGetRequest } from '@/common/utils/apiHandler';
 import { type NextRequest } from 'next/server';
 

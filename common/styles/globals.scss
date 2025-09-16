@@ -68,6 +68,10 @@ html.lenis {
   }
 }
 
+main {
+  min-height: 100vh;
+}
+
 /* ----- 전역 로딩 스피너 스타일 ----- */
 .loaderContainer {
   display: flex;

@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import kv from '@/app/main/KV/KV.module.scss';
 import { NewsItem } from '@/lib/notion';
 import { useQuery, useQueryClient } from '@tanstack/react-query'; // useQueryClient 임포트 추가

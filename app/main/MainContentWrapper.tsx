@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import KV from '@/app/_main/KV/KV';
-import MainContentInner from '@/app/_main/MainContentInner';
+import KV from '@/app/main/KV/KV';
+import MainContentInner from '@/app/main/MainContentInner';
 import { KVSliderItem, SermonData } from '@/lib/notion';
 
 interface MainContentWrapperProps {

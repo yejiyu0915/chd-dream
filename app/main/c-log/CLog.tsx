@@ -5,7 +5,7 @@ import Icon from '@/common/components/utils/Icons';
 import c from '@/app/main/c-log/CLog.module.scss';
 import { CLogItem } from '@/lib/notion';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import CLogSkeleton from '@/app/_main/c-log/CLogSkeleton';
+import CLogSkeleton from '@/app/main/c-log/CLogSkeleton';
 import { useRef } from 'react';
 
 export default function CLog() {
@@ -64,7 +64,7 @@ export default function CLog() {
         <div className={`${c.inner} inner`}>
           <h2 className={c.title}>C-log</h2>
           <p className={c.desc}>교회의 다양한 이야기를 소개합니다.</p>
-          <Link href="/info/c-log" className={c.link}>
+          <Link href="/info/c-log" className={c.link} scroll={false}>
             전체 글 보기 <Icon name="arrow-up-right" className={c.link__icon} />
           </Link>
           <div className={c.content}>
@@ -108,7 +108,9 @@ export default function CLog() {
               {cLogData.map((item: CLogItem) => {
                 return (
                   <li key={item.id} className={c.list__item}>
-                    <a href="#" className={c.list__link}>
+                    <Link href={item.link} className={c.list__link}>
+                      {' '}
+                      {/* Link 컴포넌트 사용 및 href 설정 */}
                       <div className={c.list__imageContainer}>
                         <Image
                           src={item.imageUrl}
@@ -135,7 +137,7 @@ export default function CLog() {
                           </div>
                         )}
                       </div>
-                    </a>
+                    </Link>
                   </li>
                 );
               })}

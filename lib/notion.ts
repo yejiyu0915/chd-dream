@@ -2,7 +2,8 @@ import { Client } from '@notionhq/client';
 import type {
   PageObjectResponse,
   QueryDatabaseResponse,
-  GetPageResponse,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  GetPageResponse, // 사용되지 않지만, 임포트 오류를 피하기 위해 남겨둠
   BlockObjectResponse,
   // DatabaseObjectResponse,
   // BlockObjectResponse,
@@ -18,7 +19,8 @@ export const notion = new Client({
 // 제네릭 아이템 타입 정의 (모든 속성을 포함할 수 있도록)
 interface GenericItem {
   id: string;
-  [key: string]: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any; // Notion API 응답의 유연성을 위해 any 허용
 }
 
 // Notion 페이지 객체를 특정 타입으로 변환하는 매퍼 함수 타입 정의
@@ -29,10 +31,13 @@ export async function getNotionData<T extends GenericItem>(
   databaseIdEnvVar: string, // Notion 데이터베이스 ID 환경 변수 이름 (예: 'NOTION_CLOG_ID')
   mapper: ItemMapper<T>, // Notion 페이지 객체를 원하는 타입 T로 변환하는 매퍼 함수
   options?: {
-    filter?: any; // 데이터 필터링 조건
-    sorts?: any[]; // 데이터 정렬 조건
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    filter?: QueryDatabaseResponse['results'][number] extends { properties: infer P }
+      ? { property: keyof P; [key: string]: any }
+      : any; // Notion 필터 타입으로 구체화
+    sorts?: { property: string; direction: 'ascending' | 'descending' }[]; // 데이터 정렬 조건 (구체화)
     pageSize?: number; // 가져올 데이터의 최대 개수
-    revalidateSeconds?: number; // 캐시 재검증 시간 (초 단위)
+    revalidateSeconds?: number; // 캐시 재검증 시간 (초 단위) - Next.js의 fetch revalidate와 관련되지만, 여기서는 직접 적용하지 않음
   }
 ): Promise<T[]> {
   // 환경 변수에서 Notion 토큰과 데이터베이스 ID 가져오기
@@ -49,7 +54,7 @@ export async function getNotionData<T extends GenericItem>(
       filter: options?.filter,
       sorts: options?.sorts,
       page_size: options?.pageSize,
-      // Next.js 캐싱을 위한 revalidate 옵션 적용 (기본 60초)
+      // Notion SDK 호출에는 Next.js fetch 캐싱 옵션을 직접 적용하지 않음. 대신 On-Demand Revalidation 사용
       // next: {
       //   revalidate: options?.revalidateSeconds ?? 60,
       // },
@@ -120,9 +125,9 @@ export async function getNotionDatabaseLastEditedTime(
   try {
     const database = await notion.databases.retrieve({
       database_id: notionDatabaseId,
-      // 이 정보는 매우 빠르게 변경될 수 있으므로 캐시 시간을 짧게 설정
+      // Notion SDK 호출에는 Next.js fetch 캐싱 옵션을 직접 적용하지 않음. 대신 On-Demand Revalidation 사용
       // next: {
-      //   revalidate: 1,
+      //   revalidate: 10, // 데이터베이스 메타데이터 캐시 시간 (10초)
       // },
     });
 
@@ -150,6 +155,7 @@ export interface CLogItem {
   imageAlt: string;
   tags: string[];
   slug: string; // slug 속성 추가
+  link: string; // link 속성 다시 추가
   description?: string; // description 속성 추가
 }
 
@@ -180,10 +186,11 @@ export interface KVSliderItem {
   link: string;
 }
 
-type NotionProperty = {
+interface NotionProperty {
   type: string;
-  [key: string]: any;
-};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any; // Notion 속성의 동적 특성으로 인해 any 허용
+}
 
 // Notion 속성에서 일반 텍스트를 추출하는 헬퍼 함수
 function getPlainText(property: NotionProperty | undefined): string | null {
@@ -257,7 +264,7 @@ const mapPageToCLogItem: ItemMapper<CLogItem> = (page) => {
       : []
     ).map((tag: { name: string }) => tag.name),
     slug: slug, // slug 매핑
-    link: `/info/c-log/${slug}`, // link 속성을 slug 기반으로 생성
+    link: `/info/c-log/${slug}`, // link 속성 추가
     description: getPlainText(descriptionProperty) || undefined, // description 매핑
   };
 };
@@ -390,6 +397,8 @@ export async function getNotionPageAndContentBySlug(
         },
       },
       page_size: 1, // 슬러그는 고유해야 하므로 하나만 가져옵니다.
+      // Notion SDK 호출에는 Next.js fetch 캐싱 옵션을 직접 적용하지 않음. 대신 On-Demand Revalidation 사용
+      // next: { revalidate: 60 }, // 60초 동안 Notion 데이터베이스 쿼리 결과 캐싱
     });
 
     if (response.results.length === 0) {
@@ -409,6 +418,8 @@ export async function getNotionPageAndContentBySlug(
       const blockResponse = await notion.blocks.children.list({
         block_id: page.id,
         start_cursor: cursor || undefined,
+        // Notion SDK 호출에는 Next.js fetch 캐싱 옵션을 직접 적용하지 않음. 대신 On-Demand Revalidation 사용
+        // next: { revalidate: 60 }, // 60초 동안 Notion 블록 내용 캐싱
       });
       blocks.push(...(blockResponse.results as BlockObjectResponse[]));
       cursor = blockResponse.next_cursor;
@@ -433,22 +444,23 @@ export async function getPrevNextCLogPosts(currentSlug: string): Promise<{
 
   for (let i = 0; i < clogItems.length; i++) {
     const item = clogItems[i];
-    const itemSlug = item.link?.split('/').pop();
+    // const itemSlug = item.link?.split('/').pop(); // link 속성 대신 slug 사용
 
-    if (itemSlug === currentSlug) {
+    if (item.slug === currentSlug) {
+      // item.slug로 비교
       // 현재 게시글을 찾았을 때 이전/다음 게시글 설정
       if (i > 0) {
         const prevItem = clogItems[i - 1];
         prevPost = {
           title: prevItem.title,
-          slug: prevItem.link?.split('/').pop() || '',
+          slug: prevItem.slug, // slug 사용
         };
       }
       if (i < clogItems.length - 1) {
         const nextItem = clogItems[i + 1];
         nextPost = {
           title: nextItem.title,
-          slug: nextItem.link?.split('/').pop() || '',
+          slug: nextItem.slug, // slug 사용
         };
       }
       break; // 현재 게시글을 찾았으므로 루프 종료

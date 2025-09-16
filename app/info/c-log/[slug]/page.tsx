@@ -13,10 +13,10 @@ import { compile } from '@mdx-js/mdx';
 import { getNotionPageAndContentBySlug, notion, getPrevNextCLogPosts } from '@/lib/notion';
 import { NotionToMarkdown } from 'notion-to-md';
 import mdx from 'common/styles/mdx/MdxContent.module.scss';
-import PageTitleSetter from '@/app/info/_components/PageTitleSetter';
+import PageTitleSetter from '@/app/info/components/PageTitleSetter';
 import l from 'common/styles/mdx/MdxLayout.module.scss';
-import CLogDetailHeader from './_components/CLogDetailHeader';
-import CLogDetailFooter from './_components/CLogDetailFooter';
+import CLogDetailHeader from '@/app/info/c-log/[slug]/components/CLogDetailHeader';
+import CLogDetailFooter from '@/app/info/c-log/[slug]/components/CLogDetailFooter';
 
 interface CLogDetailPageProps {
   params: { slug: string };

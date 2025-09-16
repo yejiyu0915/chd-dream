@@ -1,5 +1,5 @@
 import { Client } from '@notionhq/client'; // Notion Client 임포트
-// import type { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
+import type { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints'; // PageObjectResponse 타입 임포트 추가
 // import type { GetPagePropertyResponse } from '@notionhq/client/build/src/api-endpoints';
 
 // Notion 클라이언트 초기화
@@ -23,13 +23,13 @@ export async function GET(
     }
 
     // 페이지 정보 가져오기
-    const page = await notion.pages.retrieve({
+    const page = (await notion.pages.retrieve({
       page_id: pageId,
-    });
-    const pageProperties = page.properties as any;
+    })) as PageObjectResponse; // PageObjectResponse로 타입 단언
+    // const pageProperties = page.properties as any; // 필요 없으므로 제거
 
     if (imageType === 'cover') {
-      const cover = (page as any).cover;
+      const cover = page.cover;
       if (cover) {
         if (cover.type === 'external') {
           imageUrlToFetch = cover.external.url;
@@ -39,8 +39,17 @@ export async function GET(
         }
       }
     } else if (imageType === 'property' && propertyId) {
-      const property = pageProperties[propertyId];
-      if (property && property.type === 'files' && property.files.length > 0) {
+      // propertyId를 사용하여 page.properties에서 속성을 동적으로 찾기
+      const property = Object.values(page.properties).find(
+        (prop) => 'id' in prop && prop.id === propertyId
+      );
+
+      if (
+        property &&
+        property.type === 'files' &&
+        'files' in property &&
+        property.files.length > 0
+      ) {
         const file = property.files[0];
         if (file.type === 'external') {
           imageUrlToFetch = file.external.url;
