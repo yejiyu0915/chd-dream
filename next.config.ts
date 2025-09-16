@@ -65,13 +65,13 @@ const nextConfig: NextConfig = {
 
 const withMDX = createMDX({
   options: {
-    remarkPlugins: [remarkGfm],
-    rehypePlugins: [
-      rehypeSlug,
-      rehypeExtractToc,
-      [rehypePrettyCode, { theme: 'github-dark' }],
-      rehypeSanitize,
-    ],
+    // remarkPlugins: [remarkGfm], // 전역 MDX 플러그인 설정 제거 또는 주석 처리
+    // rehypePlugins: [
+    //   rehypeSlug,
+    //   rehypeExtractToc,
+    //   [rehypePrettyCode, { theme: 'github-dark' }],
+    //   rehypeSanitize,
+    // ],
   },
 });
 
