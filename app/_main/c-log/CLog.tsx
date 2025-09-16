@@ -5,7 +5,7 @@ import Icon from '@/common/components/utils/Icons';
 import c from '@/app/main/c-log/CLog.module.scss';
 import { CLogItem } from '@/lib/notion';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import CLogSkeleton from '@/app/main/c-log/CLogSkeleton';
+import CLogSkeleton from '@/app/_main/c-log/CLogSkeleton';
 import { useRef } from 'react';
 
 export default function CLog() {

@@ -1,11 +1,11 @@
 'use client';
 
 import m from '@/app/main/main.module.scss';
-import Intro from '@/app/main/intro/Intro';
-import Sermon from '@/app/main/sermon/Sermon';
-import CLog from '@/app/main/c-log/CLog';
-import QuickLink from '@/app/main/quick-link/QuickLink';
-import Instagram from '@/app/main/Instagram/Instagram';
+import Intro from '@/app/_main/intro/Intro';
+import Sermon from '@/app/_main/sermon/Sermon';
+import CLog from '@/app/_main/c-log/CLog';
+import QuickLink from '@/app/_main/quick-link/QuickLink';
+import Instagram from '@/app/_main/Instagram/Instagram';
 import { SermonData } from '@/lib/notion';
 
 interface MainContentInnerProps {

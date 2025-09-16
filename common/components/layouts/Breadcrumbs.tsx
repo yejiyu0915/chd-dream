@@ -12,11 +12,11 @@ interface BreadcrumbItem {
   href: string;
 }
 
-// interface BreadcrumbsProps { // props 제거
-//   breadcrumbs: BreadcrumbItem[];
-// }
+interface BreadcrumbsProps {
+  className?: string; // className prop 추가
+}
 
-export default function Breadcrumbs() {
+export default function Breadcrumbs({ className }: BreadcrumbsProps) {
   // props 제거
   const pathname = usePathname(); // usePathname 다시 추가
   const pathSegments = pathname.split('/').filter(Boolean);
@@ -38,19 +38,23 @@ export default function Breadcrumbs() {
   ];
 
   return (
-    <nav className="breadcrumb" aria-label="breadcrumb">
+    <nav className={`breadcrumb ${className || ''}`} aria-label="breadcrumb">
+      {' '}
+      {/* className 적용 */}
       <ol className="breadcrumb__list">
-        {breadcrumbs.map((crumb, index) => (
-          <li key={crumb.href} className="breadcrumb__item">
-            {index === breadcrumbs.length - 1 ? (
-              <span className="breadcrumb__active">{crumb.name}</span>
-            ) : (
-              <Link href={crumb.href} className="breadcrumb__link">
-                {crumb.name}
-              </Link>
-            )}
-          </li>
-        ))}
+        {breadcrumbs.map((crumb, index) =>
+          index > 2 ? null : (
+            <li key={crumb.href} className="breadcrumb__item">
+              {index === breadcrumbs.length - 1 ? (
+                <span className="breadcrumb__active">{crumb.name}</span>
+              ) : (
+                <Link href={crumb.href} className="breadcrumb__link">
+                  {crumb.name}
+                </Link>
+              )}
+            </li>
+          )
+        )}
       </ol>
     </nav>
   );

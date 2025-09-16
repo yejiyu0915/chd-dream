@@ -3,14 +3,14 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { CLogItem } from '@/lib/notion';
 import { useQuery } from '@tanstack/react-query';
-import CLogTagFilter from './CLogTagFilter';
-import CLogListDisplay from './CLogListDisplay';
-import CLogCategoryFilter from './CLogCategoryFilter'; // CLogCategoryFilter 컴포넌트 임포트
-import CLogSortFilter from './CLogSortFilter'; // CLogSortFilter 컴포넌트 임포트
-import CLogViewModeFilter from './CLogViewModeFilter'; // CLogViewModeFilter 컴포넌트 임포트
+import CLogTagFilter from '@/app/info/c-log/_components/CLogTagFilter';
+import CLogListDisplay from '@/app/info/c-log/_components/CLogListDisplay';
+import CLogCategoryFilter from '@/app/info/c-log/_components/CLogCategoryFilter'; // CLogCategoryFilter 컴포넌트 임포트
+import CLogSortFilter from '@/app/info/c-log/_components/CLogSortFilter'; // CLogSortFilter 컴포넌트 임포트
+import CLogViewModeFilter from '@/app/info/c-log/_components/CLogViewModeFilter'; // CLogViewModeFilter 컴포넌트 임포트
 import c from '@/app/info/c-log/CLogList.module.scss';
 import { useRouter, useSearchParams } from 'next/navigation'; // useRouter와 useSearchParams 임포트
-import { usePageTitle } from '@/app/info/title-context'; // usePageTitle 훅 임포트
+import { usePageTitle } from '@/app/info/utils/title-context'; // usePageTitle 훅 임포트
 
 export default function CLogListPage() {
   const router = useRouter();

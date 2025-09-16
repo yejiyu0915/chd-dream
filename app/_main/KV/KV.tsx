@@ -1,8 +1,8 @@
 'use client';
 
 import kv from '@/app/main/KV/KV.module.scss';
-import KVNews from '@/app/main/KV/KVNews';
-import KVSlider from '@/app/main/KV/KVSlider';
+import KVNews from '@/app/_main/KV/KVNews';
+import KVSlider from '@/app/_main/KV/KVSlider';
 import { KVSliderItem } from '@/lib/notion'; // KVSliderItem 임포트
 import { useEffect, useState } from 'react';
 

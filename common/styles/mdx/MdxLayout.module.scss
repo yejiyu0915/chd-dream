@@ -1,0 +1,260 @@
+@use '@/common/styles/mixins/function' as *;
+
+.container {
+  padding-block-start: vw(--header-height);
+}
+
+.header {
+  display: flex;
+  height: vw(450);
+  padding-block: 0 vw(40);
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+}
+.content {
+  flex: 1;
+  margin-block-start: auto;
+  position: relative;
+  z-index: 2;
+}
+.category {
+  margin-block-end: 1em;
+  padding-inline-start: 0.5em;
+  border-left: vw(4) solid var(--background);
+  @include font-vw(18, $weight: 700, $color: var(--background));
+}
+.title {
+  @include font-vw(48, $weight: 700, $color: var(--background));
+  line-height: 1.2;
+  @include ellipsis(3);
+}
+.date {
+  margin-block-start: 2.5em;
+  @include font-vw(18, $color: var(--border-light));
+}
+
+.image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+@include mq(pc-sm) {
+  .header {
+    height: vw(400);
+    padding-block: 0 vw(36);
+  }
+  .category {
+    border-left-width: vw(2);
+    @include font-vw(16);
+  }
+  .title {
+    @include font-vw(40);
+  }
+  .date {
+    @include font-vw(16);
+  }
+}
+
+@include mq(mo) {
+  .header {
+    height: vw(360);
+    padding-block: 0 vw(28);
+  }
+  .category {
+    @include font-vw(14);
+  }
+  .title {
+    @include font-vw(36);
+  }
+  .date {
+    @include font-vw(14);
+  }
+}
+
+.tag {
+  &Container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: vw(10); /* 태그 사이 간격 */
+    margin-block: vw(40); /* 태그 컨테이너 상단 여백 */
+    position: relative;
+    z-index: 2;
+  }
+  &Item {
+    padding: vw(8) vw(16); /* 태그 패딩 */
+    border-radius: vw(10); /* 태그 둥근 모서리 */
+    background-color: rgb(255, 241, 244); /* 태그 배경색 */
+    color: rgb(255, 100, 100); /* 태그 텍스트 색상 */
+    @include font-vw(18, $weight: 500);
+    white-space: nowrap; /* 태그 내용 줄바꿈 방지 */
+  }
+  @include mq(pc-sm) {
+    &Container {
+      gap: vw(8);
+      margin-block: vw(28);
+    }
+    &Item {
+      padding: vw(6) vw(12);
+      border-radius: vw(6);
+      @include font-vw(16);
+    }
+  }
+  @include mq(mo) {
+    &Container {
+      gap: vw(6);
+      margin-block: vw(18);
+    }
+    &Item {
+      padding: vw(4) vw(8);
+      border-radius: vw(4);
+      @include font-vw(14);
+    }
+  }
+}
+
+div:has(> .detailBreadcrumbs) {
+  margin-block-start: -1px;
+}
+.detailBreadcrumbs {
+  ol {
+    &::before {
+      background-color: var(--border-light);
+    }
+  }
+  li {
+    &::after {
+      background-color: var(--border-light);
+    }
+  }
+  a {
+    color: var(--border-light);
+    &:hover {
+      color: var(--background);
+    }
+  }
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border-light);
+  margin-top: vw(40);
+  margin-bottom: vw(40);
+  @include mq(pc-sm) {
+    margin-top: vw(30);
+    margin-bottom: vw(30);
+  }
+  @include mq(mo) {
+    margin-top: vw(20);
+    margin-bottom: vw(20);
+  }
+}
+
+.footer {
+  padding-block-end: vw(200);
+  @include mq(pc-sm) {
+    padding-block-end: vw(160);
+  }
+  @include mq(mo) {
+    padding-block-end: vw(80);
+  }
+}
+
+.button {
+  padding: vw(20) vw(60);
+  border-radius: vw(20);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  @include font-vw(20, $weight: 700);
+  cursor: pointer;
+  &Wrapper {
+    display: flex;
+    justify-content: center;
+    margin-block-start: vw(60);
+    @include mq(pc-sm) {
+      margin-block-start: vw(36);
+    }
+    @include mq(mo) {
+      margin-block-start: vw(18);
+    }
+  }
+  @include mq(pc-sm) {
+    padding: vw(18) vw(48);
+    border-radius: vw(12);
+    @include font-vw(16);
+  }
+  @include mq(mo) {
+    padding: vw(14.25) vw(36);
+    border-radius: vw(10);
+    @include font-vw(14);
+  }
+}
+
+.navButtons {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  margin-block-start: vw(40);
+  border-radius: vw(10);
+  border: 1px solid var(--border-light);
+  background-color: #f9f9f9;
+
+  @include mq(pc-sm) {
+    margin-block-start: vw(36);
+  }
+  @include mq(mo) {
+    margin-block-start: vw(24);
+  }
+}
+
+.navLink {
+  flex: 1;
+  @include font-vw(20);
+  display: flex; /* 아이콘과 텍스트 가로 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  gap: 0.5em;
+  padding: 1em;
+  &Title {
+    display: inline-block;
+    font-weight: 700;
+    white-space: normal;
+    line-height: 1.5;
+  }
+  i {
+    --icon-size: 1.7;
+    --icon-margin: 0;
+    flex: 0 0 vw(34);
+    filter: invert(1);
+  }
+  &:nth-child(2) {
+    border-top: 1px solid var(--border-light);
+  }
+  @include mq(pc-sm) {
+    @include font-vw(18);
+    i {
+      flex: 0 0 vw(31);
+    }
+  }
+  @include mq(mo) {
+    @include font-vw(14);
+    i {
+      flex: 0 0 vw(28);
+    }
+  }
+}

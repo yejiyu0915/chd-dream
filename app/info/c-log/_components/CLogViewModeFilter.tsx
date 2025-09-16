@@ -1,5 +1,5 @@
 import React from 'react';
-import c from './CLogList.module.scss';
+import c from '@/app/info/c-log/CLogList.module.scss';
 import Icon from '@/common/components/utils/Icons'; // Icon 컴포넌트 임포트
 
 interface CLogViewModeFilterProps {

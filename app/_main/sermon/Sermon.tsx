@@ -6,7 +6,7 @@ import Icon from '@/common/components/utils/Icons';
 import s from '@/app/main/sermon/Sermon.module.scss';
 import { SermonItem } from '@/lib/notion';
 import { useQuery, useQueryClient } from '@tanstack/react-query'; // useQueryClient 임포트 추가
-import SermonSkeleton from '@/app/main/sermon/SermonSkeleton'; // SermonSkeleton 임포트
+import SermonSkeleton from '@/app/_main/sermon/SermonSkeleton'; // SermonSkeleton 임포트
 import { useRef } from 'react'; // useRef 임포트 추가
 
 // sermonData prop 제거

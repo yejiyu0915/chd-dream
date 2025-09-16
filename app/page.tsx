@@ -1,5 +1,5 @@
 import m from '@/app/main/main.module.scss';
-import MainContentWrapper from '@/app/main/MainContentWrapper';
+import MainContentWrapper from '@/app/_main/MainContentWrapper';
 import { getSermonData, getKVSliderData, KVSliderItem } from '@/lib/notion';
 
 export default async function Main() {

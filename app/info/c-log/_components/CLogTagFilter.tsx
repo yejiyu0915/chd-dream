@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react'; // useRef, useState, useEffect 임포트
-import c from './CLogList.module.scss';
+import c from '@/app/info/c-log/CLogList.module.scss';
 import Icon from '@/common/components/utils/Icons'; // Icon 컴포넌트 임포트
 
 interface CLogTagFilterProps {

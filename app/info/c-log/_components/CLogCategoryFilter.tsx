@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import c from './CLogList.module.scss'; // 동일한 SCSS 모듈 사용
+import c from '@/app/info/c-log/CLogList.module.scss'; // 동일한 SCSS 모듈 사용
 import Icon from '@/common/components/utils/Icons'; // Icon 컴포넌트 임포트
 
 interface CLogCategoryFilterProps {
