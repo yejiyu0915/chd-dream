@@ -5,7 +5,18 @@
 }
 
 .breadcrumb {
-  display: none; // 브레드크럼 숨김
+  padding: 20px 0;
+  font-size: 14px;
+  color: #666;
+
+  a {
+    color: #333;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 .titleArea {
