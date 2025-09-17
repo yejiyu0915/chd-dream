@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { CLogItem } from '@/lib/notion';
 import Spinner from '@/common/components/utils/Spinner'; // Spinner 컴포넌트 임포트
 import c from '@/app/info/c-log/CLogList.module.scss'; // infoLayout.module.scss 사용
-import Icon from '@/common/components/utils/Icons';
+import Button from '@/common/components/utils/Button'; // Button 컴포넌트 임포트
 
 interface CLogListProps {
   cLogData: CLogItem[] | undefined;
@@ -98,8 +98,15 @@ export default function CLogList({
     }
     return (
       <div className={c.cLogList}>
-        <div className={c.inner}>
-          <p className={c.error}>에러: {errorMessage}</p>
+        <div className={c.error}>
+          {errorMessage}
+          <div className={c.loadMoreWrapper}>
+            {' '}
+            {/* wrapper는 유지 */}
+            <Button onClick={handleLoadMore} className="load-more-button" icon="arrow-down">
+              다시 시도
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -147,11 +154,15 @@ export default function CLogList({
               ))}
             </ul>
             {hasMoreItems && (
-              <div className={c.loadMoreWrapper}>
-                <button type="button" onClick={handleLoadMore} className={c.loadMoreButton}>
+              <div className="load-more-wrapper">
+                <Button
+                  type="button"
+                  onClick={handleLoadMore}
+                  className="load-more-button"
+                  icon="arrow-down"
+                >
                   더보기
-                  <Icon name="arrow-down" />
-                </button>
+                </Button>
               </div>
             )}
           </>

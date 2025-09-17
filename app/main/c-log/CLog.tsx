@@ -118,7 +118,8 @@ export default function CLog() {
                           className={c.list__image}
                           width={400} // 이미지 너비 설정 (필요에 따라 조절)
                           height={300} // 이미지 높이 설정 (필요에 따라 조절)
-                          priority // 초기 로딩 시 중요한 이미지에 대해 우선 로딩
+                          priority
+                          sizes="(max-width: 768px) 100vw, 33vw" // 반응형 이미지 크기 설정
                         />
                       </div>
                       <div className={c.list__content}>

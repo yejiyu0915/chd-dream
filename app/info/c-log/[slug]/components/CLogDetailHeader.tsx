@@ -23,7 +23,7 @@ export default function CLogDetailHeader({
       <div className={l.header}>
         {imageUrl && imageUrl !== '/no-image.svg' && (
           <div className={l.image}>
-            <Image src={imageUrl} alt={title} priority width={1440} height={400} />
+            <Image src={imageUrl} alt={title} priority width={1440} height={400} sizes="100vw" />
           </div>
         )}
         <div className={`detail-inner ${l.content}`}>

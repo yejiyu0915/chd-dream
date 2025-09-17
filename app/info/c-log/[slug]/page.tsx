@@ -17,6 +17,8 @@ import PageTitleSetter from '@/app/info/components/PageTitleSetter';
 import l from 'common/styles/mdx/MdxLayout.module.scss';
 import CLogDetailHeader from '@/app/info/c-log/[slug]/components/CLogDetailHeader';
 import CLogDetailFooter from '@/app/info/c-log/[slug]/components/CLogDetailFooter';
+import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'; // React Query 임포트
+import { PageObjectResponse, BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints'; // Notion API 타입 임포트
 
 interface CLogDetailPageProps {
   params: { slug: string };
@@ -30,7 +32,16 @@ export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
     notFound();
   }
 
-  const notionData = await getNotionPageAndContentBySlug('NOTION_CLOG_ID', slug);
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ['clog-detail', slug],
+    queryFn: () => getNotionPageAndContentBySlug('NOTION_CLOG_ID', slug),
+  });
+
+  const notionData = queryClient.getQueryData(['clog-detail', slug]) as
+    | { page: PageObjectResponse; blocks: BlockObjectResponse[] }
+    | undefined;
 
   if (!notionData) {
     notFound();
@@ -62,7 +73,8 @@ export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
           .replace(/\.$/, '')
       : '날짜 없음';
   const tags =
-    (tagsProperty?.type === 'multi_select' && tagsProperty.multi_select?.map((tag) => tag.name)) ||
+    (tagsProperty?.type === 'multi_select' &&
+      tagsProperty.multi_select?.map((tag: { name: string }) => tag.name)) ||
     []; // 태그 추출, 없으면 빈 배열
 
   let imageUrl = '/no-image.svg'; // 기본 이미지
@@ -77,31 +89,33 @@ export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
   const { prev: prevPost, next: nextPost } = await getPrevNextCLogPosts(slug);
 
   return (
-    <div className={l.container}>
-      <PageTitleSetter title={title} />
-      <CLogDetailHeader
-        title={title}
-        category={category}
-        date={date}
-        imageUrl={imageUrl}
-        tags={tags}
-      />
-      <section className={`${mdx.mdxContent} detail-inner`}>
-        <MDXRemote
-          source={markdown} // mdxSource 대신 markdown 직접 전달
-          options={{
-            mdxOptions: {
-              remarkPlugins: [remarkGfm],
-              rehypePlugins: [rehypeSlug, rehypeSanitize, rehypePrettyCode],
-            },
-          }}
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <div className={l.container}>
+        <PageTitleSetter title={title} />
+        <CLogDetailHeader
+          title={title}
+          category={category}
+          date={date}
+          imageUrl={imageUrl}
+          tags={tags}
         />
-      </section>
-      <CLogDetailFooter prevPost={prevPost} nextPost={nextPost} />
-      <aside className="relative hidden md:block">
-        {/* 목차 */}
-        {/* 목차 주석 처리된 부분 유지 */}
-      </aside>
-    </div>
+        <section className={`${mdx.mdxContent} detail-inner`}>
+          <MDXRemote
+            source={markdown} // mdxSource 대신 markdown 직접 전달
+            options={{
+              mdxOptions: {
+                remarkPlugins: [remarkGfm],
+                rehypePlugins: [rehypeSlug, rehypeSanitize, rehypePrettyCode],
+              },
+            }}
+          />
+        </section>
+        <CLogDetailFooter prevPost={prevPost} nextPost={nextPost} />
+        <aside className="relative hidden md:block">
+          {/* 목차 */}
+          {/* 목차 주석 처리된 부분 유지 */}
+        </aside>
+      </div>
+    </HydrationBoundary>
   );
 }

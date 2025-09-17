@@ -26,7 +26,15 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         <code>{children}</code>
       </pre>
     ),
-    img: ({ src, alt }) => <Image src={src} alt={alt} width={1000} height={1000} />,
+    img: ({ src, alt }) => (
+      <Image
+        src={src}
+        alt={alt}
+        width={1000}
+        height={1000}
+        sizes="(max-width: 768px) 100vw, 80vw"
+      />
+    ),
     // `components` prop을 통해 전달될 수 있는 추가 사용자 정의 컴포넌트들도 병합합니다.
     ...components,
   };

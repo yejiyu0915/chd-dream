@@ -6,11 +6,11 @@ import type {
   GetPageResponse, // 사용되지 않지만, 임포트 오류를 피하기 위해 남겨둠
   BlockObjectResponse,
   // DatabaseObjectResponse,
-  // BlockObjectResponse,
   // PartialPageObjectResponse,
   // PartialDatabaseObjectResponse,
   // PartialBlockObjectResponse,
 } from '@notionhq/client/build/src/api-endpoints';
+import { unstable_cache } from 'next/cache';
 
 export const notion = new Client({
   auth: process.env.NOTION_TOKEN,
@@ -32,12 +32,11 @@ export async function getNotionData<T extends GenericItem>(
   mapper: ItemMapper<T>, // Notion 페이지 객체를 원하는 타입 T로 변환하는 매퍼 함수
   options?: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    filter?: QueryDatabaseResponse['results'][number] extends { properties: infer P }
-      ? { property: keyof P; [key: string]: any }
-      : any; // Notion 필터 타입으로 구체화
+    filter?: any; // Notion API 필터 조건이 동적일 수 있으므로 any 허용
     sorts?: { property: string; direction: 'ascending' | 'descending' }[]; // 데이터 정렬 조건 (구체화)
     pageSize?: number; // 가져올 데이터의 최대 개수
     revalidateSeconds?: number; // 캐시 재검증 시간 (초 단위) - Next.js의 fetch revalidate와 관련되지만, 여기서는 직접 적용하지 않음
+    tags?: string[]; // 캐싱을 위한 태그 (추가)
   }
 ): Promise<T[]> {
   // 환경 변수에서 Notion 토큰과 데이터베이스 ID 가져오기
@@ -54,10 +53,6 @@ export async function getNotionData<T extends GenericItem>(
       filter: options?.filter,
       sorts: options?.sorts,
       page_size: options?.pageSize,
-      // Notion SDK 호출에는 Next.js fetch 캐싱 옵션을 직접 적용하지 않음. 대신 On-Demand Revalidation 사용
-      // next: {
-      //   revalidate: options?.revalidateSeconds ?? 60,
-      // },
     });
 
     // 쿼리 결과를 매퍼 함수를 사용하여 원하는 타입으로 변환
@@ -125,10 +120,6 @@ export async function getNotionDatabaseLastEditedTime(
   try {
     const database = await notion.databases.retrieve({
       database_id: notionDatabaseId,
-      // Notion SDK 호출에는 Next.js fetch 캐싱 옵션을 직접 적용하지 않음. 대신 On-Demand Revalidation 사용
-      // next: {
-      //   revalidate: 10, // 데이터베이스 메타데이터 캐시 시간 (10초)
-      // },
     });
 
     if ('last_edited_time' in database) {
@@ -381,56 +372,54 @@ export async function getNotionPageAndContentBySlug(
   databaseIdEnvVar: string,
   slug: string
 ): Promise<{ page: PageObjectResponse; blocks: BlockObjectResponse[] } | null> {
-  const notionDatabaseId = process.env[databaseIdEnvVar];
-  if (!process.env.NOTION_TOKEN || !notionDatabaseId) {
-    return null;
-  }
+  return unstable_cache(
+    async (databaseIdEnvVar: string, slug: string) => {
+      const notionDatabaseId = process.env[databaseIdEnvVar];
+      if (!process.env.NOTION_TOKEN || !notionDatabaseId) {
+        return null;
+      }
 
-  try {
-    // 1. 슬러그로 페이지 찾기
-    const response: QueryDatabaseResponse = await notion.databases.query({
-      database_id: notionDatabaseId,
-      filter: {
-        property: 'Slug', // Notion 데이터베이스의 slug 속성 이름
-        rich_text: {
-          equals: slug,
-        },
-      },
-      page_size: 1, // 슬러그는 고유해야 하므로 하나만 가져옵니다.
-      // Notion SDK 호출에는 Next.js fetch 캐싱 옵션을 직접 적용하지 않음. 대신 On-Demand Revalidation 사용
-      // next: { revalidate: 60 }, // 60초 동안 Notion 데이터베이스 쿼리 결과 캐싱
-    });
+      try {
+        // 1. 슬러그로 페이지 찾기
+        const response: QueryDatabaseResponse = await notion.databases.query({
+          database_id: notionDatabaseId,
+          filter: {
+            property: 'Slug', // Notion 데이터베이스의 slug 속성 이름
+            rich_text: {
+              equals: slug,
+            },
+          },
+          page_size: 1, // 슬러그는 고유해야 하므로 하나만 가져옵니다.
+        });
 
-    if (response.results.length === 0) {
-      return null; // 해당 슬러그를 가진 페이지가 없습니다.
-    }
+        if (response.results.length === 0) {
+          return null; // 페이지를 찾을 수 없으면 null 반환
+        }
 
-    const page = response.results[0];
+        const page = response.results[0]; // 첫 번째 결과가 페이지 객체여야 합니다.
 
-    if (!('properties' in page) || page.object !== 'page') {
-      return null; // 유효한 페이지 객체가 아닙니다.
-    }
+        // 2. 페이지의 모든 블록 가져오기
+        const blocks: BlockObjectResponse[] = [];
+        let cursor: string | null = null;
+        do {
+          const blockResponse = await notion.blocks.children.list({
+            block_id: page.id,
+            start_cursor: cursor || undefined,
+          });
+          blocks.push(...(blockResponse.results as BlockObjectResponse[]));
+          cursor = blockResponse.next_cursor;
+        } while (cursor);
 
-    // 2. 페이지의 모든 블록 가져오기
-    const blocks: BlockObjectResponse[] = [];
-    let cursor: string | null = null;
-    do {
-      const blockResponse = await notion.blocks.children.list({
-        block_id: page.id,
-        start_cursor: cursor || undefined,
-        // Notion SDK 호출에는 Next.js fetch 캐싱 옵션을 직접 적용하지 않음. 대신 On-Demand Revalidation 사용
-        // next: { revalidate: 60 }, // 60초 동안 Notion 블록 내용 캐싱
-      });
-      blocks.push(...(blockResponse.results as BlockObjectResponse[]));
-      cursor = blockResponse.next_cursor;
-    } while (cursor);
-
-    return { page: page as PageObjectResponse, blocks };
-  } catch (_error: unknown) {
-    void _error;
-    // console.error(`Notion 페이지 및 콘텐츠 가져오기 중 오류 발생:`, _error);
-    return null;
-  }
+        return { page: page as PageObjectResponse, blocks };
+      } catch (error: unknown) {
+        void error;
+        // console.error(`Notion 페이지 및 콘텐츠 가져오기 중 오류 발생:`, error);
+        return null;
+      }
+    },
+    [`clog-detail-${slug}`],
+    { revalidate: 60, tags: [`clog-post-${slug}`] }
+  )(databaseIdEnvVar, slug);
 }
 
 export async function getPrevNextCLogPosts(currentSlug: string): Promise<{
@@ -469,3 +458,5 @@ export async function getPrevNextCLogPosts(currentSlug: string): Promise<{
 
   return { prev: prevPost, next: nextPost };
 }
+
+export type PrevNextCLogPosts = Awaited<ReturnType<typeof getPrevNextCLogPosts>>; // PrevNextCLogPosts 타입 추가

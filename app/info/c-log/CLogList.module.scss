@@ -240,52 +240,6 @@ $list: '.list';
     align-items: center;
     min-height: vw(200); // 로딩 스피너가 보일 최소 높이
   }
-  .loadMore {
-    &Wrapper {
-      display: flex;
-      justify-content: center;
-      margin-block-start: vw(60);
-    }
-    &Button {
-      margin-block-start: vw(60);
-      padding: vw(20) vw(60) vw(20) vw(80);
-      border-radius: vw(20);
-      background-color: var(--primary);
-      color: var(--primary-foreground);
-      @include font-vw(20, $weight: 700);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      i {
-        --icon-size: 1.75;
-        --icon-margin: 0.1;
-        transform: translateY(-0.05em);
-      }
-    }
-    @include mq(pc-sm) {
-      &Wrapper {
-        display: flex;
-        justify-content: center;
-        margin-block-start: vw(36);
-      }
-      &Button {
-        margin-block-start: vw(36);
-        padding: vw(12) vw(36) vw(12) vw(48);
-        border-radius: vw(12);
-        @include font-vw(16);
-      }
-    }
-    @include mq(mo) {
-      &Wrapper {
-        margin-block-start: vw(18);
-      }
-      &Button {
-        margin-block-start: vw(18);
-        padding: vw(9) vw(24) vw(9) vw(36);
-        border-radius: vw(10);
-        @include font-vw(14);
-      }
-    }
-  }
 }
 
 .tagFilter {
