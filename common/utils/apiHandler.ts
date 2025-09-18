@@ -26,11 +26,13 @@ export async function handleApiGetRequest<T>(
     return NextResponse.json(data, {
       headers: {
         'Last-Modified': notionLastEditedTime || new Date().toUTCString(),
-        // 캐시 제어 헤더를 여기에 추가할 수도 있습니다 (예: 'Cache-Control': 'no-cache, must-revalidate')
+        'Cache-Control': 'no-store, must-revalidate', // 캐싱 비활성화 및 재검증 강제
       },
     });
-  } catch (error) {
-    console.error(`API 요청 처리 중 오류 발생:`, error);
+  } catch (_error) {
+    // error 변수명을 _error로 변경하여 사용되지 않음을 명시
+    void _error; // _error가 사용되지 않는다는 린트 경고를 피하기 위해 추가
+    // console.error(`API 요청 처리 중 오류 발생:`, _error); // 디버깅을 위해 활성화
     return NextResponse.json({ message: errorMessage }, { status: 500 });
   }
 }

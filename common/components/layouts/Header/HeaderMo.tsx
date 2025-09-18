@@ -4,31 +4,35 @@ import { useEffect, useState, useRef } from 'react';
 import Icon from '@/common/components/utils/Icons';
 import h from '@/common/components/layouts/Header/Header.module.scss';
 import { useMobileMenu } from '@/common/components/layouts/Header/MobileMenuContext';
-import { MenuItem, menuData, SnsLink, snsLinks } from '@/common/data/info';
+import { menuData, snsLinks } from '@/common/data/info';
 
-export default function HeaderMo() {
+interface HeaderMoProps {
+  isScrolled: boolean;
+}
+
+export default function HeaderMo({ isScrolled }: HeaderMoProps) {
   const scrollYRef = useRef(0);
 
   const { isMobileMenuOpen, toggleMobileMenu, stopLenis, startLenis } = useMobileMenu();
   const [activeMobileMenu, setActiveMobileMenu] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log('useEffect triggered, isMobileMenuOpen:', isMobileMenuOpen);
+    // console.log('useEffect triggered, isMobileMenuOpen:', isMobileMenuOpen);
     if (isMobileMenuOpen) {
       scrollYRef.current = window.scrollY;
       document.body.classList.add('mobile-menu-open');
-      console.log(
-        'Class "mobile-menu-open" added to body. Current body classes:',
-        document.body.classList.value
-      );
+      // console.log(
+      //   'Class "mobile-menu-open" added to body. Current body classes:',
+      //   document.body.classList.value
+      // );
       stopLenis();
     } else {
       const currentScrollY = scrollYRef.current;
       document.body.classList.remove('mobile-menu-open');
-      console.log(
-        'Class "mobile-menu-open" removed from body. Current body classes:',
-        document.body.classList.value
-      );
+      // console.log(
+      //   'Class "mobile-menu-open" removed from body. Current body classes:',
+      //   document.body.classList.value
+      // );
       window.scrollTo(0, currentScrollY);
       startLenis();
     }
@@ -39,7 +43,9 @@ export default function HeaderMo() {
   };
 
   return (
-    <div className={`${h.mobileMenuOverlay} ${isMobileMenuOpen ? h.open : ''}`}>
+    <div
+      className={`${h.mobileMenuOverlay} ${isMobileMenuOpen ? h.open : ''} ${isScrolled ? h.scroll : ''}`}
+    >
       <div className={h.mobileMenuContent} data-lenis-prevent>
         <nav className={h.mobileNav}>
           <ul className={h.mobileMenuList}>

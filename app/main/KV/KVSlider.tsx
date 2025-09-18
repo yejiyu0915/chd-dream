@@ -13,6 +13,10 @@ import { useMobileMenu } from '@/common/components/layouts/Header/MobileMenuCont
 import { useQuery, useQueryClient } from '@tanstack/react-query'; // useQueryClient 임포트 추가
 // import KVSliderSkeleton from '@/app/main/KV/KVSliderSkeleton'; // KVSliderSkeleton 임포트 제거
 
+interface KVSliderProps {
+  kvHeight: string;
+}
+
 // Swiper styles
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -27,7 +31,7 @@ const checkIfKvVisible = (element: HTMLElement | null): boolean => {
   return window.scrollY < height;
 };
 
-export default function KVSlider() {
+export default function KVSlider({ kvHeight }: KVSliderProps) {
   const sliderRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<SwiperCore | null>(null);
   const { isMobileMenuOpen } = useMobileMenu();
@@ -165,7 +169,8 @@ export default function KVSlider() {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: '100%',
+          height: kvHeight,
+          minHeight: kvHeight,
         }}
       ></div>
     );
@@ -177,7 +182,7 @@ export default function KVSlider() {
       errorMessage = error.message;
     }
     return (
-      <div className={kv.background}>
+      <div className={kv.background} style={{ height: kvHeight, minHeight: kvHeight }}>
         <p className={kv.emptyState}>에러: {errorMessage}</p>
       </div>
     );
@@ -185,7 +190,7 @@ export default function KVSlider() {
 
   if (!kvSliderItems || kvSliderItems.length === 0) {
     return (
-      <div className={kv.background}>
+      <div className={kv.background} style={{ height: kvHeight, minHeight: kvHeight }}>
         <p className={kv.emptyState}>슬라이드 데이터를 불러올 수 없습니다.</p>
       </div>
     );

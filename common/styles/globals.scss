@@ -1,9 +1,10 @@
 @use 'constants/fonts' as *;
 @use 'constants/reset' as *;
 @use 'constants/colors' as *;
-@use 'constants/typography' as *;
 @use 'constants/icons' as *;
 @use 'constants/layouts' as *;
+@use 'constants/spinner' as *; // 스피너 스타일 use로 임포트
+@use '@/common/styles/mixins/function' as *;
 
 html,
 body {
@@ -56,6 +57,18 @@ html.lenis {
   container-name: wrapper; // 컨테이너 이름 지정
   --cont-w: 1920;
   min-width: 280px;
+  * {
+    @include mq(pc-sm) {
+      --header-height: 64;
+    }
+    @include mq(mo) {
+      --header-height: 72;
+    }
+  }
+}
+
+main {
+  min-height: 100vh;
 }
 
 /* ----- 전역 로딩 스피너 스타일 ----- */
@@ -101,5 +114,337 @@ html.lenis {
   }
   to {
     opacity: 0;
+  }
+}
+
+.breadcrumb {
+  --breadcrumb-height: calc(var(--header-height) + 28);
+  position: absolute;
+  top: vw(--breadcrumb-height);
+  z-index: 2;
+  width: 100%;
+  padding-inline: var(--inner-padding);
+  &__list {
+    display: flex;
+    align-items: center;
+    position: relative;
+    &::before {
+      content: '';
+      width: 1em;
+      height: 1em;
+      margin-inline-end: 1em;
+      background-color: var(--border);
+    }
+  }
+  &__item {
+    display: flex;
+    align-items: center;
+    &::after {
+      content: '';
+      display: block;
+      width: vw(4);
+      height: vw(4);
+      margin-inline: vw(10);
+      border-radius: 50%;
+      background-color: var(--text-muted);
+    }
+    &:last-child::after {
+      display: none;
+    }
+  }
+  &__link {
+    color: var(--text-muted);
+    &:hover {
+      color: var(--primary);
+    }
+  }
+  &__active {
+    font-weight: 700;
+    color: var(--foreground);
+  }
+  @include mq(pc-sm) {
+    --breadcrumb-height: calc(var(--header-height) + 24);
+    &__list {
+      @include font-vw(14);
+      &::before {
+        display: none;
+      }
+    }
+    &__item {
+      &::after {
+        width: vw(3);
+        height: vw(3);
+        margin-inline: vw(8);
+      }
+    }
+  }
+  @include mq(mo) {
+    --breadcrumb-height: calc(var(--header-height) + 20);
+    &__list {
+      @include font-vw(12);
+    }
+    &__item {
+      &::after {
+        width: vw(2);
+        height: vw(2);
+        margin-inline: vw(6);
+      }
+    }
+  }
+}
+
+/* 404 Not Found Page Styles */
+.not-found {
+  &-icon {
+    --icon-size: 0.9;
+    --icon-margin: 0.2;
+    margin-bottom: 0.15em;
+  }
+  &-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 50em;
+    padding-block: 8em 4em;
+    text-align: center;
+    @include font-vw(16);
+    @include mq(pc-sm) {
+      @include font-vw(14);
+    }
+    @include mq(mo) {
+      @include font-vw(12);
+    }
+  }
+  &-title {
+    margin-bottom: 0.5em;
+    font-size: 3.5em;
+    font-weight: 500;
+  }
+  &-subtitle {
+    margin-bottom: 0.75em;
+    font-size: 2.25em;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  &-message {
+    margin-bottom: 4em;
+    font-size: 1.125em;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  &-link {
+    display: inline-block;
+    padding: 1em 1.75em 1em 2.5em;
+    border-radius: 1em;
+    background-color: var(--primary);
+    text-decoration: none;
+    font-size: 1.25em;
+    font-weight: 500;
+    color: var(--background);
+    i {
+      --icon-size: 1.5;
+      --icon-margin: 0.1;
+      transform: translateY(-0.05em);
+    }
+    &--reload {
+      border: vw(2) solid var(--primary);
+      background-color: var(--background);
+      font-weight: 700;
+      color: var(--primary);
+      i {
+        --icon-size: 1.25;
+        --icon-margin: 0.1;
+        transform: translateY(-0.05em);
+        filter: invert(1);
+      }
+    }
+    @include mq(mo) {
+      width: 100%;
+    }
+  }
+}
+
+/* Load More Button Styles */
+.load-more-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-block-start: vw(60);
+}
+.load-more-button {
+  margin-block-start: vw(60);
+  padding: vw(20) vw(60) vw(20) vw(80);
+  border-radius: vw(20);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  @include font-vw(20, $weight: 700);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  i {
+    --icon-size: 1.75;
+    --icon-margin: 0.1;
+  }
+}
+
+@include mq(pc-sm) {
+  .load-more-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-block-start: vw(36);
+  }
+  .load-more-button {
+    margin-block-start: vw(36);
+    padding: vw(12) vw(36) vw(12) vw(48);
+    border-radius: vw(12);
+    @include font-vw(16);
+  }
+}
+
+@include mq(mo) {
+  .load-more-wrapper {
+    margin-block-start: vw(18);
+  }
+  .load-more-button {
+    margin-block-start: vw(18);
+    padding: vw(9) vw(24) vw(9) vw(36);
+    border-radius: vw(10);
+    @include font-vw(14);
+  }
+}
+
+/* Footer Button Styles */
+.footer-button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-block-start: vw(60);
+}
+
+.footer-button {
+  padding: vw(27.5) vw(60);
+  border-radius: vw(20);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  @include font-vw(20, $weight: 700);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-block; /* Link 컴포넌트가 버튼처럼 보이도록 */
+}
+
+@include mq(pc-sm) {
+  .footer-button-wrapper {
+    margin-block-start: vw(36);
+  }
+  .footer-button {
+    padding: vw(18) vw(48);
+    border-radius: vw(12);
+    @include font-vw(16);
+  }
+}
+
+@include mq(mo) {
+  .footer-button-wrapper {
+    margin-block-start: vw(18);
+  }
+  .footer-button {
+    padding: vw(14.25) vw(36);
+    border-radius: vw(10);
+    @include font-vw(14);
+  }
+}
+
+/* Common Button Base Styles */
+.button-base {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  border: none;
+  text-decoration: none;
+  font-family: inherit;
+  /* 기본 transition */
+  transition: all 0.2s ease;
+}
+
+.button-primary {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.button-secondary {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  border: 1px solid var(--border);
+}
+
+.button-ghost {
+  background-color: transparent;
+  color: var(--foreground);
+  &:hover {
+    background-color: var(--bg-card);
+  }
+}
+
+.button-link {
+  background-color: transparent;
+  color: var(--primary);
+  text-decoration: underline;
+  &:hover {
+    color: var(--primary-dark);
+  }
+}
+
+/* List Navigation Buttons Styles */
+.list-nav-buttons {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  margin-block-start: vw(40);
+  border-radius: vw(10);
+  border: 1px solid var(--border-light);
+  background-color: #f9f9f9;
+
+  @include mq(pc-sm) {
+    margin-block-start: vw(36);
+  }
+  @include mq(mo) {
+    margin-block-start: vw(24);
+  }
+}
+
+.list-nav-link {
+  flex: 1;
+  @include font-vw(20);
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 1em;
+
+  &__title {
+    display: inline-block;
+    font-weight: 700;
+    white-space: normal;
+    line-height: 1.5;
+  }
+  i {
+    --icon-size: 1.7;
+    --icon-margin: 0;
+    flex: 0 0 vw(34);
+    filter: invert(1);
+  }
+  &:nth-child(2) {
+    border-top: 1px solid var(--border-light);
+  }
+
+  @include mq(pc-sm) {
+    @include font-vw(18);
+    i {
+      flex: 0 0 vw(31);
+    }
+  }
+  @include mq(mo) {
+    @include font-vw(14);
+    i {
+      flex: 0 0 vw(28);
+    }
   }
 }

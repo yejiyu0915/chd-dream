@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import kv from '@/app/main/KV/KV.module.scss';
 import { NewsItem } from '@/lib/notion';
 import { useQuery, useQueryClient } from '@tanstack/react-query'; // useQueryClient 임포트 추가
@@ -97,7 +96,7 @@ export default function NewsSection() {
         {newsData && newsData.length > 0 ? (
           newsData.map((newsItem) => (
             <li key={newsItem.id}>
-              <a href={`/news/${newsItem.id}`} className={kv.news__link}>
+              <a href={`/news/${newsItem.slug}`} className={kv.news__link}>
                 <h3 className={kv.news__listTitle}>{newsItem.title}</h3>
                 <p className={kv.news__listDate}>{newsItem.date}</p>
               </a>

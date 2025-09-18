@@ -99,6 +99,16 @@ export default function WorkProgress() {
     },
     {
       depth1: '교회 소개',
+      depth2: '연혁 ',
+      depth3: '',
+      link: '/about/history',
+      startDate: '-',
+      progress: 'not-started',
+      completionDate: '',
+      notes: '디자인 필요',
+    },
+    {
+      depth1: '',
       depth2: '비전',
       depth3: '',
       link: '/about/vision',

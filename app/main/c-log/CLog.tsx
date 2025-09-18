@@ -18,7 +18,7 @@ export default function CLog() {
       headers['If-Modified-Since'] = lastModifiedHeaderValue.current;
     }
 
-    const response = await fetch('/api/c-log', { headers });
+    const response = await fetch('/api/c-log-main', { headers }); // API 엔드포인트 변경
 
     if (response.status === 304) {
       // 304 Not Modified 응답이면 캐시된 데이터를 반환
@@ -46,8 +46,17 @@ export default function CLog() {
   } = useQuery<CLogItem[], Error>({
     queryKey: ['cLogItems'],
     queryFn: fetchCLogItems,
+    staleTime: 0, // 메인 페이지는 항상 최신 데이터를 가져오도록 staleTime 설정
     // refetchInterval: 60 * 1000, // 1분(60초)마다 데이터를 자동으로 다시 가져옵니다. -> 새로고침 시에만 반영되도록 제거
   });
+
+  // 디버깅을 위한 console.log 추가 (임시)
+  // console.log('Main CLog Debug:', {
+  //   cLogData,
+  //   isLoading,
+  //   isError,
+  //   error,
+  // });
 
   if (isLoading) {
     return (
@@ -55,11 +64,12 @@ export default function CLog() {
         <div className={`${c.inner} inner`}>
           <h2 className={c.title}>C-log</h2>
           <p className={c.desc}>교회의 다양한 이야기를 소개합니다.</p>
-          <Link href="/info/c-log" className={c.link}>
+          <Link href="/info/c-log" className={c.link} scroll={false}>
             전체 글 보기 <Icon name="arrow-up-right" className={c.link__icon} />
           </Link>
           <div className={c.content}>
             <ul className={c.skeletonList}>
+              {/* 메인 페이지는 6개만 표시하므로 6개 스켈레톤 렌더링 */}
               {Array.from({ length: 6 }).map((_, index) => (
                 <CLogSkeleton key={index} />
               ))}
@@ -98,7 +108,9 @@ export default function CLog() {
               {cLogData.map((item: CLogItem) => {
                 return (
                   <li key={item.id} className={c.list__item}>
-                    <a href="#" className={c.list__link}>
+                    <Link href={item.link} className={c.list__link}>
+                      {' '}
+                      {/* Link 컴포넌트 사용 및 href 설정 */}
                       <div className={c.list__imageContainer}>
                         <Image
                           src={item.imageUrl}
@@ -106,7 +118,8 @@ export default function CLog() {
                           className={c.list__image}
                           width={400} // 이미지 너비 설정 (필요에 따라 조절)
                           height={300} // 이미지 높이 설정 (필요에 따라 조절)
-                          priority // 초기 로딩 시 중요한 이미지에 대해 우선 로딩
+                          priority
+                          sizes="(max-width: 768px) 100vw, 33vw" // 반응형 이미지 크기 설정
                         />
                       </div>
                       <div className={c.list__content}>
@@ -125,7 +138,7 @@ export default function CLog() {
                           </div>
                         )}
                       </div>
-                    </a>
+                    </Link>
                   </li>
                 );
               })}

@@ -2,9 +2,11 @@
 $main: '.main';
 
 .main {
+  min-height: 100dvh; /* 동적 뷰포트 높이로 최소 높이 설정 */
+
   &__content {
     width: 100%;
-    padding-block-start: 95vh;
+    min-height: 100vh;
     position: relative;
     z-index: 2;
     pointer-events: none;

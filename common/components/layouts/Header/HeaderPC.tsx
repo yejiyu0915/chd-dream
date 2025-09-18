@@ -4,30 +4,42 @@ import { useEffect, useState } from 'react';
 import Icon from '@/common/components/utils/Icons';
 import h from '@/common/components/layouts/Header/Header.module.scss';
 import { useMobileMenu } from '@/common/components/layouts/Header/MobileMenuContext';
-import { MenuItem, menuData } from '@/common/data/info';
+import { menuData } from '@/common/data/info';
+// import { usePathname } from 'next/navigation'; // usePathname import는 Header.tsx로 이동
 
-export default function HeaderPC() {
-  const [isScrolled, setIsScrolled] = useState(false);
+interface HeaderPCProps {
+  isScrolled: boolean;
+}
+
+export default function HeaderPC({ isScrolled }: HeaderPCProps) {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isMenuHovered, setIsMenuHovered] = useState(false);
   const [mounted, setMounted] = useState(false);
+  // const pathname = usePathname(); // Header.tsx에서 관리
 
   const { isMobileMenuOpen, toggleMobileMenu } = useMobileMenu();
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      setIsScrolled(scrollTop > 200);
-    };
+    // 스크롤 로직은 Header.tsx에서 관리하므로 여기서는 제거
+    // const handleScroll = () => {
+    //   const scrollTop = window.scrollY;
+    //   setIsScrolled(scrollTop > 200);
+    // };
 
-    handleScroll();
-    window.addEventListener('scroll', handleScroll);
+    // if (pathname !== '/') {
+    //   setIsScrolled(true);
+    // } else {
+    //   handleScroll();
+    //   window.addEventListener('scroll', handleScroll);
+    // }
     setMounted(true);
 
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+    // return () => {
+    //   if (pathname === '/') {
+    //     window.removeEventListener('scroll', handleScroll);
+    //   }
+    // };
+  }, []); // pathname 의존성 제거
 
   const handleMenuMouseEnter = (menuName: string) => {
     setActiveMenu(menuName);
@@ -104,7 +116,14 @@ export default function HeaderPC() {
                 onMouseEnter={() => handleMenuMouseEnter(menuItem.name)}
                 onMouseLeave={handleMenuMouseLeave}
               >
-                <Link href={menuItem.href || '#'} className={h.menu__link}>
+                <Link
+                  href={
+                    menuItem.subMenu && menuItem.subMenu.length > 0
+                      ? menuItem.subMenu[0].href
+                      : menuItem.href || '#'
+                  }
+                  className={h.menu__link}
+                >
                   {menuItem.name}
                 </Link>
                 {menuItem.subMenu && (

@@ -1,0 +1,139 @@
+@use '@/common/styles/mixins/function' as *;
+
+$list: '.list';
+.newsListMain {
+  --list-radius: 20;
+  .newsListInner {
+    padding-block: vw(80) vw(160);
+    @include mq(pc-sm) {
+      --list-radius: 12;
+      padding-block: vw(48) vw(120);
+    }
+    @include mq(mo) {
+      --list-radius: 10;
+      padding-block: vw(48) vw(80);
+    }
+  }
+}
+
+.newsList {
+  background-color: var(--background);
+  #{$list} {
+    display: block;
+
+    &__item {
+      width: 100%;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: vw(32);
+      margin-bottom: vw(32);
+      display: flex;
+      align-items: center;
+      gap: vw(20);
+
+      &:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+    }
+    &__link {
+      display: flex;
+      flex-direction: row; // 리스트 뷰는 가로 정렬
+      flex-grow: 1; // 링크가 남은 공간을 채우도록
+      gap: vw(20);
+      align-items: center; /* 세로 중앙 정렬 */
+    }
+
+    &__index {
+      @include font-vw(24, $weight: 500, $color: var(--primary));
+      flex-shrink: 0;
+      width: vw(60);
+      text-align: center;
+    }
+
+    &__content {
+      flex-grow: 1; // 타이틀과 날짜를 포함하는 컨텐츠 영역
+      display: flex; // 타이틀과 날짜를 가로로 정렬
+      align-items: center;
+      gap: vw(20); // 타이틀과 날짜 사이 간격
+    }
+
+    &__title {
+      @include font-vw(32, 45, $weight: 700);
+      color: var(--foreground);
+      @include ellipsis(2);
+      flex-grow: 1; // 타이틀이 남은 공간을 채우도록
+    }
+
+    &__date {
+      @include font-vw(18, $color: var(--text-muted));
+      flex-shrink: 0; // 날짜는 고정 너비
+    }
+
+    @include mq(pc-sm) {
+      &__item {
+        padding-bottom: vw(24);
+        margin-bottom: vw(24);
+        gap: vw(16);
+      }
+      &__link {
+        gap: vw(16);
+      }
+      &__index {
+        @include font-vw(20);
+        width: vw(40);
+      }
+      &__title {
+        @include font-vw(24);
+      }
+      &__date {
+        @include font-vw(16);
+      }
+    }
+
+    @include mq(mo) {
+      &__item {
+        padding-bottom: vw(16);
+        margin-bottom: vw(16);
+        gap: vw(12);
+      }
+      &__link {
+        gap: vw(12);
+      }
+      &__index {
+        @include font-vw(16);
+        width: vw(30);
+      }
+      &__title {
+        @include font-vw(16);
+      }
+      &__date {
+        @include font-vw(14);
+      }
+    }
+  }
+
+  .loading,
+  .error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: vw(400);
+    @include font-vw(24);
+    color: var(--text-muted);
+    text-align: center;
+  }
+  .emptyMessage {
+    @include font-vw(24);
+    color: var(--text-muted);
+    text-align: center;
+    padding-block: vw(100);
+  }
+
+  .loadingState {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: vw(200);
+  }
+}

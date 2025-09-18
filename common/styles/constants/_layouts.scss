@@ -2,12 +2,20 @@
 
 :root {
   --inner-padding: 40px;
+  --header-height: 74;
 }
 
 .inner {
   width: 100%;
   margin: 0 auto;
   padding-inline: var(--inner-padding);
+  position: relative;
+}
+
+.detail-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--inner-padding);
   position: relative;
 }
 

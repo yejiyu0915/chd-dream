@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import createMDX from '@next/mdx';
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -45,6 +46,15 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: '/info',
+        destination: '/info/news',
+        permanent: true,
+      },
+    ];
+  },
   // Turbopack 설정 (안정화됨)
   turbopack: {
     rules: {
@@ -54,6 +64,19 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
 };
 
-export default nextConfig;
+const withMDX = createMDX({
+  options: {
+    // remarkPlugins: [remarkGfm], // 전역 MDX 플러그인 설정 제거 또는 주석 처리
+    // rehypePlugins: [
+    //   rehypeSlug,
+    //   rehypeExtractToc,
+    //   [rehypePrettyCode, { theme: 'github-dark' }],
+    //   rehypeSanitize,
+    // ],
+  },
+});
+
+export default withMDX(nextConfig);
