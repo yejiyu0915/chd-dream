@@ -1,7 +1,6 @@
 import { Client } from '@notionhq/client';
 import type {
   PageObjectResponse,
-  QueryDatabaseResponse,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   GetPageResponse, // 사용되지 않지만, 임포트 오류를 피하기 위해 남겨둠
   BlockObjectResponse,
@@ -9,11 +8,12 @@ import type {
   // PartialPageObjectResponse,
   // PartialDatabaseObjectResponse,
   // PartialBlockObjectResponse,
-} from '@notionhq/client/build/src/api-endpoints';
+} from '@notionhq/client';
 import { unstable_cache } from 'next/cache';
 
 export const notion = new Client({
   auth: process.env.NOTION_TOKEN,
+  notionVersion: '2025-09-03', // 최신 API 버전 지정
 });
 
 // 제네릭 아이템 타입 정의 (모든 속성을 포함할 수 있도록)
@@ -47,9 +47,25 @@ export async function getNotionData<T extends GenericItem>(
   }
 
   try {
+    // 2025-09-03 버전업에 따라 data_source_id를 먼저 가져와야 함
+    const databaseInfo = await notion.databases.retrieve({ database_id: notionDatabaseId });
+
+    let dataSourceId: string | undefined;
+    if (
+      'data_sources' in databaseInfo &&
+      Array.isArray(databaseInfo.data_sources) &&
+      databaseInfo.data_sources.length > 0
+    ) {
+      dataSourceId = databaseInfo.data_sources[0].id; // 첫 번째 data_source_id 사용
+    } else {
+      // data_sources가 없거나 비어있는 경우, 이전처럼 database_id를 사용 (하위 호환성을 위해)
+      dataSourceId = notionDatabaseId; // 이 부분은 실제 API 호출에서 database_id로 대체될 수 있습니다.
+    }
+
     // Notion 데이터베이스 쿼리
-    const response: QueryDatabaseResponse = await notion.databases.query({
-      database_id: notionDatabaseId,
+    // Notion SDK v5에서는 dataSources.query를 사용 (업그레이드 가이드 참조)
+    const response: any = await notion.dataSources.query({
+      data_source_id: dataSourceId as string, // data_source_id 사용
       filter: options?.filter,
       sorts: options?.sorts,
       page_size: options?.pageSize,
@@ -57,7 +73,7 @@ export async function getNotionData<T extends GenericItem>(
 
     // 쿼리 결과를 매퍼 함수를 사용하여 원하는 타입으로 변환
     const items: T[] = response.results
-      .map((page) => {
+      .map((page: PageObjectResponse) => {
         if (
           !('properties' in page) ||
           page.object !== 'page'
@@ -165,6 +181,8 @@ export interface NewsItem {
   id: string;
   title: string;
   date: string;
+  link: string;
+  slug: string; // slug 속성 추가
 }
 
 // KV Slider 데이터 타입 정의
@@ -289,11 +307,14 @@ const mapPageToNewsItem: ItemMapper<NewsItem> = (page) => {
 
   const titleProperty = properties.Title as NotionProperty | undefined;
   const dateProperty = properties.Date as NotionProperty | undefined;
+  const slugProperty = properties.Slug as NotionProperty | undefined; // Slug 속성 추가
 
   return {
     id: page.id,
     title: getPlainText(titleProperty) || '제목 없음',
     date: getFormattedDate(dateProperty),
+    link: `/info/news/${getPlainText(slugProperty) || page.id}`, // link 속성 추가
+    slug: getPlainText(slugProperty) || page.id, // slug 매핑
   };
 };
 
@@ -380,9 +401,24 @@ export async function getNotionPageAndContentBySlug(
       }
 
       try {
+        // 2025-09-03 버전업에 따라 data_source_id를 먼저 가져와야 함
+        const databaseInfo = await notion.databases.retrieve({ database_id: notionDatabaseId });
+
+        let dataSourceId: string | undefined;
+        if (
+          'data_sources' in databaseInfo &&
+          Array.isArray(databaseInfo.data_sources) &&
+          databaseInfo.data_sources.length > 0
+        ) {
+          dataSourceId = databaseInfo.data_sources[0].id; // 첫 번째 data_source_id 사용
+        } else {
+          dataSourceId = notionDatabaseId; // data_sources가 없거나 비어있는 경우, 이전처럼 database_id를 사용
+        }
+
         // 1. 슬러그로 페이지 찾기
-        const response: QueryDatabaseResponse = await notion.databases.query({
-          database_id: notionDatabaseId,
+        const response: any = await notion.dataSources.query({
+          // Notion SDK v5에서는 dataSources.query를 사용
+          data_source_id: dataSourceId as string, // data_source_id 사용
           filter: {
             property: 'Slug', // Notion 데이터베이스의 slug 속성 이름
             rich_text: {
@@ -459,4 +495,80 @@ export async function getPrevNextCLogPosts(currentSlug: string): Promise<{
   return { prev: prevPost, next: nextPost };
 }
 
-export type PrevNextCLogPosts = Awaited<ReturnType<typeof getPrevNextCLogPosts>>; // PrevNextCLogPosts 타입 추가
+export type PrevNextCLogPosts = Awaited<ReturnType<typeof getPrevNextCLogPosts>>;
+
+// NewsItem 인터페이스 추가 (Notion API 응답에 맞춰 정의)
+export interface NewsItem {
+  id: string;
+  title: string;
+  date: string;
+  link: string;
+}
+
+// Notion에서 뉴스 게시물 목록을 가져오는 함수
+export async function getNewsPosts(
+  databaseIdEnvVar: string,
+  pageSize?: number
+): Promise<NewsItem[] | null> {
+  return unstable_cache(
+    async (databaseIdEnvVar: string, pageSize?: number) => {
+      const notionDatabaseId = process.env[databaseIdEnvVar];
+      if (!process.env.NOTION_TOKEN || !notionDatabaseId) {
+        return null;
+      }
+
+      try {
+        // 2025-09-03 버전업에 따라 data_source_id를 먼저 가져와야 함
+        const databaseInfo = await notion.databases.retrieve({ database_id: notionDatabaseId });
+
+        let dataSourceId: string | undefined;
+        if (
+          'data_sources' in databaseInfo &&
+          Array.isArray(databaseInfo.data_sources) &&
+          databaseInfo.data_sources.length > 0
+        ) {
+          dataSourceId = databaseInfo.data_sources[0].id; // 첫 번째 data_source_id 사용
+        } else {
+          dataSourceId = notionDatabaseId; // data_sources가 없거나 비어있는 경우, 이전처럼 database_id를 사용
+        }
+
+        const response: any = await notion.dataSources.query({
+          data_source_id: dataSourceId as string, // data_source_id 사용
+          sorts: [
+            {
+              property: 'Date',
+              direction: 'descending',
+            },
+          ],
+          page_size: pageSize, // pageSize 적용
+        });
+
+        const newsItems: NewsItem[] = response.results.map((page: PageObjectResponse) => {
+          const p = page as PageObjectResponse;
+          const titleProperty = p.properties.Title;
+          const dateProperty = p.properties.Date;
+          const slugProperty = p.properties.Slug; // Slug 속성 추가
+
+          const title = getPlainText(titleProperty);
+          const date = getFormattedDate(dateProperty);
+          const slug = getPlainText(slugProperty) || p.id; // slug 추출 (없으면 page.id 사용)
+
+          return {
+            id: p.id,
+            title: title || '제목 없음',
+            date: date || '날짜 없음',
+            link: `/info/news/${slug}`, // Notion Page ID 대신 slug를 기반으로 링크 생성
+            slug: slug,
+          };
+        });
+
+        return newsItems;
+      } catch (error) {
+        void error;
+        return null;
+      }
+    },
+    [`news-list${pageSize !== undefined ? `-${pageSize}` : ''}`],
+    { revalidate: 60, tags: ['news-list'] }
+  )(databaseIdEnvVar, pageSize);
+}

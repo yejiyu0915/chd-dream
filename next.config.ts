@@ -1,10 +1,5 @@
 import type { NextConfig } from 'next';
 import createMDX from '@next/mdx';
-import remarkGfm from 'remark-gfm';
-import rehypePrettyCode from 'rehype-pretty-code';
-import rehypeSlug from 'rehype-slug';
-import rehypeExtractToc from '@stefanprobst/rehype-extract-toc';
-import rehypeSanitize from 'rehype-sanitize';
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -48,6 +43,15 @@ const nextConfig: NextConfig = {
       {
         source: '/browser-sync/:path*',
         destination: '/404',
+      },
+    ];
+  },
+  async redirects() {
+    return [
+      {
+        source: '/info',
+        destination: '/info/news',
+        permanent: true,
       },
     ];
   },

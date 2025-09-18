@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 // import { usePathname } from 'next/navigation'; // usePathname 제거 (주석 해제)
 import SmoothScroll from '@/common/components/utils/SmoothScroll'; // SmoothScroll 컴포넌트 임포트
 import Lenis from '@studio-freight/lenis'; // Lenis 타입 임포트
+import { PageTitleProvider } from '@/app/info/utils/title-context'; // PageTitleProvider 임포트
 
 declare global {
   interface Window {
@@ -47,7 +48,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SmoothScroll setLenisInstance={setLenisInstance}>{children}</SmoothScroll>
+      <PageTitleProvider>
+        <SmoothScroll setLenisInstance={setLenisInstance}>{children}</SmoothScroll>
+      </PageTitleProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

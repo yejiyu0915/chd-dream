@@ -116,7 +116,14 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
                 onMouseEnter={() => handleMenuMouseEnter(menuItem.name)}
                 onMouseLeave={handleMenuMouseLeave}
               >
-                <Link href={menuItem.href || '#'} className={h.menu__link}>
+                <Link
+                  href={
+                    menuItem.subMenu && menuItem.subMenu.length > 0
+                      ? menuItem.subMenu[0].href
+                      : menuItem.href || '#'
+                  }
+                  className={h.menu__link}
+                >
                   {menuItem.name}
                 </Link>
                 {menuItem.subMenu && (
