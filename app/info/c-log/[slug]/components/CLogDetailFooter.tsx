@@ -21,7 +21,7 @@ export default function CLogDetailFooter({ prevPost, nextPost }: CLogDetailFoote
       </div>
 
       {/* 이전/다음 포스트 네비게이션 */}
-      <ListNavButtons prevPost={prevPost} nextPost={nextPost} />
+      <ListNavButtons prevPost={prevPost} nextPost={nextPost} basePath="/info/c-log" />
     </div>
   );
 }

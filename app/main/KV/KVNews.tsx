@@ -36,7 +36,7 @@ export default function NewsSection() {
       lastModifiedHeaderValue.current = newLastModified;
     }
 
-    return response.json();
+    return response.json(); // API에서 이미 2개만 반환하므로 slice 불필요
   };
 
   const {

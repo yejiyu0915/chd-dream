@@ -10,24 +10,24 @@ import withTocExport from '@stefanprobst/rehype-extract-toc/mdx';
 
 import { compile } from '@mdx-js/mdx';
 
-import { getNotionPageAndContentBySlug, notion, getPrevNextCLogPosts } from '@/lib/notion';
+import { getNotionPageAndContentBySlug, notion, getPrevNextNewsPosts } from '@/lib/notion';
 import { NotionToMarkdown } from 'notion-to-md';
 import mdx from 'common/styles/mdx/MdxContent.module.scss';
 import PageTitleSetter from '@/app/info/components/PageTitleSetter';
 import l from 'common/styles/mdx/MdxLayout.module.scss';
-import CLogDetailHeader from '@/app/info/c-log/[slug]/components/CLogDetailHeader';
-import CLogDetailFooter from '@/app/info/c-log/[slug]/components/CLogDetailFooter';
-import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'; // React Query 임포트
-import { PageObjectResponse, BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints'; // Notion API 타입 임포트
+import NewsDetailHeader from '@/app/info/news/[slug]/components/NewsDetailHeader';
+import NewsDetailFooter from '@/app/info/news/[slug]/components/NewsDetailFooter';
+import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
+import { PageObjectResponse, BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 
-interface CLogDetailPageProps {
+interface NewsDetailPageProps {
   params: { slug: string };
 }
 
-// C-Log 상세 페이지 캐싱 설정 - 1시간마다 재검증
+// 뉴스 상세 페이지 캐싱 설정 - 1시간마다 재검증
 export const revalidate = 3600;
 
-export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
+export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug as string;
 
@@ -38,11 +38,11 @@ export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['clog-detail', slug],
-    queryFn: () => getNotionPageAndContentBySlug('NOTION_CLOG_ID', slug),
+    queryKey: ['news-detail', slug],
+    queryFn: () => getNotionPageAndContentBySlug('NOTION_NEWS_ID', slug),
   });
 
-  const notionData = queryClient.getQueryData(['clog-detail', slug]) as
+  const notionData = queryClient.getQueryData(['news-detail', slug]) as
     | { page: PageObjectResponse; blocks: BlockObjectResponse[] }
     | undefined;
 
@@ -61,13 +61,11 @@ export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
 
   const { page } = notionData;
   const titleProperty = page.properties.Title;
-  const categoryProperty = page.properties.Category;
   const dateProperty = page.properties.Date;
-  const tagsProperty = page.properties.Tags; // Tags 속성 추가
+  const tagsProperty = page.properties.Tags; // 뉴스에도 태그가 있다면
 
   const title =
     (titleProperty?.type === 'title' && titleProperty.title[0]?.plain_text) || '제목 없음';
-  const category = (categoryProperty?.type === 'select' && categoryProperty.select?.name) || '기타';
   const date =
     dateProperty?.type === 'date' && dateProperty.date?.start
       ? new Date(dateProperty.date.start)
@@ -89,22 +87,16 @@ export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
     }
   }
 
-  const { prev: prevPost, next: nextPost } = await getPrevNextCLogPosts(slug);
+  const { prev: prevPost, next: nextPost } = await getPrevNextNewsPosts(slug);
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <div className={l.container}>
         <PageTitleSetter title={title} />
-        <CLogDetailHeader
-          title={title}
-          category={category}
-          date={date}
-          imageUrl={imageUrl}
-          tags={tags}
-        />
+        <NewsDetailHeader title={title} date={date} imageUrl={imageUrl} tags={tags} />
         <section className={`${mdx.mdxContent} detail-inner`}>
           <MDXRemote
-            source={markdown} // mdxSource 대신 markdown 직접 전달
+            source={markdown}
             options={{
               mdxOptions: {
                 remarkPlugins: [remarkGfm],
@@ -113,7 +105,7 @@ export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
             }}
           />
         </section>
-        <CLogDetailFooter prevPost={prevPost} nextPost={nextPost} />
+        <NewsDetailFooter prevPost={prevPost} nextPost={nextPost} />
         <aside className="relative hidden md:block">
           {/* 목차 */}
           {/* 목차 주석 처리된 부분 유지 */}

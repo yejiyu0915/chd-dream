@@ -15,6 +15,15 @@ export default function KV({ kvSliderItems, setKvHeightState }: KVProps) {
   const [kvHeight, setKvHeight] = useState('100vh'); // 초기값은 항상 '100vh'로 설정
 
   useEffect(() => {
+    // 모바일 디바이스 감지 함수
+    const isMobileDevice = () => {
+      return (
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        ) || window.innerWidth <= 768
+      );
+    };
+
     // 클라이언트 사이드에서만 window.innerHeight를 사용
     const setHeight = () => {
       const newHeight = `${window.innerHeight}px`;
@@ -22,11 +31,20 @@ export default function KV({ kvSliderItems, setKvHeightState }: KVProps) {
       setKvHeightState(newHeight); // 부모 컴포넌트에게 높이 전달
     };
 
-    setHeight(); // 컴포넌트 마운트 시 높이 설정
-    window.addEventListener('resize', setHeight); // 리사이즈 시 높이 재설정
+    // 모바일에서는 초기 높이만 설정하고 resize 이벤트 무시
+    if (isMobileDevice()) {
+      setHeight(); // 컴포넌트 마운트 시에만 높이 설정
+    } else {
+      // 데스크톱에서는 기존 동작 유지
+      setHeight();
+      window.addEventListener('resize', setHeight);
+    }
 
     return () => {
-      window.removeEventListener('resize', setHeight); // 클린업
+      // 모바일이 아닌 경우에만 이벤트 리스너 제거
+      if (!isMobileDevice()) {
+        window.removeEventListener('resize', setHeight);
+      }
     };
   }, [setKvHeightState]);
 

@@ -2,7 +2,7 @@
 $main: '.main';
 
 .main {
-  min-height: 100dvh; /* 동적 뷰포트 높이로 최소 높이 설정 */
+  min-height: 100vh;
 
   &__content {
     width: 100%;

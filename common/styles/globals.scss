@@ -119,11 +119,19 @@ main {
 
 .breadcrumb {
   --breadcrumb-height: calc(var(--header-height) + 28);
+  --color: var(--text-muted);
+  --active-color: var(--foreground);
+  --hover-color: var(--primary);
   position: absolute;
   top: vw(--breadcrumb-height);
   z-index: 2;
   width: 100%;
   padding-inline: var(--inner-padding);
+  &.detail {
+    --color: #ddd;
+    --active-color: var(--background);
+    --hover-color: var(--background);
+  }
   &__list {
     display: flex;
     align-items: center;
@@ -146,21 +154,21 @@ main {
       height: vw(4);
       margin-inline: vw(10);
       border-radius: 50%;
-      background-color: var(--text-muted);
+      background-color: var(--color);
     }
     &:last-child::after {
       display: none;
     }
   }
   &__link {
-    color: var(--text-muted);
+    color: var(--color);
     &:hover {
-      color: var(--primary);
+      color: var(--hover-color);
     }
   }
   &__active {
     font-weight: 700;
-    color: var(--foreground);
+    color: var(--active-color);
   }
   @include mq(pc-sm) {
     --breadcrumb-height: calc(var(--header-height) + 24);

@@ -67,6 +67,7 @@
   }
   @include mq(mo) {
     .titleSection {
+      border-bottom: 0;
       .title {
         padding-block: vw(136) vw(24);
       }

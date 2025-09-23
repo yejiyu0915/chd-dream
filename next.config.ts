@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     // 경고: 타입 에러가 있어도 프로덕션 빌드를 허용
     ignoreBuildErrors: true,
   },
+  // 캐싱 최적화 설정 (Next.js 15에서는 isrMemoryCacheSize 옵션이 제거됨)
   images: {
     // Notion 외부 이미지 도메인 추가 (Notion 내부 URL은 필요 없음)
     remotePatterns: [
@@ -36,6 +37,9 @@ const nextConfig: NextConfig = {
       },
       // 필요하다면 다른 외부 이미지 도메인도 여기에 추가하세요.
     ],
+    // 이미지 캐싱 최적화
+    minimumCacheTTL: 60 * 60 * 24 * 7, // 7일 캐시
+    formats: ['image/webp', 'image/avif'], // 최신 이미지 포맷 사용
   },
   // Browser-sync 관련 요청 무시
   async rewrites() {

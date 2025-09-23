@@ -134,7 +134,7 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
                           <div className={h.subMenu__columns}>
                             {(() => {
                               const columns = [];
-                              const itemsPerColumn = 3;
+                              const itemsPerColumn = 4;
 
                               for (let i = 0; i < menuItem.subMenu.length; i += itemsPerColumn) {
                                 const columnItems = menuItem.subMenu.slice(i, i + itemsPerColumn);
