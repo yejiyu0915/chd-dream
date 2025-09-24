@@ -25,7 +25,7 @@ export default function Breadcrumbs({ className, isDetail }: BreadcrumbsProps) {
   const breadcrumbNames: BreadcrumbNames = {
     info: '교회 소식',
     'c-log': 'C-Log',
-    news: '뉴스',
+    news: 'NEWS',
     // 다른 경로에 대한 이름 추가
   };
 
