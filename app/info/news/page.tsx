@@ -15,7 +15,7 @@ export default function NewsListPage() {
   const { setPageTitle } = usePageTitle();
   // setPageTitle은 클라이언트 훅이므로 useEffect 내에서 호출
   useEffect(() => {
-    setPageTitle('뉴스');
+    setPageTitle('NEWS');
   }, [setPageTitle]);
 
   // 클라이언트에서 useQuery로 데이터 가져오기 (서버에서 prefetch된 데이터를 사용)
