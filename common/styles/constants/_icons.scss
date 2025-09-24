@@ -111,4 +111,12 @@
       background-image: url('/common/ico_sort-list.svg');
     }
   }
+
+  &--unchecked {
+    background-image: url('/common/ico_unchecked.svg');
+  }
+
+  &--checked {
+    background-image: url('/common/ico_checked.svg');
+  }
 }

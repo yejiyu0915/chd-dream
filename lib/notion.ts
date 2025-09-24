@@ -185,6 +185,9 @@ export interface NewsItem {
   date: string;
   link: string;
   slug: string; // slug 속성 추가
+  popup: boolean; // 팝업 표시 여부
+  popupStartDate: string; // 팝업 시작 날짜/시간
+  popupEndDate: string; // 팝업 종료 날짜/시간
 }
 
 // KV Slider 데이터 타입 정의
@@ -310,6 +313,22 @@ export const mapPageToNewsItem: ItemMapper<NewsItem> = (page) => {
   const titleProperty = properties.Title as NotionProperty | undefined;
   const dateProperty = properties.Date as NotionProperty | undefined;
   const slugProperty = properties.Slug as NotionProperty | undefined; // Slug 속성 추가
+  const popupProperty = properties.Popup as NotionProperty | undefined; // Popup 속성 추가
+  const popupStartDateProperty = properties['Popup Start Date'] as NotionProperty | undefined; // Popup Start Date 속성 추가
+  const popupEndDateProperty = properties['Popup End Date'] as NotionProperty | undefined; // Popup End Date 속성 추가
+
+  // 팝업 체크박스 값 추출
+  const popupValue = popupProperty && 'checkbox' in popupProperty ? popupProperty.checkbox : false;
+
+  // 팝업 시작/종료 날짜 추출
+  const popupStartDate =
+    popupStartDateProperty && 'date' in popupStartDateProperty && popupStartDateProperty.date?.start
+      ? popupStartDateProperty.date.start
+      : '';
+  const popupEndDate =
+    popupEndDateProperty && 'date' in popupEndDateProperty && popupEndDateProperty.date?.start
+      ? popupEndDateProperty.date.start
+      : '';
 
   return {
     id: page.id,
@@ -317,6 +336,9 @@ export const mapPageToNewsItem: ItemMapper<NewsItem> = (page) => {
     date: getFormattedDate(dateProperty),
     link: `/info/news/${getPlainText(slugProperty) || page.id}`, // link 속성 추가
     slug: getPlainText(slugProperty) || page.id, // slug 매핑
+    popup: popupValue, // 팝업 표시 여부
+    popupStartDate: popupStartDate, // 팝업 시작 날짜/시간
+    popupEndDate: popupEndDate, // 팝업 종료 날짜/시간
   };
 };
 
@@ -579,13 +601,7 @@ export async function getPrevNextNewsPosts(currentSlug: string): Promise<{
 
 export type PrevNextNewsPosts = Awaited<ReturnType<typeof getPrevNextNewsPosts>>;
 
-// NewsItem 인터페이스 추가 (Notion API 응답에 맞춰 정의)
-export interface NewsItem {
-  id: string;
-  title: string;
-  date: string;
-  link: string;
-}
+// NewsItem 인터페이스는 위에서 이미 정의됨 (팝업 속성 포함)
 
 // Notion에서 뉴스 게시물 목록을 가져오는 함수
 export async function getNewsPosts(
@@ -636,10 +652,31 @@ export async function getNewsPosts(
           const titleProperty = p.properties.Title;
           const dateProperty = p.properties.Date;
           const slugProperty = p.properties.Slug; // Slug 속성 추가
+          const popupProperty = p.properties.Popup; // Popup 속성 추가
+          const popupStartDateProperty = p.properties['Popup Start Date']; // Popup Start Date 속성 추가
+          const popupEndDateProperty = p.properties['Popup End Date']; // Popup End Date 속성 추가
 
           const title = getPlainText(titleProperty);
           const date = getFormattedDate(dateProperty);
           const slug = getPlainText(slugProperty) || p.id; // slug 추출 (없으면 page.id 사용)
+
+          // 팝업 체크박스 값 추출
+          const popupValue =
+            popupProperty && 'checkbox' in popupProperty ? popupProperty.checkbox : false;
+
+          // 팝업 시작/종료 날짜 추출
+          const popupStartDate =
+            popupStartDateProperty &&
+            'date' in popupStartDateProperty &&
+            popupStartDateProperty.date?.start
+              ? popupStartDateProperty.date.start
+              : '';
+          const popupEndDate =
+            popupEndDateProperty &&
+            'date' in popupEndDateProperty &&
+            popupEndDateProperty.date?.start
+              ? popupEndDateProperty.date.start
+              : '';
 
           return {
             id: p.id,
@@ -647,6 +684,9 @@ export async function getNewsPosts(
             date: date || '날짜 없음',
             link: `/info/news/${slug}`, // Notion Page ID 대신 slug를 기반으로 링크 생성
             slug: slug,
+            popup: popupValue, // 팝업 표시 여부
+            popupStartDate: popupStartDate, // 팝업 시작 날짜/시간
+            popupEndDate: popupEndDate, // 팝업 종료 날짜/시간
           };
         });
 

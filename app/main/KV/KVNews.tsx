@@ -96,7 +96,7 @@ export default function NewsSection() {
         {newsData && newsData.length > 0 ? (
           newsData.map((newsItem) => (
             <li key={newsItem.id}>
-              <a href={`/news/${newsItem.slug}`} className={kv.news__link}>
+              <a href={`/info/news/${newsItem.slug}`} className={kv.news__link}>
                 <h3 className={kv.news__listTitle}>{newsItem.title}</h3>
                 <p className={kv.news__listDate}>{newsItem.date}</p>
               </a>
