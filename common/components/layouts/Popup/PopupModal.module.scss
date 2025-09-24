@@ -1,0 +1,393 @@
+@use '@/common/styles/mixins/function' as *;
+// 팝업 모달 오버레이
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+  padding: vw(20);
+
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+// 팝업 모달 컨테이너
+.modal {
+  background: white;
+  border-radius: vw(20);
+  box-shadow: 0 vw(20) vw(40) rgba(0, 0, 0, 0.15);
+  max-width: vw(500);
+  width: 100%;
+  max-height: 80vh;
+  overflow: hidden;
+  transform: scale(0.9) translateY(vw(20));
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+
+  &.visible {
+    transform: scale(1) translateY(0);
+  }
+}
+
+// 모달 헤더
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: vw(20) vw(24) vw(16);
+  border-bottom: 1px solid #f0f0f0;
+}
+
+// 뉴스 배지
+.badge {
+  background: #333;
+  color: white;
+  padding: vw(6) vw(12);
+  border-radius: vw(20);
+  @include font-vw(12, $weight: 600);
+  letter-spacing: 0.5px;
+}
+
+.badgeText {
+  font-family: 'Pretendard', sans-serif;
+}
+
+// 닫기 버튼
+.closeButton {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: vw(8);
+  border-radius: vw(8);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: #f5f5f5;
+    color: #333;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// 모달 내용
+.content {
+  padding: vw(24);
+  flex: 1;
+  overflow-y: auto;
+  touch-action: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+// 제목
+.title {
+  @include font-vw(20, $weight: 700);
+  color: #333;
+  line-height: 1.4;
+  margin: 0 0 vw(12) 0;
+  font-family: 'Pretendard', sans-serif;
+}
+
+// 날짜
+.date {
+  @include font-vw(14);
+  color: #666;
+  margin: 0 0 vw(16) 0;
+  font-family: 'Pretendard', sans-serif;
+}
+
+// 뉴스 컨텐츠 영역
+.newsContent {
+  margin: vw(16) 0 vw(24) 0;
+  max-height: 380px;
+  overflow-y: auto;
+  touch-action: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+// 로딩 상태
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: vw(20);
+  color: #666;
+}
+
+.spinner {
+  width: vw(20);
+  height: vw(20);
+  border: vw(2) solid #f3f3f3;
+  border-top: vw(2) solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: vw(8);
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// 컨텐츠 블록들
+.contentBlocks {
+  line-height: 1.6;
+}
+
+.block {
+  margin-bottom: vw(12);
+}
+
+// 텍스트 스타일들
+.paragraph {
+  @include font-vw(14);
+  color: #333;
+  margin: 0 0 vw(8) 0;
+  line-height: 1.5;
+}
+
+.heading1 {
+  @include font-vw(18, $weight: 700);
+  color: #333;
+  margin: vw(16) 0 vw(8) 0;
+  line-height: 1.4;
+}
+
+.heading2 {
+  @include font-vw(16, $weight: 600);
+  color: #333;
+  margin: vw(12) 0 vw(6) 0;
+  line-height: 1.4;
+}
+
+.heading3 {
+  @include font-vw(15, $weight: 600);
+  color: #333;
+  margin: vw(10) 0 vw(4) 0;
+  line-height: 1.4;
+}
+
+.listItem {
+  @include font-vw(14);
+  color: #333;
+  margin: vw(4) 0;
+  padding-left: vw(8);
+}
+
+.quote {
+  @include font-vw(14);
+  color: #555;
+  border-left: vw(3) solid #667eea;
+  padding-left: vw(12);
+  margin: vw(8) 0;
+  font-style: italic;
+}
+
+.code {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: vw(4);
+  padding: vw(8);
+  margin: vw(8) 0;
+  font-family: 'Courier New', monospace;
+  @include font-vw(13);
+  overflow-x: auto;
+}
+
+// 이미지 스타일
+.imageContainer {
+  margin: vw(12) 0;
+  text-align: center;
+}
+
+.image {
+  max-width: 100%;
+  height: auto;
+  border-radius: vw(8);
+  box-shadow: 0 vw(2) vw(8) rgba(0, 0, 0, 0.1);
+}
+
+.imageCaption {
+  @include font-vw(12);
+  color: #666;
+  margin-top: vw(4);
+  font-style: italic;
+}
+
+// 컨텐츠 없음
+.noContent {
+  text-align: center;
+  padding: vw(20);
+  color: #666;
+
+  p {
+    @include font-vw(14);
+    margin: 0;
+  }
+}
+
+// 체크박스 컨테이너
+.checkboxContainer {
+  margin: 0;
+  padding: vw(12) 0 0 0;
+  border-top: 1px solid #f0f0f0;
+  text-align: center;
+}
+
+.checkboxLabel {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  justify-content: center;
+}
+
+.checkboxIcon {
+  --icon-size: 1.5 !important;
+  margin-right: vw(8);
+  cursor: pointer;
+  filter: invert(1);
+}
+
+.checkboxText {
+  @include font-vw(13);
+  color: #666;
+  font-family: 'Pretendard', sans-serif;
+}
+
+// 액션 버튼들
+.actions {
+  display: flex;
+  gap: vw(12);
+  justify-content: space-between;
+  margin-bottom: vw(16);
+}
+
+// 자세히 보기 버튼
+.readButton {
+  background: #333;
+  color: white;
+  border: none;
+  padding: vw(12) vw(24);
+  border-radius: vw(8);
+  @include font-vw(14, $weight: 600);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Pretendard', sans-serif;
+  flex: 1;
+
+  &:hover {
+    background: #555;
+    transform: translateY(vw(-1));
+    box-shadow: 0 vw(4) vw(12) rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// 닫기 텍스트 버튼
+.closeTextButton {
+  background: none;
+  border: 1px solid #ddd;
+  color: #666;
+  padding: vw(12) vw(24);
+  border-radius: vw(8);
+  @include font-vw(14, $weight: 500);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Pretendard', sans-serif;
+  flex: 1;
+
+  &:hover {
+    border-color: #999;
+    color: #333;
+    background-color: #f9f9f9;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// 반응형 디자인
+@include mq(mo) {
+  .overlay {
+    padding: vw(16);
+  }
+
+  .modal {
+    max-width: 100%;
+    border-radius: vw(12);
+  }
+
+  .header {
+    padding: vw(16) vw(20) vw(12);
+  }
+
+  .content {
+    padding: vw(20);
+  }
+
+  .title {
+    @include font-vw(18, $weight: 700);
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: vw(8);
+  }
+
+  .readButton,
+  .closeTextButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@include mq(mo-sm) {
+  .overlay {
+    padding: vw(12);
+  }
+
+  .header {
+    padding: vw(12) vw(16) vw(8);
+  }
+
+  .content {
+    padding: vw(16);
+  }
+
+  .title {
+    @include font-vw(16, $weight: 700);
+  }
+
+  .date {
+    @include font-vw(13);
+  }
+}

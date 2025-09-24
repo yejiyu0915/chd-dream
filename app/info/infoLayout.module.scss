@@ -44,7 +44,15 @@
   @include mq(pc-sm) {
     .titleSection {
       background-color: #f9f9f9;
-      border-bottom: 1px solid var(--border-light);
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background-color: var(--border-light);
+      }
       .inner {
         justify-content: flex-start;
       }
@@ -67,6 +75,7 @@
   }
   @include mq(mo) {
     .titleSection {
+      border-bottom: 0;
       .title {
         padding-block: vw(136) vw(24);
       }

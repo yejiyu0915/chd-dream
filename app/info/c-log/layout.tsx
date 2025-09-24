@@ -9,5 +9,5 @@ export async function generateStaticParams() {
 }
 
 export default function CLogLayout({ children }: { children: React.ReactNode }) {
-  return <Suspense fallback={<div>로딩 중...</div>}>{children}</Suspense>;
+  return <Suspense fallback={<div></div>}>{children}</Suspense>;
 }

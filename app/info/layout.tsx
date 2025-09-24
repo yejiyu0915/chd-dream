@@ -41,8 +41,10 @@ export default function InfoLayout({ children }: InfoLayoutProps) {
       {' '}
       {/* id 제거 */}
       <div className={info.titleSection}>
-        <Breadcrumbs className={isInfoDetailPage ? info.detailBreadcrumbs : info.breadcrumbs} />{' '}
-        {/* Breadcrumbs 컴포넌트 사용 */}
+        <Breadcrumbs
+          className={isInfoDetailPage ? info.detailBreadcrumbs : info.breadcrumbs}
+          isDetail={isInfoDetailPage}
+        />
         {!isInfoDetailPage && (
           <div className={`${info.inner} inner`}>
             <div className={info.title}>

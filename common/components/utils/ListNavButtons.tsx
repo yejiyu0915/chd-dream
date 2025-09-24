@@ -2,18 +2,24 @@
 
 import Link from 'next/link';
 import Icon from '@/common/components/utils/Icons';
-import { PrevNextCLogPosts } from '@/lib/notion';
 
-interface ListNavButtonsProps {
-  prevPost: PrevNextCLogPosts['prev'];
-  nextPost: PrevNextCLogPosts['next'];
+// 범용적인 이전/다음 포스트 타입 정의
+interface PostItem {
+  title: string;
+  slug: string;
 }
 
-export default function ListNavButtons({ prevPost, nextPost }: ListNavButtonsProps) {
+interface ListNavButtonsProps {
+  prevPost: PostItem | null;
+  nextPost: PostItem | null;
+  basePath: string; // 기본 경로 (예: '/info/c-log' 또는 '/info/news')
+}
+
+export default function ListNavButtons({ prevPost, nextPost, basePath }: ListNavButtonsProps) {
   return (
     <div className="list-nav-buttons">
       {prevPost ? (
-        <Link href={`/info/c-log/${prevPost.slug}`} className="list-nav-link">
+        <Link href={`${basePath}/${prevPost.slug}`} className="list-nav-link">
           <Icon name="arrow-up" />
           이전글: <span className="list-nav-link__title">{prevPost.title}</span>
         </Link>
@@ -21,7 +27,7 @@ export default function ListNavButtons({ prevPost, nextPost }: ListNavButtonsPro
         ''
       )}
       {nextPost ? (
-        <Link href={`/info/c-log/${nextPost.slug}`} className="list-nav-link">
+        <Link href={`${basePath}/${nextPost.slug}`} className="list-nav-link">
           <Icon name="arrow-down" />
           다음글: <span className="list-nav-link__title">{nextPost.title}</span>
         </Link>

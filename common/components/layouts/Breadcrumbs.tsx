@@ -14,17 +14,18 @@ interface BreadcrumbItem {
 
 interface BreadcrumbsProps {
   className?: string; // className prop 추가
+  isDetail?: boolean; // 상세페이지 여부를 나타내는 prop 추가
 }
 
-export default function Breadcrumbs({ className }: BreadcrumbsProps) {
-  // props 제거
-  const pathname = usePathname(); // usePathname 다시 추가
+export default function Breadcrumbs({ className, isDetail }: BreadcrumbsProps) {
+  const pathname = usePathname();
   const pathSegments = pathname.split('/').filter(Boolean);
 
   // 각 경로 세그먼트에 대한 표시 이름 정의 (옵션)
   const breadcrumbNames: BreadcrumbNames = {
     info: '교회 소식',
     'c-log': 'C-Log',
+    news: 'NEWS',
     // 다른 경로에 대한 이름 추가
   };
 
@@ -37,10 +38,13 @@ export default function Breadcrumbs({ className }: BreadcrumbsProps) {
     }),
   ];
 
+  // 상세페이지인 경우 detail 클래스 추가
+  const breadcrumbClasses = ['breadcrumb', className || '', isDetail ? 'detail' : '']
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <nav className={`breadcrumb ${className || ''}`} aria-label="breadcrumb">
-      {' '}
-      {/* className 적용 */}
+    <nav className={breadcrumbClasses} aria-label="breadcrumb">
       <ol className="breadcrumb__list">
         {breadcrumbs.map((crumb, index) =>
           index > 2 ? null : (
