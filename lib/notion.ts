@@ -194,6 +194,19 @@ export interface NewsItem {
 // 공지사항 데이터 타입 (뉴스와 동일한 구조)
 export type NoticeItem = NewsItem;
 
+// 일정 데이터 타입 정의
+export interface ScheduleItem {
+  id: string;
+  title: string;
+  date: string; // ISO 날짜 문자열
+  time?: string; // 시간 (선택사항)
+  location?: string; // 장소 (선택사항)
+  description?: string; // 설명 (선택사항)
+  category?: string; // 카테고리 (선택사항)
+  startDate?: string; // 시작 날짜/시간 (ISO 문자열)
+  endDate?: string; // 종료 날짜/시간 (ISO 문자열)
+}
+
 // KV Slider 데이터 타입 정의
 export interface KVSliderItem {
   id: string;
@@ -447,6 +460,49 @@ export const mapPageToMenuItem = (menuType: 'news' | 'notice' | 'c-log') => {
   };
 };
 
+// 일정 데이터 매핑 함수
+const mapPageToScheduleItem: ItemMapper<ScheduleItem> = (page) => {
+  const properties = page.properties;
+
+  const titleProperty = properties.Title as NotionProperty | undefined;
+  const dateProperty = properties.Date as NotionProperty | undefined;
+  const timeProperty = properties.Time as NotionProperty | undefined;
+  const locationProperty = properties.Location as NotionProperty | undefined;
+  const descriptionProperty = properties.Description as NotionProperty | undefined;
+  const categoryProperty = properties.Category as NotionProperty | undefined;
+
+  // 날짜를 ISO 문자열로 변환
+  let dateString = '';
+  let startDateString = '';
+  let endDateString = '';
+
+  if (dateProperty && dateProperty.type === 'date' && 'date' in dateProperty && dateProperty.date) {
+    // 기본 날짜 (시작 날짜)
+    if (dateProperty.date.start) {
+      dateString = dateProperty.date.start;
+      startDateString = dateProperty.date.start;
+    }
+    // 종료 날짜가 있으면 설정
+    if (dateProperty.date.end) {
+      endDateString = dateProperty.date.end;
+    }
+  }
+
+  return {
+    id: page.id,
+    title: getPlainText(titleProperty) || '제목 없음',
+    date: dateString,
+    time: getPlainText(timeProperty) || undefined,
+    location: getPlainText(locationProperty) || undefined,
+    description: getPlainText(descriptionProperty) || undefined,
+    category:
+      (categoryProperty && 'select' in categoryProperty && categoryProperty.select?.name) ||
+      undefined,
+    startDate: startDateString || undefined,
+    endDate: endDateString || undefined,
+  };
+};
+
 // KV Slider 데이터 매핑 함수
 const mapPageToKVSliderItem: ItemMapper<KVSliderItem> = (page) => {
   const properties = page.properties;
@@ -619,6 +675,21 @@ export async function getCLogMainData(): Promise<CLogItem[]> {
     },
     ['clog-main-data'],
     { revalidate: 300, tags: ['clog-list'] } // 5분 캐시, 태그 기반 재검증
+  )();
+}
+
+// 일정 데이터 가져오기
+export async function getScheduleData(): Promise<ScheduleItem[]> {
+  return unstable_cache(
+    async () => {
+      return getPublishedNotionData<ScheduleItem>(
+        'NOTION_SCHEDULE_ID',
+        mapPageToScheduleItem,
+        1000
+      );
+    },
+    ['schedule-data'],
+    { revalidate: 300, tags: ['schedule-list'] } // 5분 캐시, 태그 기반 재검증
   )();
 }
 

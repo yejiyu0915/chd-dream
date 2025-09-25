@@ -1,0 +1,293 @@
+// CSS 모듈에서는 :root 선택자가 포함된 파일을 import할 수 없으므로 직접 색상 정의
+
+.scheduleMain {
+  padding: 60px 0 120px;
+
+  @media (max-width: 768px) {
+    padding: 40px 0 80px;
+  }
+}
+
+.scheduleInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+
+  @media (max-width: 768px) {
+    padding: 0 16px;
+  }
+}
+
+.calendarContainer {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px;
+  background: #fff;
+  color: #333;
+
+  @media (max-width: 768px) {
+    padding: 20px 24px;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.calendarTitle {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
+}
+
+.calendarNavigation {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.navButton {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: #e9ecef;
+    border-color: #dee2e6;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.currentMonth {
+  font-size: 18px;
+  font-weight: 500;
+  min-width: 120px;
+  text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.dayHeader {
+  padding: 16px 12px;
+  text-align: center;
+  font-weight: 600;
+  color: #495057;
+  font-size: 16px;
+  border-bottom: 3px solid #e9ecef;
+
+  @media (max-width: 768px) {
+    padding: 12px 4px;
+    font-size: 12px;
+  }
+
+  &.sunday {
+    color: #dc3545;
+    font-weight: 700;
+  }
+}
+
+.dayCell {
+  background: white;
+  min-height: 160px;
+  padding: 16px;
+  border-bottom: 1px solid #e9ecef;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f8f9fa;
+  }
+
+  &.otherMonth {
+    background: #f8f9fa;
+    color: #adb5bd;
+  }
+
+  &.today {
+    border-color: #000;
+  }
+
+  @media (max-width: 768px) {
+    min-height: 80px;
+    padding: 4px;
+  }
+}
+
+.dayNumber {
+  font-weight: 500;
+  margin-bottom: 8px;
+  font-size: 16px;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+}
+
+.dayCell.sunday .dayNumber {
+  color: #dc3545;
+  font-weight: 700;
+}
+
+.todayLabel {
+  font-weight: 600;
+  color: #000;
+  font-size: 11px;
+
+  @media (max-width: 768px) {
+    font-size: 10px;
+  }
+}
+
+.eventList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.eventItem {
+  background: #000;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  &:hover {
+    background: #e9ecef;
+    border-color: #dee2e6;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 10px;
+    padding: 1px 4px;
+  }
+}
+
+.eventTime {
+  font-size: 12px;
+  opacity: 0.8;
+  font-weight: 400;
+
+  @media (max-width: 768px) {
+    font-size: 9px;
+  }
+}
+
+.spanningEventList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.spanningEvent {
+  background: #667eea;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  margin: 0 -8px; // 좌우 여백 제거하여 연속성 표현
+
+  &:hover {
+    background: #5a6fd8;
+  }
+
+  &.spanningEventStart {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    margin-left: 0;
+  }
+
+  &.spanningEventEnd {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    margin-right: 0;
+  }
+
+  &:not(.spanningEventStart):not(.spanningEventEnd) {
+    border-radius: 0;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 10px;
+    padding: 2px 6px;
+    margin: 0 -6px;
+  }
+}
+
+.loadingState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  color: #6c757d;
+  font-size: 16px;
+}
+
+.errorState {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  color: #dc3545;
+  text-align: center;
+  gap: 16px;
+}
+
+.retryButton {
+  background: #f8f9fa;
+  color: #333;
+  border: 1px solid #e9ecef;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #e9ecef;
+    border-color: #dee2e6;
+  }
+}

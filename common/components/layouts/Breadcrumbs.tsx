@@ -27,6 +27,7 @@ export default function Breadcrumbs({ className, isDetail }: BreadcrumbsProps) {
     'c-log': 'C-Log',
     news: 'NEWS',
     notice: '공지사항',
+    schedule: '일정',
     // 다른 경로에 대한 이름 추가
   };
 
