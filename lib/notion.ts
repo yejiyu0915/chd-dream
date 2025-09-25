@@ -182,7 +182,8 @@ export interface SermonItem {
 export interface NewsItem {
   id: string;
   title: string;
-  date: string;
+  date: string; // 포맷된 날짜 문자열 (표시용)
+  rawDate: string; // 원본 날짜/시간 정보 (계산용)
   link: string;
   slug: string; // slug 속성 추가
   popup: boolean; // 팝업 표시 여부
@@ -240,6 +241,14 @@ function getFormattedDate(property: NotionProperty | undefined): string {
     })
     .replace(/\. /g, '.')
     .replace(/\.$/, '');
+}
+
+// Notion 날짜 속성에서 원본 날짜/시간 문자열을 추출하는 헬퍼 함수
+function getRawDate(property: NotionProperty | undefined): string {
+  if (!property || property.type !== 'date' || !('date' in property) || !property.date?.start) {
+    return '';
+  }
+  return property.date.start;
 }
 
 // CLogItem 매핑 함수
@@ -317,26 +326,31 @@ export const mapPageToNewsItem: ItemMapper<NewsItem> = (page) => {
   const dateProperty = properties.Date as NotionProperty | undefined;
   const slugProperty = properties.Slug as NotionProperty | undefined; // Slug 속성 추가
   const popupProperty = properties.Popup as NotionProperty | undefined; // Popup 속성 추가
-  const popupStartDateProperty = properties['Popup Start Date'] as NotionProperty | undefined; // Popup Start Date 속성 추가
-  const popupEndDateProperty = properties['Popup End Date'] as NotionProperty | undefined; // Popup End Date 속성 추가
+  const popupPeriodProperty = properties['Popup Period'] as NotionProperty | undefined; // Popup Period 속성 추가
 
   // 팝업 체크박스 값 추출
   const popupValue = popupProperty && 'checkbox' in popupProperty ? popupProperty.checkbox : false;
 
-  // 팝업 시작/종료 날짜 추출
-  const popupStartDate =
-    popupStartDateProperty && 'date' in popupStartDateProperty && popupStartDateProperty.date?.start
-      ? popupStartDateProperty.date.start
-      : '';
-  const popupEndDate =
-    popupEndDateProperty && 'date' in popupEndDateProperty && popupEndDateProperty.date?.start
-      ? popupEndDateProperty.date.start
-      : '';
+  // 팝업 기간에서 시작/종료 날짜 추출
+  let popupStartDate = '';
+  let popupEndDate = '';
+
+  if (popupPeriodProperty && 'date' in popupPeriodProperty && popupPeriodProperty.date) {
+    // 시작 날짜
+    if (popupPeriodProperty.date.start) {
+      popupStartDate = popupPeriodProperty.date.start;
+    }
+    // 종료 날짜
+    if (popupPeriodProperty.date.end) {
+      popupEndDate = popupPeriodProperty.date.end;
+    }
+  }
 
   return {
     id: page.id,
     title: getPlainText(titleProperty) || '제목 없음',
     date: getFormattedDate(dateProperty),
+    rawDate: getRawDate(dateProperty),
     link: `/info/news/${getPlainText(slugProperty) || page.id}`, // link 속성 추가
     slug: getPlainText(slugProperty) || page.id, // slug 매핑
     popup: popupValue, // 팝업 표시 여부
@@ -353,26 +367,31 @@ export const mapPageToNoticeItem: ItemMapper<NoticeItem> = (page) => {
   const dateProperty = properties.Date as NotionProperty | undefined;
   const slugProperty = properties.Slug as NotionProperty | undefined;
   const popupProperty = properties.Popup as NotionProperty | undefined;
-  const popupStartDateProperty = properties['Popup Start Date'] as NotionProperty | undefined;
-  const popupEndDateProperty = properties['Popup End Date'] as NotionProperty | undefined;
+  const popupPeriodProperty = properties['Popup Period'] as NotionProperty | undefined;
 
   // 팝업 체크박스 값 추출
   const popupValue = popupProperty && 'checkbox' in popupProperty ? popupProperty.checkbox : false;
 
-  // 팝업 시작/종료 날짜 추출
-  const popupStartDate =
-    popupStartDateProperty && 'date' in popupStartDateProperty && popupStartDateProperty.date?.start
-      ? popupStartDateProperty.date.start
-      : '';
-  const popupEndDate =
-    popupEndDateProperty && 'date' in popupEndDateProperty && popupEndDateProperty.date?.start
-      ? popupEndDateProperty.date.start
-      : '';
+  // 팝업 기간에서 시작/종료 날짜 추출
+  let popupStartDate = '';
+  let popupEndDate = '';
+
+  if (popupPeriodProperty && 'date' in popupPeriodProperty && popupPeriodProperty.date) {
+    // 시작 날짜
+    if (popupPeriodProperty.date.start) {
+      popupStartDate = popupPeriodProperty.date.start;
+    }
+    // 종료 날짜
+    if (popupPeriodProperty.date.end) {
+      popupEndDate = popupPeriodProperty.date.end;
+    }
+  }
 
   return {
     id: page.id,
     title: getPlainText(titleProperty) || '제목 없음',
     date: getFormattedDate(dateProperty),
+    rawDate: getRawDate(dateProperty),
     link: `/info/notice/${getPlainText(slugProperty) || page.id}`, // 공지사항 링크
     slug: getPlainText(slugProperty) || page.id,
     popup: popupValue,
@@ -393,29 +412,32 @@ export const mapPageToMenuItem = (menuType: 'news' | 'notice' | 'c-log') => {
     const dateProperty = properties.Date as NotionProperty | undefined;
     const slugProperty = properties.Slug as NotionProperty | undefined;
     const popupProperty = properties.Popup as NotionProperty | undefined;
-    const popupStartDateProperty = properties['Popup Start Date'] as NotionProperty | undefined;
-    const popupEndDateProperty = properties['Popup End Date'] as NotionProperty | undefined;
+    const popupPeriodProperty = properties['Popup Period'] as NotionProperty | undefined;
 
     // 팝업 체크박스 값 추출
     const popupValue =
       popupProperty && 'checkbox' in popupProperty ? popupProperty.checkbox : false;
 
-    // 팝업 시작/종료 날짜 추출
-    const popupStartDate =
-      popupStartDateProperty &&
-      'date' in popupStartDateProperty &&
-      popupStartDateProperty.date?.start
-        ? popupStartDateProperty.date.start
-        : '';
-    const popupEndDate =
-      popupEndDateProperty && 'date' in popupEndDateProperty && popupEndDateProperty.date?.start
-        ? popupEndDateProperty.date.start
-        : '';
+    // 팝업 기간에서 시작/종료 날짜 추출
+    let popupStartDate = '';
+    let popupEndDate = '';
+
+    if (popupPeriodProperty && 'date' in popupPeriodProperty && popupPeriodProperty.date) {
+      // 시작 날짜
+      if (popupPeriodProperty.date.start) {
+        popupStartDate = popupPeriodProperty.date.start;
+      }
+      // 종료 날짜
+      if (popupPeriodProperty.date.end) {
+        popupEndDate = popupPeriodProperty.date.end;
+      }
+    }
 
     return {
       id: page.id,
       title: getPlainText(titleProperty) || '제목 없음',
       date: getFormattedDate(dateProperty),
+      rawDate: getRawDate(dateProperty),
       link: `${basePath}/${getPlainText(slugProperty) || page.id}`, // 동적 링크 생성
       slug: getPlainText(slugProperty) || page.id,
       popup: popupValue,
@@ -837,35 +859,37 @@ export async function getNewsPosts(
           const dateProperty = p.properties.Date;
           const slugProperty = p.properties.Slug; // Slug 속성 추가
           const popupProperty = p.properties.Popup; // Popup 속성 추가
-          const popupStartDateProperty = p.properties['Popup Start Date']; // Popup Start Date 속성 추가
-          const popupEndDateProperty = p.properties['Popup End Date']; // Popup End Date 속성 추가
+          const popupPeriodProperty = p.properties['Popup Period']; // Popup Period 속성 추가
 
           const title = getPlainText(titleProperty);
           const date = getFormattedDate(dateProperty);
+          const rawDate = getRawDate(dateProperty);
           const slug = getPlainText(slugProperty) || p.id; // slug 추출 (없으면 page.id 사용)
 
           // 팝업 체크박스 값 추출
           const popupValue =
             popupProperty && 'checkbox' in popupProperty ? popupProperty.checkbox : false;
 
-          // 팝업 시작/종료 날짜 추출
-          const popupStartDate =
-            popupStartDateProperty &&
-            'date' in popupStartDateProperty &&
-            popupStartDateProperty.date?.start
-              ? popupStartDateProperty.date.start
-              : '';
-          const popupEndDate =
-            popupEndDateProperty &&
-            'date' in popupEndDateProperty &&
-            popupEndDateProperty.date?.start
-              ? popupEndDateProperty.date.start
-              : '';
+          // 팝업 기간에서 시작/종료 날짜 추출
+          let popupStartDate = '';
+          let popupEndDate = '';
+
+          if (popupPeriodProperty && 'date' in popupPeriodProperty && popupPeriodProperty.date) {
+            // 시작 날짜
+            if (popupPeriodProperty.date.start) {
+              popupStartDate = popupPeriodProperty.date.start;
+            }
+            // 종료 날짜
+            if (popupPeriodProperty.date.end) {
+              popupEndDate = popupPeriodProperty.date.end;
+            }
+          }
 
           return {
             id: p.id,
             title: title || '제목 없음',
             date: date || '날짜 없음',
+            rawDate: rawDate,
             link: `/info/news/${slug}`, // Notion Page ID 대신 slug를 기반으로 링크 생성
             slug: slug,
             popup: popupValue, // 팝업 표시 여부

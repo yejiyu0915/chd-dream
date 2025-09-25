@@ -37,7 +37,7 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
   useEffect(() => {
     if (newsItem) {
       // 뉴스 컨텐츠 가져오기
-      fetchNewsContent(newsItem.slug);
+      fetchNewsContent(newsItem.slug, newsItem);
 
       // 모달이 표시될 때 애니메이션을 위해 약간의 지연
       const timer = setTimeout(() => {
@@ -51,18 +51,29 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
     }
   }, [newsItem]);
 
-  // 뉴스 컨텐츠 가져오기 함수
-  const fetchNewsContent = async (slug: string) => {
+  // 컨텐츠 가져오기 함수 (News 또는 Notice)
+  const fetchNewsContent = async (slug: string, item: NewsItem) => {
     try {
       setIsLoadingContent(true);
 
-      const response = await fetch(`/api/news-content/${slug}`);
+      // 링크를 기반으로 API 엔드포인트 결정
+      // Notice 항목인지 확인 (slug가 'notice'로 시작하거나 link에 '/info/notice/'가 포함된 경우)
+      const isNotice =
+        slug === 'notice9' ||
+        item.link.includes('/info/notice/') ||
+        slug.startsWith('notice') ||
+        slug.includes('notice') ||
+        item.title.includes('공지사항');
+      const apiEndpoint = isNotice ? `/api/notice-content/${slug}` : `/api/news-content/${slug}`;
+
+      const response = await fetch(apiEndpoint);
+
       if (response.ok) {
         const content = await response.json();
         setNewsContent(content);
       }
     } catch {
-      // 뉴스 컨텐츠 가져오기 실패 시 무시
+      // 컨텐츠 가져오기 실패 시 무시
     } finally {
       setIsLoadingContent(false);
     }
@@ -126,7 +137,17 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
         {/* 모달 헤더 */}
         <div className={styles.header}>
           <div className={styles.badge}>
-            <span className={styles.badgeText}>NEWS</span>
+            <span className={styles.badgeText}>
+              {(() => {
+                const isNotice =
+                  newsItem.slug === 'notice9' ||
+                  newsItem.link.includes('/info/notice/') ||
+                  newsItem.slug.startsWith('notice') ||
+                  newsItem.slug.includes('notice') ||
+                  newsItem.title.includes('공지사항');
+                return isNotice ? '공지사항' : 'NEWS';
+              })()}
+            </span>
           </div>
           <button className={styles.closeButton} onClick={handleClose} aria-label="팝업 닫기">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">

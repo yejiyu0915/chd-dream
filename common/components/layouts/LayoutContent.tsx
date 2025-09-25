@@ -5,7 +5,7 @@ import Header from '@/common/components/layouts/Header/Header';
 import Footer from '@/common/components/layouts/Footer/Footer';
 import SmoothScroll from '@/common/components/utils/SmoothScroll';
 import { useMobileMenu } from '@/common/components/layouts/Header/MobileMenuContext';
-import PopupModal from '@/common/components/layouts/Popup/PopupModal';
+import PopupModal from '@/common/components/layouts/popup/PopupModal';
 import { NewsItem } from '@/lib/notion';
 
 interface LayoutContentProps {
@@ -18,7 +18,7 @@ export default function LayoutContent({ children }: LayoutContentProps) {
   const [showPopup, setShowPopup] = useState(false);
   const scrollYRef = useRef(0);
 
-  // 팝업 뉴스 데이터 가져오기
+  // 팝업 데이터 가져오기 (News + Notice)
   useEffect(() => {
     const fetchPopupNews = async () => {
       try {
@@ -48,7 +48,7 @@ export default function LayoutContent({ children }: LayoutContentProps) {
           }
         }
       } catch {
-        // 팝업 뉴스 가져오기 실패 시 무시
+        // 팝업 데이터 가져오기 실패 시 무시
       }
     };
 
