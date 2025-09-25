@@ -190,6 +190,9 @@ export interface NewsItem {
   popupEndDate: string; // 팝업 종료 날짜/시간
 }
 
+// 공지사항 데이터 타입 (뉴스와 동일한 구조)
+export type NoticeItem = NewsItem;
+
 // KV Slider 데이터 타입 정의
 export interface KVSliderItem {
   id: string;
@@ -342,6 +345,86 @@ export const mapPageToNewsItem: ItemMapper<NewsItem> = (page) => {
   };
 };
 
+// 공지사항 데이터 매핑 함수
+export const mapPageToNoticeItem: ItemMapper<NoticeItem> = (page) => {
+  const properties = page.properties;
+
+  const titleProperty = properties.Title as NotionProperty | undefined;
+  const dateProperty = properties.Date as NotionProperty | undefined;
+  const slugProperty = properties.Slug as NotionProperty | undefined;
+  const popupProperty = properties.Popup as NotionProperty | undefined;
+  const popupStartDateProperty = properties['Popup Start Date'] as NotionProperty | undefined;
+  const popupEndDateProperty = properties['Popup End Date'] as NotionProperty | undefined;
+
+  // 팝업 체크박스 값 추출
+  const popupValue = popupProperty && 'checkbox' in popupProperty ? popupProperty.checkbox : false;
+
+  // 팝업 시작/종료 날짜 추출
+  const popupStartDate =
+    popupStartDateProperty && 'date' in popupStartDateProperty && popupStartDateProperty.date?.start
+      ? popupStartDateProperty.date.start
+      : '';
+  const popupEndDate =
+    popupEndDateProperty && 'date' in popupEndDateProperty && popupEndDateProperty.date?.start
+      ? popupEndDateProperty.date.start
+      : '';
+
+  return {
+    id: page.id,
+    title: getPlainText(titleProperty) || '제목 없음',
+    date: getFormattedDate(dateProperty),
+    link: `/info/notice/${getPlainText(slugProperty) || page.id}`, // 공지사항 링크
+    slug: getPlainText(slugProperty) || page.id,
+    popup: popupValue,
+    popupStartDate: popupStartDate,
+    popupEndDate: popupEndDate,
+  };
+};
+
+// 범용 데이터 매핑 함수 (메뉴 타입에 따라 동적 링크 생성)
+export const mapPageToMenuItem = (menuType: 'news' | 'notice' | 'c-log') => {
+  const basePath =
+    menuType === 'news' ? '/info/news' : menuType === 'notice' ? '/info/notice' : '/info/c-log';
+
+  return (page: PageObjectResponse): NewsItem => {
+    const properties = page.properties;
+
+    const titleProperty = properties.Title as NotionProperty | undefined;
+    const dateProperty = properties.Date as NotionProperty | undefined;
+    const slugProperty = properties.Slug as NotionProperty | undefined;
+    const popupProperty = properties.Popup as NotionProperty | undefined;
+    const popupStartDateProperty = properties['Popup Start Date'] as NotionProperty | undefined;
+    const popupEndDateProperty = properties['Popup End Date'] as NotionProperty | undefined;
+
+    // 팝업 체크박스 값 추출
+    const popupValue =
+      popupProperty && 'checkbox' in popupProperty ? popupProperty.checkbox : false;
+
+    // 팝업 시작/종료 날짜 추출
+    const popupStartDate =
+      popupStartDateProperty &&
+      'date' in popupStartDateProperty &&
+      popupStartDateProperty.date?.start
+        ? popupStartDateProperty.date.start
+        : '';
+    const popupEndDate =
+      popupEndDateProperty && 'date' in popupEndDateProperty && popupEndDateProperty.date?.start
+        ? popupEndDateProperty.date.start
+        : '';
+
+    return {
+      id: page.id,
+      title: getPlainText(titleProperty) || '제목 없음',
+      date: getFormattedDate(dateProperty),
+      link: `${basePath}/${getPlainText(slugProperty) || page.id}`, // 동적 링크 생성
+      slug: getPlainText(slugProperty) || page.id,
+      popup: popupValue,
+      popupStartDate: popupStartDate,
+      popupEndDate: popupEndDate,
+    };
+  };
+};
+
 // KV Slider 데이터 매핑 함수
 const mapPageToKVSliderItem: ItemMapper<KVSliderItem> = (page) => {
   const properties = page.properties;
@@ -394,6 +477,33 @@ export async function getCLogData(): Promise<CLogItem[]> {
   )();
 }
 
+// C-log 데이터 가져오기 (NewsItem 타입으로)
+export async function getCLogNewsData(): Promise<NewsItem[]> {
+  return unstable_cache(
+    async () => {
+      return getPublishedNotionData<NewsItem>('NOTION_CLOG_ID', mapPageToMenuItem('c-log'), 1000);
+    },
+    ['clog-news-data'],
+    { revalidate: 300, tags: ['clog-list'] }
+  )();
+}
+
+// 메인 페이지용 C-log 데이터 (2개만)
+export async function getMainCLogData(): Promise<NewsItem[]> {
+  // 개발 환경에서는 캐시를 비활성화
+  if (process.env.NODE_ENV === 'development') {
+    return getPublishedNotionData<NewsItem>('NOTION_CLOG_ID', mapPageToMenuItem('c-log'), 2);
+  }
+
+  return unstable_cache(
+    async () => {
+      return getPublishedNotionData<NewsItem>('NOTION_CLOG_ID', mapPageToMenuItem('c-log'), 2);
+    },
+    ['main-clog-data'],
+    { revalidate: 60, tags: ['main-clog'] }
+  )();
+}
+
 // Notion 데이터베이스에서 최신 설교 데이터 가져오기
 export async function getSermonData(): Promise<SermonItem | null> {
   return unstable_cache(
@@ -414,7 +524,7 @@ export async function getSermonData(): Promise<SermonItem | null> {
 export async function getNewsData(): Promise<NewsItem[]> {
   return unstable_cache(
     async () => {
-      return getPublishedNotionData<NewsItem>('NOTION_NEWS_ID', mapPageToNewsItem, 1000); // 명시적으로 1000개 지정
+      return getPublishedNotionData<NewsItem>('NOTION_NEWS_ID', mapPageToMenuItem('news'), 1000); // 명시적으로 1000개 지정
     },
     ['news-data'],
     { revalidate: 300, tags: ['news-list'] } // 5분 캐시, 태그 기반 재검증
@@ -423,12 +533,48 @@ export async function getNewsData(): Promise<NewsItem[]> {
 
 // 메인 페이지용 뉴스 데이터 (2개만)
 export async function getMainNewsData(): Promise<NewsItem[]> {
+  // 개발 환경에서는 캐시를 비활성화
+  if (process.env.NODE_ENV === 'development') {
+    return getPublishedNotionData<NewsItem>('NOTION_NEWS_ID', mapPageToMenuItem('news'), 2);
+  }
+
   return unstable_cache(
     async () => {
-      return getPublishedNotionData<NewsItem>('NOTION_NEWS_ID', mapPageToNewsItem, 2); // 메인 페이지용 2개
+      return getPublishedNotionData<NewsItem>('NOTION_NEWS_ID', mapPageToMenuItem('news'), 2); // 메인 페이지용 2개
     },
     ['main-news-data'],
-    { revalidate: 300, tags: ['main-news'] } // 5분 캐시, 태그 기반 재검증
+    { revalidate: 60, tags: ['main-news'] } // 1분 캐시로 단축
+  )();
+}
+
+// 공지사항 데이터 가져오기 (모든 공지사항)
+export async function getNoticeData(): Promise<NoticeItem[]> {
+  return unstable_cache(
+    async () => {
+      return getPublishedNotionData<NoticeItem>(
+        'NOTION_NOTICE_ID',
+        mapPageToMenuItem('notice'),
+        1000
+      );
+    },
+    ['notice-data'],
+    { revalidate: 300, tags: ['notice-list'] } // 5분 캐시, 태그 기반 재검증
+  )();
+}
+
+// 메인 페이지용 공지사항 데이터 (2개만)
+export async function getMainNoticeData(): Promise<NoticeItem[]> {
+  // 개발 환경에서는 캐시를 비활성화
+  if (process.env.NODE_ENV === 'development') {
+    return getPublishedNotionData<NoticeItem>('NOTION_NOTICE_ID', mapPageToMenuItem('notice'), 2);
+  }
+
+  return unstable_cache(
+    async () => {
+      return getPublishedNotionData<NoticeItem>('NOTION_NOTICE_ID', mapPageToMenuItem('notice'), 2);
+    },
+    ['main-notice-data'],
+    { revalidate: 60, tags: ['main-notice'] } // 1분 캐시로 단축
   )();
 }
 
@@ -600,6 +746,44 @@ export async function getPrevNextNewsPosts(currentSlug: string): Promise<{
 }
 
 export type PrevNextNewsPosts = Awaited<ReturnType<typeof getPrevNextNewsPosts>>;
+
+// 공지사항 이전/다음 포스트 가져오기 함수
+export async function getPrevNextNoticePosts(currentSlug: string): Promise<{
+  prev: { title: string; slug: string } | null;
+  next: { title: string; slug: string } | null;
+}> {
+  // 캐시된 공지사항 데이터 사용
+  const noticeItems = await getNoticeData();
+
+  let prevPost: { title: string; slug: string } | null = null;
+  let nextPost: { title: string; slug: string } | null = null;
+
+  for (let i = 0; i < noticeItems.length; i++) {
+    const item = noticeItems[i];
+
+    if (item.slug === currentSlug) {
+      if (i > 0) {
+        const prevItem = noticeItems[i - 1];
+        prevPost = {
+          title: prevItem.title,
+          slug: prevItem.slug,
+        };
+      }
+      if (i < noticeItems.length - 1) {
+        const nextItem = noticeItems[i + 1];
+        nextPost = {
+          title: nextItem.title,
+          slug: nextItem.slug,
+        };
+      }
+      break;
+    }
+  }
+
+  return { prev: prevPost, next: nextPost };
+}
+
+export type PrevNextNoticePosts = Awaited<ReturnType<typeof getPrevNextNoticePosts>>;
 
 // NewsItem 인터페이스는 위에서 이미 정의됨 (팝업 속성 포함)
 

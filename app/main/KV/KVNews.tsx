@@ -47,7 +47,10 @@ export default function NewsSection() {
   } = useQuery<NewsItem[], Error>({
     queryKey: ['newsData'],
     queryFn: fetchNewsData,
-    // refetchInterval: 60 * 1000, // 1분(60초)마다 데이터를 자동으로 다시 가져옵니다. -> 새로고침 시에만 반영되도록 제거
+    refetchInterval: 5 * 60 * 1000, // 5분마다 데이터를 자동으로 다시 가져옵니다
+    staleTime: 2 * 60 * 1000, // 2분간 데이터를 fresh로 간주
+    gcTime: 10 * 60 * 1000, // 10분간 캐시 유지 (cacheTime -> gcTime)
+    refetchOnWindowFocus: true, // 창에 포커스할 때 데이터 갱신
   });
 
   // 데이터가 아직 없으면서 로딩 중인 경우 (초기 로딩)
@@ -74,7 +77,7 @@ export default function NewsSection() {
   }
 
   // 로딩이 완료되었지만 newsData가 비어있거나 없는 경우 (데이터 없음)
-  if (!newsData || newsData.length === 0) {
+  if (!newsData || !Array.isArray(newsData) || newsData.length === 0) {
     return (
       <div className={kv.news}>
         <h2 className={kv.news__title}>NEWS</h2>
@@ -89,12 +92,10 @@ export default function NewsSection() {
 
   return (
     <div className={kv.news}>
-      {/* isFetching 중일 때 작은 로딩 인디케이터를 추가할 수 있습니다. */}
-      {/* {isFetching && <div className={kv.fetchingIndicator}>업데이트 중...</div>} */}
       <h2 className={kv.news__title}>NEWS</h2>
       <ul className={kv.news__list}>
-        {newsData && newsData.length > 0 ? (
-          newsData.map((newsItem) => (
+        {newsData && Array.isArray(newsData) && newsData.length > 0 ? (
+          newsData.map((newsItem: NewsItem) => (
             <li key={newsItem.id}>
               <a href={`/info/news/${newsItem.slug}`} className={kv.news__link}>
                 <h3 className={kv.news__listTitle}>{newsItem.title}</h3>

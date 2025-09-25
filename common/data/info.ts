@@ -93,3 +93,18 @@ export const snsLinks: SnsLink[] = [
   },
   { name: 'Instagram', href: 'https://www.instagram.com/chd_dream', icon: 'sns-instagram' },
 ];
+
+// 메뉴 경로 매핑
+export const menuPathMap: Record<string, string> = {
+  NEWS: '/info/news',
+  'C-log': '/info/c-log',
+  공지사항: '/info/notice',
+  영상: '/info/video',
+  SNS: '/info/sns',
+  일정: '/info/schedule',
+};
+
+// 메뉴 이름으로 경로 가져오기
+export function getMenuPath(menuName: string): string {
+  return menuPathMap[menuName] || '/';
+}

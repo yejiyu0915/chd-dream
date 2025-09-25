@@ -48,13 +48,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: vw(20) vw(24) vw(16);
-  border-bottom: 1px solid #f0f0f0;
+  padding: vw(20) vw(16) vw(16) vw(24);
 }
 
 // 뉴스 배지
 .badge {
-  background: #333;
+  background: #000;
   color: white;
   padding: vw(6) vw(12);
   border-radius: vw(20);
@@ -62,15 +61,11 @@
   letter-spacing: 0.5px;
 }
 
-.badgeText {
-  font-family: 'Pretendard', sans-serif;
-}
-
 // 닫기 버튼
 .closeButton {
   background: none;
   border: none;
-  color: #666;
+  color: #000;
   cursor: pointer;
   padding: vw(8);
   border-radius: vw(8);
@@ -81,7 +76,6 @@
 
   &:hover {
     background-color: #f5f5f5;
-    color: #333;
   }
 
   &:active {
@@ -91,7 +85,7 @@
 
 // 모달 내용
 .content {
-  padding: vw(24);
+  padding: 0 vw(24) vw(24);
   flex: 1;
   overflow-y: auto;
   touch-action: auto;
@@ -100,19 +94,17 @@
 
 // 제목
 .title {
-  @include font-vw(20, $weight: 700);
-  color: #333;
+  @include font-vw(28, $weight: 700);
+  color: #000;
   line-height: 1.4;
   margin: 0 0 vw(12) 0;
-  font-family: 'Pretendard', sans-serif;
 }
 
 // 날짜
 .date {
   @include font-vw(14);
-  color: #666;
+  color: #999;
   margin: 0 0 vw(16) 0;
-  font-family: 'Pretendard', sans-serif;
 }
 
 // 뉴스 컨텐츠 영역
@@ -122,6 +114,8 @@
   overflow-y: auto;
   touch-action: auto;
   -webkit-overflow-scrolling: touch;
+  border-top: 1px solid var(--border);
+  color: #333;
 }
 
 // 로딩 상태
@@ -138,7 +132,7 @@
   width: vw(20);
   height: vw(20);
   border: vw(2) solid #f3f3f3;
-  border-top: vw(2) solid #667eea;
+  border-top: vw(2) solid #000;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: vw(8);
@@ -164,88 +158,83 @@
 
 // 텍스트 스타일들
 .paragraph {
-  @include font-vw(14);
-  color: #333;
-  margin: 0 0 vw(8) 0;
+  @include font-vw(16);
+  margin: 0 0 0.5em 0;
   line-height: 1.5;
 }
 
 .heading1 {
-  @include font-vw(18, $weight: 700);
-  color: #333;
-  margin: vw(16) 0 vw(8) 0;
+  @include font-vw(24, $weight: 700);
+  margin: 1.25em 0 0.75em 0;
   line-height: 1.4;
 }
 
 .heading2 {
-  @include font-vw(16, $weight: 600);
-  color: #333;
-  margin: vw(12) 0 vw(6) 0;
+  @include font-vw(20, $weight: 600);
+  margin: 1em 0 0.625em 0;
   line-height: 1.4;
 }
 
 .heading3 {
-  @include font-vw(15, $weight: 600);
-  color: #333;
-  margin: vw(10) 0 vw(4) 0;
+  @include font-vw(18, $weight: 600);
+  margin: 0.875em 0 0.5em 0;
   line-height: 1.4;
 }
 
 .listItem {
-  @include font-vw(14);
-  color: #333;
-  margin: vw(4) 0;
-  padding-left: vw(8);
+  @include font-vw(16);
+  margin: 0.5em 0;
+  padding-left: 0.5em;
 }
 
 .quote {
-  @include font-vw(14);
+  @include font-vw(16);
   color: #555;
-  border-left: vw(3) solid #667eea;
-  padding-left: vw(12);
-  margin: vw(8) 0;
+  border-left: 0.1875em solid #000;
+  padding-left: 0.75em;
+  margin: 0.75em 0;
   font-style: italic;
 }
 
 .code {
   background-color: #f5f5f5;
   border: 1px solid #ddd;
-  border-radius: vw(4);
-  padding: vw(8);
-  margin: vw(8) 0;
+  border-radius: 0.25em;
+  padding: 0.5em;
+  margin: 0.75em 0;
   font-family: 'Courier New', monospace;
-  @include font-vw(13);
+  @include font-vw(16);
   overflow-x: auto;
 }
 
 // 이미지 스타일
 .imageContainer {
-  margin: vw(12) 0;
+  margin: 0.75em 0;
   text-align: center;
 }
 
 .image {
   max-width: 100%;
   height: auto;
-  border-radius: vw(8);
-  box-shadow: 0 vw(2) vw(8) rgba(0, 0, 0, 0.1);
+  border-radius: 0.5em;
+  box-shadow: 0 0.125em 0.5em rgba(0, 0, 0, 0.1);
 }
 
 .imageCaption {
-  @include font-vw(12);
+  @include font-vw(14);
   color: #666;
-  margin-top: vw(4);
+  margin-top: 0.5em;
   font-style: italic;
 }
 
 // 컨텐츠 없음
 .noContent {
   text-align: center;
-  padding: vw(20);
+  padding: 1.25em;
   color: #666;
 
   p {
-    @include font-vw(14);
+    @include font-vw(16);
     margin: 0;
   }
 }
@@ -255,7 +244,6 @@
   margin: 0;
   padding: vw(12) 0 0 0;
   border-top: 1px solid #f0f0f0;
-  text-align: center;
 }
 
 .checkboxLabel {
@@ -268,15 +256,15 @@
 
 .checkboxIcon {
   --icon-size: 1.5 !important;
+  --icon-margin: 0 !important;
   margin-right: vw(8);
   cursor: pointer;
   filter: invert(1);
 }
 
 .checkboxText {
-  @include font-vw(13);
-  color: #666;
-  font-family: 'Pretendard', sans-serif;
+  @include font-vw(14, $weight: 500);
+  padding-left: vw(4);
 }
 
 // 액션 버튼들
@@ -289,49 +277,30 @@
 
 // 자세히 보기 버튼
 .readButton {
-  background: #333;
+  background: #000;
   color: white;
   border: none;
-  padding: vw(12) vw(24);
-  border-radius: vw(8);
-  @include font-vw(14, $weight: 600);
+  height: vw(56);
+  border-radius: vw(16);
+  @include font-vw(16, $weight: 600);
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: 'Pretendard', sans-serif;
   flex: 1;
-
-  &:hover {
-    background: #555;
-    transform: translateY(vw(-1));
-    box-shadow: 0 vw(4) vw(12) rgba(0, 0, 0, 0.2);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
 }
 
 // 닫기 텍스트 버튼
 .closeTextButton {
   background: none;
   border: 1px solid #ddd;
-  color: #666;
-  padding: vw(12) vw(24);
-  border-radius: vw(8);
-  @include font-vw(14, $weight: 500);
+  color: #000;
+  height: vw(56);
+  border-radius: vw(16);
+  @include font-vw(16, $weight: 500);
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: 'Pretendard', sans-serif;
   flex: 1;
 
   &:hover {
     border-color: #999;
-    color: #333;
     background-color: #f9f9f9;
-  }
-
-  &:active {
-    transform: scale(0.98);
   }
 }
 
@@ -343,30 +312,71 @@
 
   .modal {
     max-width: 100%;
-    border-radius: vw(12);
+    border-radius: vw(16);
   }
 
   .header {
-    padding: vw(16) vw(20) vw(12);
+    padding: vw(16) vw(12) vw(12) vw(20);
   }
 
   .content {
-    padding: vw(20);
+    padding: 0 vw(20) vw(20);
   }
 
   .title {
-    @include font-vw(18, $weight: 700);
+    @include font-vw(24);
+  }
+
+  // 텍스트 스타일들
+  .paragraph {
+    @include font-vw(14);
+  }
+
+  .heading1 {
+    @include font-vw(20);
+  }
+
+  .heading2 {
+    @include font-vw(18);
+  }
+
+  .heading3 {
+    @include font-vw(16);
+  }
+
+  .listItem {
+    @include font-vw(14);
+  }
+
+  .quote {
+    @include font-vw(14);
+  }
+
+  .code {
+    @include font-vw(14);
+  }
+
+  // 이미지 스타일
+  .imageCaption {
+    @include font-vw(12);
+  }
+
+  // 컨텐츠 없음
+  .noContent {
+    p {
+      @include font-vw(14);
+    }
   }
 
   .actions {
-    flex-direction: column;
     gap: vw(8);
   }
 
   .readButton,
   .closeTextButton {
-    width: 100%;
-    justify-content: center;
+    height: vw(48);
+    border-radius: vw(12);
+    @include font-vw(14);
   }
 }
 
@@ -376,18 +386,28 @@
   }
 
   .header {
-    padding: vw(12) vw(16) vw(8);
-  }
-
-  .content {
-    padding: vw(16);
+    padding: vw(12) vw(12) vw(8) vw(20);
   }
 
   .title {
-    @include font-vw(16, $weight: 700);
+    @include font-vw(20);
   }
 
   .date {
-    @include font-vw(13);
+    @include font-vw(12);
+  }
+
+  .readButton,
+  .closeTextButton {
+    height: vw(44);
+  }
+
+  .checkboxIcon {
+    --icon-size: 1.25 !important;
+    margin-right: vw(4);
+  }
+
+  .checkboxText {
+    @include font-vw(12, $weight: 400);
   }
 }

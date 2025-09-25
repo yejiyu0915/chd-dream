@@ -26,7 +26,7 @@ export async function handleApiGetRequest<T>(
     return NextResponse.json(data, {
       headers: {
         'Last-Modified': notionLastEditedTime || new Date().toUTCString(),
-        'Cache-Control': 'public, max-age=300, must-revalidate', // 5분 캐시, 재검증 강제
+        'Cache-Control': 'public, max-age=60, must-revalidate', // 1분 캐시, 재검증 강제
         ETag: `"${notionLastEditedTime || new Date().getTime()}"`, // ETag 추가로 더 정확한 캐싱
       },
     });
