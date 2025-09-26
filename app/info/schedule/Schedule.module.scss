@@ -1,9 +1,10 @@
 // CSS 모듈에서는 :root 선택자가 포함된 파일을 import할 수 없으므로 직접 색상 정의
+@use '@/common/styles/mixins/function' as *;
 
 .scheduleMain {
   padding: 60px 0 120px;
 
-  @media (max-width: 768px) {
+  @include mq(mo) {
     padding: 40px 0 80px;
   }
 }
@@ -13,14 +14,13 @@
   margin: 0 auto;
   padding: 0 20px;
 
-  @media (max-width: 768px) {
+  @include mq(mo) {
     padding: 0 16px;
   }
 }
 
 .calendarContainer {
   background: white;
-  border-radius: 12px;
   overflow: hidden;
 }
 
@@ -28,12 +28,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 32px;
+  padding: 24px 0;
   background: #fff;
   color: #333;
 
-  @media (max-width: 768px) {
-    padding: 20px 24px;
+  @include mq(mo) {
+    padding: 0 24px 20px;
     flex-direction: column;
     gap: 16px;
   }
@@ -43,9 +43,14 @@
   font-size: 24px;
   font-weight: 600;
   margin: 0;
+  border-left: 3px solid #000;
+  padding-left: 16px;
 
-  @media (max-width: 768px) {
+  @include mq(mo) {
+    display: none;
     font-size: 20px;
+    padding-left: 0;
+    border-left: none;
   }
 }
 
@@ -53,12 +58,15 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  @include mq(mo-xs) {
+    gap: 4px;
+  }
 }
 
 .navButton {
   background: #f8f9fa;
   border: 1px solid #e9ecef;
-  border-radius: 6px;
+  border-radius: 12px;
   padding: 8px 12px;
   color: #333;
   cursor: pointer;
@@ -80,12 +88,13 @@
 
 .currentMonth {
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 700;
   min-width: 120px;
   text-align: center;
 
-  @media (max-width: 768px) {
+  @include mq(mo) {
     font-size: 16px;
+    min-width: 90px;
   }
 }
 
@@ -102,12 +111,17 @@
   font-size: 16px;
   border-bottom: 3px solid #e9ecef;
 
-  @media (max-width: 768px) {
+  @include mq(mo) {
     padding: 12px 4px;
     font-size: 12px;
   }
 
   &.sunday {
+    color: #dc3545;
+    font-weight: 700;
+  }
+
+  &.holiday {
     color: #dc3545;
     font-weight: 700;
   }
@@ -132,16 +146,50 @@
   }
 
   &.today {
-    border-color: #000;
-    border-width: 3px;
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      border: 2px solid #fff;
+      mix-blend-mode: difference;
+      pointer-events: none;
+    }
     .dayNumber {
       font-weight: 800;
     }
   }
 
-  @media (max-width: 768px) {
+  @include mq(ta) {
     min-height: 80px;
-    padding: 4px;
+    padding: 12px;
+    &.today {
+      &::before {
+        border-color: #222;
+        border-inline: none;
+        border-top: none;
+      }
+    }
+
+    &.selected {
+      background-color: #f3f3f3;
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        border-bottom: 2px double #000;
+      }
+    }
+  }
+  @include mq(mo) {
+    padding: 8px;
   }
 }
 
@@ -151,7 +199,11 @@
   padding: 16px 16px 0;
   font-size: 16px;
 
-  @media (max-width: 768px) {
+  @include mq(ta) {
+    padding: 0;
+    font-size: 14px;
+  }
+  @include mq(mo) {
     font-size: 12px;
   }
 }
@@ -161,28 +213,42 @@
   font-weight: 700;
 }
 
+.dayCell.holiday .dayNumber {
+  color: #dc3545;
+  font-weight: 700;
+}
+
 .todayLabel {
   font-weight: 600;
   color: #000;
   font-size: 11px;
 
-  @media (max-width: 768px) {
-    font-size: 10px;
+  @include mq(ta) {
+    display: none;
   }
+}
+
+.holidayLabel {
+  font-size: 12px;
+  margin-left: 4px;
+  cursor: help;
 }
 
 .eventList {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 8px;
+
+  @include mq(ta) {
+    display: none; // 모바일에서는 숨김
+  }
 }
 
 .eventItem {
-  background: #000;
-  color: #fff;
+  background-color: #f7f8f9;
   margin-left: 16px;
   padding: 12px 16px;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 16px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -192,35 +258,75 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  border: 2px solid #eee;
 
-  @media (max-width: 768px) {
+  &.important {
+    background-color: #000; // 빨간색으로 중요 일정 표시
+    color: white;
+    border: 2px solid #000;
+    .eventTag {
+      background-color: #333;
+    }
+  }
+
+  @include mq(ta) {
     font-size: 10px;
     padding: 1px 4px;
   }
+}
+
+.eventTitle {
+  display: block;
+  font-weight: 700;
+  line-height: 1.3;
 }
 
 .eventTime {
   display: block;
   margin-top: 4px;
   font-size: 12px;
-  opacity: 0.8;
+  opacity: 0.5;
   font-weight: 400;
 
-  @media (max-width: 768px) {
+  @include mq(ta) {
     font-size: 9px;
+  }
+}
+
+.eventTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-top: 12px;
+}
+
+.eventTag {
+  background: #e9ecef;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.2;
+
+  @include mq(ta) {
+    font-size: 8px;
+    padding: 1px 3px;
   }
 }
 
 .spanningEventList {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  margin-bottom: 4px;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  @include mq(ta) {
+    display: none; // 모바일에서는 숨김
+  }
 }
 
 .spanningEvent {
-  background: #000;
-  color: white;
+  background-color: #f7f8f9;
   padding: 12px 16px;
   font-size: 16px;
   overflow: hidden;
@@ -229,20 +335,155 @@
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
+  min-height: auto; // 높이를 동적으로 설정할 수 있도록
+  border-block: 2px solid #eee;
 
   &.spanningEventStart {
     margin-left: 16px;
-    border-radius: 10px 0 0 10px;
+    border-radius: 12px 0 0 12px;
+    border-left: 2px solid #eee;
   }
 
   &.spanningEventEnd {
-    border-radius: 0 10px 10px 0;
+    border-radius: 0 12px 12px 0;
+    border-right: 2px solid #eee;
   }
 
-  @media (max-width: 768px) {
+  &.important {
+    background-color: #000; // 빨간색으로 중요 일정 표시
+    color: white;
+    border-block: 2px solid #000;
+
+    &.spanningEventStart {
+      border-left: 2px solid #000;
+    }
+
+    &.spanningEventEnd {
+      border-right: 2px solid #000;
+    }
+
+    .eventTag {
+      background-color: #333;
+    }
+  }
+
+  @include mq(ta) {
     font-size: 10px;
     padding: 2px 6px;
     margin: 0 -6px;
+  }
+}
+
+// 모바일에서 일정 개수 표시용 동그라미
+.eventDot {
+  display: none; // 기본적으로 숨김
+
+  @include mq(ta) {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #000;
+    margin: 1px;
+
+    &.important {
+      background-color: #dc3545;
+    }
+  }
+  @include mq(mo) {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+.eventDotsContainer {
+  display: none; // 기본적으로 숨김
+
+  @include mq(ta) {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 4px;
+    gap: 2px;
+  }
+}
+
+// 모바일 일정 상세 패널
+.mobileEventPanel {
+  display: none;
+  @include mq(ta) {
+    display: block;
+    margin-top: 40px;
+  }
+}
+
+.mobileEventPanelHeader {
+  @include mq(ta) {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+}
+
+.mobileEventPanelTitle {
+  @include mq(ta) {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.mobileEventList {
+  @include mq(ta) {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.mobileEventItem {
+  @include mq(ta) {
+    display: block;
+    background: #f7f8f9;
+    padding: 12px;
+    border-left: 4px solid #000;
+
+    &.important {
+      border-left-color: #dc3545;
+    }
+  }
+}
+
+.mobileEventItemTitle {
+  @include mq(ta) {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.mobileEventItemTime {
+  @include mq(ta) {
+    font-size: 12px;
+    color: #666;
+    margin-top: 8px;
+  }
+}
+
+.mobileEventItemTags {
+  @include mq(ta) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 16px;
+  }
+}
+
+.mobileEventItemTag {
+  @include mq(ta) {
+    background: #e9ecef;
+    color: #495057;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
   }
 }
 

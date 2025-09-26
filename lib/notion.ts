@@ -203,6 +203,8 @@ export interface ScheduleItem {
   location?: string; // 장소 (선택사항)
   description?: string; // 설명 (선택사항)
   category?: string; // 카테고리 (선택사항)
+  tags?: string[]; // 태그 배열 (선택사항)
+  important?: boolean; // 중요 일정 여부 (선택사항)
   startDate?: string; // 시작 날짜/시간 (ISO 문자열)
   endDate?: string; // 종료 날짜/시간 (ISO 문자열)
 }
@@ -470,6 +472,8 @@ const mapPageToScheduleItem: ItemMapper<ScheduleItem> = (page) => {
   const locationProperty = properties.Location as NotionProperty | undefined;
   const descriptionProperty = properties.Description as NotionProperty | undefined;
   const categoryProperty = properties.Category as NotionProperty | undefined;
+  const tagsProperty = properties.Tags as NotionProperty | undefined;
+  const importantProperty = properties.Important as NotionProperty | undefined;
 
   // 날짜를 ISO 문자열로 변환
   let dateString = '';
@@ -498,6 +502,14 @@ const mapPageToScheduleItem: ItemMapper<ScheduleItem> = (page) => {
     category:
       (categoryProperty && 'select' in categoryProperty && categoryProperty.select?.name) ||
       undefined,
+    tags: (tagsProperty &&
+    'multi_select' in tagsProperty &&
+    Array.isArray(tagsProperty.multi_select)
+      ? tagsProperty.multi_select
+      : []
+    ).map((tag: { name: string }) => tag.name),
+    important:
+      (importantProperty && 'checkbox' in importantProperty && importantProperty.checkbox) || false,
     startDate: startDateString || undefined,
     endDate: endDateString || undefined,
   };

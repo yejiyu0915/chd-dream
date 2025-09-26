@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ScheduleItem } from '@/lib/notion';
+import Holidays from 'date-holidays';
 import s from '../Schedule.module.scss';
 
 interface CalendarDay {
@@ -11,6 +12,11 @@ interface CalendarDay {
   isToday: boolean;
   events: ScheduleItem[];
   spanningEvents: SpanningEvent[];
+  holidayInfo: {
+    isHoliday: boolean;
+    name: string;
+    type: string;
+  };
 }
 
 interface SpanningEvent {
@@ -36,19 +42,21 @@ const formatTimeInfo = (event: ScheduleItem): string => {
 
     const startDateStr = startDate
       .toLocaleDateString('ko-KR', {
-        month: '2-digit',
-        day: '2-digit',
+        month: 'numeric',
+        day: 'numeric',
       })
       .replace(/\./g, '/')
-      .replace(/\/$/, '');
+      .replace(/\/$/, '')
+      .replace(/\s/g, ''); // 띄어쓰기 제거
 
     const endDateStr = endDate
       .toLocaleDateString('ko-KR', {
-        month: '2-digit',
-        day: '2-digit',
+        month: 'numeric',
+        day: 'numeric',
       })
       .replace(/\./g, '/')
-      .replace(/\/$/, '');
+      .replace(/\/$/, '')
+      .replace(/\s/g, ''); // 띄어쓰기 제거
 
     const startHasTime = hasActualTime(event.startDate);
     const endHasTime = hasActualTime(event.endDate);
@@ -106,11 +114,12 @@ const formatTimeInfo = (event: ScheduleItem): string => {
     const startDate = new Date(event.startDate);
     const dateStr = startDate
       .toLocaleDateString('ko-KR', {
-        month: '2-digit',
-        day: '2-digit',
+        month: 'numeric',
+        day: 'numeric',
       })
       .replace(/\./g, '/')
-      .replace(/\/$/, '');
+      .replace(/\/$/, '')
+      .replace(/\s/g, ''); // 띄어쓰기 제거
 
     if (hasActualTime(event.startDate)) {
       const timeStr = startDate.toLocaleTimeString('ko-KR', {
@@ -133,6 +142,27 @@ const formatTimeInfo = (event: ScheduleItem): string => {
 
 export default function ScheduleCalendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [isMobilePanelOpen, setIsMobilePanelOpen] = useState(false);
+
+  // 연속 일정의 높이값을 캐시하는 Map
+  const heightCache = useRef<Map<string, number>>(new Map());
+
+  // 한국 공휴일 인스턴스 생성
+  const holidays = new Holidays('KR');
+
+  // 공휴일 확인 함수
+  const getHolidayInfo = (date: Date) => {
+    const holidayInfo = holidays.isHoliday(date);
+    if (holidayInfo) {
+      return {
+        isHoliday: true,
+        name: holidayInfo.name,
+        type: holidayInfo.type,
+      };
+    }
+    return { isHoliday: false, name: '', type: '' };
+  };
 
   // 일정 데이터 가져오기
   const {
@@ -155,6 +185,127 @@ export default function ScheduleCalendar() {
     refetchOnWindowFocus: true, // 창 포커스 시 데이터 새로고침
     refetchOnMount: true, // 컴포넌트 마운트 시 데이터 새로고침
   });
+
+  // 연속 일정의 높이를 동기화하는 함수
+  const syncSpanningEventHeights = () => {
+    if (!scheduleData) return;
+    console.log('Syncing spanning event heights, window width:', window.innerWidth);
+
+    // 모든 연속 일정을 찾아서 그룹화
+    const spanningEventGroups = new Map<string, HTMLElement[]>();
+
+    scheduleData.forEach((event) => {
+      if (event.startDate && event.endDate) {
+        const startDate = new Date(event.startDate);
+        const endDate = new Date(event.endDate);
+
+        // 같은 연속 일정인지 확인 (같은 제목과 날짜 범위)
+        const groupKey = `${event.title}-${startDate.getTime()}-${endDate.getTime()}`;
+
+        // DOM에서 해당 연속 일정 요소들을 찾기
+        const elements = document.querySelectorAll(`[data-spanning-event="${groupKey}"]`);
+        if (elements.length > 0) {
+          spanningEventGroups.set(groupKey, Array.from(elements) as HTMLElement[]);
+        }
+      }
+    });
+
+    // 각 그룹의 높이를 동기화
+    spanningEventGroups.forEach((elements, groupKey) => {
+      if (elements.length > 1) {
+        let targetHeight: number;
+
+        // 캐시에서 높이값 확인
+        if (heightCache.current.has(groupKey)) {
+          // 캐시된 높이값 사용
+          targetHeight = heightCache.current.get(groupKey)!;
+          console.log('Using cached height for', groupKey, ':', targetHeight);
+        } else {
+          // 첫 번째 요소의 높이를 측정하고 캐시에 저장
+          const firstElement = elements[0];
+          targetHeight = Math.ceil(firstElement.offsetHeight);
+          heightCache.current.set(groupKey, targetHeight);
+          console.log('Setting new height for', groupKey, ':', targetHeight);
+        }
+
+        // 모든 요소에 캐시된 높이값 적용
+        elements.forEach((element) => {
+          element.style.height = `${targetHeight}px`;
+        });
+      }
+    });
+  };
+
+  // 컴포넌트 마운트 및 데이터 변경 시 높이 동기화
+  useEffect(() => {
+    if (scheduleData && scheduleData.length > 0) {
+      // DOM이 업데이트된 후 실행 (지연 시간 단축)
+      setTimeout(syncSpanningEventHeights, 50);
+    }
+  }, [scheduleData, currentDate]);
+
+  // PC에서 높이 동기화를 위한 추가 useEffect
+  useEffect(() => {
+    if (scheduleData && scheduleData.length > 0 && window.innerWidth > 768) {
+      // PC에서는 더 긴 지연 시간으로 높이 동기화
+      setTimeout(syncSpanningEventHeights, 100);
+    }
+  }, [scheduleData, currentDate]);
+
+  // 날짜 클릭 핸들러 (모바일에서만 동작)
+  const handleDateClick = (date: Date) => {
+    if (window.innerWidth <= 768) {
+      console.log('Setting selected date:', date);
+      setSelectedDate(date);
+      setIsMobilePanelOpen(true);
+    }
+  };
+
+  // 선택된 날짜의 일정 가져오기
+  const getSelectedDateEvents = () => {
+    if (!selectedDate || !scheduleData) return [];
+
+    const selectedDateOnly = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      selectedDate.getDate()
+    );
+    const events: ScheduleItem[] = [];
+
+    scheduleData.forEach((event) => {
+      if (event.startDate && event.endDate) {
+        const eventStartDate = new Date(event.startDate);
+        const eventEndDate = new Date(event.endDate);
+        const eventStartDateOnly = new Date(
+          eventStartDate.getFullYear(),
+          eventStartDate.getMonth(),
+          eventStartDate.getDate()
+        );
+        const eventEndDateOnly = new Date(
+          eventEndDate.getFullYear(),
+          eventEndDate.getMonth(),
+          eventEndDate.getDate()
+        );
+
+        if (selectedDateOnly >= eventStartDateOnly && selectedDateOnly <= eventEndDateOnly) {
+          events.push(event);
+        }
+      } else if (event.startDate) {
+        const eventStartDate = new Date(event.startDate);
+        const eventStartDateOnly = new Date(
+          eventStartDate.getFullYear(),
+          eventStartDate.getMonth(),
+          eventStartDate.getDate()
+        );
+
+        if (selectedDateOnly.getTime() === eventStartDateOnly.getTime()) {
+          events.push(event);
+        }
+      }
+    });
+
+    return events;
+  };
 
   // 현재 월의 캘린더 데이터 생성
   const calendarData = useMemo(() => {
@@ -183,12 +334,15 @@ export default function ScheduleCalendar() {
       const isCurrentMonth = dayDate.getMonth() === month;
       const isToday = dayDate.getTime() === today.getTime();
 
+      const holidayInfo = getHolidayInfo(dayDate);
+
       days.push({
         date: dayDate,
         isCurrentMonth,
         isToday,
         events: [],
         spanningEvents: [],
+        holidayInfo,
       });
     }
 
@@ -336,11 +490,21 @@ export default function ScheduleCalendar() {
             key={index}
             className={`${s.dayCell} ${
               !day.isCurrentMonth ? s.otherMonth : ''
-            } ${day.isToday ? s.today : ''} ${day.date.getDay() === 0 ? s.sunday : ''}`}
+            } ${day.isToday ? s.today : ''} ${day.date.getDay() === 0 ? s.sunday : ''} ${
+              day.holidayInfo.isHoliday ? s.holiday : ''
+            } ${selectedDate && day.date.getTime() === selectedDate.getTime() ? s.selected : ''}`}
+            data-selected={selectedDate && day.date.getTime() === selectedDate.getTime()}
+            onClick={() => handleDateClick(day.date)}
+            style={{ cursor: window.innerWidth <= 768 ? 'pointer' : 'default' }}
           >
             <div className={s.dayNumber}>
               {day.date.getDate()}
               {day.isToday && <span className={s.todayLabel}> (오늘)</span>}
+              {/* {day.holidayInfo.isHoliday && (
+                <span className={s.holidayLabel} title={day.holidayInfo.name}>
+                  {day.holidayInfo.name}
+                </span>
+              )} */}
             </div>
 
             {/* 연속된 일정 (Spanning Events) */}
@@ -350,18 +514,35 @@ export default function ScheduleCalendar() {
                   const { event, isFirstDay, isLastDay } = spanningEvent;
                   const timeInfo = formatTimeInfo(event);
 
+                  const groupKey = `${event.title}-${new Date(event.startDate!).getTime()}-${new Date(event.endDate!).getTime()}`;
+
                   return (
                     <div
                       key={`${event.id}-${index}`}
                       className={`${s.spanningEvent} ${
                         isFirstDay ? s.spanningEventStart : ''
-                      } ${isLastDay ? s.spanningEventEnd : ''}`}
+                      } ${isLastDay ? s.spanningEventEnd : ''} ${
+                        event.important ? s.important : ''
+                      }`}
                       title={`${event.title}${timeInfo}${event.location ? ` - ${event.location}` : ''}`}
+                      data-spanning-event={groupKey}
                     >
                       {isFirstDay && (
                         <>
-                          {event.title}
+                          <span className={s.eventTitle}>{event.title}</span>
                           {timeInfo && <span className={s.eventTime}>{timeInfo}</span>}
+                          {event.tags && event.tags.length > 0 && (
+                            <div className={s.eventTags}>
+                              {event.tags.slice(0, 2).map((tag, tagIndex) => (
+                                <span key={tagIndex} className={s.eventTag}>
+                                  {tag}
+                                </span>
+                              ))}
+                              {event.tags.length > 2 && (
+                                <span className={s.eventTag}>+{event.tags.length - 2}</span>
+                              )}
+                            </div>
+                          )}
                         </>
                       )}
                     </div>
@@ -379,11 +560,23 @@ export default function ScheduleCalendar() {
                   return (
                     <div
                       key={event.id}
-                      className={s.eventItem}
+                      className={`${s.eventItem} ${event.important ? s.important : ''}`}
                       title={`${event.title}${timeInfo}${event.location ? ` - ${event.location}` : ''}`}
                     >
-                      {event.title}
+                      <span className={s.eventTitle}>{event.title}</span>
                       {timeInfo && <span className={s.eventTime}>{timeInfo}</span>}
+                      {event.tags && event.tags.length > 0 && (
+                        <div className={s.eventTags}>
+                          {event.tags.slice(0, 2).map((tag, tagIndex) => (
+                            <span key={tagIndex} className={s.eventTag}>
+                              {tag}
+                            </span>
+                          ))}
+                          {event.tags.length > 2 && (
+                            <span className={s.eventTag}>+{event.tags.length - 2}</span>
+                          )}
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -392,9 +585,73 @@ export default function ScheduleCalendar() {
                 )}
               </div>
             )}
+
+            {/* 모바일에서 일정 개수 표시용 동그라미 */}
+            <div className={s.eventDotsContainer}>
+              {/* 연속 일정 동그라미 */}
+              {day.spanningEvents.map((spanningEvent, index) => (
+                <div
+                  key={`spanning-${spanningEvent.event.id}-${index}`}
+                  className={`${s.eventDot} ${spanningEvent.event.important ? s.important : ''}`}
+                />
+              ))}
+              {/* 단일 일정 동그라미 */}
+              {day.events.map((event, index) => (
+                <div
+                  key={`single-${event.id}-${index}`}
+                  className={`${s.eventDot} ${event.important ? s.important : ''}`}
+                />
+              ))}
+            </div>
           </div>
         ))}
       </div>
+
+      {/* 모바일 일정 상세 패널 */}
+      {isMobilePanelOpen && selectedDate && (
+        <div className={s.mobileEventPanel}>
+          <div className={s.mobileEventPanelHeader}>
+            <div className={s.mobileEventPanelTitle}>
+              {selectedDate.toLocaleDateString('ko-KR', {
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long',
+              })}
+            </div>
+          </div>
+          <div className={s.mobileEventList}>
+            {getSelectedDateEvents().map((event) => {
+              const timeInfo = formatTimeInfo(event);
+              return (
+                <div
+                  key={event.id}
+                  className={`${s.mobileEventItem} ${event.important ? s.important : ''}`}
+                >
+                  <div className={s.mobileEventItemTitle}>{event.title}</div>
+                  {timeInfo && <div className={s.mobileEventItemTime}>{timeInfo}</div>}
+                  {event.location && (
+                    <div className={s.mobileEventItemTime}>📍 {event.location}</div>
+                  )}
+                  {event.tags && event.tags.length > 0 && (
+                    <div className={s.mobileEventItemTags}>
+                      {event.tags.map((tag, tagIndex) => (
+                        <span key={tagIndex} className={s.mobileEventItemTag}>
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            {getSelectedDateEvents().length === 0 && (
+              <div className={s.mobileEventItem}>
+                <div className={s.mobileEventItemTitle}>일정이 없습니다</div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
