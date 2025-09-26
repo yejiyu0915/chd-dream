@@ -23,6 +23,114 @@ interface SpanningEvent {
 
 const DAYS_OF_WEEK = ['주일', '월', '화', '수', '목', '금', '토'];
 
+// 시간 정보 포맷팅 함수
+const formatTimeInfo = (event: ScheduleItem): string => {
+  // 원본 데이터에서 시간이 실제로 설정되었는지 확인하는 헬퍼 함수
+  const hasActualTime = (dateString: string): boolean => {
+    return dateString.includes('T');
+  };
+
+  if (event.startDate && event.endDate) {
+    const startDate = new Date(event.startDate);
+    const endDate = new Date(event.endDate);
+
+    const startDateStr = startDate
+      .toLocaleDateString('ko-KR', {
+        month: '2-digit',
+        day: '2-digit',
+      })
+      .replace(/\./g, '/')
+      .replace(/\/$/, '');
+
+    const endDateStr = endDate
+      .toLocaleDateString('ko-KR', {
+        month: '2-digit',
+        day: '2-digit',
+      })
+      .replace(/\./g, '/')
+      .replace(/\/$/, '');
+
+    const startHasTime = hasActualTime(event.startDate);
+    const endHasTime = hasActualTime(event.endDate);
+
+    // 같은 날짜인 경우
+    if (startDateStr === endDateStr) {
+      if (startHasTime && endHasTime) {
+        const startTimeStr = startDate.toLocaleTimeString('ko-KR', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        });
+        const endTimeStr = endDate.toLocaleTimeString('ko-KR', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        });
+        return ` ${startDateStr}(${startTimeStr}~${endTimeStr})`;
+      } else {
+        return ` ${startDateStr}`;
+      }
+    } else {
+      // 다른 날짜인 경우
+      if (startHasTime && endHasTime) {
+        const startTimeStr = startDate.toLocaleTimeString('ko-KR', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        });
+        const endTimeStr = endDate.toLocaleTimeString('ko-KR', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        });
+        return ` ${startDateStr}(${startTimeStr}) → ${endDateStr}(${endTimeStr})`;
+      } else if (startHasTime) {
+        const startTimeStr = startDate.toLocaleTimeString('ko-KR', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        });
+        return ` ${startDateStr}(${startTimeStr}) → ${endDateStr}`;
+      } else if (endHasTime) {
+        const endTimeStr = endDate.toLocaleTimeString('ko-KR', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        });
+        return ` ${startDateStr} → ${endDateStr}(${endTimeStr})`;
+      } else {
+        return ` ${startDateStr} → ${endDateStr}`;
+      }
+    }
+  } else if (event.startDate) {
+    const startDate = new Date(event.startDate);
+    const dateStr = startDate
+      .toLocaleDateString('ko-KR', {
+        month: '2-digit',
+        day: '2-digit',
+      })
+      .replace(/\./g, '/')
+      .replace(/\/$/, '');
+
+    if (hasActualTime(event.startDate)) {
+      const timeStr = startDate.toLocaleTimeString('ko-KR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      });
+      // 단일 일정이고 시간이 설정된 경우 시간만 표시
+      return ` ${timeStr}`;
+    } else {
+      // 단일 날짜이고 시간도 없는 경우 날짜 표시 생략
+      return '';
+    }
+  } else if (event.time) {
+    return ` ${event.time}`;
+  }
+
+  return '';
+};
+
 export default function ScheduleCalendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -42,8 +150,10 @@ export default function ScheduleCalendar() {
       }
       return response.json();
     },
-    staleTime: 1000 * 60 * 5, // 5분 캐시
+    staleTime: 0, // 캐시 사용하지 않음 - 항상 최신 데이터 가져오기
     retry: 3,
+    refetchOnWindowFocus: true, // 창 포커스 시 데이터 새로고침
+    refetchOnMount: true, // 컴포넌트 마운트 시 데이터 새로고침
   });
 
   // 현재 월의 캘린더 데이터 생성
@@ -84,16 +194,43 @@ export default function ScheduleCalendar() {
 
     // 일정 데이터 처리
     if (scheduleData) {
+      console.log('Schedule data:', scheduleData);
       scheduleData.forEach((event) => {
         const eventStartDate = event.startDate ? new Date(event.startDate) : new Date(event.date);
         const eventEndDate = event.endDate ? new Date(event.endDate) : eventStartDate;
+
+        console.log(`Event: ${event.title}`, {
+          startDate: eventStartDate,
+          endDate: eventEndDate,
+          originalStartDate: event.startDate,
+          originalDate: event.date,
+        });
 
         // 캘린더 범위 내에서 이벤트가 겹치는 날짜들 찾기
         const eventDays: number[] = [];
         for (let i = 0; i < days.length; i++) {
           const dayDate = days[i].date;
-          if (dayDate >= eventStartDate && dayDate <= eventEndDate) {
+
+          // 날짜만 비교하기 위해 시간을 00:00:00으로 설정
+          const dayDateOnly = new Date(
+            dayDate.getFullYear(),
+            dayDate.getMonth(),
+            dayDate.getDate()
+          );
+          const eventStartDateOnly = new Date(
+            eventStartDate.getFullYear(),
+            eventStartDate.getMonth(),
+            eventStartDate.getDate()
+          );
+          const eventEndDateOnly = new Date(
+            eventEndDate.getFullYear(),
+            eventEndDate.getMonth(),
+            eventEndDate.getDate()
+          );
+
+          if (dayDateOnly >= eventStartDateOnly && dayDateOnly <= eventEndDateOnly) {
             eventDays.push(i);
+            console.log(`✅ Event "${event.title}" matches day ${dayDate.toDateString()}`);
           }
         }
 
@@ -211,20 +348,7 @@ export default function ScheduleCalendar() {
               <div className={s.spanningEventList}>
                 {day.spanningEvents.map((spanningEvent, index) => {
                   const { event, isFirstDay, isLastDay } = spanningEvent;
-
-                  // 시간 정보 포맷팅
-                  let timeInfo = '';
-                  if (event.startDate) {
-                    const startDate = new Date(event.startDate);
-                    const timeStr = startDate.toLocaleTimeString('ko-KR', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: false,
-                    });
-                    timeInfo = ` ${timeStr}`;
-                  } else if (event.time) {
-                    timeInfo = ` ${event.time}`;
-                  }
+                  const timeInfo = formatTimeInfo(event);
 
                   return (
                     <div
@@ -250,19 +374,7 @@ export default function ScheduleCalendar() {
             {day.events.length > 0 && (
               <div className={s.eventList}>
                 {day.events.slice(0, 3).map((event) => {
-                  // 시간 정보 포맷팅
-                  let timeInfo = '';
-                  if (event.startDate) {
-                    const startDate = new Date(event.startDate);
-                    const timeStr = startDate.toLocaleTimeString('ko-KR', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: false,
-                    });
-                    timeInfo = ` ${timeStr}`;
-                  } else if (event.time) {
-                    timeInfo = ` ${event.time}`;
-                  }
+                  const timeInfo = formatTimeInfo(event);
 
                   return (
                     <div

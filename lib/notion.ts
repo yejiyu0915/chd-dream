@@ -680,6 +680,11 @@ export async function getCLogMainData(): Promise<CLogItem[]> {
 
 // 일정 데이터 가져오기
 export async function getScheduleData(): Promise<ScheduleItem[]> {
+  // 개발 환경에서는 캐시를 비활성화
+  if (process.env.NODE_ENV === 'development') {
+    return getPublishedNotionData<ScheduleItem>('NOTION_SCHEDULE_ID', mapPageToScheduleItem, 1000);
+  }
+
   return unstable_cache(
     async () => {
       return getPublishedNotionData<ScheduleItem>(
