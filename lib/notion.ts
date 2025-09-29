@@ -182,12 +182,31 @@ export interface SermonItem {
 export interface NewsItem {
   id: string;
   title: string;
-  date: string;
+  date: string; // 포맷된 날짜 문자열 (표시용)
+  rawDate: string; // 원본 날짜/시간 정보 (계산용)
   link: string;
   slug: string; // slug 속성 추가
   popup: boolean; // 팝업 표시 여부
   popupStartDate: string; // 팝업 시작 날짜/시간
   popupEndDate: string; // 팝업 종료 날짜/시간
+}
+
+// 공지사항 데이터 타입 (뉴스와 동일한 구조)
+export type NoticeItem = NewsItem;
+
+// 일정 데이터 타입 정의
+export interface ScheduleItem {
+  id: string;
+  title: string;
+  date: string; // ISO 날짜 문자열
+  time?: string; // 시간 (선택사항)
+  location?: string; // 장소 (선택사항)
+  description?: string; // 설명 (선택사항)
+  category?: string; // 카테고리 (선택사항)
+  tags?: string[]; // 태그 배열 (선택사항)
+  important?: boolean; // 중요 일정 여부 (선택사항)
+  startDate?: string; // 시작 날짜/시간 (ISO 문자열)
+  endDate?: string; // 종료 날짜/시간 (ISO 문자열)
 }
 
 // KV Slider 데이터 타입 정의
@@ -237,6 +256,14 @@ function getFormattedDate(property: NotionProperty | undefined): string {
     })
     .replace(/\. /g, '.')
     .replace(/\.$/, '');
+}
+
+// Notion 날짜 속성에서 원본 날짜/시간 문자열을 추출하는 헬퍼 함수
+function getRawDate(property: NotionProperty | undefined): string {
+  if (!property || property.type !== 'date' || !('date' in property) || !property.date?.start) {
+    return '';
+  }
+  return property.date.start;
 }
 
 // CLogItem 매핑 함수
@@ -314,31 +341,177 @@ export const mapPageToNewsItem: ItemMapper<NewsItem> = (page) => {
   const dateProperty = properties.Date as NotionProperty | undefined;
   const slugProperty = properties.Slug as NotionProperty | undefined; // Slug 속성 추가
   const popupProperty = properties.Popup as NotionProperty | undefined; // Popup 속성 추가
-  const popupStartDateProperty = properties['Popup Start Date'] as NotionProperty | undefined; // Popup Start Date 속성 추가
-  const popupEndDateProperty = properties['Popup End Date'] as NotionProperty | undefined; // Popup End Date 속성 추가
+  const popupPeriodProperty = properties['Popup Period'] as NotionProperty | undefined; // Popup Period 속성 추가
 
   // 팝업 체크박스 값 추출
   const popupValue = popupProperty && 'checkbox' in popupProperty ? popupProperty.checkbox : false;
 
-  // 팝업 시작/종료 날짜 추출
-  const popupStartDate =
-    popupStartDateProperty && 'date' in popupStartDateProperty && popupStartDateProperty.date?.start
-      ? popupStartDateProperty.date.start
-      : '';
-  const popupEndDate =
-    popupEndDateProperty && 'date' in popupEndDateProperty && popupEndDateProperty.date?.start
-      ? popupEndDateProperty.date.start
-      : '';
+  // 팝업 기간에서 시작/종료 날짜 추출
+  let popupStartDate = '';
+  let popupEndDate = '';
+
+  if (popupPeriodProperty && 'date' in popupPeriodProperty && popupPeriodProperty.date) {
+    // 시작 날짜
+    if (popupPeriodProperty.date.start) {
+      popupStartDate = popupPeriodProperty.date.start;
+    }
+    // 종료 날짜
+    if (popupPeriodProperty.date.end) {
+      popupEndDate = popupPeriodProperty.date.end;
+    }
+  }
 
   return {
     id: page.id,
     title: getPlainText(titleProperty) || '제목 없음',
     date: getFormattedDate(dateProperty),
+    rawDate: getRawDate(dateProperty),
     link: `/info/news/${getPlainText(slugProperty) || page.id}`, // link 속성 추가
     slug: getPlainText(slugProperty) || page.id, // slug 매핑
     popup: popupValue, // 팝업 표시 여부
     popupStartDate: popupStartDate, // 팝업 시작 날짜/시간
     popupEndDate: popupEndDate, // 팝업 종료 날짜/시간
+  };
+};
+
+// 공지사항 데이터 매핑 함수
+export const mapPageToNoticeItem: ItemMapper<NoticeItem> = (page) => {
+  const properties = page.properties;
+
+  const titleProperty = properties.Title as NotionProperty | undefined;
+  const dateProperty = properties.Date as NotionProperty | undefined;
+  const slugProperty = properties.Slug as NotionProperty | undefined;
+  const popupProperty = properties.Popup as NotionProperty | undefined;
+  const popupPeriodProperty = properties['Popup Period'] as NotionProperty | undefined;
+
+  // 팝업 체크박스 값 추출
+  const popupValue = popupProperty && 'checkbox' in popupProperty ? popupProperty.checkbox : false;
+
+  // 팝업 기간에서 시작/종료 날짜 추출
+  let popupStartDate = '';
+  let popupEndDate = '';
+
+  if (popupPeriodProperty && 'date' in popupPeriodProperty && popupPeriodProperty.date) {
+    // 시작 날짜
+    if (popupPeriodProperty.date.start) {
+      popupStartDate = popupPeriodProperty.date.start;
+    }
+    // 종료 날짜
+    if (popupPeriodProperty.date.end) {
+      popupEndDate = popupPeriodProperty.date.end;
+    }
+  }
+
+  return {
+    id: page.id,
+    title: getPlainText(titleProperty) || '제목 없음',
+    date: getFormattedDate(dateProperty),
+    rawDate: getRawDate(dateProperty),
+    link: `/info/notice/${getPlainText(slugProperty) || page.id}`, // 공지사항 링크
+    slug: getPlainText(slugProperty) || page.id,
+    popup: popupValue,
+    popupStartDate: popupStartDate,
+    popupEndDate: popupEndDate,
+  };
+};
+
+// 범용 데이터 매핑 함수 (메뉴 타입에 따라 동적 링크 생성)
+export const mapPageToMenuItem = (menuType: 'news' | 'notice' | 'c-log') => {
+  const basePath =
+    menuType === 'news' ? '/info/news' : menuType === 'notice' ? '/info/notice' : '/info/c-log';
+
+  return (page: PageObjectResponse): NewsItem => {
+    const properties = page.properties;
+
+    const titleProperty = properties.Title as NotionProperty | undefined;
+    const dateProperty = properties.Date as NotionProperty | undefined;
+    const slugProperty = properties.Slug as NotionProperty | undefined;
+    const popupProperty = properties.Popup as NotionProperty | undefined;
+    const popupPeriodProperty = properties['Popup Period'] as NotionProperty | undefined;
+
+    // 팝업 체크박스 값 추출
+    const popupValue =
+      popupProperty && 'checkbox' in popupProperty ? popupProperty.checkbox : false;
+
+    // 팝업 기간에서 시작/종료 날짜 추출
+    let popupStartDate = '';
+    let popupEndDate = '';
+
+    if (popupPeriodProperty && 'date' in popupPeriodProperty && popupPeriodProperty.date) {
+      // 시작 날짜
+      if (popupPeriodProperty.date.start) {
+        popupStartDate = popupPeriodProperty.date.start;
+      }
+      // 종료 날짜
+      if (popupPeriodProperty.date.end) {
+        popupEndDate = popupPeriodProperty.date.end;
+      }
+    }
+
+    return {
+      id: page.id,
+      title: getPlainText(titleProperty) || '제목 없음',
+      date: getFormattedDate(dateProperty),
+      rawDate: getRawDate(dateProperty),
+      link: `${basePath}/${getPlainText(slugProperty) || page.id}`, // 동적 링크 생성
+      slug: getPlainText(slugProperty) || page.id,
+      popup: popupValue,
+      popupStartDate: popupStartDate,
+      popupEndDate: popupEndDate,
+    };
+  };
+};
+
+// 일정 데이터 매핑 함수
+const mapPageToScheduleItem: ItemMapper<ScheduleItem> = (page) => {
+  const properties = page.properties;
+
+  const titleProperty = properties.Title as NotionProperty | undefined;
+  const dateProperty = properties.Date as NotionProperty | undefined;
+  const timeProperty = properties.Time as NotionProperty | undefined;
+  const locationProperty = properties.Location as NotionProperty | undefined;
+  const descriptionProperty = properties.Description as NotionProperty | undefined;
+  const categoryProperty = properties.Category as NotionProperty | undefined;
+  const tagsProperty = properties.Tags as NotionProperty | undefined;
+  const importantProperty = properties.Important as NotionProperty | undefined;
+
+  // 날짜를 ISO 문자열로 변환
+  let dateString = '';
+  let startDateString = '';
+  let endDateString = '';
+
+  if (dateProperty && dateProperty.type === 'date' && 'date' in dateProperty && dateProperty.date) {
+    // 기본 날짜 (시작 날짜)
+    if (dateProperty.date.start) {
+      dateString = dateProperty.date.start;
+      startDateString = dateProperty.date.start;
+    }
+    // 종료 날짜가 있으면 설정
+    if (dateProperty.date.end) {
+      endDateString = dateProperty.date.end;
+    }
+  }
+
+  return {
+    id: page.id,
+    title: getPlainText(titleProperty) || '제목 없음',
+    date: dateString,
+    time: getPlainText(timeProperty) || undefined,
+    location: getPlainText(locationProperty) || undefined,
+    description: getPlainText(descriptionProperty) || undefined,
+    category:
+      (categoryProperty && 'select' in categoryProperty && categoryProperty.select?.name) ||
+      undefined,
+    tags: (tagsProperty &&
+    'multi_select' in tagsProperty &&
+    Array.isArray(tagsProperty.multi_select)
+      ? tagsProperty.multi_select
+      : []
+    ).map((tag: { name: string }) => tag.name),
+    important:
+      (importantProperty && 'checkbox' in importantProperty && importantProperty.checkbox) || false,
+    startDate: startDateString || undefined,
+    endDate: endDateString || undefined,
   };
 };
 
@@ -394,6 +567,33 @@ export async function getCLogData(): Promise<CLogItem[]> {
   )();
 }
 
+// C-log 데이터 가져오기 (NewsItem 타입으로)
+export async function getCLogNewsData(): Promise<NewsItem[]> {
+  return unstable_cache(
+    async () => {
+      return getPublishedNotionData<NewsItem>('NOTION_CLOG_ID', mapPageToMenuItem('c-log'), 1000);
+    },
+    ['clog-news-data'],
+    { revalidate: 300, tags: ['clog-list'] }
+  )();
+}
+
+// 메인 페이지용 C-log 데이터 (2개만)
+export async function getMainCLogData(): Promise<NewsItem[]> {
+  // 개발 환경에서는 캐시를 비활성화
+  if (process.env.NODE_ENV === 'development') {
+    return getPublishedNotionData<NewsItem>('NOTION_CLOG_ID', mapPageToMenuItem('c-log'), 2);
+  }
+
+  return unstable_cache(
+    async () => {
+      return getPublishedNotionData<NewsItem>('NOTION_CLOG_ID', mapPageToMenuItem('c-log'), 2);
+    },
+    ['main-clog-data'],
+    { revalidate: 60, tags: ['main-clog'] }
+  )();
+}
+
 // Notion 데이터베이스에서 최신 설교 데이터 가져오기
 export async function getSermonData(): Promise<SermonItem | null> {
   return unstable_cache(
@@ -414,7 +614,7 @@ export async function getSermonData(): Promise<SermonItem | null> {
 export async function getNewsData(): Promise<NewsItem[]> {
   return unstable_cache(
     async () => {
-      return getPublishedNotionData<NewsItem>('NOTION_NEWS_ID', mapPageToNewsItem, 1000); // 명시적으로 1000개 지정
+      return getPublishedNotionData<NewsItem>('NOTION_NEWS_ID', mapPageToMenuItem('news'), 1000); // 명시적으로 1000개 지정
     },
     ['news-data'],
     { revalidate: 300, tags: ['news-list'] } // 5분 캐시, 태그 기반 재검증
@@ -423,12 +623,48 @@ export async function getNewsData(): Promise<NewsItem[]> {
 
 // 메인 페이지용 뉴스 데이터 (2개만)
 export async function getMainNewsData(): Promise<NewsItem[]> {
+  // 개발 환경에서는 캐시를 비활성화
+  if (process.env.NODE_ENV === 'development') {
+    return getPublishedNotionData<NewsItem>('NOTION_NEWS_ID', mapPageToMenuItem('news'), 2);
+  }
+
   return unstable_cache(
     async () => {
-      return getPublishedNotionData<NewsItem>('NOTION_NEWS_ID', mapPageToNewsItem, 2); // 메인 페이지용 2개
+      return getPublishedNotionData<NewsItem>('NOTION_NEWS_ID', mapPageToMenuItem('news'), 2); // 메인 페이지용 2개
     },
     ['main-news-data'],
-    { revalidate: 300, tags: ['main-news'] } // 5분 캐시, 태그 기반 재검증
+    { revalidate: 60, tags: ['main-news'] } // 1분 캐시로 단축
+  )();
+}
+
+// 공지사항 데이터 가져오기 (모든 공지사항)
+export async function getNoticeData(): Promise<NoticeItem[]> {
+  return unstable_cache(
+    async () => {
+      return getPublishedNotionData<NoticeItem>(
+        'NOTION_NOTICE_ID',
+        mapPageToMenuItem('notice'),
+        1000
+      );
+    },
+    ['notice-data'],
+    { revalidate: 300, tags: ['notice-list'] } // 5분 캐시, 태그 기반 재검증
+  )();
+}
+
+// 메인 페이지용 공지사항 데이터 (2개만)
+export async function getMainNoticeData(): Promise<NoticeItem[]> {
+  // 개발 환경에서는 캐시를 비활성화
+  if (process.env.NODE_ENV === 'development') {
+    return getPublishedNotionData<NoticeItem>('NOTION_NOTICE_ID', mapPageToMenuItem('notice'), 2);
+  }
+
+  return unstable_cache(
+    async () => {
+      return getPublishedNotionData<NoticeItem>('NOTION_NOTICE_ID', mapPageToMenuItem('notice'), 2);
+    },
+    ['main-notice-data'],
+    { revalidate: 60, tags: ['main-notice'] } // 1분 캐시로 단축
   )();
 }
 
@@ -451,6 +687,26 @@ export async function getCLogMainData(): Promise<CLogItem[]> {
     },
     ['clog-main-data'],
     { revalidate: 300, tags: ['clog-list'] } // 5분 캐시, 태그 기반 재검증
+  )();
+}
+
+// 일정 데이터 가져오기
+export async function getScheduleData(): Promise<ScheduleItem[]> {
+  // 개발 환경에서는 캐시를 비활성화
+  if (process.env.NODE_ENV === 'development') {
+    return getPublishedNotionData<ScheduleItem>('NOTION_SCHEDULE_ID', mapPageToScheduleItem, 1000);
+  }
+
+  return unstable_cache(
+    async () => {
+      return getPublishedNotionData<ScheduleItem>(
+        'NOTION_SCHEDULE_ID',
+        mapPageToScheduleItem,
+        1000
+      );
+    },
+    ['schedule-data'],
+    { revalidate: 300, tags: ['schedule-list'] } // 5분 캐시, 태그 기반 재검증
   )();
 }
 
@@ -601,6 +857,44 @@ export async function getPrevNextNewsPosts(currentSlug: string): Promise<{
 
 export type PrevNextNewsPosts = Awaited<ReturnType<typeof getPrevNextNewsPosts>>;
 
+// 공지사항 이전/다음 포스트 가져오기 함수
+export async function getPrevNextNoticePosts(currentSlug: string): Promise<{
+  prev: { title: string; slug: string } | null;
+  next: { title: string; slug: string } | null;
+}> {
+  // 캐시된 공지사항 데이터 사용
+  const noticeItems = await getNoticeData();
+
+  let prevPost: { title: string; slug: string } | null = null;
+  let nextPost: { title: string; slug: string } | null = null;
+
+  for (let i = 0; i < noticeItems.length; i++) {
+    const item = noticeItems[i];
+
+    if (item.slug === currentSlug) {
+      if (i > 0) {
+        const prevItem = noticeItems[i - 1];
+        prevPost = {
+          title: prevItem.title,
+          slug: prevItem.slug,
+        };
+      }
+      if (i < noticeItems.length - 1) {
+        const nextItem = noticeItems[i + 1];
+        nextPost = {
+          title: nextItem.title,
+          slug: nextItem.slug,
+        };
+      }
+      break;
+    }
+  }
+
+  return { prev: prevPost, next: nextPost };
+}
+
+export type PrevNextNoticePosts = Awaited<ReturnType<typeof getPrevNextNoticePosts>>;
+
 // NewsItem 인터페이스는 위에서 이미 정의됨 (팝업 속성 포함)
 
 // Notion에서 뉴스 게시물 목록을 가져오는 함수
@@ -653,35 +947,37 @@ export async function getNewsPosts(
           const dateProperty = p.properties.Date;
           const slugProperty = p.properties.Slug; // Slug 속성 추가
           const popupProperty = p.properties.Popup; // Popup 속성 추가
-          const popupStartDateProperty = p.properties['Popup Start Date']; // Popup Start Date 속성 추가
-          const popupEndDateProperty = p.properties['Popup End Date']; // Popup End Date 속성 추가
+          const popupPeriodProperty = p.properties['Popup Period']; // Popup Period 속성 추가
 
           const title = getPlainText(titleProperty);
           const date = getFormattedDate(dateProperty);
+          const rawDate = getRawDate(dateProperty);
           const slug = getPlainText(slugProperty) || p.id; // slug 추출 (없으면 page.id 사용)
 
           // 팝업 체크박스 값 추출
           const popupValue =
             popupProperty && 'checkbox' in popupProperty ? popupProperty.checkbox : false;
 
-          // 팝업 시작/종료 날짜 추출
-          const popupStartDate =
-            popupStartDateProperty &&
-            'date' in popupStartDateProperty &&
-            popupStartDateProperty.date?.start
-              ? popupStartDateProperty.date.start
-              : '';
-          const popupEndDate =
-            popupEndDateProperty &&
-            'date' in popupEndDateProperty &&
-            popupEndDateProperty.date?.start
-              ? popupEndDateProperty.date.start
-              : '';
+          // 팝업 기간에서 시작/종료 날짜 추출
+          let popupStartDate = '';
+          let popupEndDate = '';
+
+          if (popupPeriodProperty && 'date' in popupPeriodProperty && popupPeriodProperty.date) {
+            // 시작 날짜
+            if (popupPeriodProperty.date.start) {
+              popupStartDate = popupPeriodProperty.date.start;
+            }
+            // 종료 날짜
+            if (popupPeriodProperty.date.end) {
+              popupEndDate = popupPeriodProperty.date.end;
+            }
+          }
 
           return {
             id: p.id,
             title: title || '제목 없음',
             date: date || '날짜 없음',
+            rawDate: rawDate,
             link: `/info/news/${slug}`, // Notion Page ID 대신 slug를 기반으로 링크 생성
             slug: slug,
             popup: popupValue, // 팝업 표시 여부

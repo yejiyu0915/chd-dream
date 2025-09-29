@@ -3,14 +3,19 @@
 import Image from 'next/image';
 import l from '@/common/styles/mdx/MdxLayout.module.scss';
 
-interface NewsDetailHeaderProps {
+interface NoticeDetailHeaderProps {
   title: string;
   date: string;
   imageUrl: string;
-  tags: string[]; // 태그 prop 추가
+  tags: string[];
 }
 
-export default function NewsDetailHeader({ title, date, imageUrl, tags }: NewsDetailHeaderProps) {
+export default function NoticeDetailHeader({
+  title,
+  date,
+  imageUrl,
+  tags,
+}: NoticeDetailHeaderProps) {
   return (
     <>
       <div className={l.header}>
@@ -26,7 +31,6 @@ export default function NewsDetailHeader({ title, date, imageUrl, tags }: NewsDe
       </div>
       {tags && tags.length > 0 && (
         <div className={`detail-inner ${l.tagContainer}`}>
-          {/* 태그 컨테이너 추가 */}
           {tags.map((tag) => (
             <span key={tag} className={l.tagItem}>
               #{tag}

@@ -12,5 +12,13 @@ export const pageMeta: Record<string, PageMeta> = {
     title: 'C-log',
     description: '교회의 다양한 이야기를 만나보세요.',
   },
+  '/info/notice': {
+    title: '공지사항',
+    description: '교회의 공지사항을 전해드립니다.',
+  },
+  '/info/schedule': {
+    title: '일정',
+    description: '교회의 다양한 일정과 행사를 확인하세요.',
+  },
   // 여기에 추가적인 info 페이지들의 메타데이터를 정의합니다.
 };

@@ -10,24 +10,24 @@ import withTocExport from '@stefanprobst/rehype-extract-toc/mdx';
 
 import { compile } from '@mdx-js/mdx';
 
-import { getNotionPageAndContentBySlug, notion, getPrevNextNewsPosts } from '@/lib/notion';
+import { getNotionPageAndContentBySlug, notion, getPrevNextNoticePosts } from '@/lib/notion';
 import { NotionToMarkdown } from 'notion-to-md';
 import mdx from '@/common/styles/mdx/MdxContent.module.scss';
 import PageTitleSetter from '@/app/info/components/PageTitleSetter';
 import l from '@/common/styles/mdx/MdxLayout.module.scss';
-import NewsDetailHeader from '@/app/info/news/[slug]/components/NewsDetailHeader';
-import NewsDetailFooter from '@/app/info/news/[slug]/components/NewsDetailFooter';
+import NoticeDetailHeader from '@/app/info/notice/[slug]/components/NoticeDetailHeader';
+import NoticeDetailFooter from '@/app/info/notice/[slug]/components/NoticeDetailFooter';
 import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
 import { PageObjectResponse, BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 
-interface NewsDetailPageProps {
+interface NoticeDetailPageProps {
   params: { slug: string };
 }
 
-// 뉴스 상세 페이지 캐싱 설정 - 1시간마다 재검증
+// 공지사항 상세 페이지 캐싱 설정 - 1시간마다 재검증
 export const revalidate = 3600;
 
-export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
+export default async function NoticeDetailPage({ params }: NoticeDetailPageProps) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug as string;
 
@@ -38,11 +38,11 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['news-detail', slug],
-    queryFn: () => getNotionPageAndContentBySlug('NOTION_NEWS_ID', slug),
+    queryKey: ['notice-detail', slug],
+    queryFn: () => getNotionPageAndContentBySlug('NOTION_NOTICE_ID', slug),
   });
 
-  const notionData = queryClient.getQueryData(['news-detail', slug]) as
+  const notionData = queryClient.getQueryData(['notice-detail', slug]) as
     | { page: PageObjectResponse; blocks: BlockObjectResponse[] }
     | undefined;
 
@@ -62,7 +62,7 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
   const { page } = notionData;
   const titleProperty = page.properties.Title;
   const dateProperty = page.properties.Date;
-  const tagsProperty = page.properties.Tags; // 뉴스에도 태그가 있다면
+  const tagsProperty = page.properties.Tags;
 
   const title =
     (titleProperty?.type === 'title' && titleProperty.title[0]?.plain_text) || '제목 없음';
@@ -76,9 +76,9 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
   const tags =
     (tagsProperty?.type === 'multi_select' &&
       tagsProperty.multi_select?.map((tag: { name: string }) => tag.name)) ||
-    []; // 태그 추출, 없으면 빈 배열
+    [];
 
-  let imageUrl = '/no-image.svg'; // 기본 이미지
+  let imageUrl = '/no-image.svg';
   if (page.cover) {
     if (page.cover.type === 'external') {
       imageUrl = page.cover.external.url || '/no-image.svg';
@@ -87,13 +87,13 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
     }
   }
 
-  const { prev: prevPost, next: nextPost } = await getPrevNextNewsPosts(slug);
+  const { prev: prevPost, next: nextPost } = await getPrevNextNoticePosts(slug);
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <div className={l.container}>
         <PageTitleSetter title={title} />
-        <NewsDetailHeader title={title} date={date} imageUrl={imageUrl} tags={tags} />
+        <NoticeDetailHeader title={title} date={date} imageUrl={imageUrl} tags={tags} />
         <section className={`${mdx.mdxContent} detail-inner`}>
           <MDXRemote
             source={markdown}
@@ -105,11 +105,8 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
             }}
           />
         </section>
-        <NewsDetailFooter prevPost={prevPost} nextPost={nextPost} />
-        <aside className="relative hidden md:block">
-          {/* 목차 */}
-          {/* 목차 주석 처리된 부분 유지 */}
-        </aside>
+        <NoticeDetailFooter prevPost={prevPost} nextPost={nextPost} />
+        <aside className="relative hidden md:block">{/* 목차 */}</aside>
       </div>
     </HydrationBoundary>
   );

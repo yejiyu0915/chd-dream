@@ -4,10 +4,10 @@ import { type NextRequest } from 'next/server';
 export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const { slug } = await params;
-    const result = await getNotionPageAndContentBySlug('NOTION_NEWS_ID', slug);
+    const result = await getNotionPageAndContentBySlug('NOTION_NOTICE_ID', slug);
 
     if (!result) {
-      return Response.json({ error: '뉴스 페이지를 찾을 수 없습니다.' }, { status: 404 });
+      return Response.json({ error: '공지사항 페이지를 찾을 수 없습니다.' }, { status: 404 });
     }
 
     const { page, blocks } = result;
@@ -95,6 +95,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     return Response.json(responseData);
   } catch {
-    return Response.json({ error: '뉴스 컨텐츠를 가져오는 데 실패했습니다.' }, { status: 500 });
+    return Response.json({ error: '공지사항 컨텐츠를 가져오는 데 실패했습니다.' }, { status: 500 });
   }
 }

@@ -5,6 +5,7 @@
   padding-block-end: vw(80);
   border-bottom: vw(1) solid var(--border);
   @include font-vw(16);
+  word-break: break-all;
   @include mq(pc-sm) {
     margin-block: vw(60);
     padding-block-end: vw(48);
