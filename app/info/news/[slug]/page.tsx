@@ -12,9 +12,9 @@ import { compile } from '@mdx-js/mdx';
 
 import { getNotionPageAndContentBySlug, notion, getPrevNextNewsPosts } from '@/lib/notion';
 import { NotionToMarkdown } from 'notion-to-md';
-import mdx from 'common/styles/mdx/MdxContent.module.scss';
+import mdx from '@/common/styles/mdx/MdxContent.module.scss';
 import PageTitleSetter from '@/app/info/components/PageTitleSetter';
-import l from 'common/styles/mdx/MdxLayout.module.scss';
+import l from '@/common/styles/mdx/MdxLayout.module.scss';
 import NewsDetailHeader from '@/app/info/news/[slug]/components/NewsDetailHeader';
 import NewsDetailFooter from '@/app/info/news/[slug]/components/NewsDetailFooter';
 import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';

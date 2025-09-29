@@ -133,6 +133,7 @@ main {
   z-index: 2;
   width: 100%;
   padding-inline: var(--inner-padding);
+  font-size: vw(16);
   &.detail {
     --color: #ddd;
     --active-color: var(--background);

@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import l from 'common/styles/mdx/MdxLayout.module.scss';
+import l from '@/common/styles/mdx/MdxLayout.module.scss';
 
 interface NoticeDetailHeaderProps {
   title: string;

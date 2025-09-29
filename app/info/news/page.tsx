@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { usePageTitle } from '@/app/info/utils/title-context';
 import n from '@/app/info/news/NewsList.module.scss'; // NewsList.module.scss 사용
-import NewsListDisplay from './components/NewsListDisplay'; // NewsListDisplay 컴포넌트 임포트
+import NewsListDisplay from '@/app/info/news/components/NewsListDisplay'; // NewsListDisplay 컴포넌트 임포트
 import { NewsItem } from '@/lib/notion'; // NewsItem 인터페이스 임포트
 import { useQuery } from '@tanstack/react-query'; // useQuery 임포트
 

@@ -12,11 +12,11 @@ import { compile } from '@mdx-js/mdx';
 
 import { getNotionPageAndContentBySlug, notion, getPrevNextNoticePosts } from '@/lib/notion';
 import { NotionToMarkdown } from 'notion-to-md';
-import mdx from 'common/styles/mdx/MdxContent.module.scss';
+import mdx from '@/common/styles/mdx/MdxContent.module.scss';
 import PageTitleSetter from '@/app/info/components/PageTitleSetter';
-import l from 'common/styles/mdx/MdxLayout.module.scss';
-import NoticeDetailHeader from './components/NoticeDetailHeader';
-import NoticeDetailFooter from './components/NoticeDetailFooter';
+import l from '@/common/styles/mdx/MdxLayout.module.scss';
+import NoticeDetailHeader from '@/app/info/notice/[slug]/components/NoticeDetailHeader';
+import NoticeDetailFooter from '@/app/info/notice/[slug]/components/NoticeDetailFooter';
 import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
 import { PageObjectResponse, BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 

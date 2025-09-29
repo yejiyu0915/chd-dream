@@ -2,20 +2,20 @@
 @use '@/common/styles/mixins/function' as *;
 
 .scheduleMain {
-  padding: 60px 0 120px;
+  padding: vw(60) 0 vw(120);
 
   @include mq(mo) {
-    padding: 40px 0 80px;
+    padding: vw(40) 0 vw(80);
   }
 }
 
 .scheduleInner {
-  max-width: 1200px;
+  max-width: vw(1200);
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 vw(20);
 
   @include mq(mo) {
-    padding: 0 16px;
+    padding: 0 vw(16);
   }
 }
 
@@ -28,27 +28,27 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 0;
+  padding: vw(24) 0;
   background: #fff;
   color: #333;
 
   @include mq(mo) {
-    padding: 0 24px 20px;
+    padding: 0 vw(24) vw(20);
     flex-direction: column;
-    gap: 16px;
+    gap: vw(16);
   }
 }
 
 .calendarTitle {
-  font-size: 24px;
+  font-size: vw(24);
   font-weight: 600;
   margin: 0;
-  border-left: 3px solid #000;
-  padding-left: 16px;
+  border-left: vw(3) solid #000;
+  padding-left: vw(16);
 
   @include mq(mo) {
     display: none;
-    font-size: 20px;
+    font-size: vw(20);
     padding-left: 0;
     border-left: none;
   }
@@ -57,23 +57,24 @@
 .calendarNavigation {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: vw(16);
   @include mq(mo-xs) {
-    gap: 4px;
+    gap: vw(4);
   }
 }
 
 .navButton {
   background: #f8f9fa;
   border: 1px solid #e9ecef;
-  border-radius: 12px;
-  padding: 8px 12px;
+  border-radius: vw(12);
+  padding: vw(8) vw(12);
   color: #333;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  @include font-vw(16);
 
   &:hover {
     background: #e9ecef;
@@ -87,14 +88,14 @@
 }
 
 .currentMonth {
-  font-size: 18px;
+  font-size: vw(18);
   font-weight: 700;
-  min-width: 120px;
+  min-width: vw(120);
   text-align: center;
 
   @include mq(mo) {
-    font-size: 16px;
-    min-width: 90px;
+    font-size: vw(16);
+    min-width: vw(90);
   }
 }
 
@@ -104,16 +105,16 @@
 }
 
 .dayHeader {
-  padding: 16px 12px;
+  padding: vw(16) vw(12);
   text-align: center;
   font-weight: 600;
   color: #495057;
-  font-size: 16px;
-  border-bottom: 3px solid #e9ecef;
+  font-size: vw(16);
+  border-bottom: vw(3) solid #e9ecef;
 
   @include mq(mo) {
-    padding: 12px 4px;
-    font-size: 12px;
+    padding: vw(12) vw(4);
+    font-size: vw(12);
   }
 
   &.sunday {
@@ -129,8 +130,8 @@
 
 .dayCell {
   background: white;
-  min-height: 120px;
-  padding-bottom: 16px;
+  min-height: vw(120);
+  padding-bottom: vw(16);
   border-bottom: 1px solid #e9ecef;
   position: relative;
   cursor: pointer;
@@ -154,7 +155,7 @@
       z-index: 2;
       width: 100%;
       height: 100%;
-      border: 2px solid #fff;
+      border: vw(2) solid #fff;
       mix-blend-mode: difference;
       pointer-events: none;
     }
@@ -164,8 +165,8 @@
   }
 
   @include mq(ta) {
-    min-height: 80px;
-    padding: 12px;
+    min-height: vw(80);
+    padding: vw(12);
     &.today {
       &::before {
         border-color: #222;
@@ -184,27 +185,27 @@
         z-index: 2;
         width: 100%;
         height: 100%;
-        border-bottom: 2px double #000;
+        border-bottom: vw(2) double #000;
       }
     }
   }
   @include mq(mo) {
-    padding: 8px;
+    padding: vw(8);
   }
 }
 
 .dayNumber {
   font-weight: 500;
-  margin-bottom: 8px;
-  padding: 16px 16px 0;
-  font-size: 16px;
+  margin-bottom: vw(8);
+  padding: vw(16) vw(16) 0;
+  font-size: vw(16);
 
   @include mq(ta) {
     padding: 0;
-    font-size: 14px;
+    font-size: vw(14);
   }
   @include mq(mo) {
-    font-size: 12px;
+    font-size: vw(12);
   }
 }
 
@@ -220,8 +221,8 @@
 
 .todayLabel {
   font-weight: 600;
-  color: #000;
-  font-size: 11px;
+  color: inherit;
+  font-size: vw(11);
 
   @include mq(ta) {
     display: none;
@@ -229,15 +230,15 @@
 }
 
 .holidayLabel {
-  font-size: 12px;
-  margin-left: 4px;
+  font-size: vw(12);
+  margin-left: vw(4);
   cursor: help;
 }
 
 .eventList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: vw(8);
 
   @include mq(ta) {
     display: none; // 모바일에서는 숨김
@@ -246,10 +247,10 @@
 
 .eventItem {
   background-color: #f7f8f9;
-  margin-left: 16px;
-  padding: 12px 16px;
-  border-radius: 12px;
-  font-size: 16px;
+  margin-inline: vw(16);
+  padding: vw(12) vw(16);
+  border-radius: vw(12);
+  font-size: vw(16);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -257,21 +258,21 @@
   transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  border: 2px solid #eee;
+  gap: vw(2);
+  border: vw(2) solid #eee;
 
   &.important {
     background-color: #000; // 빨간색으로 중요 일정 표시
     color: white;
-    border: 2px solid #000;
+    border: vw(2) solid #000;
     .eventTag {
       background-color: #333;
     }
   }
 
   @include mq(ta) {
-    font-size: 10px;
-    padding: 1px 4px;
+    font-size: vw(10);
+    padding: vw(1) vw(4);
   }
 }
 
@@ -283,42 +284,42 @@
 
 .eventTime {
   display: block;
-  margin-top: 4px;
-  font-size: 12px;
+  margin-top: vw(4);
+  font-size: vw(12);
   opacity: 0.5;
   font-weight: 400;
 
   @include mq(ta) {
-    font-size: 9px;
+    font-size: vw(9);
   }
 }
 
 .eventTags {
   display: flex;
   flex-wrap: wrap;
-  gap: 2px;
-  margin-top: 12px;
+  gap: vw(2);
+  margin-top: vw(12);
 }
 
 .eventTag {
   background: #e9ecef;
-  padding: 2px 4px;
-  border-radius: 3px;
-  font-size: 10px;
+  padding: vw(2) vw(4);
+  border-radius: vw(3);
+  font-size: vw(10);
   font-weight: 500;
   line-height: 1.2;
 
   @include mq(ta) {
-    font-size: 8px;
-    padding: 1px 3px;
+    font-size: vw(8);
+    padding: vw(1) vw(3);
   }
 }
 
 .spanningEventList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: vw(8);
+  margin-bottom: vw(8);
 
   @include mq(ta) {
     display: none; // 모바일에서는 숨김
@@ -327,8 +328,8 @@
 
 .spanningEvent {
   background-color: #f7f8f9;
-  padding: 12px 16px;
-  font-size: 16px;
+  padding: vw(12) vw(16);
+  font-size: vw(16);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -336,30 +337,31 @@
   transition: all 0.2s ease;
   position: relative;
   min-height: auto; // 높이를 동적으로 설정할 수 있도록
-  border-block: 2px solid #eee;
+  border-block: vw(2) solid #eee;
 
   &.spanningEventStart {
-    margin-left: 16px;
-    border-radius: 12px 0 0 12px;
-    border-left: 2px solid #eee;
+    margin-left: vw(16);
+    border-radius: vw(12) 0 0 vw(12);
+    border-left: vw(2) solid #eee;
   }
 
   &.spanningEventEnd {
-    border-radius: 0 12px 12px 0;
-    border-right: 2px solid #eee;
+    margin-right: vw(16);
+    border-radius: 0 vw(12) vw(12) 0;
+    border-right: vw(2) solid #eee;
   }
 
   &.important {
     background-color: #000; // 빨간색으로 중요 일정 표시
     color: white;
-    border-block: 2px solid #000;
+    border-block: vw(2) solid #000;
 
     &.spanningEventStart {
-      border-left: 2px solid #000;
+      border-left: vw(2) solid #000;
     }
 
     &.spanningEventEnd {
-      border-right: 2px solid #000;
+      border-right: vw(2) solid #000;
     }
 
     .eventTag {
@@ -368,9 +370,9 @@
   }
 
   @include mq(ta) {
-    font-size: 10px;
-    padding: 2px 6px;
-    margin: 0 -6px;
+    font-size: vw(10);
+    padding: vw(2) vw(6);
+    margin: 0 vw(-6);
   }
 }
 
@@ -380,19 +382,19 @@
 
   @include mq(ta) {
     display: inline-block;
-    width: 10px;
-    height: 10px;
+    width: vw(10);
+    height: vw(10);
     border-radius: 50%;
-    background-color: #000;
-    margin: 1px;
+    background-color: #bbb;
+    margin: vw(1);
 
     &.important {
       background-color: #dc3545;
     }
   }
   @include mq(mo) {
-    width: 8px;
-    height: 8px;
+    width: vw(8);
+    height: vw(8);
   }
 }
 
@@ -402,8 +404,8 @@
   @include mq(ta) {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 4px;
-    gap: 2px;
+    margin-top: vw(4);
+    gap: vw(2);
   }
 }
 
@@ -412,20 +414,20 @@
   display: none;
   @include mq(ta) {
     display: block;
-    margin-top: 40px;
+    margin-top: vw(40);
   }
 }
 
 .mobileEventPanelHeader {
   @include mq(ta) {
-    margin-bottom: 12px;
-    padding-bottom: 8px;
+    margin-bottom: vw(12);
+    padding-bottom: vw(8);
   }
 }
 
 .mobileEventPanelTitle {
   @include mq(ta) {
-    font-size: 16px;
+    font-size: vw(16);
     font-weight: 600;
     color: #333;
   }
@@ -435,7 +437,7 @@
   @include mq(ta) {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: vw(8);
   }
 }
 
@@ -443,8 +445,8 @@
   @include mq(ta) {
     display: block;
     background: #f7f8f9;
-    padding: 12px;
-    border-left: 4px solid #000;
+    padding: vw(12);
+    border-left: vw(4) solid #000;
 
     &.important {
       border-left-color: #dc3545;
@@ -454,7 +456,7 @@
 
 .mobileEventItemTitle {
   @include mq(ta) {
-    font-size: 14px;
+    font-size: vw(14);
     font-weight: 600;
     color: #333;
   }
@@ -462,9 +464,9 @@
 
 .mobileEventItemTime {
   @include mq(ta) {
-    font-size: 12px;
+    font-size: vw(12);
     color: #666;
-    margin-top: 8px;
+    margin-top: vw(8);
   }
 }
 
@@ -472,8 +474,8 @@
   @include mq(ta) {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
-    margin-top: 16px;
+    gap: vw(4);
+    margin-top: vw(16);
   }
 }
 
@@ -481,9 +483,9 @@
   @include mq(ta) {
     background: #e9ecef;
     color: #495057;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 10px;
+    padding: vw(2) vw(6);
+    border-radius: vw(4);
+    font-size: vw(10);
   }
 }
 
@@ -491,9 +493,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 400px;
+  min-height: vw(400);
   color: #6c757d;
-  font-size: 16px;
+  font-size: vw(16);
 }
 
 .errorState {
@@ -501,20 +503,20 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 400px;
+  min-height: vw(400);
   color: #dc3545;
   text-align: center;
-  gap: 16px;
+  gap: vw(16);
 }
 
 .retryButton {
   background: #f8f9fa;
   color: #333;
   border: 1px solid #e9ecef;
-  padding: 12px 24px;
-  border-radius: 6px;
+  padding: vw(12) vw(24);
+  border-radius: vw(6);
   cursor: pointer;
-  font-size: 14px;
+  font-size: vw(14);
   transition: all 0.2s ease;
 
   &:hover {
