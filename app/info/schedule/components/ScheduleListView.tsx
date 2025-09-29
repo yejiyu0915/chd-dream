@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { ScheduleItem } from '@/lib/notion';
 import { formatTimeInfo } from '@/app/info/schedule/types/utils';
+import Icon from '@/common/components/utils/Icons';
 import s from '@/app/info/schedule/Schedule.module.scss';
 
 interface ScheduleListViewProps {
@@ -13,6 +14,8 @@ interface ScheduleListViewProps {
   onPreviousMonth: () => void;
   onNextMonth: () => void;
   onGoToToday: () => void;
+  onPreviousPeriod: () => void;
+  onNextPeriod: () => void;
 }
 
 /**
@@ -26,10 +29,28 @@ export default function ScheduleListView({
   isLoading,
   isError,
   error,
-  onPreviousMonth,
-  onNextMonth,
+  onPreviousMonth: _onPreviousMonth,
+  onNextMonth: _onNextMonth,
   onGoToToday,
+  onPreviousPeriod,
+  onNextPeriod,
 }: ScheduleListViewProps) {
+  // 아코디언 상태 관리 (기본적으로 모든 섹션 펼침)
+  const [expandedDates, setExpandedDates] = useState<Set<string>>(new Set(['ongoing']));
+
+  // 날짜 토글 함수
+  const toggleDate = (dateKey: string) => {
+    setExpandedDates((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(dateKey)) {
+        newSet.delete(dateKey);
+      } else {
+        newSet.add(dateKey);
+      }
+      return newSet;
+    });
+  };
+
   // 기간에 따른 날짜 범위 계산 (의미있는 구간으로)
   const dateRange = useMemo(() => {
     const year = currentDate.getFullYear();
@@ -45,20 +66,22 @@ export default function ScheduleListView({
         endDate = new Date(year, month + 1, 0); // 다음 달 0일 = 이번 달 마지막 날
         break;
 
-      case '3months':
+      case '3months': {
         // 분기 (Q1: 1-3월, Q2: 4-6월, Q3: 7-9월, Q4: 10-12월)
         const quarter = Math.floor(month / 3);
         const quarterStartMonth = quarter * 3;
         startDate = new Date(year, quarterStartMonth, 1);
         endDate = new Date(year, quarterStartMonth + 3, 0);
         break;
+      }
 
-      case '6months':
+      case '6months': {
         // 반기 (상반기: 1-6월, 하반기: 7-12월)
         const halfYear = month < 6 ? 0 : 6; // 상반기(0) 또는 하반기(6)
         startDate = new Date(year, halfYear, 1);
         endDate = new Date(year, halfYear + 6, 0);
         break;
+      }
 
       case '1year':
         // 전체 연도
@@ -143,6 +166,18 @@ export default function ScheduleListView({
     };
   }, [scheduleData, dateRange]);
 
+  // 기간 내 일정들의 날짜 키들을 기본적으로 펼침 상태로 설정
+  useEffect(() => {
+    if (groupedScheduleData.length > 0) {
+      const dateKeys = groupedScheduleData.map(({ date }) => date.toISOString().split('T')[0]);
+      setExpandedDates((prev) => {
+        const newSet = new Set(prev);
+        dateKeys.forEach((key) => newSet.add(key));
+        return newSet;
+      });
+    }
+  }, [groupedScheduleData]);
+
   if (isLoading) {
     return (
       <div className={s.scheduleListContainer}>
@@ -167,44 +202,49 @@ export default function ScheduleListView({
       <div className={s.calendarHeader}>
         <h2 className={s.calendarTitle}>리스트로 보기</h2>
         <div className={s.calendarNavigation}>
-          <button className={s.navButton} onClick={onPreviousMonth} aria-label="이전 달">
+          <button className={s.navButton} onClick={onPreviousPeriod} aria-label="이전 기간">
             ←
           </button>
-          <div className={s.currentMonth}>
-            {(() => {
-              const year = currentDate.getFullYear();
-              const month = currentDate.getMonth();
+          <div
+            className={s.currentMonth}
+            dangerouslySetInnerHTML={{
+              __html: (() => {
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth();
 
-              switch (period) {
-                case '1month':
-                  return currentDate.toLocaleDateString('ko-KR', {
-                    year: 'numeric',
-                    month: 'long',
-                  });
+                switch (period) {
+                  case '1month':
+                    return currentDate.toLocaleDateString('ko-KR', {
+                      year: 'numeric',
+                      month: 'long',
+                    });
 
-                case '3months':
-                  const quarter = Math.floor(month / 3) + 1;
-                  const quarterStartMonth = Math.floor(month / 3) * 3;
-                  const quarterEndMonth = quarterStartMonth + 2;
-                  return `${year}년 Q${quarter}분기 (${quarterStartMonth + 1}월~${quarterEndMonth + 1}월)`;
+                  case '3months': {
+                    const quarter = Math.floor(month / 3) + 1;
+                    const quarterStartMonth = Math.floor(month / 3) * 3;
+                    const quarterEndMonth = quarterStartMonth + 2;
+                    return `${year}년 Q${quarter}<span class="only-pc">분기 (${quarterStartMonth + 1}월~${quarterEndMonth + 1}월)</span>`;
+                  }
 
-                case '6months':
-                  const halfYear = month < 6 ? '상반기' : '하반기';
-                  const halfYearRange = month < 6 ? '1월~6월' : '7월~12월';
-                  return `${year}년 ${halfYear} (${halfYearRange})`;
+                  case '6months': {
+                    const halfYear = month < 6 ? '상' : '하';
+                    const halfYearRange = month < 6 ? '1월~6월' : '7월~12월';
+                    return `${year}년 ${halfYear}<span class="only-pc">반기 (${halfYearRange})</span>`;
+                  }
 
-                case '1year':
-                  return `${year}년`;
+                  case '1year':
+                    return `${year}년`;
 
-                default:
-                  return currentDate.toLocaleDateString('ko-KR', {
-                    year: 'numeric',
-                    month: 'long',
-                  });
-              }
-            })()}
-          </div>
-          <button className={s.navButton} onClick={onNextMonth} aria-label="다음 달">
+                  default:
+                    return currentDate.toLocaleDateString('ko-KR', {
+                      year: 'numeric',
+                      month: 'long',
+                    });
+                }
+              })(),
+            }}
+          />
+          <button className={s.navButton} onClick={onNextPeriod} aria-label="다음 기간">
             →
           </button>
           <button className={s.navButton} onClick={onGoToToday} aria-label="오늘">
@@ -215,8 +255,14 @@ export default function ScheduleListView({
 
       <div className={s.scheduleListInfo}>
         <p className={s.scheduleListSubtitle}>
-          총 {ongoingEvents.length + groupedScheduleData.length}일의 일정이 있습니다
-          {ongoingEvents.length > 0 && ` (진행 중: ${ongoingEvents.length}개)`}
+          총 <strong>{ongoingEvents.length + groupedScheduleData.length}일</strong>의 일정이
+          있습니다
+          {ongoingEvents.length > 0 && (
+            <>
+              {' '}
+              (진행 중: <strong>{ongoingEvents.length}개</strong>)
+            </>
+          )}
         </p>
       </div>
 
@@ -229,84 +275,107 @@ export default function ScheduleListView({
           {/* 진행 중인 일정 섹션 */}
           {ongoingEvents.length > 0 && (
             <div className={s.scheduleListDay}>
-              <div className={s.scheduleListDayHeader}>
+              <div
+                className={s.scheduleListDayHeader}
+                onClick={() => toggleDate('ongoing')}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className={s.scheduleListDayDate}>진행 중인 일정</div>
                 <div className={s.scheduleListDayCount}>{ongoingEvents.length}개</div>
+                <div className={s.accordionIcon}>
+                  <Icon name={expandedDates.has('ongoing') ? 'arrow-down' : 'arrow-up'} />
+                </div>
               </div>
-              <div className={s.scheduleListEvents}>
-                {ongoingEvents.map((event) => {
-                  const timeInfo = formatTimeInfo(event);
-                  return (
-                    <div
-                      key={event.id}
-                      className={`${s.scheduleListEvent} ${event.important ? s.important : ''} ${s.ongoingEvent}`}
-                    >
-                      <div className={s.scheduleListEventContent}>
-                        <div className={s.scheduleListEventTitle}>{event.title}</div>
-                        {timeInfo && <div className={s.scheduleListEventTime}>{timeInfo}</div>}
-                        {event.location && (
-                          <div className={s.scheduleListEventLocation}>📍 {event.location}</div>
-                        )}
-                        {event.tags && event.tags.length > 0 && (
-                          <div className={s.scheduleListEventTags}>
-                            {event.tags.map((tag, index) => (
-                              <span key={index} className={s.scheduleListEventTag}>
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        )}
+              {expandedDates.has('ongoing') && (
+                <div className={s.scheduleListEvents}>
+                  {ongoingEvents.map((event) => {
+                    const timeInfo = formatTimeInfo(event);
+                    return (
+                      <div
+                        key={event.id}
+                        className={`${s.scheduleListEvent} ${event.important ? s.important : ''} ${s.ongoingEvent}`}
+                      >
+                        <div className={s.scheduleListEventContent}>
+                          <div className={s.scheduleListEventTitle}>{event.title}</div>
+                          {timeInfo && <div className={s.scheduleListEventTime}>{timeInfo}</div>}
+                          {event.location && (
+                            <div className={s.scheduleListEventLocation}>📍 {event.location}</div>
+                          )}
+                          {event.tags && event.tags.length > 0 && (
+                            <div className={s.scheduleListEventTags}>
+                              {event.tags.map((tag, index) => (
+                                <span key={index} className={s.scheduleListEventTag}>
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
           {/* 기간 내 일정 섹션 */}
-          {groupedScheduleData.map(({ date, events }) => (
-            <div key={date.toISOString()} className={s.scheduleListDay}>
-              <div className={s.scheduleListDayHeader}>
-                <div className={s.scheduleListDayDate}>
-                  {date.toLocaleDateString('ko-KR', {
-                    month: 'long',
-                    day: 'numeric',
-                    weekday: 'long',
-                  })}
+          {groupedScheduleData.map(({ date, events }) => {
+            const dateKey = date.toISOString().split('T')[0];
+            const isExpanded = expandedDates.has(dateKey);
+
+            return (
+              <div key={date.toISOString()} className={s.scheduleListDay}>
+                <div
+                  className={s.scheduleListDayHeader}
+                  onClick={() => toggleDate(dateKey)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className={s.scheduleListDayDate}>
+                    {date.toLocaleDateString('ko-KR', {
+                      month: 'long',
+                      day: 'numeric',
+                      weekday: 'long',
+                    })}
+                  </div>
+                  <div className={s.scheduleListDayCount}>{events.length}개 일정</div>
+                  <div className={s.accordionIcon}>
+                    <Icon name={isExpanded ? 'arrow-down' : 'arrow-up'} />
+                  </div>
                 </div>
-                <div className={s.scheduleListDayCount}>{events.length}개 일정</div>
-              </div>
-              <div className={s.scheduleListEvents}>
-                {events.map((event) => {
-                  const timeInfo = formatTimeInfo(event);
-                  return (
-                    <div
-                      key={event.id}
-                      className={`${s.scheduleListEvent} ${event.important ? s.important : ''}`}
-                    >
-                      <div className={s.scheduleListEventContent}>
-                        <div className={s.scheduleListEventTitle}>{event.title}</div>
-                        {timeInfo && <div className={s.scheduleListEventTime}>{timeInfo}</div>}
-                        {event.location && (
-                          <div className={s.scheduleListEventLocation}>📍 {event.location}</div>
-                        )}
-                        {event.tags && event.tags.length > 0 && (
-                          <div className={s.scheduleListEventTags}>
-                            {event.tags.map((tag, index) => (
-                              <span key={index} className={s.scheduleListEventTag}>
-                                {tag}
-                              </span>
-                            ))}
+                {isExpanded && (
+                  <div className={s.scheduleListEvents}>
+                    {events.map((event) => {
+                      const timeInfo = formatTimeInfo(event);
+                      return (
+                        <div
+                          key={event.id}
+                          className={`${s.scheduleListEvent} ${event.important ? s.important : ''}`}
+                        >
+                          <div className={s.scheduleListEventContent}>
+                            <div className={s.scheduleListEventTitle}>{event.title}</div>
+                            {timeInfo && <div className={s.scheduleListEventTime}>{timeInfo}</div>}
+                            {event.location && (
+                              <div className={s.scheduleListEventLocation}>📍 {event.location}</div>
+                            )}
+                            {event.tags && event.tags.length > 0 && (
+                              <div className={s.scheduleListEventTags}>
+                                {event.tags.map((tag, index) => (
+                                  <span key={index} className={s.scheduleListEventTag}>
+                                    {tag}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

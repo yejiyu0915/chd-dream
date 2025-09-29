@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { ScheduleItem } from '@/lib/notion';
 import { CalendarDay, SpanningEvent } from '@/app/info/schedule/types/types';
 import { useHolidayInfo, useScheduleData } from '@/app/info/schedule/types/hooks';
@@ -51,7 +51,7 @@ export default function ScheduleCalendar() {
     });
 
     // 각 그룹의 높이를 동기화
-    spanningEventGroups.forEach((elements, groupKey) => {
+    spanningEventGroups.forEach((elements, _groupKey) => {
       if (elements.length > 1) {
         // 모든 요소의 높이를 먼저 초기화
         elements.forEach((element) => {
@@ -279,6 +279,50 @@ export default function ScheduleCalendar() {
     setCurrentDate(new Date());
   };
 
+  // 이전 기간으로 이동 (기간에 따라 다르게)
+  const goToPreviousPeriod = () => {
+    setCurrentDate((prev) => {
+      const newDate = new Date(prev);
+      switch (period) {
+        case '1month':
+          newDate.setMonth(newDate.getMonth() - 1);
+          break;
+        case '3months':
+          newDate.setMonth(newDate.getMonth() - 3);
+          break;
+        case '6months':
+          newDate.setMonth(newDate.getMonth() - 6);
+          break;
+        case '1year':
+          newDate.setFullYear(newDate.getFullYear() - 1);
+          break;
+      }
+      return newDate;
+    });
+  };
+
+  // 다음 기간으로 이동 (기간에 따라 다르게)
+  const goToNextPeriod = () => {
+    setCurrentDate((prev) => {
+      const newDate = new Date(prev);
+      switch (period) {
+        case '1month':
+          newDate.setMonth(newDate.getMonth() + 1);
+          break;
+        case '3months':
+          newDate.setMonth(newDate.getMonth() + 3);
+          break;
+        case '6months':
+          newDate.setMonth(newDate.getMonth() + 6);
+          break;
+        case '1year':
+          newDate.setFullYear(newDate.getFullYear() + 1);
+          break;
+      }
+      return newDate;
+    });
+  };
+
   // 월/년 표시
   const monthYear = currentDate.toLocaleDateString('ko-KR', {
     year: 'numeric',
@@ -346,6 +390,8 @@ export default function ScheduleCalendar() {
           onPreviousMonth={goToPreviousMonth}
           onNextMonth={goToNextMonth}
           onGoToToday={goToToday}
+          onPreviousPeriod={goToPreviousPeriod}
+          onNextPeriod={goToNextPeriod}
         />
       )}
     </div>

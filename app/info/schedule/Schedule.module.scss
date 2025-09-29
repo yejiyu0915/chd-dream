@@ -96,7 +96,7 @@
 
   @include mq(mo) {
     font-size: vw(16);
-    min-width: vw(90);
+    min-width: vw(92);
   }
 }
 
@@ -279,7 +279,7 @@
 
 .eventTitle {
   display: block;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.3;
 }
 
@@ -564,6 +564,11 @@
       filter: none;
     }
   }
+
+  @include mq(mo) {
+    padding: vw(8);
+    font-size: vw(14);
+  }
 }
 
 // 기간 필터 스타일
@@ -585,6 +590,13 @@
   &.active {
     border-color: #000;
     font-weight: 700;
+  }
+
+  @include mq(mo) {
+    padding: vw(8);
+    font-size: vw(14);
+    height: vw(35.5);
+    border-bottom-width: vw(2);
   }
 }
 
@@ -610,14 +622,15 @@
 }
 
 .scheduleListInfo {
-  padding: vw(16) vw(24);
-  background: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
+  padding: 0 vw(24) vw(24) 0;
+  @include mq(mo) {
+    padding: vw(6) vw(24) vw(24) 0;
+  }
 }
 
 .scheduleListSubtitle {
   font-size: vw(14);
-  color: #666;
+  color: #333;
   margin: 0;
 }
 
@@ -630,26 +643,68 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: vw(20) vw(24);
+  padding: vw(20) vw(60) vw(20) vw(24);
   background: #e9ecef;
+  transition: background-color 0.2s ease;
+  position: relative;
+
+  &:hover {
+    background: #dee2e6;
+  }
+
+  @include mq(mo) {
+    padding: vw(16) vw(48) vw(16) vw(16);
+  }
 }
 
 .scheduleListDayDate {
   font-size: vw(20);
   font-weight: 600;
   color: #333;
+  @include mq(mo) {
+    font-size: vw(14);
+  }
 }
 
 .scheduleListDayCount {
-  font-size: vw(12);
+  font-size: vw(14);
   color: #666;
   background: #f8f9fa;
   padding: vw(4) vw(8);
   border-radius: vw(4);
+  @include mq(mo) {
+    font-size: vw(12);
+  }
+}
+
+.accordionIcon {
+  position: absolute;
+  right: vw(24);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+  font-size: vw(16);
+
+  i {
+    --icon-size: 2;
+    --icon-margin: 0;
+    filter: invert(1);
+  }
+
+  @include mq(mo) {
+    font-size: vw(12);
+    right: vw(16);
+  }
 }
 
 .scheduleListEvents {
   padding: vw(16) 0 vw(16) vw(60);
+  @include mq(mo) {
+    padding: vw(16) 0 vw(16) vw(24);
+  }
 }
 
 .scheduleListEvent {
@@ -675,6 +730,21 @@
   &.ongoingEvent {
     border-left: vw(3) solid #000;
   }
+
+  // 모바일에서 캘린더 뷰와 동일한 스타일 적용
+  @include mq(mo) {
+    padding: vw(12);
+    border-left: vw(4) solid #000;
+    margin-bottom: vw(8);
+
+    &.important {
+      border-left-color: #dc3545;
+    }
+
+    &.ongoingEvent {
+      border-left: vw(4) solid #000;
+    }
+  }
 }
 
 .scheduleListEventContent {
@@ -687,17 +757,26 @@
   font-size: vw(16);
   font-weight: 700;
   line-height: 1.4;
+  @include mq(mo) {
+    font-size: vw(14);
+  }
 }
 
 .scheduleListEventTime {
   font-size: vw(14);
   color: #666;
   font-weight: 500;
+  @include mq(mo) {
+    font-size: vw(12);
+  }
 }
 
 .scheduleListEventLocation {
   font-size: vw(14);
   color: #666;
+  @include mq(mo) {
+    font-size: vw(12);
+  }
 }
 
 .scheduleListEventTags {
@@ -705,6 +784,11 @@
   flex-wrap: wrap;
   gap: vw(6);
   margin-top: vw(8);
+
+  @include mq(mo) {
+    gap: vw(4);
+    margin-top: vw(16);
+  }
 }
 
 .scheduleListEventTag {
@@ -714,6 +798,12 @@
   border-radius: vw(4);
   font-size: vw(12);
   font-weight: 500;
+
+  @include mq(mo) {
+    padding: vw(2) vw(6);
+    font-size: vw(10);
+    font-weight: normal;
+  }
 }
 
 .emptyState {
@@ -721,4 +811,11 @@
   text-align: center;
   color: #666;
   font-size: vw(16);
+}
+
+// PC에서만 표시되는 요소
+.only-pc {
+  @include mq(mo) {
+    display: none;
+  }
 }

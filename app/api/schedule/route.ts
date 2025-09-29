@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getScheduleData } from '@/lib/notion';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const scheduleData = await getScheduleData();
 
