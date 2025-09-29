@@ -22,20 +22,6 @@ export default function LayoutContent({ children }: LayoutContentProps) {
   useEffect(() => {
     const fetchPopupNews = async () => {
       try {
-        // 영구적으로 닫힌 상태 확인 (로컬 스토리지)
-        const popupPermanentlyClosed = localStorage.getItem('popupNewsPermanentlyClosed');
-
-        if (popupPermanentlyClosed) {
-          return; // 영구적으로 닫았다면 표시하지 않음
-        }
-
-        // 세션 스토리지에서 팝업 닫힘 상태 확인
-        const popupClosed = sessionStorage.getItem('popupNewsClosed');
-
-        if (popupClosed) {
-          return; // 이미 팝업을 닫았다면 표시하지 않음
-        }
-
         const response = await fetch('/api/popup-news');
 
         if (response.ok) {
@@ -43,6 +29,27 @@ export default function LayoutContent({ children }: LayoutContentProps) {
 
           // 데이터가 있고, 빈 객체가 아니며, id가 있는 경우에만 팝업 표시
           if (data && Object.keys(data).length > 0 && data.id) {
+            // 팝업 ID와 기간 정보를 기반으로 "다시 보지 않기" 상태 확인
+            const popupKey = `popupClosed_${data.id}`;
+            const popupEndDate = data.popupEndDate || data.rawDate || data.date;
+
+            // 저장된 "다시 보지 않기" 정보 확인
+            const storedPopupData = localStorage.getItem(popupKey);
+
+            if (storedPopupData) {
+              try {
+                const { endDate, permanentlyClosed } = JSON.parse(storedPopupData);
+
+                // 기간이 변경되었거나 영구적으로 닫지 않은 경우에만 팝업 표시
+                if (endDate === popupEndDate && permanentlyClosed) {
+                  return; // 동일한 기간이고 영구적으로 닫았다면 표시하지 않음
+                }
+              } catch {
+                // JSON 파싱 실패 시 기존 데이터 삭제
+                localStorage.removeItem(popupKey);
+              }
+            }
+
             setPopupNews(data);
             setShowPopup(true);
           }
@@ -83,9 +90,18 @@ export default function LayoutContent({ children }: LayoutContentProps) {
   const handleClosePopup = (dontShowAgain: boolean = false) => {
     setShowPopup(false);
 
-    if (dontShowAgain) {
-      // 로컬 스토리지에 영구적으로 저장 (브라우저를 닫아도 유지)
-      localStorage.setItem('popupNewsPermanentlyClosed', 'true');
+    if (dontShowAgain && popupNews) {
+      // 팝업 ID와 기간 정보를 기반으로 "다시 보지 않기" 상태 저장
+      const popupKey = `popupClosed_${popupNews.id}`;
+      const popupEndDate = popupNews.popupEndDate || popupNews.rawDate || popupNews.date;
+
+      const popupData = {
+        endDate: popupEndDate,
+        permanentlyClosed: true,
+        closedAt: new Date().toISOString(),
+      };
+
+      localStorage.setItem(popupKey, JSON.stringify(popupData));
     }
     // X 버튼만 누른 경우(dontShowAgain이 false)에는 세션 처리하지 않음
     // 팝업이 다시 뜰 수 있도록 아무것도 저장하지 않음
