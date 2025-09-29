@@ -7,6 +7,9 @@ import { useHolidayInfo, useScheduleData } from '@/app/info/schedule/types/hooks
 import CalendarHeader from '@/app/info/schedule/components/CalendarHeader';
 import CalendarGrid from '@/app/info/schedule/components/CalendarGrid';
 import MobileEventPanel from '@/app/info/schedule/components/MobileEventPanel';
+import ScheduleViewModeFilter from '@/app/info/schedule/components/ScheduleViewModeFilter';
+import SchedulePeriodFilter from '@/app/info/schedule/components/SchedulePeriodFilter';
+import ScheduleListView from '@/app/info/schedule/components/ScheduleListView';
 import s from '@/app/info/schedule/Schedule.module.scss';
 
 // 고정 px 값 사용 - 리사이즈 시 재계산으로 안정성 확보
@@ -15,6 +18,8 @@ export default function ScheduleCalendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isMobilePanelOpen, setIsMobilePanelOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
+  const [period, setPeriod] = useState<'1month' | '3months' | '6months' | '1year'>('1month');
 
   // 캐시 제거 - 리사이즈할 때마다 재계산으로 안정성 확보
 
@@ -304,22 +309,44 @@ export default function ScheduleCalendar() {
 
   return (
     <div className={s.calendarContainer}>
-      <CalendarHeader
-        monthYear={monthYear}
-        onPreviousMonth={goToPreviousMonth}
-        onNextMonth={goToNextMonth}
-        onGoToToday={goToToday}
-      />
+      {/* 필터 그룹 */}
+      <div className={s.filterGroup}>
+        <ScheduleViewModeFilter viewMode={viewMode} onViewModeChange={setViewMode} />
+        {viewMode === 'list' && <SchedulePeriodFilter period={period} onPeriodChange={setPeriod} />}
+      </div>
 
-      <CalendarGrid
-        calendarData={calendarData}
-        selectedDate={selectedDate}
-        onDateClick={handleDateClick}
-      />
+      {viewMode === 'calendar' ? (
+        <>
+          <CalendarHeader
+            monthYear={monthYear}
+            onPreviousMonth={goToPreviousMonth}
+            onNextMonth={goToNextMonth}
+            onGoToToday={goToToday}
+          />
 
-      {/* 모바일 일정 상세 패널 */}
-      {isMobilePanelOpen && selectedDate && (
-        <MobileEventPanel selectedDate={selectedDate} events={getSelectedDateEvents()} />
+          <CalendarGrid
+            calendarData={calendarData}
+            selectedDate={selectedDate}
+            onDateClick={handleDateClick}
+          />
+
+          {/* 모바일 일정 상세 패널 */}
+          {isMobilePanelOpen && selectedDate && (
+            <MobileEventPanel selectedDate={selectedDate} events={getSelectedDateEvents()} />
+          )}
+        </>
+      ) : (
+        <ScheduleListView
+          scheduleData={scheduleData || []}
+          currentDate={currentDate}
+          period={period}
+          isLoading={isLoading}
+          isError={isError}
+          error={error}
+          onPreviousMonth={goToPreviousMonth}
+          onNextMonth={goToNextMonth}
+          onGoToToday={goToToday}
+        />
       )}
     </div>
   );
