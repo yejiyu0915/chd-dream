@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { NewsItem } from '@/lib/notion';
 import Icon from '@/common/components/utils/Icons';
-import styles from '@/common/components/layouts/popup/PopupModal.module.scss';
+import styles from '@/common/components/layouts/Popup/PopupModal.module.scss';
 
 // 뉴스 컨텐츠 타입 정의
 interface NewsContent {

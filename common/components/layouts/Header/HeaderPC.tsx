@@ -58,7 +58,7 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
       <div className={h.overlay}></div>
       <div className={h.inner}>
         <div className={h.logo} style={{ opacity: mounted ? 1 : 0 }}>
-          <Link href="/">
+          <Link href="/" onClick={isMobileMenuOpen ? toggleMobileMenu : undefined}>
             <svg
               width="257"
               height="342"

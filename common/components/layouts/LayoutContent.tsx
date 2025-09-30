@@ -5,7 +5,7 @@ import Header from '@/common/components/layouts/Header/Header';
 import Footer from '@/common/components/layouts/Footer/Footer';
 import SmoothScroll from '@/common/components/utils/SmoothScroll';
 import { useMobileMenu } from '@/common/components/layouts/Header/MobileMenuContext';
-import PopupModal from '@/common/components/layouts/popup/PopupModal';
+import PopupModal from '@/common/components/layouts/Popup/PopupModal';
 import { NewsItem } from '@/lib/notion';
 
 interface LayoutContentProps {
