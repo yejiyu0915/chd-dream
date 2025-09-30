@@ -120,6 +120,7 @@
     }
     &__tag {
       display: flex;
+      flex-wrap: wrap;
       gap: vw(10);
       margin-block-start: vw(10);
       @include font-vw(16, $weight: 300);
