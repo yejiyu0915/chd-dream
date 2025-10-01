@@ -5,8 +5,8 @@ import { MobileMenuProvider } from '@/common/components/layouts/Header/MobileMen
 import LayoutContent from '@/common/components/layouts/LayoutContent';
 
 export const metadata: Metadata = {
-  title: '순복음인천초대교회',
-  description: '꿈이 이루어지는 행복한 교회, 순복음인천초대교회입니다.',
+  title: '행복으로가는교회',
+  description: '꿈이 이루어지는 행복한 교회, 행복으로가는교회입니다.',
 };
 
 export default function RootLayout({

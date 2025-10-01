@@ -27,7 +27,7 @@ export default function Dashboard() {
       <div className={styles.dashboard}>
         <div className={styles.container}>
           <div className={styles.header}>
-            <h1>순복음인천초대교회</h1>
+            <h1>행복으로가는교회</h1>
             <h2>홈페이지 제작 프로젝트</h2>
             <p>마지막 업데이트: 2025년 9월 11일</p>
           </div>

@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import Icon from '@/common/components/utils/Icons';
 import h from '@/common/components/layouts/Header/Header.module.scss';
 import { useMobileMenu } from '@/common/components/layouts/Header/MobileMenuContext';
-import { menuData, snsLinks } from '@/common/data/info';
+import { menuData, snsLinks, prevLinks } from '@/common/data/info';
 
 interface HeaderMoProps {
   isScrolled: boolean;
@@ -107,6 +107,31 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
                 </li>
               ))}
             </ul>
+          </div>
+
+          <div className={h.mobilePrevLinks}>
+            {prevLinks.map((prevInfo, index) => (
+              <div key={index} className={h.mobilePrevGroup}>
+                <div className={h.mobilePrevRow}>
+                  <h4 className={h.mobilePrevTitle}>{prevInfo.name}</h4>
+                  <ul className={h.mobilePrevList}>
+                    {prevInfo.links.map((link, linkIndex) => (
+                      <li key={linkIndex} className={h.mobilePrevItem}>
+                        <Link
+                          href={link.href}
+                          className={h.mobilePrevLink}
+                          target="_blank"
+                          title={`${link.name} 바로가기`}
+                        >
+                          <span className="sr-only">{link.name}</span>
+                          <Icon name={link.icon} className={h.mobilePrevIcon} />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
           </div>
         </nav>
       </div>

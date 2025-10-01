@@ -794,6 +794,58 @@
       }
     }
 
+    // 이전 교회 링크 영역
+    .mobilePrevLinks {
+      display: flex;
+      flex-direction: column;
+      gap: vw(4);
+      border-top: 1px solid var(--foreground);
+      padding-block: vw(20) 0;
+      .mobilePrevGroup {
+        width: 100%;
+      }
+
+      .mobilePrevRow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: vw(16);
+        padding: vw(8) vw(16);
+        border-radius: vw(20);
+        background-color: rgba(0, 0, 0, 0.03);
+      }
+
+      .mobilePrevTitle {
+        @include font-vw(14, $color: #999);
+        margin: 0;
+        min-width: vw(80);
+        @include ellipsis;
+      }
+
+      .mobilePrevList {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        gap: vw(4);
+      }
+
+      .mobilePrevItem {
+        .mobilePrevLink {
+          display: block;
+          padding: vw(4);
+          transition: background-color 0.2s ease;
+        }
+      }
+
+      .mobilePrevIcon {
+        --icon-margin: 0;
+        width: vw(20);
+        height: vw(20);
+        opacity: 0.4;
+      }
+    }
+
     // SNS 링크 영역
     .mobileSns {
       border-top: 1px solid var(--border-light);
