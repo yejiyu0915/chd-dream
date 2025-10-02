@@ -104,7 +104,7 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
                 />
               </g>
             </svg>
-            <span>순복음인천초대교회</span>
+            <span>행복으로가는교회</span>
           </Link>
         </div>
         <div className={h.menu} style={{ opacity: mounted ? 1 : 0 }}>

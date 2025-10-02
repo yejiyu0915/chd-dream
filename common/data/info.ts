@@ -30,7 +30,7 @@ export const menuData: MenuItem[] = [
     ],
     content: {
       image: '/main/church-building.jpg',
-      title: '순복음인천초대교회',
+      title: '행복으로가는교회',
       description: '하나님의 사랑으로 함께하는 교회',
     },
   },
@@ -69,13 +69,17 @@ export interface ContactInfo {
   phone2: string;
   address: string;
   fax: string;
+  denomination: string;
+  name: string;
 }
 
 export const contactInfo: ContactInfo = {
   phone1: '032-463-9004',
-  phone2: '032-472-9004',
-  address: '인천광역시 남동구 호구포로 818 퍼스트하임프라자 6층\n(구월동 1264번지)',
+  phone2: '032-441-0176',
+  address: '21552 인천 남동구 문화로 227 (간석동, 행복으로가는교회)',
   fax: '032-465-9004',
+  name: '행복으로가는교회',
+  denomination: '기독교대한하나님의성회(순복음)',
 };
 
 export interface SnsLink {
@@ -92,6 +96,37 @@ export const snsLinks: SnsLink[] = [
     icon: 'sns-youtube',
   },
   { name: 'Instagram', href: 'https://www.instagram.com/chd_dream', icon: 'sns-instagram' },
+];
+
+export interface PrevInfo {
+  name: string;
+  links: SnsLink[];
+}
+
+export const prevLinks: PrevInfo[] = [
+  {
+    name: '(구)행복으로가는교회',
+    links: [
+      { name: 'Homepage', href: 'http://gohappy.onmam.co.kr/', icon: 'sns-link' },
+      {
+        name: 'Youtube',
+        href: 'https://youtube.com/channel/UCsFxe1pefLTHrn5SunTklcw',
+        icon: 'sns-youtube',
+      },
+    ],
+  },
+  {
+    name: '(구)순복음인천초대교회',
+    links: [
+      { name: 'Band', href: 'https://band.us/band/5843149', icon: 'sns-band' },
+      {
+        name: 'Youtube',
+        href: 'https://youtube.com/channel/UCMxS1A66oRGM6038-6m52uA',
+        icon: 'sns-youtube',
+      },
+      { name: 'Instagram', href: 'https://www.instagram.com/chd_dream', icon: 'sns-instagram' },
+    ],
+  },
 ];
 
 // 메뉴 경로 매핑

@@ -48,7 +48,7 @@ export default function QuickLink() {
             </div>
           </div>
           <div className={q.pic}>
-            <Image src="/main/quick-link.jpg" alt="순복음인천초대교회" width={400} height={500} />
+            <Image src="/main/quick-link.jpg" alt="행복으로가는교회" width={400} height={500} />
           </div>
         </div>
       </div>

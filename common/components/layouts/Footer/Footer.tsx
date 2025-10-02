@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Icon from '@/common/components/utils/Icons';
 import f from '@/common/components/layouts/Footer/Footer.module.scss';
-import { contactInfo, snsLinks, menuData } from '@/common/data/info';
+import { contactInfo, snsLinks, menuData, prevLinks } from '@/common/data/info';
 
 export default function Footer() {
   const snsClassMap: { [key: string]: string } = {
@@ -32,6 +32,24 @@ export default function Footer() {
                 <Link href="/location">오시는 길</Link>
               </li>
             </ul>
+            <div className={f.prevLinks}>
+              {prevLinks.map((prevInfo, index) => (
+                <div key={index} className={f.prevGroup}>
+                  <div className={f.prevRow}>
+                    <h4 className={f.prevTitle}>{prevInfo.name}</h4>
+                    <ul className={f.prevList}>
+                      {prevInfo.links.map((link, linkIndex) => (
+                        <li key={linkIndex} className={getSnsClassName(link.name)}>
+                          <Link href={link.href} target="_blank" title={`${link.name} 바로가기`}>
+                            <Icon name={link.icon} className={f.icon} />
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
             <ul className={f.sns}>
               {snsLinks.map((snsLink, index) => (
                 <li key={index} className={getSnsClassName(snsLink.name)}>
@@ -45,7 +63,7 @@ export default function Footer() {
           <div className={`${f.contact} ${f.box}`}>
             <strong className={f.title}>Contact</strong>
             <div className={f.content}>
-              <p>순복음인천초대교회는 언제나 열려있습니다.</p>
+              <p>행복으로가는교회는 언제나 열려있습니다.</p>
               <div className={f.link}>
                 <Link href={`tel:${contactInfo.phone1}`}>
                   <Icon name="phone" className={f.icon} /> CONTACT #1
@@ -59,15 +77,16 @@ export default function Footer() {
           <div className={`${f.info} ${f.box}`}>
             <strong className={f.title}>Info</strong>
             <dl className={f.content}>
+              <dt>CHURCH NAME</dt>
+              <dd>{contactInfo.denomination}</dd>
+              <dd>{contactInfo.name}</dd>
               <dt>ADDRESS</dt>
               <dd>{contactInfo.address}</dd>
-              <dt>FAX</dt>
-              <dd>{contactInfo.fax}</dd>
             </dl>
           </div>
         </div>
-        <p className={f.copyright}>Copyright 2025 순복음인천초대교회. All rights reserved.</p>
-        <p className={f.text}>INCHEON CHODAE CHURCH.</p>
+        <p className={f.copyright}>Copyright 2026 행복으로가는교회. All rights reserved.</p>
+        <p className={f.text}>CHURCH TO HAPPINESS.</p>
       </div>
     </footer>
   );
