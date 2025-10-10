@@ -38,7 +38,8 @@ export const menuData: MenuItem[] = [
     name: '예배 안내',
     subMenu: [
       { name: '예배 시간표', href: '/worship/schedule' },
-      { name: '말씀과 찬양', href: '/worship/sermon' },
+      { name: '온라인 주보', href: '/worship/bulletin' },
+      { name: '생명의 말씀', href: '/worship/sermon' },
     ],
     content: {
       image: '/main/worship.jpg',

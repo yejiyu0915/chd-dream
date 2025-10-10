@@ -77,7 +77,7 @@ export default function Footer() {
           <div className={`${f.info} ${f.box}`}>
             <strong className={f.title}>Info</strong>
             <dl className={f.content}>
-              <dt>CHURCH NAME</dt>
+              <dt>NAME</dt>
               <dd>{contactInfo.denomination}</dd>
               <dd>{contactInfo.name}</dd>
               <dt>ADDRESS</dt>

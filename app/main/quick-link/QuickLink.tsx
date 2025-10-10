@@ -22,8 +22,8 @@ export default function QuickLink() {
               </div>
               <div className={q.list__item}>
                 <Link href="/info/video">
-                  <p className={q.list__title}>교회 영상</p>
-                  <p className={q.list__desc}>교회 행사 영상을 확인할 수 있습니다.</p>
+                  <p className={q.list__title}>교구 소개</p>
+                  <p className={q.list__desc}>교구 소개와 교구 활동을 확인할 수 있습니다.</p>
                   <Icon name="arrow-up-right" />
                 </Link>
               </div>

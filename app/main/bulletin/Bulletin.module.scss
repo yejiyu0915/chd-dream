@@ -1,5 +1,5 @@
 @use '@/common/styles/mixins/function' as *;
-.sermon {
+.bulletin {
   width: 100%;
   border-radius: calc(var(--inner-padding) * 1.5) calc(var(--inner-padding) * 1.5) 0 0;
   background-color: var(--background);
@@ -26,7 +26,7 @@
     color: var(--text-muted);
     &__icon {
       --icon-size: 1.25;
-      --icon-margin: 0.25;
+      --icon-margin: 0;
       top: -0.1em;
       mix-blend-mode: difference;
       filter: brightness(0.7);
@@ -92,12 +92,11 @@
       margin-block-start: cqi(24);
       @include font-cqi(24, $min: 16, $weight: 500);
       &Desc {
+        display: inline-block;
         padding-inline-end: cqi(12);
-        position: relative;
-        top: 0.15em;
         @include font-cqi(16, $min: 12);
         color: var(--text-light);
-        vertical-align: text-top;
+        transform: translateY(-0.3em);
       }
     }
     img {
@@ -233,7 +232,6 @@
         @include font-vw(20);
         &Desc {
           padding-inline-end: vw(8);
-          top: 0.2em;
           @include font-vw(14);
         }
       }
@@ -297,8 +295,8 @@
         @include font-vw(16);
         &Desc {
           padding-inline-end: vw(6);
-          top: 0.18em;
           @include font-vw(12);
+          transform: translateY(-0.2em);
         }
       }
     }
@@ -318,6 +316,11 @@
     }
     .pastor {
       flex: 0 0 vw(100);
+      &__name {
+        &Desc {
+          transform: translateY(-0.25em);
+        }
+      }
     }
     .footnote {
       margin-block-start: vw(40);

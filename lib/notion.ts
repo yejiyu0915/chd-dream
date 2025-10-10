@@ -178,6 +178,16 @@ export interface SermonItem {
   slug: string; // slug 속성 추가
 }
 
+// 주보 데이터 타입 정의 (SermonItem과 동일)
+export interface BulletinItem {
+  id: string;
+  date: string;
+  title: string;
+  summary: string;
+  praise: string;
+  slug: string;
+}
+
 // 뉴스 데이터 타입 정의
 export interface NewsItem {
   id: string;
@@ -368,6 +378,26 @@ const mapPageToSermonItem: ItemMapper<SermonItem> = (page) => {
     summary: getPlainText(summaryProperty) || '요약 없음',
     praise: getPlainText(praiseProperty) || '찬양 없음', // verse → praise로 변경
     slug: getPlainText(slugProperty) || page.id, // slug 매핑
+  };
+};
+
+// 주보 데이터 매핑 함수 (SermonItem과 동일한 구조)
+const mapPageToBulletinItem: ItemMapper<BulletinItem> = (page) => {
+  const properties = page.properties;
+
+  const titleProperty = properties.Title as NotionProperty | undefined;
+  const dateProperty = properties.Date as NotionProperty | undefined;
+  const summaryProperty = properties.Summary as NotionProperty | undefined;
+  const praiseProperty = properties.Praise as NotionProperty | undefined;
+  const slugProperty = properties.Slug as NotionProperty | undefined;
+
+  return {
+    id: page.id,
+    date: getFormattedDateWithWeek(dateProperty), // 주보 데이터에도 주차 정보 포함
+    title: getPlainText(titleProperty) || '제목 없음',
+    summary: getPlainText(summaryProperty) || '요약 없음',
+    praise: getPlainText(praiseProperty) || '찬양 없음',
+    slug: getPlainText(slugProperty) || page.id,
   };
 };
 
@@ -655,6 +685,32 @@ export async function getSermonData(): Promise<SermonItem | null> {
     },
     ['sermon-data'],
     { revalidate: 300, tags: ['sermon-list'] } // 5분 캐시, 태그 기반 재검증
+  )();
+}
+
+// Notion 데이터베이스에서 최신 주보 데이터 가져오기
+export async function getBulletinData(): Promise<BulletinItem | null> {
+  // 개발 환경에서는 캐시를 비활성화
+  if (process.env.NODE_ENV === 'development') {
+    const bulletins = await getPublishedNotionData<BulletinItem>(
+      'NOTION_SERMON_ID',
+      mapPageToBulletinItem,
+      1
+    );
+    return bulletins.length > 0 ? bulletins[0] : null;
+  }
+
+  return unstable_cache(
+    async () => {
+      const bulletins = await getPublishedNotionData<BulletinItem>(
+        'NOTION_SERMON_ID',
+        mapPageToBulletinItem,
+        1
+      );
+      return bulletins.length > 0 ? bulletins[0] : null;
+    },
+    ['bulletin-data'],
+    { revalidate: 300, tags: ['bulletin-list'] } // 5분 캐시, 태그 기반 재검증
   )();
 }
 
