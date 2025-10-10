@@ -174,8 +174,18 @@ export interface SermonItem {
   date: string;
   title: string;
   summary: string; // Notion의 Summary (s.verse)
-  verse: string; // Notion의 Verse (s.desc)
-  link: string;
+  praise: string; // Notion의 Praise (s.desc) - 기존 verse에서 변경
+  slug: string; // slug 속성 추가
+}
+
+// 주보 데이터 타입 정의 (SermonItem과 동일)
+export interface BulletinItem {
+  id: string;
+  date: string;
+  title: string;
+  summary: string;
+  praise: string;
+  slug: string;
 }
 
 // 뉴스 데이터 타입 정의
@@ -243,6 +253,28 @@ function getPlainText(property: NotionProperty | undefined): string | null {
   return null;
 }
 
+// 월별 주차 계산 함수
+function getWeekNumber(date: Date): number {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+
+  // 해당 월의 첫 번째 날
+  const firstDayOfMonth = new Date(year, month, 1);
+
+  // 해당 월의 첫 번째 월요일 찾기
+  const firstMonday = new Date(firstDayOfMonth);
+  const dayOfWeek = firstDayOfMonth.getDay();
+  const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // 일요일이면 6일, 아니면 dayOfWeek - 1
+  firstMonday.setDate(firstDayOfMonth.getDate() - daysToMonday);
+
+  // 현재 날짜와 첫 번째 월요일의 차이를 주 단위로 계산
+  const diffTime = date.getTime() - firstMonday.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const weekNumber = Math.floor(diffDays / 7) + 1;
+
+  return weekNumber;
+}
+
 // Notion 날짜 속성에서 포맷된 날짜 문자열을 추출하는 헬퍼 함수
 function getFormattedDate(property: NotionProperty | undefined): string {
   if (!property || property.type !== 'date' || !('date' in property) || !property.date?.start) {
@@ -256,6 +288,25 @@ function getFormattedDate(property: NotionProperty | undefined): string {
     })
     .replace(/\. /g, '.')
     .replace(/\.$/, '');
+}
+
+// 설교 데이터용 날짜 포맷 함수 (주차 정보 포함)
+function getFormattedDateWithWeek(property: NotionProperty | undefined): string {
+  if (!property || property.type !== 'date' || !('date' in property) || !property.date?.start) {
+    return '날짜 없음';
+  }
+  const date = new Date(property.date.start);
+  const formattedDate = date
+    .toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    })
+    .replace(/\. /g, '.')
+    .replace(/\.$/, '');
+
+  const weekNumber = getWeekNumber(date);
+  return `${formattedDate} (${date.getFullYear()}년 ${date.getMonth() + 1}월 ${weekNumber}주차)`;
 }
 
 // Notion 날짜 속성에서 원본 날짜/시간 문자열을 추출하는 헬퍼 함수
@@ -317,19 +368,36 @@ const mapPageToSermonItem: ItemMapper<SermonItem> = (page) => {
   const titleProperty = properties.Title as NotionProperty | undefined;
   const dateProperty = properties.Date as NotionProperty | undefined;
   const summaryProperty = properties.Summary as NotionProperty | undefined;
-  const verseProperty = properties.Verse as NotionProperty | undefined;
-  const linkProperty = properties.Link as NotionProperty | undefined;
+  const praiseProperty = properties.Praise as NotionProperty | undefined; // Verse → Praise로 변경
+  const slugProperty = properties.Slug as NotionProperty | undefined; // Slug 속성 추가
 
   return {
     id: page.id,
-    date: getFormattedDate(dateProperty),
+    date: getFormattedDateWithWeek(dateProperty), // 설교 데이터에만 주차 정보 포함
     title: getPlainText(titleProperty) || '제목 없음',
     summary: getPlainText(summaryProperty) || '요약 없음',
-    verse: getPlainText(verseProperty) || '본문 없음',
-    link:
-      linkProperty && 'url' in linkProperty && typeof linkProperty.url === 'string'
-        ? linkProperty.url
-        : '/',
+    praise: getPlainText(praiseProperty) || '찬양 없음', // verse → praise로 변경
+    slug: getPlainText(slugProperty) || page.id, // slug 매핑
+  };
+};
+
+// 주보 데이터 매핑 함수 (SermonItem과 동일한 구조)
+const mapPageToBulletinItem: ItemMapper<BulletinItem> = (page) => {
+  const properties = page.properties;
+
+  const titleProperty = properties.Title as NotionProperty | undefined;
+  const dateProperty = properties.Date as NotionProperty | undefined;
+  const summaryProperty = properties.Summary as NotionProperty | undefined;
+  const praiseProperty = properties.Praise as NotionProperty | undefined;
+  const slugProperty = properties.Slug as NotionProperty | undefined;
+
+  return {
+    id: page.id,
+    date: getFormattedDateWithWeek(dateProperty), // 주보 데이터에도 주차 정보 포함
+    title: getPlainText(titleProperty) || '제목 없음',
+    summary: getPlainText(summaryProperty) || '요약 없음',
+    praise: getPlainText(praiseProperty) || '찬양 없음',
+    slug: getPlainText(slugProperty) || page.id,
   };
 };
 
@@ -596,6 +664,16 @@ export async function getMainCLogData(): Promise<NewsItem[]> {
 
 // Notion 데이터베이스에서 최신 설교 데이터 가져오기
 export async function getSermonData(): Promise<SermonItem | null> {
+  // 개발 환경에서는 캐시를 비활성화
+  if (process.env.NODE_ENV === 'development') {
+    const sermons = await getPublishedNotionData<SermonItem>(
+      'NOTION_SERMON_ID',
+      mapPageToSermonItem,
+      1
+    );
+    return sermons.length > 0 ? sermons[0] : null;
+  }
+
   return unstable_cache(
     async () => {
       const sermons = await getPublishedNotionData<SermonItem>(
@@ -607,6 +685,32 @@ export async function getSermonData(): Promise<SermonItem | null> {
     },
     ['sermon-data'],
     { revalidate: 300, tags: ['sermon-list'] } // 5분 캐시, 태그 기반 재검증
+  )();
+}
+
+// Notion 데이터베이스에서 최신 주보 데이터 가져오기
+export async function getBulletinData(): Promise<BulletinItem | null> {
+  // 개발 환경에서는 캐시를 비활성화
+  if (process.env.NODE_ENV === 'development') {
+    const bulletins = await getPublishedNotionData<BulletinItem>(
+      'NOTION_SERMON_ID',
+      mapPageToBulletinItem,
+      1
+    );
+    return bulletins.length > 0 ? bulletins[0] : null;
+  }
+
+  return unstable_cache(
+    async () => {
+      const bulletins = await getPublishedNotionData<BulletinItem>(
+        'NOTION_SERMON_ID',
+        mapPageToBulletinItem,
+        1
+      );
+      return bulletins.length > 0 ? bulletins[0] : null;
+    },
+    ['bulletin-data'],
+    { revalidate: 300, tags: ['bulletin-list'] } // 5분 캐시, 태그 기반 재검증
   )();
 }
 

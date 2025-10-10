@@ -2,18 +2,18 @@
 
 import m from '@/app/main/main.module.scss';
 import Intro from '@/app/main/intro/Intro';
-import Sermon from '@/app/main/sermon/Sermon';
+import Bulletin from '@/app/main/bulletin/Bulletin';
 import CLog from '@/app/main/c-log/CLog';
 import QuickLink from '@/app/main/quick-link/QuickLink';
 import Instagram from '@/app/main/Instagram/Instagram';
-import { SermonData } from '@/lib/notion';
+import { BulletinItem } from '@/lib/notion';
 
 interface MainContentInnerProps {
-  sermonData: SermonData;
+  bulletinData: BulletinItem;
   kvHeight: string;
 }
 
-export default function MainContentInner({ sermonData, kvHeight }: MainContentInnerProps) {
+export default function MainContentInner({ bulletinData, kvHeight }: MainContentInnerProps) {
   // kvHeight가 'vh' 단위인지 'px' 단위인지 확인하여 0.95를 곱합니다.
   const calculatedPaddingTop = kvHeight.endsWith('vh')
     ? `${parseFloat(kvHeight) * 0.95}vh`
@@ -21,7 +21,7 @@ export default function MainContentInner({ sermonData, kvHeight }: MainContentIn
 
   return (
     <div className={m.main__content} style={{ paddingTop: calculatedPaddingTop }}>
-      <Sermon sermonData={sermonData} />
+      <Bulletin />
       <Intro />
       <CLog />
       <QuickLink />

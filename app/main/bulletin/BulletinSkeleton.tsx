@@ -1,8 +1,8 @@
-import s from '@/app/main/sermon/Sermon.module.scss';
+import s from '@/app/main/bulletin/Bulletin.module.scss';
 
-export default function SermonSkeleton() {
+export default function BulletinSkeleton() {
   return (
-    <section className={s.sermon}>
+    <section className={s.bulletin}>
       <div className={s.inner}>
         <div className={s.content}>
           <div className={s.text}>

@@ -327,7 +327,7 @@
   @include mq(mo) {
     .slider {
       .buttonWrap {
-        bottom: vw(260);
+        // bottom: vw(260);
         left: calc((var(--inner-padding) * 2) - vw(4));
       }
       .buttonPrev,
@@ -340,7 +340,7 @@
     }
     .content {
       &__text {
-        bottom: vw(310);
+        // bottom: vw(310);
       }
       &__title {
         @include font-vw(36);
@@ -355,7 +355,7 @@
     }
     .news {
       gap: vw(8);
-      bottom: vw(130);
+      // bottom: vw(130);
       @include font-vw(14);
       &__list {
         &Date {
@@ -365,11 +365,11 @@
     }
 
     .progressBarContainer {
-      bottom: vw(350);
+      // bottom: vw(350);
     }
 
     .controls {
-      bottom: vw(266);
+      // bottom: vw(266);
       left: initial;
       right: calc(var(--inner-padding) * 2);
     }
