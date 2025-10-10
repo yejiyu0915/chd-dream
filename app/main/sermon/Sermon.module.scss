@@ -18,11 +18,11 @@
     flex: 1;
     margin-inline-start: cqi(160);
     padding-inline-start: calc(var(--inner-padding) * 1.5);
-    padding-block-start: cqi(120);
+    padding-block-start: cqi(88);
     border-left: cqi(5) solid var(--primary);
   }
   .eyebrow {
-    @include font-cqi(28, $min: 16, $weight: 500);
+    @include font-cqi(28, 44, $min: 16);
     color: var(--text-muted);
     &__icon {
       --icon-size: 1.25;
@@ -33,7 +33,7 @@
     }
   }
   .title {
-    margin-block-start: cqi(28);
+    margin-block-start: cqi(56);
     @include font-cqi(64, 84, $min: 36, $weight: 700, $ls: -0.055);
   }
   .verse {
@@ -46,9 +46,13 @@
     @include font-cqi(24, 38, $min: 16);
     color: var(--text-muted);
   }
+  .praise {
+    font-weight: 600;
+    color: #222;
+  }
   .link {
     flex: 0 0 cqi(400);
-    padding-block-start: cqi(182);
+    padding-block-start: cqi(96);
     &__list {
       display: flex;
       flex-direction: column;
@@ -109,7 +113,7 @@
       --icon-size: 1.25;
       --icon-margin: 0.25;
       top: -0.02em;
-      filter: brightness(0.7);
+      opacity: 0.3;
     }
   }
 
@@ -119,14 +123,14 @@
     }
     .text {
       margin-inline-start: vw(160);
-      padding-block-start: vw(120);
+      padding-block-start: vw(88);
       border-left-width: vw(5);
     }
     .eyebrow {
       @include font-vw(28);
     }
     .title {
-      margin-block-start: vw(28);
+      margin-block-start: vw(56);
       @include font-vw(64);
     }
     .verse {
@@ -140,7 +144,7 @@
     }
     .link {
       flex: 0 0 vw(400);
-      padding-block-start: vw(182);
+      padding-block-start: vw(96);
       &__list {
         gap: vw(16);
         @include font-vw(28);
@@ -196,7 +200,7 @@
       @include font-vw(18);
     }
     .title {
-      margin-block-start: vw(24);
+      margin-block-start: vw(48);
       @include font-vw(48);
     }
     .verse {
@@ -251,7 +255,7 @@
       gap: vw(32) vw(20);
     }
     .text {
-      padding-block: vw(24) vw(12);
+      padding-block: 0 vw(12);
       padding-inline-start: var(--inner-padding);
       border-left-width: vw(3);
     }
@@ -259,7 +263,7 @@
       @include font-vw(14);
     }
     .title {
-      margin-block-start: vw(12);
+      margin-block-start: vw(32);
       @include font-vw(32);
     }
     .verse {

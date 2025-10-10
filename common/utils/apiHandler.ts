@@ -10,6 +10,18 @@ export async function handleApiGetRequest<T>(
   errorMessage: string = '데이터를 가져오는 데 실패했습니다.'
 ) {
   try {
+    // 개발 환경에서는 캐시를 완전히 비활성화
+    if (process.env.NODE_ENV === 'development') {
+      const data = await dataFetcher();
+      return NextResponse.json(data, {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+          Pragma: 'no-cache',
+          Expires: '0',
+        },
+      });
+    }
+
     const clientLastModified = request.headers.get('If-Modified-Since');
 
     // Notion 데이터베이스의 현재 마지막 수정 시간 가져오기

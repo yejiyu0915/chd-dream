@@ -89,6 +89,9 @@ export default function Sermon() {
     );
   }
 
+  // 디버깅을 위한 콘솔 로그
+  console.log('Sermon Data:', sermonData);
+
   return (
     <section className={s.sermon}>
       <div className={s.inner}>
@@ -97,35 +100,41 @@ export default function Sermon() {
         <div className={s.content}>
           <div className={s.text}>
             <h2 className={s.eyebrow}>
-              <Icon name="book-open" className={s.eyebrow__icon} /> 이번 주
-              말씀&nbsp;&nbsp;|&nbsp;&nbsp;
+              <Icon name="book-open" className={s.eyebrow__icon} /> 이번 주 예배
+              <br />
               {sermonData.date}
             </h2>
             <p className={s.title}>{sermonData.title}</p>
             <p className={s.verse}>{sermonData.summary}</p>
-            <p className={s.desc}>{sermonData.verse}</p>
+            <p className={s.desc}>
+              성가 찬양&nbsp;&nbsp;:&nbsp;&nbsp;
+              <span className={s.praise}>{sermonData.praise || '찬양 정보 없음'}</span>
+            </p>
           </div>
           <div className={s.link}>
             <ul className={s.link__list}>
               <li className={s.link__item}>
-                <Link href={sermonData.link} className={s.thisWeek} target="_blank">
+                <Link
+                  href={`/worship/sermon/${sermonData.slug || sermonData.id}`}
+                  className={s.thisWeek}
+                >
                   {' '}
                   <span className={s.link__text}>
-                    오늘의 말씀 <span className="only-pc">보러가기</span>
-                    <Icon name="external-link" className={s.link__icon} />
+                    이번 주 주보
+                    <Icon name="arrow-up-right" className={s.link__icon} />
                   </span>
                 </Link>
               </li>
               <li className={s.link__item}>
                 <Link href="/worship/sermon">
                   <span className={s.link__text}>
-                    지난 말씀 <span className="only-pc">보러가기</span>
+                    지난 주보 <span className="only-pc">보러가기</span>
                     <Icon name="arrow-up-right" className={s.link__icon} />
                   </span>
                 </Link>
               </li>
               <li className={s.link__item}>
-                <Link href="https://band.us/band/5843149" target="_blank">
+                <Link href="#" target="_blank">
                   <span className={s.link__text}>
                     네이버 밴드
                     <Icon name="external-link" className={s.link__icon} />
