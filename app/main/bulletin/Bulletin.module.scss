@@ -28,8 +28,6 @@
       --icon-size: 1.25;
       --icon-margin: 0;
       top: -0.1em;
-      mix-blend-mode: difference;
-      filter: brightness(0.7);
     }
   }
   .title {
@@ -78,12 +76,6 @@
     &__icon {
       --icon-size: 1.1;
       top: -0.08em;
-      mix-blend-mode: difference;
-    }
-    a:not(.thisWeek):hover {
-      .link__icon {
-        filter: invert(1);
-      }
     }
   }
   .pastor {
@@ -112,7 +104,6 @@
       --icon-size: 1.25;
       --icon-margin: 0.25;
       top: -0.02em;
-      opacity: 0.3;
     }
   }
 

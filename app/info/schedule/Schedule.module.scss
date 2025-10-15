@@ -544,7 +544,6 @@
   i {
     --icon-size: 1.25;
     --icon-margin: 0;
-    filter: invert(1);
   }
 
   &:hover {
@@ -556,10 +555,6 @@
     background: #000;
     color: white;
     border-color: #000;
-
-    i {
-      filter: none;
-    }
   }
 
   @include mq(mo) {
@@ -688,7 +683,6 @@
   i {
     --icon-size: 2;
     --icon-margin: 0;
-    filter: invert(1);
   }
 
   @include mq(mo) {

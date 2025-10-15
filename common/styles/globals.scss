@@ -444,7 +444,6 @@ main {
     --icon-size: 1.7;
     --icon-margin: 0;
     flex: 0 0 vw(34);
-    filter: invert(1);
   }
   &:nth-child(2) {
     border-top: 1px solid var(--border-light);

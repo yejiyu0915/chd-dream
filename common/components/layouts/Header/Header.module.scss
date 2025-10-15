@@ -259,7 +259,7 @@
     position: absolute;
     top: vw(140);
     right: var(--inner-padding);
-    @include font-vw(18);
+    @include font-vw(18, $weight: 500);
     color: var(--header-color);
     @include smooth-transition;
     .icon {
@@ -287,10 +287,9 @@
       .hamburgerIcon {
         --icon-size: 2;
         --icon-margin: 0;
+        --icon-color: var(--header-color);
         width: vw(28);
         height: vw(28);
-        color: var(--header-color);
-        filter: invert(1);
       }
     }
   }
@@ -306,7 +305,7 @@
     }
     .util {
       .icon {
-        filter: invert(1);
+        --icon-color: var(--header-color);
       }
     }
   }
@@ -358,7 +357,7 @@
       font-weight: 600;
       @include scroll-animation;
       .icon {
-        filter: invert(1);
+        --icon-color: var(--header-color);
       }
     }
   }
@@ -435,7 +434,7 @@
         font-weight: 600;
         animation: none;
         .icon {
-          filter: invert(1);
+          --icon-color: var(--header-color);
         }
         .hamburgerButton {
           display: flex;
@@ -587,16 +586,10 @@
         @include font-vw(15);
         .icon {
           --icon-size: 1.8;
-          filter: none;
           transform: translateY(0.05em);
         }
         .mobileMenuToggle {
           display: block !important;
-        }
-        .hamburgerButton {
-          .hamburgerIcon {
-            filter: none;
-          }
         }
       }
     }
@@ -614,11 +607,11 @@
       }
       .util {
         .icon {
-          filter: invert(1);
+          --icon-color: var(--header-color);
         }
         .hamburgerButton {
           .hamburgerIcon {
-            filter: invert(1);
+            --icon-color: var(--header-color);
           }
         }
       }
@@ -712,11 +705,11 @@
     .mobileMenuIcon {
       --icon-size: 1.8;
       --icon-margin: 0;
+      --icon-color: var(--foreground);
       width: vw(28);
       height: vw(28);
       color: var(--foreground);
       transition: transform 0.3s ease-in-out;
-      filter: invert(1);
     }
 
     .mobileMenuButton.active .mobileMenuIcon {

@@ -40,16 +40,20 @@
       padding: vw(28) vw(32);
       position: relative;
     }
+  }
+  &__icon {
+    position: absolute;
+    right: vw(32);
+    bottom: vw(28);
+    border-radius: vw(10);
+    background-color: var(--bg-dark);
+    transition: transform 0.3s ease-in-out;
+
     i {
       --icon-size: 2;
       --icon-margin: 0;
-      position: absolute;
-      right: vw(32);
-      bottom: vw(28);
-      border-radius: vw(10);
-      background-color: var(--primary);
+      --icon-color: #fff;
       @include font-vw(16, $min: 14);
-      transition: transform 0.3s ease-in-out;
     }
   }
   &__title {
@@ -71,9 +75,6 @@
   &__item:hover {
     background-color: var(--bg-dark);
     color: var(--text-white);
-    i {
-      mix-blend-mode: difference;
-    }
     .list__desc {
       opacity: 1;
       color: var(--text-white);
@@ -129,10 +130,10 @@
       a {
         padding: vw(24);
       }
-      i {
-        right: vw(24);
-        bottom: vw(24);
-      }
+    }
+    &__icon {
+      right: vw(24);
+      bottom: vw(24);
     }
     &__title {
       @include font-vw(24);
@@ -166,11 +167,11 @@
       a {
         padding: vw(20) vw(20) vw(16);
       }
-      i {
-        border-radius: vw(4);
-        right: 0;
-        bottom: 0;
-      }
+    }
+    &__icon {
+      border-radius: vw(4);
+      right: 0;
+      bottom: 0;
     }
     &__title {
       @include font-vw(18);
@@ -206,6 +207,8 @@
       a {
         padding: vw(20);
       }
+    }
+    &__icon {
       i {
         --icon-size: 1.2;
       }
