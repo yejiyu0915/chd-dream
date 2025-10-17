@@ -337,6 +337,14 @@ export default function ScheduleListView({
                       day: 'numeric',
                       weekday: 'long',
                     })}
+                    {(() => {
+                      const today = new Date();
+                      const isToday =
+                        date.getFullYear() === today.getFullYear() &&
+                        date.getMonth() === today.getMonth() &&
+                        date.getDate() === today.getDate();
+                      return isToday ? ' (오늘)' : '';
+                    })()}
                   </div>
                   <div className={s.scheduleListDayCount}>{events.length}개 일정</div>
                   <div className={s.accordionIcon}>

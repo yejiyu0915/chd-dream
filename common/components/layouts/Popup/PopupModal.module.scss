@@ -29,7 +29,7 @@
   background: white;
   border-radius: vw(20);
   box-shadow: 0 vw(20) vw(40) rgba(0, 0, 0, 0.15);
-  max-width: vw(500);
+  max-width: vw(600);
   width: 100%;
   max-height: 80vh;
   overflow: hidden;
@@ -53,12 +53,16 @@
 
 // 뉴스 배지
 .badge {
-  background: #000;
+  background: var(--accent-brand);
   color: white;
-  padding: vw(6) vw(12);
+  padding: vw(10) vw(16);
   border-radius: vw(20);
-  @include font-vw(12, $weight: 600);
+  @include font-vw(18, $weight: 600);
   letter-spacing: 0.5px;
+  @include mq(mo) {
+    padding: vw(6) vw(12);
+    @include font-vw(12);
+  }
 }
 
 // 닫기 버튼
@@ -81,6 +85,16 @@
   &:active {
     transform: scale(0.95);
   }
+
+  svg {
+    width: vw(40);
+    height: vw(40);
+
+    @include mq(mo) {
+      width: vw(24);
+      height: vw(24);
+    }
+  }
 }
 
 // 모달 내용
@@ -94,17 +108,17 @@
 
 // 제목
 .title {
-  @include font-vw(28, $weight: 700);
+  @include font-vw(36, $weight: 700);
   color: #000;
   line-height: 1.4;
-  margin: 0 0 vw(12) 0;
+  margin: 0 0 vw(16) 0;
 }
 
 // 날짜
 .date {
-  @include font-vw(14);
+  @include font-vw(16);
   color: #999;
-  margin: 0 0 vw(16) 0;
+  margin: 0 0 vw(20) 0;
 }
 
 // 뉴스 컨텐츠 영역
@@ -114,7 +128,7 @@
   overflow-y: auto;
   touch-action: auto;
   -webkit-overflow-scrolling: touch;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--accent-border);
   color: #333;
 }
 
@@ -126,25 +140,6 @@
   justify-content: center;
   padding: vw(20);
   color: #666;
-}
-
-.spinner {
-  width: vw(20);
-  height: vw(20);
-  border: vw(2) solid #f3f3f3;
-  border-top: vw(2) solid #000;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: vw(8);
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 // 컨텐츠 블록들
@@ -241,7 +236,7 @@
 // 체크박스 컨테이너
 .checkboxContainer {
   margin: 0;
-  padding: vw(12) 0 0 0;
+  padding: vw(18) 0 0 0;
   border-top: 1px solid #f0f0f0;
 }
 
@@ -258,11 +253,10 @@
   --icon-margin: 0 !important;
   margin-right: vw(8);
   cursor: pointer;
-  filter: invert(1);
 }
 
 .checkboxText {
-  @include font-vw(14, $weight: 500);
+  @include font-vw(18, $weight: 500);
   padding-left: vw(4);
 }
 
@@ -389,7 +383,7 @@
   }
 
   .title {
-    @include font-vw(20);
+    @include font-vw(22);
   }
 
   .date {

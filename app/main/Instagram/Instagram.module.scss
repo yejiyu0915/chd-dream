@@ -1,15 +1,15 @@
 @use '@/common/styles/mixins/function' as *;
 .instagram {
   padding-block: vw(100);
-  background-color: var(--background);
+  background-color: var(--bg-page);
   .empty {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     height: 100vh;
-    background-color: var(--bg-hover);
+    background-color: var(--bg-interactive);
     @include font-vw(24, $weight: 500);
-    color: var(--foreground);
+    color: var(--text-main);
   }
 }

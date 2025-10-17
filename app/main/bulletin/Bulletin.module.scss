@@ -1,9 +1,24 @@
 @use '@/common/styles/mixins/function' as *;
 .bulletin {
   width: 100%;
+  position: relative;
   border-radius: calc(var(--inner-padding) * 1.5) calc(var(--inner-padding) * 1.5) 0 0;
-  background-color: var(--background);
+  background-color: var(--bg-page);
+  background-image: url('/main/bulltein.jpg');
+  background-repeat: no-repeat;
+  background-position: 30% top;
+  background-size: 150% auto;
   letter-spacing: -0.05em;
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 55%;
+    background: linear-gradient(to top, rgba(255, 255, 255, 1) 3%, rgba(255, 255, 255, 0) 20%);
+    pointer-events: none;
+  }
   .inner {
     padding: calc(var(--inner-padding) * 6) calc(var(--inner-padding) * 4)
       calc(var(--inner-padding) * 4);
@@ -19,17 +34,15 @@
     margin-inline-start: cqi(160);
     padding-inline-start: calc(var(--inner-padding) * 1.5);
     padding-block-start: cqi(88);
-    border-left: cqi(5) solid var(--primary);
+    border-left: cqi(5) solid var(--bg-overlay);
   }
   .eyebrow {
     @include font-cqi(28, 44, $min: 16);
-    color: var(--text-muted);
+    color: var(--text-placeholder);
     &__icon {
       --icon-size: 1.25;
       --icon-margin: 0;
       top: -0.1em;
-      mix-blend-mode: difference;
-      filter: brightness(0.7);
     }
   }
   .title {
@@ -44,7 +57,7 @@
     margin-block-start: cqi(48);
     padding-inline-start: cqi(64);
     @include font-cqi(24, 38, $min: 16);
-    color: var(--text-muted);
+    color: var(--text-placeholder);
   }
   .praise {
     font-weight: 600;
@@ -64,11 +77,11 @@
       height: cqi(80);
       padding-inline: cqi(32);
       border-radius: cqi(20);
-      background-color: var(--bg-hover);
+      background-color: var(--bg-section);
       line-height: cqi(80);
       &.thisWeek {
-        background-color: var(--primary);
-        color: var(--primary-foreground);
+        background-color: var(--accent-brand);
+        color: var(--text-inverse);
       }
     }
     &__text {
@@ -78,12 +91,6 @@
     &__icon {
       --icon-size: 1.1;
       top: -0.08em;
-      mix-blend-mode: difference;
-    }
-    a:not(.thisWeek):hover {
-      .link__icon {
-        filter: invert(1);
-      }
     }
   }
   .pastor {
@@ -95,7 +102,7 @@
         display: inline-block;
         padding-inline-end: cqi(12);
         @include font-cqi(16, $min: 12);
-        color: var(--text-light);
+        color: var(--text-placeholder);
         transform: translateY(-0.3em);
       }
     }
@@ -106,13 +113,12 @@
   .footnote {
     margin-block-start: cqi(40);
     @include font-cqi(18, 28, $min: 14);
-    color: var(--text-light);
+    color: var(--text-placeholder);
     text-align: right;
     &__icon {
       --icon-size: 1.25;
       --icon-margin: 0.25;
       top: -0.02em;
-      opacity: 0.3;
     }
   }
 
@@ -182,6 +188,8 @@
     }
   }
   @include mq(pc-sm) {
+    background-position: 80% top;
+    background-size: 200% auto;
     .inner {
       padding: calc(var(--inner-padding) * 4) var(--inner-padding) calc(var(--inner-padding) * 2)
         calc(var(--inner-padding) * 2);
@@ -246,6 +254,7 @@
     }
   }
   @include mq(mo) {
+    background-size: 180% auto;
     .inner {
       padding: calc(var(--inner-padding) * 4) var(--inner-padding) calc(var(--inner-padding) * 2);
     }

@@ -17,14 +17,18 @@ export default function QuickLink() {
                   <p className={q.list__desc}>
                     주일 예배, 학생부 예배, 평일 기도회 일정을 안내합니다.
                   </p>
-                  <Icon name="arrow-up-right" />
+                  <div className={q.list__icon}>
+                    <Icon name="arrow-up-right" />
+                  </div>
                 </Link>
               </div>
               <div className={q.list__item}>
                 <Link href="/info/video">
                   <p className={q.list__title}>교구 소개</p>
                   <p className={q.list__desc}>교구 소개와 교구 활동을 확인할 수 있습니다.</p>
-                  <Icon name="arrow-up-right" />
+                  <div className={q.list__icon}>
+                    <Icon name="arrow-up-right" />
+                  </div>
                 </Link>
               </div>
             </div>
@@ -33,7 +37,9 @@ export default function QuickLink() {
                 <Link href="/info/schedule">
                   <p className={q.list__title}>교회 일정</p>
                   <p className={q.list__desc}>교회의 주요 일정을 확인할 수 있습니다.</p>
-                  <Icon name="arrow-up-right" />
+                  <div className={q.list__icon}>
+                    <Icon name="arrow-up-right" />
+                  </div>
                 </Link>
               </div>
               <div className={`${q.list__item} ${q.list__itemLg}`}>
@@ -42,7 +48,9 @@ export default function QuickLink() {
                   <p className={q.list__desc}>
                     교회 주소 및 교회까지 오시는 대중교통 정보를 확인할 수 있습니다.
                   </p>
-                  <Icon name="arrow-up-right" />
+                  <div className={q.list__icon}>
+                    <Icon name="arrow-up-right" />
+                  </div>
                 </Link>
               </div>
             </div>

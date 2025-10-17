@@ -1,51 +1,25 @@
 :root {
-  // 기본 배경 및 전경 색상
-  --background: #fff; // 흰색
-  --foreground: #000; // 검은색
+  // === 텍스트 색상 ===
+  --text-main: #000; // 메인 텍스트 (기존 --foreground)
+  --text-body: #333; // 본문 텍스트 (기존 --text-primary)
+  --text-caption: #666; // 캡션/부가 텍스트 (기존 --text-secondary)
+  --text-placeholder: #888; // 플레이스홀더 (기존 --text-muted)
+  --text-inverse: #fff; // 반전 텍스트 (기존 --text-white)
 
-  // 텍스트 색상
-  --text-primary: #333;
-  --text-secondary: #666;
-  --text-muted: #888;
-  --text-light: #999;
-  --text-white: #fff; // 흰색 텍스트
+  // === 배경 색상 ===
+  --bg-page: #fff; // 페이지 배경 (기존 --background)
+  --bg-section: #f5f5f5; // 섹션 배경 (기존 --bg-light)
+  --bg-overlay: #111; // 오버레이 배경 (기존 --bg-dark)
+  --bg-interactive: rgba(0, 0, 0, 0.05); // 인터랙티브 배경 (기존 --bg-hover)
 
-  // 경계선 색상
-  --border: #e0e0e0;
-  --border-light: #f0f0f0;
+  // === 액센트 색상 ===
+  --accent-brand: #624580; // 브랜드 색상 (기존 --primary)
+  --accent-secondary: rgb(250, 247, 252); // 보조 색상 (기존 --secondary)
+  --accent-border: #e0e0e0; // 기본 경계선 (기존 --border)
+  --accent-border-subtle: #f0f0f0; // 연한 경계선 (기존 --border-light)
 
-  // 강조 및 주요 색상
-  --primary: #000; // 주로 검은색이 강조색으로 사용됨
-  --primary-foreground: #fff; // primary 배경에 사용될 흰색 텍스트
-
-  // 배경 및 요소 색상
-  --bg-dark: #111;
-  --bg-light: #f5f5f5;
-  --bg-hover: rgba(0, 0, 0, 0.05);
-  --bg-card: #eee; // CLogSkeleton에서 사용된 배경색
-  --bg-card-foreground: #222; // CLogSkeleton에서 사용된 텍스트색
-
-  // 푸터 관련 색상
-  --footer-border-top: rgba(255, 255, 255, 0.1);
-  --footer-sns-bg-green: rgba(33, 197, 49, 0.7); // 녹색 계열 (기존 #21c531)
-  --footer-sns-bg-red: rgba(255, 0, 51, 0.7); // 빨간색 계열 (기존 #ff0033)
-  --footer-sns-bg-instagram-start: rgba(249, 206, 52, 0.3);
-  --footer-sns-bg-instagram-mid1: rgba(238, 42, 123, 0.3);
-  --footer-sns-bg-instagram-mid2: rgba(98, 40, 215, 0.3);
-  --footer-sns-bg-instagram-end: rgba(79, 91, 213, 0.7);
-  --footer-box-bg: rgba(255, 255, 255, 0.05);
-  --footer-box-bg-hover: rgba(255, 255, 255, 0.075);
-  --footer-text-muted: rgba(255, 255, 255, 0.5);
-
-  // 로고 색상 (SVG에서 추출)
-  --logo-yellow: #fdcf00;
-
-  // 기타
-  --accent-red: #ff4444; // CLog에서 사용된 빨간색
-  --gradient-light-start: #f8f9fa; // Header 그라데이션 시작
-  --gradient-light-end: #e9ecef; // Header 그라데이션 끝
-  --gradient-dark-start: rgba(0, 0, 0, 0.7); // KV 그라데이션 시작
-  --gradient-dark-end: rgba(0, 0, 0, 0.4); // KV 그라데이션 끝
-  --skeleton-loading-start: #e0e0e0;
-  --skeleton-loading-mid: #f0f0f0;
+  // === 상태 색상 ===
+  --state-success: #21c531; // 성공 상태 (푸터 녹색에서 추출)
+  --state-error: #ff0033; // 에러 상태 (푸터 빨간색에서 추출)
+  --state-warning: #fdcf00; // 경고 상태 (로고 노란색)
 }

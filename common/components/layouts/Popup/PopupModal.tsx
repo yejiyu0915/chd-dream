@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { NewsItem } from '@/lib/notion';
 import Icon from '@/common/components/utils/Icons';
+import Spinner from '@/common/components/utils/Spinner';
 import styles from '@/common/components/layouts/Popup/PopupModal.module.scss';
 
 // 뉴스 컨텐츠 타입 정의
@@ -171,7 +172,7 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
           <div className={styles.newsContent}>
             {isLoadingContent ? (
               <div className={styles.loading}>
-                <div className={styles.spinner}></div>
+                <Spinner size="md" color="var(--accent-brand)" />
                 <p>내용을 불러오는 중...</p>
               </div>
             ) : newsContent ? (

@@ -3,7 +3,7 @@
 .mdxContent {
   margin-block: vw(80);
   padding-block-end: vw(80);
-  border-bottom: vw(1) solid var(--border);
+  border-bottom: vw(1) solid var(--accent-border);
   @include font-vw(16);
   word-break: break-all;
   @include mq(pc-sm) {
@@ -73,6 +73,10 @@
     li {
       margin-bottom: 0.5em;
       line-height: 1.6;
+
+      ul {
+        margin-top: 0.5em;
+      }
     }
   }
 
@@ -94,6 +98,10 @@
     margin: 1.5em 0;
     padding: 0.5em 1.5em;
     color: #666;
+    font-style: italic;
+    p {
+      margin-bottom: 0;
+    }
   }
 
   pre {

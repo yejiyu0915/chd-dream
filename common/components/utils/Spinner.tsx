@@ -8,7 +8,7 @@ interface SpinnerProps {
 
 export default function Spinner({
   size = 'md',
-  color = 'var(--primary)',
+  color = 'var(--accent-brand)',
   className = '',
 }: SpinnerProps) {
   const sizeMap = {
