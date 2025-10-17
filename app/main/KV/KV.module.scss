@@ -1,6 +1,8 @@
 @use '@/common/styles/mixins/function' as *;
 
 .kv {
+  --gradient-dark-start: rgba(0, 0, 0, 0.7); // KV 그라데이션 시작
+  --gradient-dark-end: rgba(0, 0, 0, 0.4); // KV 그라데이션 끝
   width: 100%;
   position: fixed;
   top: 0;
@@ -42,7 +44,7 @@
     .buttonPrev,
     .buttonNext {
       position: static;
-      color: var(--text-white);
+      color: var(--text-inverse);
       cursor: pointer;
 
       i {
@@ -86,7 +88,7 @@
       z-index: 1;
       width: 100%;
       padding-inline: calc(var(--inner-padding) * 4);
-      color: var(--text-white);
+      color: var(--text-inverse);
     }
     &__title {
       display: flex;
@@ -129,7 +131,7 @@
     width: vw(300);
     height: vw(150);
     @include font-vw(18, $line: 28);
-    color: var(--text-white);
+    color: var(--text-inverse);
     overflow: hidden; // 추가: 내용이 컨테이너를 벗어나지 않도록 함
     &__title {
       font-weight: 700;
@@ -193,7 +195,7 @@
     .bullet {
       width: vw(8);
       height: vw(8);
-      background-color: var(--text-white);
+      background-color: var(--text-inverse);
       opacity: 0.5;
       transition:
         opacity 0.3s ease,
@@ -214,7 +216,7 @@
   .playPauseButton {
     background: none;
     border: none;
-    color: var(--text-white);
+    color: var(--text-inverse);
     cursor: pointer;
     padding: 0;
     display: flex;

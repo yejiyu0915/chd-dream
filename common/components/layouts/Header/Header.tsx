@@ -2,32 +2,27 @@
 
 import HeaderPC from '@/common/components/layouts/Header/HeaderPC';
 import HeaderMo from '@/common/components/layouts/Header/HeaderMo';
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { usePathname } from 'next/navigation';
 
 export default function Header() {
-  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      setIsScrolled(scrollTop > 200);
-    };
+  // useSyncExternalStore로 스크롤 상태를 서버와 클라이언트에서 동기화 (플리커 방지)
+  const scrollY = useSyncExternalStore(
+    // 구독 함수 - 스크롤 이벤트 리스너 등록
+    (callback) => {
+      window.addEventListener('scroll', callback);
+      return () => window.removeEventListener('scroll', callback);
+    },
+    // 클라이언트에서 현재 스크롤 위치 반환
+    () => window.scrollY,
+    // 서버사이드에서 초기값 반환 (0으로 설정)
+    () => 0
+  );
 
-    if (pathname !== '/') {
-      setIsScrolled(true);
-    } else {
-      handleScroll();
-      window.addEventListener('scroll', handleScroll);
-    }
-
-    return () => {
-      if (pathname === '/') {
-        window.removeEventListener('scroll', handleScroll);
-      }
-    };
-  }, [pathname]);
+  // 스크롤 상태 계산
+  const isScrolled = pathname !== '/' || scrollY > 200;
 
   return (
     <>

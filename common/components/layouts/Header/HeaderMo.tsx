@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
 import Icon from '@/common/components/utils/Icons';
 import h from '@/common/components/layouts/Header/Header.module.scss';
@@ -17,24 +18,39 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
   const [activeMobileMenu, setActiveMobileMenu] = useState<string | null>(null);
 
   useEffect(() => {
-    // console.log('useEffect triggered, isMobileMenuOpen:', isMobileMenuOpen);
     if (isMobileMenuOpen) {
+      // 스크롤 위치 저장
       scrollYRef.current = window.scrollY;
+      console.log('메뉴 열림 - 스크롤 위치:', scrollYRef.current);
+      console.log('isScrolled 상태:', isScrolled);
+
+      // body에 스크롤 위치를 data 속성으로 저장
+      document.body.setAttribute('data-scroll-y', scrollYRef.current.toString());
+
+      // 메뉴 열릴 때 무조건 스크롤 상태 유지 (플리커 방지)
+      document.body.style.setProperty('top', `-${scrollYRef.current}px`, 'important');
       document.body.classList.add('mobile-menu-open');
-      // console.log(
-      //   'Class "mobile-menu-open" added to body. Current body classes:',
-      //   document.body.classList.value
-      // );
       stopLenis();
+
+      // 추가 확인: 스타일이 제대로 적용되었는지 확인
+      console.log('적용된 top 값:', document.body.style.top);
     } else {
-      const currentScrollY = scrollYRef.current;
+      // 저장된 스크롤 위치 복원
+      const savedScrollY = document.body.getAttribute('data-scroll-y');
+      const scrollY = savedScrollY ? parseInt(savedScrollY, 10) : scrollYRef.current;
+
+      console.log('메뉴 닫힘 - 복원할 스크롤 위치:', scrollY);
+
+      // body 스타일 초기화
+      document.body.style.removeProperty('top');
       document.body.classList.remove('mobile-menu-open');
-      // console.log(
-      //   'Class "mobile-menu-open" removed from body. Current body classes:',
-      //   document.body.classList.value
-      // );
-      window.scrollTo(0, currentScrollY);
-      startLenis();
+      document.body.removeAttribute('data-scroll-y');
+
+      // 다음 프레임에서 스크롤 복원 (DOM 업데이트 후)
+      requestAnimationFrame(() => {
+        window.scrollTo(0, scrollY);
+        startLenis();
+      });
     }
   }, [isMobileMenuOpen, stopLenis, startLenis]);
 
@@ -44,7 +60,7 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
 
   return (
     <div
-      className={`${h.mobileMenuOverlay} ${isMobileMenuOpen ? h.open : ''} ${isScrolled ? h.scroll : ''}`}
+      className={`${h.mobileMenuOverlay} ${isMobileMenuOpen ? h.open : ''} ${isMobileMenuOpen || isScrolled ? h.scroll : ''}`}
     >
       <div className={h.mobileMenuContent} data-lenis-prevent>
         <nav className={h.mobileNav}>
@@ -82,7 +98,19 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
                       </div>
                       <div className={h.mobileSubMenuBottom}>
                         <div className={h.mobileSubMenuVisual}>
-                          <div className={h.mobileVisualImage}></div>
+                          <div className={h.mobileVisualImage}>
+                            <Image
+                              src={`/common/gnb-${index + 1}.jpg`}
+                              alt={`${menuItem.name} 서브메뉴 이미지`}
+                              fill
+                              style={{
+                                objectFit: 'cover',
+                                objectPosition: 'center',
+                              }}
+                              sizes="(max-width: 768px) 100vw, 50vw"
+                              priority={false}
+                            />
+                          </div>
                           <div className={h.mobileVisualContent}>
                             <p>
                               {menuItem.content?.description || '하나님의 사랑으로 함께하는 교회'}

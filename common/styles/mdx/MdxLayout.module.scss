@@ -17,7 +17,7 @@
     z-index: 1;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.75);
   }
 }
 .content {
@@ -29,17 +29,17 @@
 .category {
   margin-block-end: 1em;
   padding-inline-start: 0.5em;
-  border-left: vw(4) solid var(--background);
-  @include font-vw(18, $weight: 700, $color: var(--background));
+  border-left: vw(4) solid var(--bg-page);
+  @include font-vw(24, $weight: 700, $color: var(--bg-page));
 }
 .title {
-  @include font-vw(48, $weight: 700, $color: var(--background));
+  @include font-vw(56, $weight: 700, $color: var(--bg-page));
   line-height: 1.2;
   @include ellipsis(3);
 }
 .date {
   margin-block-start: 2.5em;
-  @include font-vw(18, $color: var(--border-light));
+  @include font-vw(20, $color: var(--accent-border-subtle));
 }
 
 .image {
@@ -100,9 +100,9 @@
   &Item {
     padding: vw(8) vw(16); /* 태그 패딩 */
     border-radius: vw(10); /* 태그 둥근 모서리 */
-    background-color: rgb(255, 241, 244); /* 태그 배경색 */
-    color: rgb(255, 100, 100); /* 태그 텍스트 색상 */
-    @include font-vw(18, $weight: 500);
+    background-color: var(--accent-secondary); /* 태그 배경색 */
+    color: var(--accent-brand); /* 태그 텍스트 색상 */
+    @include font-vw(20, $weight: 500);
     white-space: nowrap; /* 태그 내용 줄바꿈 방지 */
   }
   @include mq(pc-sm) {
@@ -135,25 +135,25 @@ div:has(> .detailBreadcrumbs) {
 .detailBreadcrumbs {
   ol {
     &::before {
-      background-color: var(--border-light);
+      background-color: var(--accent-border-subtle);
     }
   }
   li {
     &::after {
-      background-color: var(--border-light);
+      background-color: var(--accent-border-subtle);
     }
   }
   a {
-    color: var(--border-light);
+    color: var(--accent-border-subtle);
     &:hover {
-      color: var(--background);
+      color: var(--bg-page);
     }
   }
 }
 
 .divider {
   border: none;
-  border-top: 1px solid var(--border-light);
+  border-top: 1px solid var(--accent-border-subtle);
   margin-top: vw(40);
   margin-bottom: vw(40);
   @include mq(pc-sm) {

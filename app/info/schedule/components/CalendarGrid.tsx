@@ -1,6 +1,5 @@
 import React from 'react';
 import { CalendarDay, DAYS_OF_WEEK } from '../types/types';
-import { formatTimeInfo } from '@/app/info/schedule/types/utils';
 import s from '@/app/info/schedule/Schedule.module.scss';
 
 interface CalendarGridProps {
@@ -37,95 +36,23 @@ export default function CalendarGrid({
             day.holidayInfo.isHoliday ? s.holiday : ''
           } ${selectedDate && day.date.getTime() === selectedDate.getTime() ? s.selected : ''}`}
           data-selected={selectedDate && day.date.getTime() === selectedDate.getTime()}
+          data-debug-selected={selectedDate ? selectedDate.getTime() : 'null'}
+          data-debug-day={day.date.getTime()}
           onClick={() => onDateClick(day.date)}
           style={{
-            cursor:
-              typeof window !== 'undefined' && window.innerWidth <= 768 ? 'pointer' : 'default',
+            cursor: 'pointer',
           }}
         >
           <div className={s.dayNumber}>
-            {day.date.getDate()}
+            {index === 0
+              ? `${day.date.getMonth() + 1}/${day.date.getDate()}`
+              : day.date.getDate() === 1
+                ? `${day.date.getMonth() + 1}/${day.date.getDate()}`
+                : day.date.getDate()}
             {day.isToday && <span className={s.todayLabel}> (오늘)</span>}
           </div>
 
-          {/* 연속된 일정 (Spanning Events) */}
-          {day.spanningEvents.length > 0 && (
-            <div className={s.spanningEventList}>
-              {day.spanningEvents.map((spanningEvent, eventIndex) => {
-                const { event, isFirstDay, isLastDay } = spanningEvent;
-                const timeInfo = formatTimeInfo(event);
-
-                const groupKey = `${event.title}-${new Date(event.startDate!).getTime()}-${new Date(event.endDate!).getTime()}`;
-
-                return (
-                  <div
-                    key={`${event.id}-${eventIndex}`}
-                    className={`${s.spanningEvent} ${
-                      isFirstDay ? s.spanningEventStart : ''
-                    } ${isLastDay ? s.spanningEventEnd : ''} ${event.important ? s.important : ''}`}
-                    title={`${event.title}${timeInfo}${event.location ? ` - ${event.location}` : ''}`}
-                    data-spanning-event={groupKey}
-                  >
-                    {isFirstDay && (
-                      <>
-                        <span className={s.eventTitle}>{event.title}</span>
-                        {timeInfo && <span className={s.eventTime}>{timeInfo}</span>}
-                        {event.tags && event.tags.length > 0 && (
-                          <div className={s.eventTags}>
-                            {event.tags.slice(0, 2).map((tag, tagIndex) => (
-                              <span key={tagIndex} className={s.eventTag}>
-                                {tag}
-                              </span>
-                            ))}
-                            {event.tags.length > 2 && (
-                              <span className={s.eventTag}>+{event.tags.length - 2}</span>
-                            )}
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* 단일 날짜 일정 */}
-          {day.events.length > 0 && (
-            <div className={s.eventList}>
-              {day.events.slice(0, 3).map((event) => {
-                const timeInfo = formatTimeInfo(event);
-
-                return (
-                  <div
-                    key={event.id}
-                    className={`${s.eventItem} ${event.important ? s.important : ''}`}
-                    title={`${event.title}${timeInfo}${event.location ? ` - ${event.location}` : ''}`}
-                  >
-                    <span className={s.eventTitle}>{event.title}</span>
-                    {timeInfo && <span className={s.eventTime}>{timeInfo}</span>}
-                    {event.tags && event.tags.length > 0 && (
-                      <div className={s.eventTags}>
-                        {event.tags.slice(0, 2).map((tag, tagIndex) => (
-                          <span key={tagIndex} className={s.eventTag}>
-                            {tag}
-                          </span>
-                        ))}
-                        {event.tags.length > 2 && (
-                          <span className={s.eventTag}>+{event.tags.length - 2}</span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-              {day.events.length > 3 && (
-                <div className={s.eventItem}>+{day.events.length - 3}개 더</div>
-              )}
-            </div>
-          )}
-
-          {/* 모바일에서 일정 개수 표시용 동그라미 */}
+          {/* 일정 개수 표시용 동그라미 */}
           <div className={s.eventDotsContainer}>
             {/* 연속 일정 동그라미 */}
             {day.spanningEvents.map((spanningEvent, eventIndex) => (

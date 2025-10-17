@@ -1,6 +1,19 @@
 @use '@/common/styles/mixins/function' as *;
 
 .footer {
+  // === 푸터 전용 색상 변수 ===
+  --footer-border-top: rgba(255, 255, 255, 0.1);
+  --footer-sns-bg-green: rgba(33, 197, 49, 0.7);
+  --footer-sns-bg-red: rgba(255, 0, 51, 0.7);
+  --footer-sns-bg-instagram-start: rgba(249, 206, 52, 0.3);
+  --footer-sns-bg-instagram-mid1: rgba(238, 42, 123, 0.3);
+  --footer-sns-bg-instagram-mid2: rgba(98, 40, 215, 0.3);
+  --footer-sns-bg-instagram-end: rgba(79, 91, 213, 0.7);
+  --footer-box-bg: rgba(255, 255, 255, 0.05);
+  --footer-box-bg-hover: rgba(255, 255, 255, 0.075);
+  --footer-text-muted: rgba(255, 255, 255, 0.5);
+
+  // === 푸터 레이아웃 변수 ===
   --footer-border-radius: 20;
   --footer-gap: 16;
   width: 100%;
@@ -8,7 +21,7 @@
   position: relative;
   z-index: 2;
   background-color: #624580;
-  color: var(--text-white);
+  color: var(--text-inverse);
   .top {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -83,7 +96,6 @@
         transition: background-color 0.2s ease;
         i {
           --icon-margin: 0;
-          filter: invert(1);
         }
       }
     }
@@ -106,7 +118,7 @@
         padding-right: 0;
         border-radius: vw(--footer-border-radius);
         overflow: hidden;
-        @include font-vw(16, $color: var(--text-white));
+        @include font-vw(16, $color: var(--text-inverse));
       }
     }
     .band {
@@ -163,8 +175,8 @@
       margin-block-start: vw(10);
       padding-inline-end: vw(12);
       border-radius: vw(12);
-      background-color: var(--background);
-      @include font-vw(16, 56, $weight: 700, $color: var(--foreground));
+      background-color: var(--bg-page);
+      @include font-vw(16, 56, $weight: 700, $color: var(--text-main));
       text-align: center;
     }
     .icon {

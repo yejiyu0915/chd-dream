@@ -4,7 +4,7 @@ $list: '.list';
 .newsListMain {
   --list-radius: 20;
   .newsListInner {
-    padding-block: vw(80) vw(160);
+    padding-block: vw(120) vw(200);
     @include mq(pc-sm) {
       --list-radius: 12;
       padding-block: vw(48) vw(120);
@@ -17,13 +17,13 @@ $list: '.list';
 }
 
 .newsList {
-  background-color: var(--background);
+  background-color: var(--bg-page);
   #{$list} {
     display: block;
 
     &__item {
       width: 100%;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--accent-border);
       padding-bottom: vw(32);
       margin-bottom: vw(32);
       display: flex;
@@ -45,7 +45,7 @@ $list: '.list';
     }
 
     &__index {
-      @include font-vw(24, $weight: 500, $color: var(--primary));
+      @include font-vw(24, $weight: 500, $color: var(--accent-brand));
       flex-shrink: 0;
       width: vw(60);
       text-align: center;
@@ -60,13 +60,13 @@ $list: '.list';
 
     &__title {
       @include font-vw(32, 45, $weight: 700);
-      color: var(--foreground);
+      color: var(--text-main);
       @include ellipsis(2);
       flex-grow: 1; // 타이틀이 남은 공간을 채우도록
     }
 
     &__date {
-      @include font-vw(18, $color: var(--text-muted));
+      @include font-vw(18, $color: var(--text-placeholder));
       flex-shrink: 0; // 날짜는 고정 너비
     }
 
@@ -120,12 +120,12 @@ $list: '.list';
     align-items: center;
     min-height: vw(400);
     @include font-vw(24);
-    color: var(--text-muted);
+    color: var(--text-placeholder);
     text-align: center;
   }
   .emptyMessage {
     @include font-vw(24);
-    color: var(--text-muted);
+    color: var(--text-placeholder);
     text-align: center;
     padding-block: vw(100);
   }

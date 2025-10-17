@@ -165,7 +165,7 @@ export default function KVSlider({ kvHeight }: KVSliderProps) {
       <div
         className={kv.background}
         style={{
-          backgroundColor: 'var(--foreground)',
+          backgroundColor: 'var(--text-main)',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',

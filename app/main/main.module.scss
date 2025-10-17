@@ -19,8 +19,8 @@ $main: '.main';
       justify-content: center;
       width: 100%;
       height: 100vh;
-      background-color: var(--bg-hover);
-      @include font-vw(24, $weight: 500, $color: var(--foreground));
+      background-color: var(--bg-interactive);
+      @include font-vw(24, $weight: 500, $color: var(--text-main));
     }
   }
 }

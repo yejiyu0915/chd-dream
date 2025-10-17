@@ -19,6 +19,8 @@
 }
 
 .header {
+  --gradient-light-start: #f8f9fa; // Header 그라데이션 시작
+  --gradient-light-end: #e9ecef; // Header 그라데이션 끝
   --header-color: #fff;
   position: fixed;
   top: 0;
@@ -33,11 +35,12 @@
     z-index: 998; // 헤더 내부에서 로고/메뉴보다 아래에 있도록 유지
     width: 100%;
     height: vw(253);
-    background-color: var(--background);
-    border-bottom: vw(1) solid var(--border);
+    background-color: var(--bg-page);
+    border-bottom: vw(1) solid var(--accent-border);
     opacity: 0;
     visibility: hidden;
     // @include smooth-transition; // 데스크톱 스크롤/호버 시 트랜지션 유지
+    will-change: opacity;
   }
   .inner {
     display: flex;
@@ -146,11 +149,12 @@
     height: auto;
     // min-height: vw(400);
     max-height: vw(600);
-    background: var(--background);
+    background: var(--bg-page);
     z-index: 999;
     opacity: 0;
     visibility: hidden;
     box-shadow: 0 vw(5) vw(5) 0 rgba(0, 0, 0, 0.03);
+    will-change: opacity;
 
     &.show {
       opacity: 1;
@@ -191,7 +195,7 @@
     &__link {
       display: block;
       padding: vw(8) vw(20);
-      color: var(--text-primary);
+      color: var(--text-body);
       text-decoration: none;
       @include font-vw(18, $weight: 400);
       letter-spacing: -0.02em;
@@ -201,7 +205,7 @@
 
       &:hover {
         font-weight: 700;
-        color: var(--foreground);
+        color: var(--text-main);
         text-decoration: underline;
         text-underline-offset: vw(4);
 
@@ -211,14 +215,14 @@
           left: vw(8);
           top: 50%;
           transform: translateY(-50%);
-          color: var(--foreground);
+          color: var(--text-main);
           @include font-vw(24);
         }
       }
     }
 
     &__right {
-      border-left: vw(1) solid var(--border-light);
+      border-left: vw(1) solid var(--accent-border-subtle);
       padding-left: vw(20);
     }
 
@@ -231,11 +235,12 @@
       padding-top: vw(8);
 
       &Image {
+        position: relative;
         width: 100%;
-        height: vw(200);
         border-radius: vw(12);
         overflow: hidden;
         background: linear-gradient(135deg, var(--gradient-light-start), var(--gradient-light-end));
+        aspect-ratio: 16 / 9;
 
         img {
           width: 100%;
@@ -250,7 +255,7 @@
         position: relative;
 
         p {
-          @include font-vw(14, 21, $ls: -0.02, $color: var(--text-secondary));
+          @include font-vw(14, 21, $ls: -0.02, $color: var(--accent-brand));
         }
       }
     }
@@ -295,10 +300,11 @@
   }
 
   &.hover {
-    --header-color: var(--foreground);
+    --header-color: var(--text-main);
     .overlay {
       opacity: 1;
       visibility: visible;
+      transition: opacity 0.1s;
     }
     .menu .item .menuLink {
       font-weight: 600;
@@ -312,7 +318,7 @@
 
   // 스크롤 시 적용될 스타일
   &.scroll {
-    --header-color: var(--foreground);
+    --header-color: var(--text-main);
     height: vw(--header-height);
     .overlay {
       height: vw(--header-height);
@@ -383,7 +389,7 @@
 
     &,
     &.scroll {
-      --header-color: var(--foreground);
+      --header-color: var(--text-main);
       height: vw(--header-height);
       .overlay {
         height: vw(--header-height);
@@ -487,7 +493,7 @@
           top: 50%;
           width: 1px;
           height: vw(24);
-          background: var(--foreground);
+          background: var(--text-main);
           transform: translateY(-50%);
         }
       }
@@ -530,6 +536,7 @@
           padding-top: vw(8);
 
           &Image {
+            position: relative;
             height: vw(160);
           }
         }
@@ -554,15 +561,13 @@
   @include mq(mo) {
     &,
     &.scroll {
-      --header-color: var(--background);
-      // height: vw(72);
-      background-color: transparent; // 모바일 기본 헤더 배경 투명
+      --header-color: var(--text-main);
+      // background-color: var(--bg-page);
+      // border-bottom: 1px solid var(--accent-border);
+      // backdrop-filter: blur(30px);
       .overlay {
-        opacity: 0;
-        visibility: hidden;
-        transition: none; // 모바일에서는 헤더 내부 overlay 즉시 숨김
-        animation: none;
-        // height: vw(72);
+        opacity: 1;
+        transition: none;
       }
       .logo {
         a {
@@ -586,28 +591,11 @@
         @include font-vw(15);
         .icon {
           --icon-size: 1.8;
+          --icon-color: var(--header-color);
           transform: translateY(0.05em);
         }
         .mobileMenuToggle {
           display: block !important;
-        }
-      }
-    }
-    // .header.mobileOpen 일 때 헤더의 배경색 변경
-    &.scroll,
-    &.mobileOpen {
-      --header-color: var(--foreground);
-      background-color: var(--background);
-      .overlay {
-        opacity: 1;
-        visibility: visible;
-        transition: none;
-        animation: none;
-        // height: vw(72);
-      }
-      .util {
-        .icon {
-          --icon-color: var(--header-color);
         }
         .hamburgerButton {
           .hamburgerIcon {
@@ -616,12 +604,10 @@
         }
       }
     }
-    &.mounted {
-      .logo,
-      .menu,
-      .util {
-        opacity: 1;
-        transition: none;
+    &:not(.scroll) {
+      --header-color: var(--bg-page);
+      .overlay {
+        opacity: 0;
       }
     }
   }
@@ -647,7 +633,7 @@
     left: 0;
     width: 100vw;
     height: calc(100vh - vw(--header-height));
-    background: var(--background);
+    background: var(--bg-page);
     z-index: 1001; // 헤더보다 높은 z-index로 설정 (명시적으로 재설정)
     touch-action: auto; // 터치 스크롤 허용
     -webkit-overflow-scrolling: touch;
@@ -667,7 +653,7 @@
       overflow-y: auto; // 내용이 넘칠 경우 스크롤 허용
       touch-action: auto; // 터치 스크롤 허용
       nav {
-        padding-block-end: vw(200);
+        padding-block-end: vw(40);
       }
     }
 
@@ -678,7 +664,7 @@
     }
 
     .mobileMenuItem {
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--accent-border);
 
       &:last-child {
         border-bottom: none;
@@ -694,27 +680,26 @@
       background: none;
       border: none;
       cursor: pointer;
-      @include font-vw(18, $weight: 700, $color: var(--foreground));
+      @include font-vw(18, $weight: 700, $color: var(--text-main));
       text-align: left;
 
       &.active {
-        color: var(--primary);
+        color: var(--accent-brand);
       }
     }
 
     .mobileMenuIcon {
       --icon-size: 1.8;
       --icon-margin: 0;
-      --icon-color: var(--foreground);
+      --icon-color: var(--text-main);
       width: vw(28);
       height: vw(28);
-      color: var(--foreground);
       transition: transform 0.3s ease-in-out;
     }
 
     .mobileMenuButton.active .mobileMenuIcon {
       transform: rotate(180deg);
-      color: var(--primary);
+      --icon-color: var(--accent-brand);
     }
 
     .mobileSubMenu {
@@ -742,7 +727,7 @@
         padding: 0;
         display: flex;
         flex-direction: column;
-        border-left: 3px solid #000;
+        border-left: vw(3) solid var(--accent-brand);
       }
 
       .mobileSubMenuItem {
@@ -750,13 +735,13 @@
           display: block;
           padding: vw(16) vw(32);
           border-top: 1px solid #e9e9e9;
-          background-color: #f9f9f9;
-          @include font-vw(16, $color: var(--text-primary));
+          background-color: var(--accent-secondary);
+          @include font-vw(16, $color: var(--text-body));
           text-decoration: none;
           @include smooth-transition;
 
           &:hover {
-            color: var(--primary);
+            color: var(--accent-brand);
             font-weight: 600;
           }
         }
@@ -767,6 +752,7 @@
       .mobileSubMenuVisual {
         padding-inline-start: vw(32);
         .mobileVisualImage {
+          position: relative;
           width: 100%;
           height: vw(120);
           border-radius: vw(8);
@@ -781,7 +767,7 @@
 
         .mobileVisualContent {
           p {
-            @include font-vw(14, 20, $ls: -0.02, $color: var(--text-secondary));
+            @include font-vw(14, 20, $ls: -0.02, $color: var(--text-caption));
           }
         }
       }
@@ -792,7 +778,7 @@
       display: flex;
       flex-direction: column;
       gap: vw(4);
-      border-top: 1px solid var(--foreground);
+      border-top: 1px solid var(--text-main);
       padding-block: vw(20) 0;
       .mobilePrevGroup {
         width: 100%;
@@ -841,7 +827,7 @@
 
     // SNS 링크 영역
     .mobileSns {
-      border-top: 1px solid var(--border-light);
+      border-top: 1px solid var(--accent-border-subtle);
       padding-block: vw(20);
 
       .mobileSnsList {
@@ -857,12 +843,12 @@
           display: flex;
           align-items: center;
           gap: vw(8);
-          @include font-vw(16, $color: var(--text-primary));
+          @include font-vw(16, $color: var(--text-body));
           text-decoration: none;
           @include smooth-transition;
 
           &:hover {
-            color: var(--primary);
+            color: var(--accent-brand);
           }
         }
       }

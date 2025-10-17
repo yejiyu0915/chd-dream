@@ -1,6 +1,6 @@
 @use '@/common/styles/mixins/function' as *;
 .intro {
-  background-color: var(--background);
+  background-color: var(--bg-page);
   .inner {
     display: flex;
     align-items: center;
@@ -13,7 +13,7 @@
   }
   .title {
     @include font-vw(80, 120, $weight: 900);
-    color: var(--foreground);
+    color: var(--text-main);
     text-align: center;
   }
   .text {
@@ -22,8 +22,8 @@
     justify-content: center;
     width: 100%;
     height: 100vh;
-    background-color: var(--bg-hover);
+    background-color: var(--bg-interactive);
     @include font-vw(24, $weight: 500);
-    color: var(--foreground);
+    color: var(--text-main);
   }
 }

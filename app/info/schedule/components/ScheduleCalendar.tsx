@@ -6,7 +6,7 @@ import { CalendarDay, SpanningEvent } from '@/app/info/schedule/types/types';
 import { useHolidayInfo, useScheduleData } from '@/app/info/schedule/types/hooks';
 import CalendarHeader from '@/app/info/schedule/components/CalendarHeader';
 import CalendarGrid from '@/app/info/schedule/components/CalendarGrid';
-import MobileEventPanel from '@/app/info/schedule/components/MobileEventPanel';
+import EventPanel from './EventPanel';
 import ScheduleViewModeFilter from '@/app/info/schedule/components/ScheduleViewModeFilter';
 import SchedulePeriodFilter from '@/app/info/schedule/components/SchedulePeriodFilter';
 import ScheduleListView from '@/app/info/schedule/components/ScheduleListView';
@@ -15,7 +15,7 @@ import s from '@/app/info/schedule/Schedule.module.scss';
 // 고정 px 값 사용 - 리사이즈 시 재계산으로 안정성 확보
 
 export default function ScheduleCalendar() {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState<Date | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isMobilePanelOpen, setIsMobilePanelOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
@@ -78,19 +78,6 @@ export default function ScheduleCalendar() {
     }
   }, [scheduleData, currentDate, syncSpanningEventHeights]);
 
-  // PC에서 높이 동기화를 위한 추가 useEffect
-  useEffect(() => {
-    if (
-      scheduleData &&
-      scheduleData.length > 0 &&
-      typeof window !== 'undefined' &&
-      window.innerWidth > 768
-    ) {
-      // PC에서는 더 긴 지연 시간으로 높이 동기화
-      setTimeout(syncSpanningEventHeights, 100);
-    }
-  }, [scheduleData, currentDate, syncSpanningEventHeights]);
-
   // 뷰포트 크기 변경 시 높이 재계산 (디바운싱 적용)
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -113,12 +100,26 @@ export default function ScheduleCalendar() {
     };
   }, [scheduleData, syncSpanningEventHeights]);
 
-  // 날짜 클릭 핸들러 (모바일에서만 동작)
-  const handleDateClick = (date: Date) => {
-    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
-      setSelectedDate(date);
-      setIsMobilePanelOpen(true);
+  // 뷰 모드 변경 시 spanning event 높이 재동기화
+  useEffect(() => {
+    if (scheduleData && scheduleData.length > 0 && viewMode === 'calendar') {
+      // 캘린더 뷰로 전환될 때 높이 동기화
+      setTimeout(syncSpanningEventHeights, 100);
     }
+  }, [viewMode, scheduleData, syncSpanningEventHeights]);
+
+  // 클라이언트에서만 초기화 (SSR hydration 에러 방지)
+  useEffect(() => {
+    const today = new Date();
+    setCurrentDate(today);
+    setSelectedDate(today);
+    setIsMobilePanelOpen(true);
+  }, []);
+
+  // 날짜 클릭 핸들러 (모바일과 PC 모두에서 동작)
+  const handleDateClick = (date: Date) => {
+    setSelectedDate(date);
+    setIsMobilePanelOpen(true);
   };
 
   // 선택된 날짜의 일정 가져오기
@@ -169,6 +170,7 @@ export default function ScheduleCalendar() {
 
   // 현재 월의 캘린더 데이터 생성
   const calendarData = useMemo(() => {
+    if (!currentDate) return [];
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
 
@@ -266,22 +268,35 @@ export default function ScheduleCalendar() {
 
   // 이전 달로 이동
   const goToPreviousMonth = () => {
-    setCurrentDate((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+    setCurrentDate((prev) =>
+      prev ? new Date(prev.getFullYear(), prev.getMonth() - 1, 1) : new Date()
+    );
   };
 
   // 다음 달로 이동
   const goToNextMonth = () => {
-    setCurrentDate((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+    setCurrentDate((prev) =>
+      prev ? new Date(prev.getFullYear(), prev.getMonth() + 1, 1) : new Date()
+    );
   };
 
   // 오늘로 이동
   const goToToday = () => {
-    setCurrentDate(new Date());
+    const today = new Date();
+    // 시간 부분을 제거하고 날짜만 사용
+    const todayDateOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    setCurrentDate(todayDateOnly);
+    // currentDate 변경 후 selectedDate 설정
+    setTimeout(() => {
+      setSelectedDate(todayDateOnly);
+      setIsMobilePanelOpen(true);
+    }, 0);
   };
 
   // 이전 기간으로 이동 (기간에 따라 다르게)
   const goToPreviousPeriod = () => {
     setCurrentDate((prev) => {
+      if (!prev) return new Date();
       const newDate = new Date(prev);
       switch (period) {
         case '1month':
@@ -304,6 +319,7 @@ export default function ScheduleCalendar() {
   // 다음 기간으로 이동 (기간에 따라 다르게)
   const goToNextPeriod = () => {
     setCurrentDate((prev) => {
+      if (!prev) return new Date();
       const newDate = new Date(prev);
       switch (period) {
         case '1month':
@@ -324,12 +340,13 @@ export default function ScheduleCalendar() {
   };
 
   // 월/년 표시
-  const monthYear = currentDate.toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'long',
-  });
+  const monthYear =
+    currentDate?.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: 'long',
+    }) || '';
 
-  if (isLoading) {
+  if (isLoading || !currentDate) {
     return (
       <div className={s.calendarContainer}>
         <div className={s.loadingState}>일정을 불러오는 중...</div>
@@ -368,16 +385,18 @@ export default function ScheduleCalendar() {
             onGoToToday={goToToday}
           />
 
-          <CalendarGrid
-            calendarData={calendarData}
-            selectedDate={selectedDate}
-            onDateClick={handleDateClick}
-          />
+          <div className={s.calendarGridWrapper}>
+            <CalendarGrid
+              calendarData={calendarData}
+              selectedDate={selectedDate}
+              onDateClick={handleDateClick}
+            />
 
-          {/* 모바일 일정 상세 패널 */}
-          {isMobilePanelOpen && selectedDate && (
-            <MobileEventPanel selectedDate={selectedDate} events={getSelectedDateEvents()} />
-          )}
+            {/* 일정 상세 패널 */}
+            {isMobilePanelOpen && selectedDate && (
+              <EventPanel selectedDate={selectedDate} events={getSelectedDateEvents()} />
+            )}
+          </div>
         </>
       ) : (
         <ScheduleListView

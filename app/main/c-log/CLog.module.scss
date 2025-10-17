@@ -1,14 +1,14 @@
 @use '@/common/styles/mixins/function' as *;
 
 .cLog {
-  background-color: var(--background);
+  background-color: var(--bg-page);
   .inner {
     padding-block: vw(160);
     position: relative;
   }
   .title {
     @include font-vw(60, $weight: 700);
-    color: var(--foreground);
+    color: var(--text-main);
   }
   .desc {
     margin-block: vw(30) vw(60);
@@ -21,9 +21,9 @@
     width: fit-content;
     padding-inline: vw(36);
     border-radius: vw(20);
-    background-color: var(--primary);
+    background-color: var(--accent-brand);
     @include font-vw(24);
-    color: var(--primary-foreground);
+    color: var(--text-inverse);
     line-height: vw(72);
     &__icon {
       --icon-size: 1.25;
@@ -41,7 +41,7 @@
     align-items: center;
     min-height: vw(400);
     @include font-vw(24);
-    color: var(--text-muted);
+    color: var(--text-placeholder);
   }
   .error {
     display: flex;
@@ -50,7 +50,7 @@
     align-items: center;
     min-height: vw(400);
     @include font-vw(24);
-    color: var(--accent-red);
+    color: var(--state-error);
     text-align: center;
   }
   .list {
@@ -102,20 +102,20 @@
     &__title {
       margin-block-end: 1em;
       @include font-vw(32, 45, $weight: 700);
-      color: var(--foreground);
+      color: var(--text-main);
       @include ellipsis(2);
     }
     &__info {
       display: flex;
       align-items: center;
       gap: vw(10);
-      @include font-vw(18);
+      @include font-vw(22);
     }
     &__category {
       font-weight: 700;
     }
     &__date {
-      color: var(--text-muted);
+      color: var(--text-placeholder);
     }
     &__tag {
       display: flex;
@@ -127,8 +127,8 @@
     &__tagItem {
       padding-inline: vw(12);
       border-radius: vw(4);
-      background-color: var(--bg-card);
-      color: var(--bg-card-foreground);
+      background-color: var(--bg-section);
+      color: var(--text-body);
       line-height: 2;
     }
   }
@@ -216,12 +216,12 @@
   }
 
   .skeleton {
-    background-color: var(--skeleton-loading-start);
+    background-color: var(--accent-border);
     background: linear-gradient(
       90deg,
-      var(--skeleton-loading-start) 25%,
-      var(--skeleton-loading-mid) 37%,
-      var(--skeleton-loading-start) 63%
+      var(--accent-border) 25%,
+      var(--accent-border-subtle) 37%,
+      var(--accent-border) 63%
     );
     background-size: 400% 100%;
     animation: skeleton-loading 1.4s ease infinite;
@@ -418,7 +418,7 @@
       align-items: center;
       min-height: vw(400);
       @include font-vw(24);
-      color: var(--text-muted);
+      color: var(--text-placeholder);
     }
     .error {
       display: flex;
@@ -427,7 +427,7 @@
       align-items: center;
       min-height: vw(400);
       @include font-vw(24);
-      color: var(--accent-red);
+      color: var(--state-error);
       text-align: center;
     }
     .list {
@@ -561,10 +561,10 @@
       right: var(--inner-padding);
       top: calc(var(--inner-padding) * 4);
       border-radius: vw(10);
-      border: 1px solid var(--foreground);
-      background-color: var(--background);
+      border: 1px solid var(--accent-brand);
+      background-color: var(--bg-page);
       @include font-vw(16);
-      color: var(--foreground);
+      color: var(--accent-brand);
       font-weight: 600;
       line-height: vw(40);
     }

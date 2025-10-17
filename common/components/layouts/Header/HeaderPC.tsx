@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import Icon from '@/common/components/utils/Icons';
 import h from '@/common/components/layouts/Header/Header.module.scss';
@@ -53,7 +54,7 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
 
   return (
     <header
-      className={`${h.header} ${isScrolled ? h.scroll : ''} ${isMenuHovered ? h.hover : ''} ${isMobileMenuOpen ? h.mobileOpen : ''} ${mounted ? h.mounted : ''}`}
+      className={`${h.header} ${isMenuHovered ? h.hover : ''} ${isMobileMenuOpen ? h.scroll : h.default} ${isScrolled ? h.scroll : ''} ${mounted ? h.mounted : ''}`}
     >
       <div className={h.overlay}></div>
       <div className={h.inner}>
@@ -157,7 +158,19 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
                         </div>
                         <div className={h.subMenu__right}>
                           <div className={h.subMenu__visual}>
-                            <div className={h.subMenu__visualImage}></div>
+                            <div className={h.subMenu__visualImage}>
+                              <Image
+                                src={`/common/gnb-${index + 1}.jpg`}
+                                alt={`${menuItem.name} 서브메뉴 이미지`}
+                                fill
+                                style={{
+                                  objectFit: 'cover',
+                                  objectPosition: 'center',
+                                }}
+                                sizes="(max-width: 768px) 100vw, 50vw"
+                                priority={false}
+                              />
+                            </div>
                             <div className={h.subMenu__visualContent}>
                               <p>
                                 {menuItem.content?.description || '하나님의 사랑으로 함께하는 교회'}
