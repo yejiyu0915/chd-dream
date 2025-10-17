@@ -22,10 +22,12 @@ export default function MainContentInner({ bulletinData, kvHeight }: MainContent
   return (
     <div className={m.main__content} style={{ paddingTop: calculatedPaddingTop }}>
       <Bulletin />
-      <Intro />
-      <CLog />
-      <QuickLink />
-      <Instagram />
+      <div style={{ backgroundColor: 'var(--bg-page)' }}>
+        <Intro />
+        <CLog />
+        <QuickLink />
+        <Instagram />
+      </div>
     </div>
   );
 }
