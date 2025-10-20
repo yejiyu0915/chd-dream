@@ -9,6 +9,8 @@ import CLogSkeleton from '@/app/main/c-log/CLogSkeleton';
 import { useRef } from 'react';
 
 export default function CLog() {
+  'use memo'; // React 컴파일러 최적화 적용
+
   const queryClient = useQueryClient();
   const lastModifiedHeaderValue = useRef<string | null>(null);
 

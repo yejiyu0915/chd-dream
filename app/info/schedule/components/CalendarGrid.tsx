@@ -17,6 +17,8 @@ export default function CalendarGrid({
   selectedDate,
   onDateClick,
 }: CalendarGridProps) {
+  'use memo'; // React 컴파일러 최적화 적용
+
   return (
     <div className={s.calendarGrid}>
       {/* 요일 헤더 */}

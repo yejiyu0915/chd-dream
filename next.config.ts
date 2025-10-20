@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
     // 경고: 타입 에러가 있어도 프로덕션 빌드를 허용
     ignoreBuildErrors: true,
   },
+  // React 컴파일러 활성화 (실험적 기능)
+  experimental: {
+    reactCompiler: true,
+  },
   // 캐싱 최적화 설정 (Next.js 15에서는 isrMemoryCacheSize 옵션이 제거됨)
   images: {
     // Notion 외부 이미지 도메인 추가 (Notion 내부 URL은 필요 없음)

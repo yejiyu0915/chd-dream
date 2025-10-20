@@ -15,6 +15,8 @@ import s from '@/app/info/schedule/Schedule.module.scss';
 // 고정 px 값 사용 - 리사이즈 시 재계산으로 안정성 확보
 
 export default function ScheduleCalendar() {
+  'use memo'; // React 컴파일러 최적화 적용
+
   const [currentDate, setCurrentDate] = useState<Date | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isMobilePanelOpen, setIsMobilePanelOpen] = useState(false);

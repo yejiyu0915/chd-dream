@@ -6,12 +6,22 @@
   font-style: normal;
   font-display: swap;
 }
+
+// Useol 폰트 정의
+@font-face {
+  font-family: 'Useol';
+  src: url('/fonts/useol.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 :root {
   --font-family:
     'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue',
     'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
   --font-family-mono: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  --font-family-useol: 'Useol', sans-serif;
 
   // Variable 폰트 굵기 변수들
   --font-weight-thin: 100;

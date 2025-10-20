@@ -13,6 +13,8 @@ interface HeaderPCProps {
 }
 
 export default function HeaderPC({ isScrolled }: HeaderPCProps) {
+  'use memo'; // React 컴파일러 최적화 적용
+
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isMenuHovered, setIsMenuHovered] = useState(false);
   const [mounted, setMounted] = useState(false);

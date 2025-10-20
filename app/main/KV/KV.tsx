@@ -12,6 +12,8 @@ interface KVProps {
 }
 
 export default function KV({ kvSliderItems, setKvHeightState }: KVProps) {
+  'use memo'; // React 컴파일러 최적화 적용
+
   const [kvHeight, setKvHeight] = useState('100vh'); // 초기값은 항상 '100vh'로 설정
 
   useEffect(() => {

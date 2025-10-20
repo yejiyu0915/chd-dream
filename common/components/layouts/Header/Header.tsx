@@ -6,6 +6,8 @@ import { useSyncExternalStore } from 'react';
 import { usePathname } from 'next/navigation';
 
 export default function Header() {
+  'use memo'; // React 컴파일러 최적화 적용
+
   const pathname = usePathname();
 
   // useSyncExternalStore로 스크롤 상태를 서버와 클라이언트에서 동기화 (플리커 방지)

@@ -13,6 +13,8 @@ interface EventPanelProps {
  * 선택된 날짜의 일정들을 상세히 표시
  */
 export default function EventPanel({ selectedDate, events }: EventPanelProps) {
+  'use memo'; // React 컴파일러 최적화 적용
+
   return (
     <div className={s.eventPanel}>
       <div className={s.eventPanelHeader}>

@@ -20,7 +20,7 @@
   padding-block: vw(40);
   position: relative;
   z-index: 2;
-  background-color: #624580;
+  background-color: var(--accent-brand);
   color: var(--text-inverse);
   .top {
     display: grid;

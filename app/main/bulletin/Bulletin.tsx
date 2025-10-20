@@ -10,6 +10,8 @@ import BulletinSkeleton from '@/app/main/bulletin/BulletinSkeleton';
 import { useRef } from 'react';
 
 export default function Bulletin() {
+  'use memo'; // React 컴파일러 최적화 적용
+
   const queryClient = useQueryClient();
   const lastModifiedHeaderValue = useRef<string | null>(null);
 
@@ -84,7 +86,7 @@ export default function Bulletin() {
         <div className={s.content}>
           <div className={s.text}>
             <h2 className={s.eyebrow}>
-              <Icon name="book-open" className={s.eyebrow__icon} /> 이번 주 예배
+              <Icon name="book-open" className={s.eyebrow__icon} /> 주일 오전 예배
               <br />
               {bulletinData.date}
             </h2>

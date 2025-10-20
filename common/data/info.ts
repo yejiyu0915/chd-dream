@@ -25,7 +25,7 @@ export const menuData: MenuItem[] = [
       { name: '담임 목사 소개', href: '/about/pastor' },
       { name: '교구 소개', href: '/about/group' },
       { name: '섬기는 분들', href: '/about/servant' },
-      { name: '모임 안내', href: '/about/activity' },
+      { name: '활동 안내', href: '/about/activity' },
       { name: '시설 안내', href: '/about/facility' },
     ],
     content: {

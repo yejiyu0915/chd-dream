@@ -12,6 +12,8 @@ interface HeaderMoProps {
 }
 
 export default function HeaderMo({ isScrolled }: HeaderMoProps) {
+  'use memo'; // React 컴파일러 최적화 적용
+
   const scrollYRef = useRef(0);
 
   const { isMobileMenuOpen, toggleMobileMenu, stopLenis, startLenis } = useMobileMenu();

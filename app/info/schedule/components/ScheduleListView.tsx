@@ -35,6 +35,8 @@ export default function ScheduleListView({
   onPreviousPeriod,
   onNextPeriod,
 }: ScheduleListViewProps) {
+  'use memo'; // React 컴파일러 최적화 적용
+
   // 아코디언 상태 관리 (기본적으로 모든 섹션 펼침)
   const [expandedDates, setExpandedDates] = useState<Set<string>>(new Set(['ongoing']));
 

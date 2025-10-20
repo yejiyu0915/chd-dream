@@ -2,7 +2,8 @@
 .quickLink {
   padding-block: vw(200);
   position: relative;
-  background-image: url('/main/quick-link-bg.jpg');
+  // background-image: url('/main/quick-link-bg.jpg');
+  background-image: url('/info/info-bg.jpg');
   background-repeat: no-repeat;
   background-position: center top;
   background-size: cover;
@@ -25,6 +26,16 @@
     height: 55%;
     background: linear-gradient(to top, rgba(255, 255, 255, 1) 3%, rgba(255, 255, 255, 0) 50%);
     pointer-events: none;
+  }
+}
+.title {
+  font-family: var(--font-family-useol);
+  @include font-vw(48, 64, $color: var(--accent-brand));
+  text-align: center;
+  text-transform: uppercase;
+  &__wrap {
+    margin-block-end: vw(80);
+    padding-inline: calc(var(--inner-padding) * 4);
   }
 }
 .content {
@@ -63,7 +74,7 @@
       justify-content: space-between;
       width: 100%;
       height: 100%;
-      padding: vw(28) vw(32);
+      padding: vw(36) vw(32) vw(28);
       position: relative;
     }
   }
@@ -84,6 +95,12 @@
   }
   &__title {
     @include font-vw(32, $weight: 700, $min: 24);
+    i {
+      --icon-size: 1.25;
+      --icon-margin: 0;
+      margin-inline-end: 0.25em;
+      transform: translateY(-0.1em);
+    }
   }
   &__desc {
     opacity: 0;
@@ -131,6 +148,11 @@
 }
 
 @include mq(pc) {
+  .title {
+    &__wrap {
+      padding-inline: var(--inner-padding);
+    }
+  }
   .content {
     padding-inline: var(--inner-padding);
   }
@@ -139,6 +161,13 @@
 @include mq(pc-sm) {
   .quickLink {
     padding-block: vw(100);
+  }
+  .title {
+    @include font-vw(40, 56);
+    &__wrap {
+      margin-block-end: vw(60);
+      padding-inline: 0;
+    }
   }
   .content {
     gap: vw(24);
@@ -183,6 +212,12 @@
 @include mq(mo) {
   .quickLink {
     padding-block: vw(60);
+  }
+  .title {
+    @include font-vw(32);
+    &__wrap {
+      margin-block-end: vw(40);
+    }
   }
   .content {
     flex-direction: column;
@@ -233,6 +268,12 @@
 }
 
 @include mq(mo-sm) {
+  .title {
+    @include font-vw(24);
+    &__wrap {
+      margin-block-end: vw(32);
+    }
+  }
   .list {
     &__item {
       a {
