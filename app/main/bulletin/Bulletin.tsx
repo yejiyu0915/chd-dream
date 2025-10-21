@@ -93,7 +93,7 @@ export default function Bulletin() {
             <p className={s.title}>{bulletinData.title}</p>
             <p className={s.verse}>{bulletinData.summary}</p>
             <p className={s.desc}>
-              성가 찬양&nbsp;&nbsp;:&nbsp;&nbsp;
+              해피니스 찬양대&nbsp;&nbsp;:&nbsp;&nbsp;
               <span className={s.praise}>{bulletinData.praise || '찬양 정보 없음'}</span>
             </p>
           </div>

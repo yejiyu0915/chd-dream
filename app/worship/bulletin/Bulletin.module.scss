@@ -1,0 +1,521 @@
+@use '@/common/styles/mixins/function' as *;
+
+.inner {
+  display: flex;
+  gap: vw(60);
+  padding-block: vw(160) vw(200);
+}
+
+.items {
+  &__list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: vw(40) vw(24);
+    margin-bottom: vw(60);
+  }
+
+  &__item {
+    min-height: vw(240);
+    border-radius: vw(12) 0 0 vw(12);
+    overflow: hidden;
+    position: relative;
+    border: vw(2) solid var(--accent-tertiary);
+    color: var(--accent-brand);
+    &::before {
+      content: '';
+      position: absolute;
+      right: vw(4);
+      top: 0;
+      width: vw(4);
+      height: 100%;
+      box-sizing: content-box;
+      border: vw(2) solid var(--accent-tertiary);
+      border-top: 0;
+      border-bottom: 0;
+      background-color: var(--accent-secondary);
+    }
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: vw(16);
+  }
+}
+
+.item {
+  &__info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: vw(12);
+    height: 100%;
+    padding: vw(20) vw(36) vw(12) vw(20);
+  }
+
+  &__title {
+    @include font-vw(22, $weight: 600);
+    margin-bottom: vw(8);
+    line-height: 1.4;
+    @include ellipsis(2);
+  }
+
+  &__date {
+    @include font-vw(18);
+    word-break: keep-all;
+    line-height: 1.4;
+    display: flex;
+    flex-direction: column;
+    gap: vw(2);
+  }
+
+  &__dateMain {
+    @include font-vw(18);
+  }
+
+  &__dateWeek {
+    @include font-vw(14);
+  }
+
+  &__itemActive {
+    border-color: var(--accent-brand);
+    background: var(--accent-brand);
+    color: white;
+
+    .item__dateMain,
+    .item__dateWeek,
+    .item__title {
+      color: white;
+    }
+  }
+}
+
+.control {
+  &__prev,
+  &__next {
+    padding: vw(12) vw(20);
+    background: var(--bg-subtle);
+    border: 1px solid var(--accent-border-subtle);
+    border-radius: vw(8);
+    @include font-vw(14, $weight: 500, $color: var(--text-main));
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background: var(--accent-brand);
+      color: white;
+      border-color: var(--accent-brand);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__pages {
+    display: flex;
+    gap: vw(8);
+  }
+
+  &__page {
+    width: vw(40);
+    height: vw(40);
+    border: 1px solid var(--accent-border-subtle);
+    border-radius: vw(8);
+    @include font-vw(14, $weight: 500, $color: var(--text-main));
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: var(--bg-subtle);
+    }
+
+    &Active {
+      background: var(--accent-brand);
+      color: white;
+      border-color: var(--accent-brand);
+    }
+  }
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: vw(16);
+  text-align: center;
+  padding: vw(80);
+  @include font-vw(18, $color: var(--text-sub));
+}
+
+.content {
+  flex: 0 0 vw(800);
+  min-height: vw(900);
+  border-radius: vw(12);
+  border: 1px solid var(--accent-border-subtle);
+  background-image: url('/main/bulltein3.jpg');
+  background-size: auto 100%;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+.latest {
+  padding: vw(80) vw(60);
+
+  &__title {
+    display: flex;
+    gap: vw(8);
+    align-items: center;
+    @include font-vw(24, $weight: 500, $color: var(--text-main));
+    &Text {
+      margin-block: vw(8);
+      @include font-vw(20, $ls: -0.01, $weight: 600, $color: var(--accent-brand));
+      line-height: 1.6;
+    }
+  }
+
+  &__dateMain {
+    @include font-vw(20, $weight: 600, $color: var(--text-main));
+  }
+
+  &__dateWeek {
+    @include font-vw(16, $color: var(--text-sub));
+  }
+
+  &__info {
+    margin-bottom: vw(32);
+  }
+
+  &__bulletinTitle {
+    margin-block: vw(36);
+    @include font-vw(44, 64, $ls: -0.025, $weight: 700, $color: var(--text-main));
+  }
+
+  &__date {
+    @include font-vw(16, $color: var(--text-sub));
+    word-break: keep-all;
+    line-height: 1.4;
+  }
+
+  &__sections {
+    display: flex;
+    flex-direction: column;
+    gap: vw(8);
+    line-height: 1.6;
+  }
+
+  &__section {
+    display: flex;
+    align-items: flex-start;
+    gap: vw(12);
+  }
+
+  &__sectionTitle {
+    @include font-vw(18, $weight: 600, $color: var(--accent-brand));
+  }
+
+  &__summary,
+  &__praise {
+    @include font-vw(18, $color: var(--text-main));
+  }
+
+  &__content {
+    margin-top: vw(24);
+    padding-top: vw(36);
+    border-top: 1px solid var(--accent-border-subtle);
+  }
+
+  &__contentTitle {
+    @include font-vw(20, $weight: 600, $color: var(--accent-brand));
+    margin-bottom: vw(16);
+  }
+
+  &__contentLoading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: vw(16);
+    text-align: center;
+    padding: vw(40);
+    @include font-vw(16, $color: var(--text-sub));
+  }
+
+  &__contentBody {
+    // MDX 스타일은 mdxContent 클래스에서 처리됨
+    margin-block: 0 !important;
+    padding-block-end: 0 !important;
+    border: 0 !important;
+    font-size: vw(16) !important;
+    word-break: keep-all !important;
+    h3 {
+      color: var(--accent-brand);
+    }
+  }
+
+  &__contentWrap {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: vw(24);
+  }
+}
+
+// 반응형 디자인
+@include mq(pc-sm) {
+  .inner {
+    padding-block: vw(60) vw(80);
+  }
+
+  .items {
+    &__list {
+      grid-template-columns: repeat(2, 1fr);
+      gap: vw(24);
+      margin-bottom: vw(40);
+    }
+
+    &__controls {
+      gap: vw(12);
+    }
+  }
+
+  .item {
+    &__thumbnail {
+      height: vw(160);
+    }
+
+    &__info {
+      padding: vw(16);
+    }
+
+    &__title {
+      @include font-vw(16);
+    }
+
+    &__date {
+      @include font-vw(12);
+      word-break: keep-all;
+      line-height: 1.4;
+      display: flex;
+      flex-direction: column;
+      gap: vw(2);
+    }
+
+    &__dateMain {
+      @include font-vw(12);
+    }
+
+    &__dateWeek {
+      @include font-vw(10);
+    }
+  }
+
+  .control {
+    &__prev,
+    &__next {
+      padding: vw(10) vw(16);
+      @include font-vw(12);
+    }
+
+    &__page {
+      width: vw(32);
+      height: vw(32);
+      @include font-vw(12);
+    }
+  }
+
+  .loading {
+    padding: vw(60);
+    @include font-vw(16);
+  }
+
+  .content {
+    margin-top: vw(40);
+  }
+
+  .latest {
+    padding: vw(24);
+
+    &__title {
+      @include font-vw(20);
+      margin-bottom: vw(16);
+      display: flex;
+      flex-direction: column;
+      gap: vw(2);
+    }
+
+    &__dateMain {
+      @include font-vw(20);
+    }
+
+    &__dateWeek {
+      @include font-vw(14);
+    }
+
+    &__bulletinTitle {
+      @include font-vw(18);
+    }
+
+    &__date {
+      @include font-vw(14);
+      word-break: keep-all;
+      line-height: 1.4;
+    }
+
+    &__sections {
+      gap: vw(16);
+    }
+
+    &__section {
+      padding: vw(16);
+    }
+
+    &__sectionTitle {
+      @include font-vw(14);
+    }
+
+    &__summary,
+    &__praise {
+      @include font-vw(12);
+    }
+
+    &__contentTitle {
+      @include font-vw(18);
+    }
+
+    &__contentLoading {
+      padding: vw(30);
+      @include font-vw(14);
+    }
+
+    &__contentBody {
+      margin-top: vw(12);
+    }
+  }
+}
+
+@include mq(mo) {
+  .inner {
+    padding-block: vw(40) vw(60);
+  }
+
+  .items {
+    &__list {
+      grid-template-columns: 1fr;
+      gap: vw(20);
+      margin-bottom: vw(32);
+    }
+
+    &__controls {
+      gap: vw(8);
+    }
+  }
+
+  .item {
+    &__info {
+      padding: vw(12);
+    }
+
+    &__title {
+      @include font-vw(14);
+    }
+
+    &__date {
+      @include font-vw(11);
+      display: flex;
+      flex-direction: column;
+      gap: vw(1);
+    }
+
+    &__dateMain {
+      @include font-vw(11);
+    }
+
+    &__dateWeek {
+      @include font-vw(9);
+    }
+  }
+
+  .control {
+    &__prev,
+    &__next {
+      padding: vw(8) vw(12);
+      @include font-vw(11);
+    }
+
+    &__page {
+      width: vw(28);
+      height: vw(28);
+      @include font-vw(11);
+    }
+  }
+
+  .loading {
+    padding: vw(40);
+    @include font-vw(14);
+  }
+
+  .content {
+    margin-top: vw(32);
+  }
+
+  .latest {
+    padding: vw(20);
+
+    &__title {
+      @include font-vw(18);
+      margin-bottom: vw(12);
+      display: flex;
+      flex-direction: column;
+      gap: vw(2);
+    }
+
+    &__dateMain {
+      @include font-vw(18);
+    }
+
+    &__dateWeek {
+      @include font-vw(12);
+    }
+
+    &__bulletinTitle {
+      @include font-vw(16);
+    }
+
+    &__date {
+      @include font-vw(12);
+      word-break: keep-all;
+      line-height: 1.4;
+    }
+
+    &__sections {
+      gap: vw(12);
+    }
+
+    &__section {
+      padding: vw(12);
+    }
+
+    &__sectionTitle {
+      @include font-vw(12);
+    }
+
+    &__summary,
+    &__praise {
+      @include font-vw(11);
+    }
+
+    &__contentTitle {
+      @include font-vw(16);
+    }
+
+    &__contentLoading {
+      padding: vw(20);
+      @include font-vw(12);
+    }
+
+    &__contentBody {
+      margin-top: vw(8);
+    }
+  }
+}

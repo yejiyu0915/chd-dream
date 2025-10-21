@@ -28,6 +28,8 @@ export default function Breadcrumbs({ className, isDetail }: BreadcrumbsProps) {
     news: 'NEWS',
     notice: '공지사항',
     schedule: '일정',
+    worship: '예배 안내',
+    bulletin: '온라인 주보',
     // 다른 경로에 대한 이름 추가
   };
 

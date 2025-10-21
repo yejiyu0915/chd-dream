@@ -688,7 +688,7 @@ export async function getSermonData(): Promise<SermonItem | null> {
   )();
 }
 
-// Notion 데이터베이스에서 최신 주보 데이터 가져오기
+// Notion 데이터베이스에서 최신 주보 데이터 가져오기 (단일)
 export async function getBulletinData(): Promise<BulletinItem | null> {
   // 개발 환경에서는 캐시를 비활성화
   if (process.env.NODE_ENV === 'development') {
@@ -710,6 +710,22 @@ export async function getBulletinData(): Promise<BulletinItem | null> {
       return bulletins.length > 0 ? bulletins[0] : null;
     },
     ['bulletin-data'],
+    { revalidate: 300, tags: ['bulletin-list'] } // 5분 캐시, 태그 기반 재검증
+  )();
+}
+
+// Notion 데이터베이스에서 모든 주보 데이터 가져오기 (목록용)
+export async function getBulletinListData(): Promise<BulletinItem[]> {
+  // 개발 환경에서는 캐시를 비활성화
+  if (process.env.NODE_ENV === 'development') {
+    return getPublishedNotionData<BulletinItem>('NOTION_SERMON_ID', mapPageToBulletinItem, 1000);
+  }
+
+  return unstable_cache(
+    async () => {
+      return getPublishedNotionData<BulletinItem>('NOTION_SERMON_ID', mapPageToBulletinItem, 1000);
+    },
+    ['bulletin-list-data'],
     { revalidate: 300, tags: ['bulletin-list'] } // 5분 캐시, 태그 기반 재검증
   )();
 }
@@ -859,17 +875,60 @@ export async function getNotionPageAndContentBySlug(
 
         const page = response.results[0]; // 첫 번째 결과가 페이지 객체여야 합니다.
 
-        // 2. 페이지의 모든 블록 가져오기
-        const blocks: BlockObjectResponse[] = [];
-        let cursor: string | null = null;
-        do {
-          const blockResponse = await notion.blocks.children.list({
-            block_id: page.id,
-            start_cursor: cursor || undefined,
-          });
-          blocks.push(...(blockResponse.results as BlockObjectResponse[]));
-          cursor = blockResponse.next_cursor;
-        } while (cursor);
+        // 2. 페이지의 모든 블록 가져오기 (중첩 구조 포함)
+        const getAllBlocksWithChildren = async (blockId: string): Promise<any[]> => {
+          const allBlocks: any[] = [];
+          let cursor: string | null = null;
+
+          do {
+            const blockResponse = await notion.blocks.children.list({
+              block_id: blockId,
+              start_cursor: cursor || undefined,
+            });
+
+            const blocks = blockResponse.results as BlockObjectResponse[];
+
+            // 각 블록에 대해 children을 재귀적으로 가져오기
+            for (const block of blocks) {
+              const blockWithChildren = { ...block };
+
+              // children이 있는 블록 타입들만 재귀적으로 처리
+              if (
+                block.type === 'bulleted_list_item' ||
+                block.type === 'numbered_list_item' ||
+                block.type === 'toggle' ||
+                block.type === 'callout'
+              ) {
+                try {
+                  const childBlocks = await getAllBlocksWithChildren(block.id);
+                  blockWithChildren.children = childBlocks;
+                } catch (error) {
+                  // children을 가져올 수 없는 경우 무시
+                  console.warn(`Could not fetch children for block ${block.id}:`, error);
+                }
+              } else if (block.type === 'table') {
+                // 테이블의 경우 table_rows를 별도로 가져오기
+                try {
+                  const tableRowsResponse = await notion.blocks.children.list({
+                    block_id: block.id,
+                  });
+                  const tableRows = tableRowsResponse.results;
+                  blockWithChildren.table_rows = tableRows;
+                } catch (error) {
+                  console.warn(`Could not fetch table rows for block ${block.id}:`, error);
+                }
+              }
+
+              allBlocks.push(blockWithChildren);
+            }
+
+            cursor = blockResponse.next_cursor;
+          } while (cursor);
+
+          return allBlocks;
+        };
+
+        const blocks = await getAllBlocksWithChildren(page.id);
 
         return { page: page as PageObjectResponse, blocks };
       } catch (error: unknown) {
@@ -879,7 +938,7 @@ export async function getNotionPageAndContentBySlug(
       }
     },
     [`${databaseIdEnvVar}-detail-${slug}`],
-    { revalidate: 60, tags: [`${databaseIdEnvVar}-post-${slug}`] }
+    { revalidate: 300, tags: [`${databaseIdEnvVar}-post-${slug}`] } // 5분 캐시로 증가
   )(databaseIdEnvVar, slug);
 }
 

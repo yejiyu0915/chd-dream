@@ -20,5 +20,13 @@ export const pageMeta: Record<string, PageMeta> = {
     title: '일정',
     description: '교회의 다양한 일정과 행사를 확인하세요.',
   },
+  '/worship/schedule': {
+    title: '예배 안내',
+    description: '예배 시간표를 확인하세요.',
+  },
+  '/worship/bulletin': {
+    title: '온라인 주보',
+    description: '이번 주 주보와 지난 주보를 확인하세요.',
+  },
   // 여기에 추가적인 info 페이지들의 메타데이터를 정의합니다.
 };

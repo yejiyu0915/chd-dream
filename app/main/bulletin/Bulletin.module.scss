@@ -4,10 +4,10 @@
   position: relative;
   border-radius: calc(var(--inner-padding) * 1.5) calc(var(--inner-padding) * 1.5) 0 0;
   background-color: var(--bg-page);
-  background-image: url('/main/bulltein.jpg');
+  background-image: url('/main/quick-link-bg.jpg');
   background-repeat: no-repeat;
-  background-position: 30% top;
-  background-size: 150% auto;
+  background-position: center bottom;
+  background-size: 100% auto;
   letter-spacing: -0.05em;
   &::before {
     content: '';
@@ -254,7 +254,7 @@
     }
   }
   @include mq(mo) {
-    background-size: 180% auto;
+    background-size: auto 100%;
     .inner {
       padding: calc(var(--inner-padding) * 4) var(--inner-padding) calc(var(--inner-padding) * 2);
     }
