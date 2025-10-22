@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Spinner from '@/common/components/utils/Spinner';
 import n from '@/app/info/notice/NoticeList.module.scss';
 import { NoticeItem } from '@/lib/notion';
@@ -20,6 +21,62 @@ export default function NoticeListDisplay({
   isError,
   error,
 }: NoticeListDisplayProps) {
+  const router = useRouter();
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const prefetchedLinks = useRef<Set<string>>(new Set());
+
+  // hover 시 페이지 프리패치 (PC용)
+  const handleMouseEnter = (link: string) => {
+    if (!prefetchedLinks.current.has(link)) {
+      router.prefetch(link);
+      prefetchedLinks.current.add(link);
+    }
+  };
+
+  // touchstart 시 페이지 프리패치 (모바일용)
+  const handleTouchStart = (link: string) => {
+    if (!prefetchedLinks.current.has(link)) {
+      router.prefetch(link);
+      prefetchedLinks.current.add(link);
+    }
+  };
+
+  // Intersection Observer로 뷰포트 내 링크 자동 프리패치 (모바일 최적화)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const link = entry.target.getAttribute('data-prefetch-href');
+            if (link && !prefetchedLinks.current.has(link)) {
+              router.prefetch(link);
+              prefetchedLinks.current.add(link);
+            }
+          }
+        });
+      },
+      {
+        rootMargin: '150px',
+        threshold: 0.1,
+      }
+    );
+
+    const linkElements = document.querySelectorAll('[data-prefetch-href]');
+    linkElements.forEach((element) => {
+      observerRef.current?.observe(element);
+    });
+
+    return () => {
+      observerRef.current?.disconnect();
+    };
+  }, [router, noticeData]);
+
   const initialDisplayCount = 8;
   const loadMoreCount = 8;
 
@@ -61,8 +118,14 @@ export default function NoticeListDisplay({
           <>
             <ul className={n.list}>
               {displayedNotices.map((item, _index) => (
-                <li key={item.id} className={n.list__item}>
-                  <Link href={item.link || '#'} className={n.list__link}>
+                <li key={item.id} className={n.list__item} data-prefetch-href={item.link || '#'}>
+                  <Link
+                    href={item.link || '#'}
+                    className={n.list__link}
+                    prefetch={true}
+                    onMouseEnter={() => handleMouseEnter(item.link || '#')}
+                    onTouchStart={() => handleTouchStart(item.link || '#')}
+                  >
                     <span className={n.list__index}>
                       {noticeData.length - noticeData.indexOf(item)}
                     </span>

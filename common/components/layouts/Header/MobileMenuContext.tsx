@@ -15,6 +15,8 @@ interface MobileMenuContextType {
 const MobileMenuContext = createContext<MobileMenuContextType | undefined>(undefined);
 
 export function MobileMenuProvider({ children }: { children: ReactNode }) {
+  'use memo'; // React 컴파일러 최적화 적용
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [lenisInstance, setLenisInstance] = useState<Lenis | null>(null);
 

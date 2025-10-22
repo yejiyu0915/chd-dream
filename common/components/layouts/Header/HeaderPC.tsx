@@ -13,6 +13,8 @@ interface HeaderPCProps {
 }
 
 export default function HeaderPC({ isScrolled }: HeaderPCProps) {
+  'use memo'; // React 컴파일러 최적화 적용
+
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isMenuHovered, setIsMenuHovered] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -158,7 +160,10 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
                         </div>
                         <div className={h.subMenu__right}>
                           <div className={h.subMenu__visual}>
-                            <div className={h.subMenu__visualImage}>
+                            <div
+                              className={h.subMenu__visualImage}
+                              style={{ position: 'relative' }}
+                            >
                               <Image
                                 src={`/common/gnb-${index + 1}.jpg`}
                                 alt={`${menuItem.name} 서브메뉴 이미지`}

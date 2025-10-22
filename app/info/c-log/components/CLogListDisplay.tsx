@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { CLogItem } from '@/lib/notion';
 import Spinner from '@/common/components/utils/Spinner'; // Spinner 컴포넌트 임포트
 import c from '@/app/info/c-log/CLogList.module.scss'; // infoLayout.module.scss 사용
@@ -26,8 +27,65 @@ export default function CLogList({
   error,
   viewMode: _viewMode, // viewMode prop을 _viewMode로 변경하여 사용되지 않음을 명시
 }: CLogListProps) {
+  const router = useRouter();
   const [itemsPerPage, setItemsPerPage] = useState(PC_ITEMS_PER_LOAD);
   const [visibleItemCount, setVisibleItemCount] = useState(itemsPerPage);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const prefetchedLinks = useRef<Set<string>>(new Set());
+
+  // hover 시 페이지 프리패치 (PC용)
+  const handleMouseEnter = (link: string) => {
+    if (!prefetchedLinks.current.has(link)) {
+      router.prefetch(link);
+      prefetchedLinks.current.add(link);
+    }
+  };
+
+  // touchstart 시 페이지 프리패치 (모바일용)
+  const handleTouchStart = (link: string) => {
+    if (!prefetchedLinks.current.has(link)) {
+      router.prefetch(link);
+      prefetchedLinks.current.add(link);
+    }
+  };
+
+  // Intersection Observer로 뷰포트 내 링크 자동 프리패치 (모바일 최적화)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // 이미 observer가 있으면 정리
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const link = entry.target.getAttribute('data-prefetch-href');
+            if (link && !prefetchedLinks.current.has(link)) {
+              router.prefetch(link);
+              prefetchedLinks.current.add(link);
+            }
+          }
+        });
+      },
+      {
+        rootMargin: '150px', // 뷰포트 150px 전부터 프리패치 시작
+        threshold: 0.1, // 10%만 보여도 트리거
+      }
+    );
+
+    // 모든 링크 요소를 observe
+    const linkElements = document.querySelectorAll('[data-prefetch-href]');
+    linkElements.forEach((element) => {
+      observerRef.current?.observe(element);
+    });
+
+    return () => {
+      observerRef.current?.disconnect();
+    };
+  }, [router, visibleItemCount, cLogData]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -121,9 +179,15 @@ export default function CLogList({
           <>
             {/* viewMode prop에 따라 c.list--grid 또는 c.list--list 클래스 추가 */}
             <ul className={`${c[`list--${_viewMode}`]}`}>
-              {cLogData.slice(0, visibleItemCount).map((item) => (
-                <li key={item.id} className={c.list__item}>
-                  <Link href={item.link || '#'} className={c.list__link}>
+              {cLogData.slice(0, visibleItemCount).map((item, index) => (
+                <li key={item.id} className={c.list__item} data-prefetch-href={item.link || '#'}>
+                  <Link
+                    href={item.link || '#'}
+                    className={c.list__link}
+                    prefetch={true}
+                    onMouseEnter={() => handleMouseEnter(item.link || '#')}
+                    onTouchStart={() => handleTouchStart(item.link || '#')}
+                  >
                     {item.imageUrl && (
                       <Image
                         src={item.imageUrl}
@@ -131,6 +195,8 @@ export default function CLogList({
                         width={500}
                         height={300}
                         className={c.list__image}
+                        priority={index < 2} // 처음 2개 이미지는 우선 로드
+                        loading={index < 2 ? undefined : 'lazy'}
                       />
                     )}
                     <div className={c.list__content}>

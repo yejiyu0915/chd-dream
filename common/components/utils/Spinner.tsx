@@ -11,6 +11,8 @@ export default function Spinner({
   color = 'var(--accent-brand)',
   className = '',
 }: SpinnerProps) {
+  'use memo'; // React 컴파일러 최적화 적용
+
   const sizeMap = {
     sm: '20px',
     md: '40px',

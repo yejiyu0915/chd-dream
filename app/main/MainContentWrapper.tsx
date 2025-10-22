@@ -14,6 +14,8 @@ export default function MainContentWrapper({
   kvSliderItems,
   bulletinData,
 }: MainContentWrapperProps) {
+  'use memo'; // React 컴파일러 최적화 적용
+
   const [kvHeight, setKvHeight] = useState('100vh'); // KV 높이 상태
 
   return (

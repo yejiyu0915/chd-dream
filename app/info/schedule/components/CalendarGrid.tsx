@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarDay, DAYS_OF_WEEK } from '../types/types';
+import { CalendarDay, DAYS_OF_WEEK } from '@/app/info/schedule/types/types';
 import s from '@/app/info/schedule/Schedule.module.scss';
 
 interface CalendarGridProps {
@@ -17,6 +17,8 @@ export default function CalendarGrid({
   selectedDate,
   onDateClick,
 }: CalendarGridProps) {
+  'use memo'; // React 컴파일러 최적화 적용
+
   return (
     <div className={s.calendarGrid}>
       {/* 요일 헤더 */}

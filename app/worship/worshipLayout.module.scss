@@ -1,0 +1,92 @@
+@use '@/common/styles/mixins/function' as *;
+
+.worshipLayout {
+  .titleSection {
+    // background: var(--bg-page);
+    background: url('/main/quick-link-bg.jpg') no-repeat center center / cover;
+    position: relative;
+
+    .inner {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      height: 100%;
+      position: relative;
+      z-index: 1;
+    }
+    .title {
+      padding-block: vw(160) vw(80);
+      position: relative;
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, 45%);
+        width: vw(10);
+        height: vw(10);
+        border-radius: 50%;
+        background-color: var(--accent-brand);
+      }
+    }
+    .pageTitle {
+      @include font-vw(70, $weight: 600);
+      color: var(--text-main);
+      text-align: center;
+    }
+    .pageDesc {
+      margin-block-start: vw(36);
+      @include font-vw(24, $color: var(--text-main));
+      text-align: center;
+      opacity: 0.9;
+    }
+  }
+
+  @include mq(pc-sm) {
+    .titleSection {
+      background-color: #f9f9f9;
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background-color: var(--accent-border-subtle);
+      }
+      .inner {
+        justify-content: flex-start;
+      }
+      .title {
+        padding-block: vw(150) vw(48);
+        &::after {
+          display: none;
+        }
+      }
+      .pageTitle {
+        @include font-vw(64);
+        text-align: left;
+      }
+      .pageDesc {
+        margin-block-start: vw(24);
+        @include font-vw(20);
+        text-align: left;
+      }
+    }
+  }
+  @include mq(mo) {
+    .titleSection {
+      border-bottom: 0;
+      .title {
+        padding-block: vw(136) vw(24);
+      }
+      .pageTitle {
+        @include font-vw(36);
+      }
+      .pageDesc {
+        margin-block-start: vw(18);
+        @include font-vw(14);
+      }
+    }
+  }
+}

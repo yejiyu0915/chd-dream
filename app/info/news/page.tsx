@@ -18,7 +18,7 @@ export default function NewsListPage() {
     setPageTitle('NEWS');
   }, [setPageTitle]);
 
-  // 클라이언트에서 useQuery로 데이터 가져오기 (서버에서 prefetch된 데이터를 사용)
+  // 클라이언트에서 useQuery로 데이터 가져오기
   const {
     data: newsData,
     isLoading,
@@ -33,12 +33,9 @@ export default function NewsListPage() {
       }
       return response.json();
     },
-    staleTime: 0, // 캐시 사용하지 않음 - 항상 최신 데이터 가져오기
+    staleTime: 1000 * 60 * 5, // 5분간 캐시 유지
     retry: 3, // 실패 시 3번 재시도
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // 지수 백오프
-    refetchOnWindowFocus: true, // 창 포커스 시 데이터 새로고침
-    refetchOnMount: true, // 컴포넌트 마운트 시 데이터 새로고침
-    refetchInterval: 1000 * 60 * 2, // 2분마다 자동 새로고침
   });
 
   return (

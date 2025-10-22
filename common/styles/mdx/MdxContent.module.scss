@@ -4,7 +4,7 @@
   margin-block: vw(80);
   padding-block-end: vw(80);
   border-bottom: vw(1) solid var(--accent-border);
-  @include font-vw(16);
+  @include font-vw(20);
   word-break: break-all;
   @include mq(pc-sm) {
     margin-block: vw(60);
@@ -13,7 +13,7 @@
   @include mq(mo) {
     margin-block: vw(48);
     padding-block-end: vw(24);
-    @include font-vw(14);
+    @include font-vw(15);
   }
   h1,
   h2,

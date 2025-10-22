@@ -32,6 +32,8 @@ const checkIfKvVisible = (element: HTMLElement | null): boolean => {
 };
 
 export default function KVSlider({ kvHeight }: KVSliderProps) {
+  'use memo'; // React 컴파일러 최적화 적용
+
   const sliderRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<SwiperCore | null>(null);
   const { isMobileMenuOpen } = useMobileMenu();

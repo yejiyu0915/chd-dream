@@ -28,12 +28,9 @@ export default function NoticeListPage() {
       }
       return response.json();
     },
-    staleTime: 0,
+    staleTime: 1000 * 60 * 5, // 5분간 캐시 유지
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
-    refetchInterval: 1000 * 60 * 2,
   });
 
   return (

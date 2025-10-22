@@ -8,12 +8,9 @@ import Image from 'next/image';
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     // 기본 HTML 태그들을 커스텀 컴포넌트로 매핑
-    h1: ({ children }) => <h1>{children}</h1>,
-    h2: ({ children }) => <h2>{children}</h2>,
-    h3: ({ children }) => <h3>{children}</h3>,
-    h4: ({ children }) => <h4>{children}</h4>,
-    h5: ({ children }) => <h5>{children}</h5>,
-    h6: ({ children }) => <h6>{children}</h6>,
+    h1: ({ children }) => <h2>{children}</h2>,
+    h2: ({ children }) => <h3>{children}</h3>,
+    h3: ({ children }) => <h4>{children}</h4>,
     p: ({ children }) => <p>{children}</p>,
     ul: ({ children }) => <ul>{children}</ul>,
     ol: ({ children }) => <ol>{children}</ol>,
@@ -35,6 +32,16 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         sizes="(max-width: 768px) 100vw, 80vw"
       />
     ),
+    table: ({ children }) => (
+      <div className="table-wrapper">
+        <table>{children}</table>
+      </div>
+    ),
+    thead: ({ children }) => <thead>{children}</thead>,
+    tbody: ({ children }) => <tbody>{children}</tbody>,
+    tr: ({ children }) => <tr>{children}</tr>,
+    th: ({ children }) => <th>{children}</th>,
+    td: ({ children }) => <td>{children}</td>,
     // `components` prop을 통해 전달될 수 있는 추가 사용자 정의 컴포넌트들도 병합합니다.
     ...components,
   };

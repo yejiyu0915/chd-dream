@@ -14,6 +14,8 @@ interface MainContentInnerProps {
 }
 
 export default function MainContentInner({ bulletinData, kvHeight }: MainContentInnerProps) {
+  'use memo'; // React 컴파일러 최적화 적용
+
   // kvHeight가 'vh' 단위인지 'px' 단위인지 확인하여 0.95를 곱합니다.
   const calculatedPaddingTop = kvHeight.endsWith('vh')
     ? `${parseFloat(kvHeight) * 0.95}vh`

@@ -258,7 +258,10 @@ main {
     line-height: 1.5;
   }
   &-link {
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
     padding: 1em 1.75em 1em 2.5em;
     border-radius: 1em;
     background-color: var(--accent-brand);

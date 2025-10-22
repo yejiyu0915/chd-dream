@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Breadcrumbs from '@/common/components/layouts/Breadcrumbs';
 import { usePageTitle } from '@/app/info/utils/title-context';
-import info from './infoLayout.module.scss';
+import info from '@/app/info/infoLayout.module.scss';
 import { pageMeta } from '@/common/data/list'; // pageMeta 임포트
 
 interface InfoLayoutProps {

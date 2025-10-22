@@ -12,6 +12,8 @@ interface HeaderMoProps {
 }
 
 export default function HeaderMo({ isScrolled }: HeaderMoProps) {
+  'use memo'; // React 컴파일러 최적화 적용
+
   const scrollYRef = useRef(0);
 
   const { isMobileMenuOpen, toggleMobileMenu, stopLenis, startLenis } = useMobileMenu();
@@ -21,8 +23,6 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
     if (isMobileMenuOpen) {
       // 스크롤 위치 저장
       scrollYRef.current = window.scrollY;
-      console.log('메뉴 열림 - 스크롤 위치:', scrollYRef.current);
-      console.log('isScrolled 상태:', isScrolled);
 
       // body에 스크롤 위치를 data 속성으로 저장
       document.body.setAttribute('data-scroll-y', scrollYRef.current.toString());
@@ -31,15 +31,10 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
       document.body.style.setProperty('top', `-${scrollYRef.current}px`, 'important');
       document.body.classList.add('mobile-menu-open');
       stopLenis();
-
-      // 추가 확인: 스타일이 제대로 적용되었는지 확인
-      console.log('적용된 top 값:', document.body.style.top);
     } else {
       // 저장된 스크롤 위치 복원
       const savedScrollY = document.body.getAttribute('data-scroll-y');
       const scrollY = savedScrollY ? parseInt(savedScrollY, 10) : scrollYRef.current;
-
-      console.log('메뉴 닫힘 - 복원할 스크롤 위치:', scrollY);
 
       // body 스타일 초기화
       document.body.style.removeProperty('top');
@@ -98,7 +93,7 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
                       </div>
                       <div className={h.mobileSubMenuBottom}>
                         <div className={h.mobileSubMenuVisual}>
-                          <div className={h.mobileVisualImage}>
+                          <div className={h.mobileVisualImage} style={{ position: 'relative' }}>
                             <Image
                               src={`/common/gnb-${index + 1}.jpg`}
                               alt={`${menuItem.name} 서브메뉴 이미지`}

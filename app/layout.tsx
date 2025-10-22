@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import '@/common/styles/globals.scss';
-import { Providers } from './providers';
+import { Providers } from '@/app/providers';
 import { MobileMenuProvider } from '@/common/components/layouts/Header/MobileMenuContext';
 import LayoutContent from '@/common/components/layouts/LayoutContent';
 

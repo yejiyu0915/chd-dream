@@ -6,7 +6,7 @@ import { CalendarDay, SpanningEvent } from '@/app/info/schedule/types/types';
 import { useHolidayInfo, useScheduleData } from '@/app/info/schedule/types/hooks';
 import CalendarHeader from '@/app/info/schedule/components/CalendarHeader';
 import CalendarGrid from '@/app/info/schedule/components/CalendarGrid';
-import EventPanel from './EventPanel';
+import EventPanel from '@/app/info/schedule/components/EventPanel';
 import ScheduleViewModeFilter from '@/app/info/schedule/components/ScheduleViewModeFilter';
 import SchedulePeriodFilter from '@/app/info/schedule/components/SchedulePeriodFilter';
 import ScheduleListView from '@/app/info/schedule/components/ScheduleListView';
@@ -15,6 +15,8 @@ import s from '@/app/info/schedule/Schedule.module.scss';
 // 고정 px 값 사용 - 리사이즈 시 재계산으로 안정성 확보
 
 export default function ScheduleCalendar() {
+  'use memo'; // React 컴파일러 최적화 적용
+
   const [currentDate, setCurrentDate] = useState<Date | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isMobilePanelOpen, setIsMobilePanelOpen] = useState(false);
@@ -349,7 +351,31 @@ export default function ScheduleCalendar() {
   if (isLoading || !currentDate) {
     return (
       <div className={s.calendarContainer}>
-        <div className={s.loadingState}>일정을 불러오는 중...</div>
+        <div className={s.loadingState}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '16px',
+              padding: '40px 20px',
+            }}
+          >
+            <div
+              style={{
+                width: '48px',
+                height: '48px',
+                border: '4px solid var(--color-gray-200)',
+                borderTopColor: 'var(--color-primary)',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite',
+              }}
+            />
+            <p style={{ color: 'var(--color-text-secondary)', fontSize: '14px' }}>
+              일정을 불러오는 중...
+            </p>
+          </div>
+        </div>
       </div>
     );
   }

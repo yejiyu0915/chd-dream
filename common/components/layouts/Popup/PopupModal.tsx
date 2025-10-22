@@ -30,6 +30,8 @@ interface PopupModalProps {
 }
 
 export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
+  'use memo'; // React 컴파일러 최적화 적용
+
   const [isVisible, setIsVisible] = useState(false);
   const [newsContent, setNewsContent] = useState<NewsContent | null>(null);
   const [isLoadingContent, setIsLoadingContent] = useState(false);

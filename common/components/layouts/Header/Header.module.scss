@@ -431,7 +431,7 @@
       .subMenu {
         top: vw(--header-height); // 스크롤 시 헤더 높이 (로고 36px + 메뉴 50px + 패딩 12px*2)
         &__list {
-          gap: vw(2);
+          gap: vw(6);
         }
       }
       .util {
@@ -754,7 +754,7 @@
         .mobileVisualImage {
           position: relative;
           width: 100%;
-          height: vw(120);
+          height: vw(160);
           border-radius: vw(8);
           overflow: hidden;
           background: linear-gradient(
