@@ -45,7 +45,7 @@ const BulletinContent = memo(function BulletinContent({
   const formattedDate = formatDate(displayBulletin.date);
 
   return (
-    <div className={b.content}>
+    <div className={b.content} style={{ minHeight: contentLoading ? '60vh' : 'auto' }}>
       <div className={b.latest}>
         <div className={b.latest__title}>
           <span className={b.latest__dateMain}>{formattedDate.date}</span>
