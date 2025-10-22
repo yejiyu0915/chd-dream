@@ -1,11 +1,16 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import PageTitleSetter from '@/app/worship/components/PageTitleSetter';
-import BulletinList from './components/BulletinList';
-import BulletinContent from './components/BulletinContent';
-import { formatDate } from './utils/bulletinUtils';
-import { convertBlocksToMdxHtml, processHtmlTags } from './utils/htmlConverter';
+import BulletinList from '@/app/worship/bulletin/components/BulletinList';
+import BulletinContent from '@/app/worship/bulletin/components/BulletinContent';
+import Spinner from '@/common/components/utils/Spinner';
+import { formatDate } from '@/app/worship/bulletin/utils/bulletinUtils';
+import {
+  convertBlocksToMdxHtml,
+  processHtmlTags,
+} from '@/app/worship/bulletin/utils/htmlConverter';
 import b from '@/app/worship/bulletin/Bulletin.module.scss';
 
 interface BulletinItem {
@@ -20,10 +25,12 @@ interface BulletinItem {
 }
 
 export default function BulletinPage() {
-  const [bulletinList, setBulletinList] = useState<BulletinItem[]>([]);
+  const queryClient = useQueryClient();
+  const lastModifiedHeaderValue = useRef<string | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null); // 스크롤 대상 ref
+
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
   const [latestBulletin, setLatestBulletin] = useState<BulletinItem | null>(null);
   const [selectedBulletin, setSelectedBulletin] = useState<BulletinItem | null>(null);
   const [bulletinContent, setBulletinContent] = useState<string>('');
@@ -37,6 +44,58 @@ export default function BulletinPage() {
   // 실제 적용된 필터 상태
   const [selectedYear, setSelectedYear] = useState<string>('all');
   const [selectedMonth, setSelectedMonth] = useState<string>('all');
+
+  const itemsPerPage = 6; // 2x3 그리드
+
+  // 주보 리스트 데이터 가져오기 (If-Modified-Since 헤더 사용)
+  const fetchBulletinListData = async (): Promise<BulletinItem[]> => {
+    const headers: HeadersInit = {};
+    if (lastModifiedHeaderValue.current) {
+      headers['If-Modified-Since'] = lastModifiedHeaderValue.current;
+    }
+
+    const response = await fetch('/api/bulletin', { headers });
+
+    // 304 응답: 데이터가 변경되지 않음 - 캐시된 데이터 반환
+    if (response.status === 304) {
+      return (queryClient.getQueryData(['bulletin-list']) as BulletinItem[]) || [];
+    }
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Last-Modified 헤더 저장
+    const newLastModified = response.headers.get('Last-Modified');
+    if (newLastModified) {
+      lastModifiedHeaderValue.current = newLastModified;
+    }
+
+    const data = await response.json();
+    // API 응답이 배열인 경우와 객체인 경우 모두 처리
+    return Array.isArray(data) ? data : data.items || [];
+  };
+
+  // React Query로 주보 리스트 관리
+  const {
+    data: bulletinList = [],
+    isLoading: loading,
+    isError,
+    error,
+  } = useQuery<BulletinItem[], Error>({
+    queryKey: ['bulletin-list'],
+    queryFn: fetchBulletinListData,
+    staleTime: 1000 * 60 * 5, // 5분간 캐시 유지
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  });
+
+  // 최신 주보 설정
+  useEffect(() => {
+    if (bulletinList.length > 0 && !latestBulletin) {
+      setLatestBulletin(bulletinList[0]);
+    }
+  }, [bulletinList, latestBulletin]);
 
   // 사용 가능한 연도/월 목록 생성
   const availableYears = React.useMemo(() => {
@@ -60,8 +119,6 @@ export default function BulletinPage() {
     });
     return Array.from(months).sort((a, b) => a.localeCompare(b)); // 월순 정렬
   }, [bulletinList]);
-
-  const itemsPerPage = 6; // 2x3 그리드
 
   // 필터링된 아이템들
   const filteredItems = bulletinList.filter((item) => {
@@ -108,11 +165,37 @@ export default function BulletinPage() {
     setCurrentPage(1); // 필터 적용 시 첫 페이지로 이동
   };
 
+  // Lenis를 활용한 스크롤 함수
+  const scrollToContent = useCallback(() => {
+    if (!contentRef.current) return;
+
+    // 약간의 지연을 두어 상태 업데이트 완료 보장
+    setTimeout(() => {
+      const target = contentRef.current;
+      if (typeof window !== 'undefined' && window.lenis && target) {
+        // Lenis 스무스 스크롤 사용
+        // 요소의 위치를 계산하여 스크롤
+        const targetPosition = target.getBoundingClientRect().top + window.scrollY - 80;
+        window.lenis.scrollTo(targetPosition, {
+          duration: 1.2, // 1.2초 부드러운 스크롤
+        });
+      } else if (target) {
+        // Lenis가 없으면 기본 스크롤
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }
+    }, 100);
+  }, []);
+
   // 주보 아이템 클릭 핸들러 (최적화된 버전)
   const handleBulletinClick = useCallback(
     async (item: BulletinItem) => {
       // 이미 같은 주보가 선택되어 있고 내용이 있다면 중복 로드 방지
       if (selectedBulletin?.id === item.id && bulletinContent) {
+        // 같은 항목 클릭 시에도 상단으로 스크롤 (모바일 UX 개선)
+        scrollToContent();
         return;
       }
 
@@ -158,34 +241,8 @@ export default function BulletinPage() {
         setLoadingStep('');
       }
     },
-    [selectedBulletin?.id, bulletinContent]
+    [selectedBulletin?.id, bulletinContent, scrollToContent]
   );
-
-  // 주보 데이터 가져오기
-  useEffect(() => {
-    const fetchBulletins = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/bulletin');
-        const data = await response.json();
-
-        // API 응답이 배열인 경우와 객체인 경우 모두 처리
-        const items = Array.isArray(data) ? data : data.items || [];
-        setBulletinList(items);
-
-        // 최신 주보 설정 (첫 번째 아이템)
-        if (items.length > 0) {
-          setLatestBulletin(items[0]);
-        }
-      } catch {
-        // console.error('주보 데이터를 가져오는데 실패했습니다:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBulletins();
-  }, []); // 의존성 배열을 비워서 한 번만 실행
 
   // itemsPerPage나 필터가 변경될 때 totalPages 재계산
   useEffect(() => {
@@ -208,19 +265,77 @@ export default function BulletinPage() {
     }
   }, [latestBulletin, selectedBulletin, handleBulletinClick]);
 
+  // 주보 선택 시 자동 스크롤 (모바일 UX 개선)
+  useEffect(() => {
+    // 주보가 선택되고, 로딩이 완료되었을 때만 스크롤
+    if (selectedBulletin && !contentLoading && bulletinContent) {
+      scrollToContent();
+    }
+  }, [selectedBulletin, contentLoading, bulletinContent, scrollToContent]);
+
+  // 로딩 상태 처리 (초기 로드 시에만)
+  if (loading && bulletinList.length === 0) {
+    return (
+      <>
+        <PageTitleSetter title="온라인 주보" />
+        <div className={`${b.bulletin} detail-inner`}>
+          <div className={b.inner}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '60vh',
+                gap: '20px',
+                width: '100%',
+              }}
+            >
+              <Spinner size="lg" />
+              <p style={{ color: 'var(--color-text-secondary)', fontSize: '16px' }}>
+                주보를 불러오는 중...
+              </p>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // 에러 상태 처리
+  if (isError) {
+    return (
+      <>
+        <PageTitleSetter title="온라인 주보" />
+        <div className={`${b.bulletin} detail-inner`}>
+          <div className={b.inner}>
+            <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+              <p style={{ marginBottom: '10px' }}>주보 데이터를 가져오는데 실패했습니다.</p>
+              <p style={{ color: '#999', fontSize: '14px' }}>
+                {error?.message || '알 수 없는 오류가 발생했습니다.'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <PageTitleSetter title="온라인 주보" />
       <div className={`${b.bulletin} detail-inner`}>
         <div className={b.inner}>
-          <BulletinContent
-            selectedBulletin={selectedBulletin}
-            latestBulletin={latestBulletin}
-            bulletinContent={bulletinContent}
-            contentLoading={contentLoading}
-            loadingStep={loadingStep}
-            formatDate={formatDate}
-          />
+          <div ref={contentRef}>
+            <BulletinContent
+              selectedBulletin={selectedBulletin}
+              latestBulletin={latestBulletin}
+              bulletinContent={bulletinContent}
+              contentLoading={contentLoading}
+              loadingStep={loadingStep}
+              formatDate={formatDate}
+            />
+          </div>
 
           <BulletinList
             loading={loading}

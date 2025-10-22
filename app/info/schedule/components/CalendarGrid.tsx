@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarDay, DAYS_OF_WEEK } from '../types/types';
+import { CalendarDay, DAYS_OF_WEEK } from '@/app/info/schedule/types/types';
 import s from '@/app/info/schedule/Schedule.module.scss';
 
 interface CalendarGridProps {

@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Breadcrumbs from '@/common/components/layouts/Breadcrumbs';
 import { usePageTitle, PageTitleProvider } from '@/app/worship/utils/title-context';
-import worship from './worshipLayout.module.scss';
+import worship from '@/app/worship/worshipLayout.module.scss';
 import { pageMeta } from '@/common/data/list'; // pageMeta 임포트
 
 interface WorshipLayoutProps {

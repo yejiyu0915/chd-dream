@@ -99,7 +99,7 @@ const BulletinList = memo(function BulletinList({
         </div>
 
         <button className={b.filter__apply} onClick={onFilterApply}>
-          이동
+          적용
         </button>
       </div>
 

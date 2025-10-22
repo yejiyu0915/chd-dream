@@ -1,5 +1,9 @@
-import { extractText, flushCurrentList, renderChildren } from './bulletinUtils';
-import { renderTable } from './tableUtils';
+import {
+  extractText,
+  flushCurrentList,
+  renderChildren,
+} from '@/app/worship/bulletin/utils/bulletinUtils';
+import { renderTable } from '@/app/worship/bulletin/utils/tableUtils';
 
 // 변환 결과 캐시 (메모이제이션)
 const conversionCache = new Map<string, string>();

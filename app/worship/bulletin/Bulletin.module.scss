@@ -42,12 +42,17 @@
   }
 
   &__item {
+    --item-bg-color: var(--text-inverse);
+    --item-border-color: var(--accent-tertiary);
+    --item-border-color2: var(--accent-secondary);
+    --item-text-color: var(--accent-brand);
     width: 100%;
     height: vw(240);
     border-radius: vw(--border-radius) 0 0 vw(--border-radius);
     overflow: hidden;
     position: relative;
-    border: vw(--border-width) solid var(--accent-tertiary);
+    border: vw(--border-width) solid var(--item-border-color);
+    background-color: var(--item-bg-color);
     &::before {
       content: '';
       position: absolute;
@@ -56,10 +61,17 @@
       width: vw(4);
       height: 100%;
       box-sizing: content-box;
-      border: vw(--border-width) solid var(--accent-tertiary);
+      border: vw(--border-width) solid var(--item-border-color);
       border-top: 0;
       border-bottom: 0;
-      background-color: var(--accent-secondary);
+      background-color: var(--item-border-color2);
+    }
+
+    &Active {
+      --item-bg-color: var(--accent-brand);
+      --item-border-color: var(--accent-secondary);
+      --item-border-color2: var(--accent-brand);
+      --item-text-color: var(--text-inverse);
     }
   }
 
@@ -241,7 +253,7 @@
     width: 100%;
     height: 100%;
     padding: vw(20) vw(36) vw(12) vw(20);
-    color: var(--accent-brand);
+    color: var(--item-text-color);
     text-align: left;
   }
 
@@ -267,18 +279,6 @@
 
   &__dateWeek {
     @include font-vw(16);
-  }
-
-  &__itemActive {
-    border-color: var(--accent-brand);
-    background: var(--accent-brand);
-    color: white;
-
-    .item__dateMain,
-    .item__dateWeek,
-    .item__title {
-      color: white;
-    }
   }
   @include mq(pc-sm) {
     &__info {
@@ -432,7 +432,7 @@
   border-radius: vw(--border-radius);
   border: vw(--border-width) solid var(--accent-border-subtle);
   background-image: url('/main/bulltein3-1.jpg');
-  background-size: cover;
+  background-size: 100% auto;
   background-position: center top;
   background-repeat: no-repeat;
 }

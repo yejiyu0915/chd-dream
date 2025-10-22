@@ -1,4 +1,4 @@
-import { extractText } from './bulletinUtils';
+import { extractText } from '@/app/worship/bulletin/utils/bulletinUtils';
 
 // 테이블 처리 함수
 export const renderTable = (table: Record<string, unknown>): string => {
