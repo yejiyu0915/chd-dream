@@ -875,8 +875,13 @@ export async function getNotionPageAndContentBySlug(
 
         const page = response.results[0]; // 첫 번째 결과가 페이지 객체여야 합니다.
 
-        // 2. 페이지의 모든 블록 가져오기 (중첩 구조 포함)
-        const getAllBlocksWithChildren = async (blockId: string): Promise<any[]> => {
+        // 2. 페이지의 모든 블록 가져오기 (최적화된 버전)
+        const getAllBlocksWithChildren = async (blockId: string, depth = 0): Promise<any[]> => {
+          // 최대 깊이 제한 (성능 최적화)
+          if (depth > 3) {
+            return [];
+          }
+
           const allBlocks: any[] = [];
           let cursor: string | null = null;
 
@@ -888,19 +893,20 @@ export async function getNotionPageAndContentBySlug(
 
             const blocks = blockResponse.results as BlockObjectResponse[];
 
-            // 각 블록에 대해 children을 재귀적으로 가져오기
-            for (const block of blocks) {
-              const blockWithChildren = { ...block };
+            // 병렬 처리로 성능 개선
+            const blockPromises = blocks.map(async (block) => {
+              const blockWithChildren = { ...block } as any;
 
-              // children이 있는 블록 타입들만 재귀적으로 처리
+              // children이 있는 블록 타입들만 재귀적으로 처리 (깊이 제한)
               if (
-                block.type === 'bulleted_list_item' ||
-                block.type === 'numbered_list_item' ||
-                block.type === 'toggle' ||
-                block.type === 'callout'
+                (block.type === 'bulleted_list_item' ||
+                  block.type === 'numbered_list_item' ||
+                  block.type === 'toggle' ||
+                  block.type === 'callout') &&
+                depth < 2 // 중첩 깊이 제한
               ) {
                 try {
-                  const childBlocks = await getAllBlocksWithChildren(block.id);
+                  const childBlocks = await getAllBlocksWithChildren(block.id, depth + 1);
                   blockWithChildren.children = childBlocks;
                 } catch (error) {
                   // children을 가져올 수 없는 경우 무시
@@ -919,8 +925,12 @@ export async function getNotionPageAndContentBySlug(
                 }
               }
 
-              allBlocks.push(blockWithChildren);
-            }
+              return blockWithChildren;
+            });
+
+            // 모든 블록을 병렬로 처리
+            const processedBlocks = await Promise.all(blockPromises);
+            allBlocks.push(...processedBlocks);
 
             cursor = blockResponse.next_cursor;
           } while (cursor);
@@ -938,7 +948,10 @@ export async function getNotionPageAndContentBySlug(
       }
     },
     [`${databaseIdEnvVar}-detail-${slug}`],
-    { revalidate: 300, tags: [`${databaseIdEnvVar}-post-${slug}`] } // 5분 캐시로 증가
+    {
+      revalidate: 3600, // 1시간 캐시 (성능 최적화)
+      tags: [`${databaseIdEnvVar}-post-${slug}`, 'bulletin-content'],
+    }
   )(databaseIdEnvVar, slug);
 }
 

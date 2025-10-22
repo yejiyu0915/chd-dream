@@ -1,8 +1,44 @@
 import { extractText, flushCurrentList, renderChildren } from './bulletinUtils';
 import { renderTable } from './tableUtils';
 
-// 노션 블록을 MDX 형식의 HTML 문자열로 변환 (중첩 리스트 및 테이블 지원)
+// 변환 결과 캐시 (메모이제이션)
+const conversionCache = new Map<string, string>();
+
+// 노션 블록을 MDX 형식의 HTML 문자열로 변환 (최적화된 버전)
 export const convertBlocksToMdxHtml = (blocks: unknown[]): string => {
+  // 캐시 키 생성 (블록 구조를 기반으로)
+  const cacheKey = JSON.stringify(blocks);
+
+  // 캐시에서 결과 확인
+  if (conversionCache.has(cacheKey)) {
+    return conversionCache.get(cacheKey)!;
+  }
+
+  // 블록 수가 많으면 청크 단위로 처리 (메모리 최적화)
+  const CHUNK_SIZE = 50;
+  const result: string[] = [];
+
+  for (let i = 0; i < blocks.length; i += CHUNK_SIZE) {
+    const chunk = blocks.slice(i, i + CHUNK_SIZE);
+    const chunkResult = processBlockChunk(chunk);
+    result.push(chunkResult);
+  }
+
+  const finalResult = result.join('');
+
+  // 결과를 캐시에 저장 (캐시 크기 제한)
+  if (conversionCache.size > 50) {
+    // 캐시가 너무 커지면 가장 오래된 항목 제거
+    const firstKey = conversionCache.keys().next().value;
+    conversionCache.delete(firstKey);
+  }
+  conversionCache.set(cacheKey, finalResult);
+
+  return finalResult;
+};
+
+// 블록 청크 처리 함수 (메모리 최적화)
+const processBlockChunk = (blocks: unknown[]): string => {
   const result: string[] = [];
   let currentList: string[] = [];
   let currentListType: 'bulleted' | 'numbered' | null = null;

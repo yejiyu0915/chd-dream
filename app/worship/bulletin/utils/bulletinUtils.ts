@@ -24,12 +24,8 @@ export const extractText = (richText: unknown) => {
         return textObj.plain_text || '';
       })
       .join('');
-    if (result === '') {
-      console.log('Empty text extracted from:', JSON.stringify(richText, null, 2));
-    }
     return result;
   }
-  console.log('Non-array richText:', JSON.stringify(richText, null, 2));
   return '';
 };
 

@@ -2,10 +2,7 @@ import { extractText } from './bulletinUtils';
 
 // 테이블 처리 함수
 export const renderTable = (table: Record<string, unknown>): string => {
-  console.log('Processing table:', JSON.stringify(table, null, 2));
-
   if (!table.table || typeof table.table !== 'object') {
-    console.log('No table property found');
     return '';
   }
 
@@ -15,19 +12,8 @@ export const renderTable = (table: Record<string, unknown>): string => {
 
   // table_rows가 별도로 가져와진 경우 사용
   const tableRows = (table.table_rows || tableObj.table_rows) as unknown[];
-  console.log('Table properties:', {
-    hasColumnHeader,
-    hasRowHeader,
-    tableRows: tableRows as unknown[],
-  });
-
-  // 테이블 행 구조 확인
-  if ((tableRows as unknown[]).length > 0) {
-    console.log('First table row structure:', JSON.stringify((tableRows as unknown[])[0], null, 2));
-  }
 
   if (!Array.isArray(tableRows) || (tableRows as unknown[]).length === 0) {
-    console.log('No table rows found');
     return '';
   }
 
@@ -61,7 +47,6 @@ export const renderTable = (table: Record<string, unknown>): string => {
         tableHtml += '<tr>';
         rowObj.cells.forEach((cell: unknown, cellIndex: number) => {
           const cellObj = cell as Record<string, unknown>;
-          console.log(`Cell ${cellIndex} structure:`, JSON.stringify(cellObj, null, 2));
 
           // 셀이 배열인 경우 직접 처리
           let cellText = '';
@@ -86,6 +71,5 @@ export const renderTable = (table: Record<string, unknown>): string => {
   }
   tableHtml += '</tbody></table>';
 
-  console.log('Generated table HTML:', tableHtml);
   return tableHtml;
 };

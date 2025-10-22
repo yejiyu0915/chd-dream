@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { memo } from 'react';
 import Spinner from '@/common/components/utils/Spinner';
 import b from '@/app/worship/bulletin/Bulletin.module.scss';
 import mdx from '@/common/styles/mdx/MdxContent.module.scss';
@@ -28,7 +28,7 @@ interface BulletinContentProps {
   };
 }
 
-export default function BulletinContent({
+const BulletinContent = memo(function BulletinContent({
   selectedBulletin,
   latestBulletin,
   bulletinContent,
@@ -71,7 +71,7 @@ export default function BulletinContent({
         {/* 선택된 주보의 본문 내용 */}
         {selectedBulletin && (
           <div className={b.latest__content}>
-            <h2 className={b.latest__contentTitle}>
+            <h2 className="sr-only">
               {selectedBulletin && latestBulletin && selectedBulletin.slug === latestBulletin.slug
                 ? '이번 주 주보'
                 : '주보 내용'}
@@ -91,4 +91,6 @@ export default function BulletinContent({
       </div>
     </div>
   );
-}
+});
+
+export default BulletinContent;

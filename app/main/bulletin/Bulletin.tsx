@@ -21,7 +21,7 @@ export default function Bulletin() {
       headers['If-Modified-Since'] = lastModifiedHeaderValue.current;
     }
 
-    const response = await fetch('/api/bulletin', { headers });
+    const response = await fetch('/api/bulletin-latest', { headers });
 
     if (response.status === 304) {
       return (queryClient.getQueryData(['bulletinData']) as BulletinItem) || null;
@@ -78,8 +78,6 @@ export default function Bulletin() {
     );
   }
 
-  console.log('Bulletin Data:', bulletinData);
-
   return (
     <section className={s.bulletin}>
       <div className={s.inner}>
@@ -100,21 +98,10 @@ export default function Bulletin() {
           <div className={s.link}>
             <ul className={s.link__list}>
               <li className={s.link__item}>
-                <Link
-                  href={`/worship/sermon/${bulletinData.slug || bulletinData.id}`}
-                  className={s.thisWeek}
-                >
+                <Link href={`/worship/bulletin`} className={s.thisWeek}>
                   {' '}
                   <span className={s.link__text}>
-                    이번 주 주보
-                    <Icon name="arrow-up-right" className={s.link__icon} />
-                  </span>
-                </Link>
-              </li>
-              <li className={s.link__item}>
-                <Link href="/worship/sermon">
-                  <span className={s.link__text}>
-                    지난 주보 <span className="only-pc">보러가기</span>
+                    온라인 주보
                     <Icon name="arrow-up-right" className={s.link__icon} />
                   </span>
                 </Link>
@@ -124,6 +111,14 @@ export default function Bulletin() {
                   <span className={s.link__text}>
                     네이버 밴드
                     <Icon name="external-link" className={s.link__icon} />
+                  </span>
+                </Link>
+              </li>
+              <li className={s.link__item}>
+                <Link href="/worship/sermon">
+                  <span className={s.link__text}>
+                    생명의 말씀
+                    <Icon name="arrow-up-right" className={s.link__icon} />
                   </span>
                 </Link>
               </li>

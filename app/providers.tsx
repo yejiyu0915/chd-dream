@@ -31,8 +31,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
   // 경로 변경 시 스크롤을 페이지 최상단으로 이동 로직 제거 (페이지별 처리)
   // const pathname = usePathname();
   // useEffect(() => {
-  //   // eslint-disable-next-line no-console
-  //   console.log('Pathname changed to:', pathname, ' - Attempting to scroll to top.');
   //   if (window.lenis && typeof window.lenis.scrollTo === 'function') {
   //     // 특정 ID를 가진 요소로 스크롤 (예: info-main-content)
   //     window.lenis.scrollTo('#info-main-content', { duration: 0, immediate: true });

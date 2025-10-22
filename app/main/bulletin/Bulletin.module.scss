@@ -4,10 +4,10 @@
   position: relative;
   border-radius: calc(var(--inner-padding) * 1.5) calc(var(--inner-padding) * 1.5) 0 0;
   background-color: var(--bg-page);
-  background-image: url('/main/quick-link-bg.jpg');
+  background-image: url('/main/bulltein3-1.jpg');
   background-repeat: no-repeat;
   background-position: center bottom;
-  background-size: 100% auto;
+  background-size: cover;
   letter-spacing: -0.05em;
   &::before {
     content: '';
@@ -16,7 +16,7 @@
     bottom: 0;
     width: 100%;
     height: 55%;
-    background: linear-gradient(to top, rgba(255, 255, 255, 1) 3%, rgba(255, 255, 255, 0) 20%);
+    background: linear-gradient(to top, rgba(255, 255, 255, 1) 3%, rgba(255, 255, 255, 0) 40%);
     pointer-events: none;
   }
   .inner {
@@ -77,9 +77,12 @@
       height: cqi(80);
       padding-inline: cqi(32);
       border-radius: cqi(20);
+      border: cqi(3) solid var(--accent-border-subtle);
+      box-sizing: content-box;
       background-color: var(--bg-section);
       line-height: cqi(80);
       &.thisWeek {
+        border-color: var(--accent-brand);
         background-color: var(--accent-brand);
         color: var(--text-inverse);
       }
@@ -158,6 +161,7 @@
         height: vw(80);
         padding-inline: vw(32);
         border-radius: vw(20);
+        border-width: vw(3);
         line-height: vw(80);
       }
     }
@@ -188,8 +192,8 @@
     }
   }
   @include mq(pc-sm) {
-    background-position: 80% top;
-    background-size: 200% auto;
+    // background-position: 80% top;
+    // background-size: 200% auto;
     .inner {
       padding: calc(var(--inner-padding) * 4) var(--inner-padding) calc(var(--inner-padding) * 2)
         calc(var(--inner-padding) * 2);
@@ -230,6 +234,7 @@
         height: vw(64);
         padding-inline: vw(32);
         border-radius: vw(12);
+        border-width: vw(2);
         line-height: vw(64);
       }
     }
@@ -254,7 +259,8 @@
     }
   }
   @include mq(mo) {
-    background-size: auto 100%;
+    // background-size: auto 100%;
+    background-image: url('/main/bulltein3.jpg');
     .inner {
       padding: calc(var(--inner-padding) * 4) var(--inner-padding) calc(var(--inner-padding) * 2);
     }

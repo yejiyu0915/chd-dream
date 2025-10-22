@@ -26,7 +26,7 @@ export const pageMeta: Record<string, PageMeta> = {
   },
   '/worship/bulletin': {
     title: '온라인 주보',
-    description: '이번 주 주보와 지난 주보를 확인하세요.',
+    description: '주보 내용을 간단하게 확인하세요.',
   },
   // 여기에 추가적인 info 페이지들의 메타데이터를 정의합니다.
 };

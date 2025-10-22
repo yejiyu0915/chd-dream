@@ -17,7 +17,7 @@ interface PageTitleProviderProps {
 }
 
 export function PageTitleProvider({ children }: PageTitleProviderProps) {
-  const [currentPageTitle, setCurrentPageTitle] = useState<string>('예배');
+  const [currentPageTitle, setCurrentPageTitle] = useState<string>('');
 
   const setPageTitle = (title: string) => {
     setCurrentPageTitle(title);
