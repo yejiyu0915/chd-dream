@@ -1,0 +1,64 @@
+@use '@/common/styles/mixins/function' as *;
+
+// 메인 컨테이너
+.sermon {
+  &__inner {
+    display: flex;
+    gap: vw(40);
+  }
+}
+
+// 왼쪽 내비게이션
+.nav {
+  width: vw(200);
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: vw(12);
+  }
+
+  &__item {
+    // 필요시 추가
+  }
+
+  &__button {
+    display: block;
+    width: 100%;
+    padding: vw(12) vw(16);
+    border: 1px solid #ddd;
+    background: #fff;
+    font-size: vw(14);
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #f5f5f5;
+    }
+
+    &.active {
+      border-color: #333;
+      background: #333;
+      color: #fff;
+    }
+  }
+}
+
+// 오른쪽 본문
+.content {
+  flex: 1;
+  padding: vw(20);
+  border: 1px solid #ddd;
+
+  &__title {
+    margin-bottom: vw(20);
+    font-size: vw(24);
+    font-weight: 700;
+  }
+
+  &__body {
+    font-size: vw(16);
+    line-height: 1.6;
+  }
+}
