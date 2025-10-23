@@ -27,7 +27,6 @@ interface BulletinItem {
 export default function BulletinPage() {
   const queryClient = useQueryClient();
   const lastModifiedHeaderValue = useRef<string | null>(null);
-  const contentRef = useRef<HTMLDivElement>(null); // 스크롤 대상 ref
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -165,32 +164,9 @@ export default function BulletinPage() {
     setCurrentPage(1); // 필터 적용 시 첫 페이지로 이동
   };
 
-  // 스크롤 함수 (재사용)
-  const scrollToTop = useCallback(() => {
-    const target = contentRef.current;
-    if (target) {
-      if (typeof window !== 'undefined' && window.lenis) {
-        // Lenis 스무스 스크롤 사용
-        const targetPosition = target.getBoundingClientRect().top + window.scrollY - 80;
-        window.lenis.scrollTo(targetPosition, {
-          duration: 0.8,
-        });
-      } else {
-        // Lenis가 없으면 기본 스크롤
-        target.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-      }
-    }
-  }, []);
-
-  // 주보 아이템 클릭 핸들러 (최적화된 버전)
+  // 주보 아이템 클릭 핸들러
   const handleBulletinClick = useCallback(
     async (item: BulletinItem) => {
-      // 클릭 즉시 상단으로 스크롤
-      scrollToTop();
-
       // 이미 같은 주보가 선택되어 있고 내용이 있다면 데이터 로드 생략
       if (selectedBulletin?.id === item.id && bulletinContent) {
         return;
@@ -226,11 +202,6 @@ export default function BulletinPage() {
 
           setLoadingStep('완료!');
           setBulletinContent(processedHtml);
-
-          // 컨텐츠 로드 완료 후 스크롤 위치 재조정 (높이 변화 보정)
-          setTimeout(() => {
-            scrollToTop();
-          }, 100);
         }
       } catch (error) {
         if (error instanceof Error && error.name === 'AbortError') {
@@ -243,7 +214,7 @@ export default function BulletinPage() {
         setLoadingStep('');
       }
     },
-    [selectedBulletin?.id, bulletinContent, scrollToTop]
+    [selectedBulletin?.id, bulletinContent]
   );
 
   // itemsPerPage나 필터가 변경될 때 totalPages 재계산
@@ -255,11 +226,12 @@ export default function BulletinPage() {
 
   // 필터 변경 시 첫 페이지로 이동 (이제 handleFilterApply에서 처리)
 
-  // 최신 주보 자동 로드 (latestBulletin이 설정된 후 실행)
+  // 최신 주보 자동 로드 (단, 스크롤은 하지 않음)
   useEffect(() => {
     if (latestBulletin && !selectedBulletin) {
       // 약간의 지연을 두어 초기 로딩 완료 후 실행
       const timer = setTimeout(() => {
+        // 스크롤 없이 컨텐츠만 로드
         handleBulletinClick(latestBulletin);
       }, 100);
 
@@ -319,7 +291,7 @@ export default function BulletinPage() {
     <>
       <PageTitleSetter title="온라인 주보" />
       <div className={`${b.bulletin} detail-inner`}>
-        <div className={b.inner} ref={contentRef}>
+        <div className={b.inner}>
           <BulletinContent
             selectedBulletin={selectedBulletin}
             latestBulletin={latestBulletin}

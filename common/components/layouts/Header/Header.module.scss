@@ -652,8 +652,10 @@
       padding: 0 var(--inner-padding);
       overflow-y: auto; // 내용이 넘칠 경우 스크롤 허용
       touch-action: auto; // 터치 스크롤 허용
+      will-change: scroll-position;
+      -webkit-overflow-scrolling: touch;
       nav {
-        padding-block-end: vw(40);
+        padding-block-end: vw(200);
       }
     }
 
@@ -705,11 +707,13 @@
     .mobileSubMenu {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.3s linear;
-      will-change: max-height;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: max-height, transform;
+      contain: layout style paint;
 
       &.show {
-        max-height: vw(600);
+        max-height: vw(3000);
+        transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
       }
     }
 

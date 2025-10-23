@@ -1,7 +1,8 @@
 'use client';
 
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import Spinner from '@/common/components/utils/Spinner';
+import Icon from '@/common/components/utils/Icons';
 import b from '@/app/worship/bulletin/Bulletin.module.scss';
 
 interface BulletinItem {
@@ -56,8 +57,21 @@ const BulletinList = memo(function BulletinList({
 }: BulletinListProps) {
   // 페이지네이션 그룹 크기 (테스트용으로 쉽게 변경 가능)
   const PAGINATION_GROUP_SIZE = 3; // 테스트용: 3개씩 그룹화
+
+  // 모바일 리스트 확장 상태
+  const [isListExpanded, setIsListExpanded] = useState(false);
+
   return (
-    <div className={b.items}>
+    <div className={`${b.items} ${isListExpanded ? b.itemsExpanded : ''}`}>
+      {/* 모바일 토글 버튼 */}
+      <button
+        type="button"
+        className={b.items__toggle}
+        onClick={() => setIsListExpanded(!isListExpanded)}
+      >
+        <span>지난 주보 목록 {isListExpanded ? '닫기' : '열기'}</span>
+        <Icon name="accordion" />
+      </button>
       {/* 필터 섹션 */}
       <div className={b.items__filters}>
         <div className={b.filter__group}>

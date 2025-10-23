@@ -13,8 +13,8 @@
     padding-block: vw(80) vw(120);
   }
   @include mq(ta) {
-    flex-direction: column;
-    gap: vw(48);
+    flex-direction: column-reverse;
+    gap: vw(36);
     padding-block: vw(48) vw(80);
   }
   @include mq(mo) {
@@ -26,6 +26,12 @@
 
 .items {
   flex: 1;
+
+  // 모바일 토글 버튼 (기본적으로 숨김)
+  &__toggle {
+    display: none;
+  }
+
   &__filters {
     display: flex;
     align-items: center;
@@ -103,8 +109,57 @@
   }
 
   @include mq(ta) {
+    // 태블릿부터 토글 버튼 표시
+    &__toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: vw(56);
+      padding-inline: vw(20) vw(10);
+      border: vw(--border-width) solid var(--accent-tertiary);
+      border-radius: vw(--border-radius);
+      background-color: var(--accent-secondary);
+      @include font-vw(16, $weight: 600, $color: var(--accent-brand));
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+      i {
+        --icon-size: 1.5;
+      }
+
+      &:hover {
+        background-color: var(--accent-tertiary);
+      }
+    }
+
+    // 확장 시 아이콘 회전
+    &Expanded &__toggle i {
+      transform: rotate(180deg);
+    }
+
+    // 필터와 리스트 컨테이너 (기본 숨김)
+    &__filters,
+    &__list,
+    &__controls {
+      display: none;
+    }
+
+    // 확장 시 필터와 리스트 표시
+    &Expanded &__filters,
+    &Expanded &__list,
+    &Expanded &__controls {
+      display: flex;
+    }
+
+    &Expanded &__list {
+      display: grid;
+    }
+
     &__filters {
-      margin-bottom: vw(24);
+      margin-block: vw(24);
+      padding-block-start: vw(24);
+      border-top: vw(--border-width) dashed var(--accent-border);
     }
 
     &__list {
@@ -123,6 +178,7 @@
   }
 
   @include mq(mo) {
+    // 필터와 리스트 스타일 (토글 버튼은 ta에서 이미 정의됨)
     &__filters {
       margin-bottom: vw(20);
     }
@@ -622,6 +678,7 @@
 
     &__bulletinTitle {
       margin-block: vw(32);
+      border-width: vw(2);
       @include font-vw(40);
     }
 
