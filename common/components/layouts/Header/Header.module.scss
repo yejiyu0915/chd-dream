@@ -655,7 +655,7 @@
       will-change: scroll-position;
       -webkit-overflow-scrolling: touch;
       nav {
-        padding-block-end: vw(80);
+        padding-block-end: vw(200);
       }
     }
 
@@ -712,7 +712,7 @@
       contain: layout style paint;
 
       &.show {
-        max-height: vw(1000);
+        max-height: vw(1600);
       }
     }
 
