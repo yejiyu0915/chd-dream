@@ -30,7 +30,7 @@
       }
     }
     .pageTitle {
-      @include font-vw(70, $weight: 600);
+      @include font-vw(64, $weight: 600);
       color: var(--text-main);
       text-align: center;
     }

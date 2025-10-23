@@ -527,9 +527,6 @@
     word-break: keep-all !important;
     h3 {
       color: var(--accent-brand);
-      &::before {
-        content: '＃ ';
-      }
     }
     h4 {
       font-family: var(--font-family-useol);

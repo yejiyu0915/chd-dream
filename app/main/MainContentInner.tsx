@@ -5,7 +5,7 @@ import Intro from '@/app/main/intro/Intro';
 import Bulletin from '@/app/main/bulletin/Bulletin';
 import CLog from '@/app/main/c-log/CLog';
 import QuickLink from '@/app/main/quick-link/QuickLink';
-import Instagram from '@/app/main/Instagram/Instagram';
+// import Instagram from '@/app/main/Instagram/Instagram';
 import { BulletinItem } from '@/lib/notion';
 
 interface MainContentInnerProps {
@@ -28,7 +28,7 @@ export default function MainContentInner({ bulletinData, kvHeight }: MainContent
         <Intro />
         <CLog />
         <QuickLink />
-        <Instagram />
+        {/* <Instagram /> */}
       </div>
     </div>
   );

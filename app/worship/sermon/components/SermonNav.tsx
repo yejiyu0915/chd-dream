@@ -1,7 +1,8 @@
 'use client';
 
-import type { SermonDataType } from '../data/sermonData';
-import s from '../Sermon.module.scss';
+import Icon from '@/common/components/utils/Icons';
+import type { SermonDataType } from '@/app/worship/sermon/data/sermonData';
+import s from '@/app/worship/sermon/Sermon.module.scss';
 
 interface SermonNavProps {
   data: SermonDataType[];
@@ -25,6 +26,10 @@ export default function SermonNav({ data, activeId, onSelect }: SermonNavProps) 
           </li>
         ))}
       </ul>
+      <p className={s.nav__desc}>
+        <Icon name="info" className={s.nav__icon} /> 더 많은 말씀 영상은 네이버 밴드 가입 승인 후
+        확인하실 수 있습니다. (문의: 부속실)
+      </p>
     </nav>
   );
 }

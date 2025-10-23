@@ -475,3 +475,88 @@ main {
     }
   }
 }
+
+/* Top Button Styles */
+.top-button {
+  // opacity / visibility / display
+  opacity: 0;
+  visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  // width / height
+  width: vw(72);
+  height: vw(72);
+  // position
+  position: fixed;
+  z-index: 900;
+  right: vw(40);
+  bottom: vw(40);
+  // border
+  border: vw(2) solid var(--bg-page);
+  border-radius: 50%;
+  // background
+  background-color: var(--accent-brand);
+  // font
+  @include font-vw(24);
+  color: var(--text-inverse);
+  // transform
+  transform: translateY(vw(60));
+  // transition
+  transition:
+    opacity 0.3s ease-in-out 0s,
+    visibility 0.3s ease-in-out 0s,
+    transform 0.3s ease-out 0.275s,
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+  // 기타
+  cursor: pointer;
+  pointer-events: none;
+
+  i {
+    --icon-size: 1.75;
+    --icon-margin: 0;
+  }
+
+  &:hover {
+    border-color: var(--accent-brand);
+    background-color: var(--bg-page);
+    color: var(--accent-brand);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  // 버튼 표시 상태 (아래에서 올라오는 애니메이션 + opacity fade)
+  &--visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+    // 등장할 때는 동시에 작동하도록 delay 제거
+    transition:
+      opacity 0.4s ease-in-out 0.15s,
+      visibility 0.4s ease-in-out 0s,
+      transform 0.4s ease-out 0s,
+      background-color 0.4s ease,
+      color 0.4s ease,
+      border-color 0.4s ease;
+  }
+
+  @include mq(pc-sm) {
+    width: vw(64);
+    height: vw(64);
+    right: vw(32);
+    bottom: vw(32);
+    @include font-vw(20);
+  }
+
+  @include mq(mo) {
+    width: vw(56);
+    height: vw(56);
+    right: vw(20);
+    bottom: vw(20);
+  }
+}
