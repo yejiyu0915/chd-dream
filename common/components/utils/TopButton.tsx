@@ -64,7 +64,7 @@ export default function TopButton() {
     // Lenis 라이브러리가 있으면 부드러운 스크롤 사용
     if (window.lenis) {
       window.lenis.scrollTo(0, {
-        duration: 1.5,
+        duration: 0.8,
         easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       });
     } else {
