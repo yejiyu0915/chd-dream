@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef } from 'react';
 import type { SermonDataType } from '@/app/worship/sermon/data/sermonData';
 import Icon from '@/common/components/utils/Icons';
 import s from '@/app/worship/sermon/Sermon.module.scss';
@@ -18,10 +19,38 @@ export default function SermonContent({
   onSelect,
 }: SermonContentProps) {
   const ContentComponent = data.component; // 동적 컴포넌트 할당
+  const contentRef = useRef<HTMLDivElement>(null); // content 영역 참조
+
+  // 모바일 네비게이션 클릭 시 상단으로 스크롤하는 핸들러
+  const handleNavClick = (id: string) => {
+    // 먼저 설교 변경
+    onSelect?.(id);
+
+    // 약간의 딜레이 후 스크롤 (컨텐츠 렌더링 대기)
+    setTimeout(() => {
+      // Lenis 라이브러리가 있으면 부드러운 스크롤 사용
+      if (window.lenis && contentRef.current) {
+        window.lenis.scrollTo(contentRef.current, {
+          duration: 1.2,
+          offset: -100, // 헤더 높이만큼 여유 공간
+        });
+      } else if (contentRef.current) {
+        // Lenis가 없으면 기본 스크롤 사용
+        const headerOffset = 100;
+        const elementPosition = contentRef.current.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+      }
+    }, 100);
+  };
 
   return (
     <>
-      <div className={s.content}>
+      <div className={s.content} ref={contentRef}>
         <div className={s.content__header}>
           <h2 className={s.content__title}>{data.title}</h2>
           <p className={s.content__speaker}>담임목사: 김영구</p>
@@ -38,7 +67,7 @@ export default function SermonContent({
           <button
             type="button"
             className={s.mobileNav__button}
-            onClick={() => onSelect?.(prevSermon.id)}
+            onClick={() => handleNavClick(prevSermon.id)}
           >
             <Icon name="arrow-up" />
             이전글: <span className={s.mobileNav__title}>{prevSermon.title}</span>
@@ -50,7 +79,7 @@ export default function SermonContent({
           <button
             type="button"
             className={s.mobileNav__button}
-            onClick={() => onSelect?.(nextSermon.id)}
+            onClick={() => handleNavClick(nextSermon.id)}
           >
             <Icon name="arrow-down" />
             다음글: <span className={s.mobileNav__title}>{nextSermon.title}</span>
