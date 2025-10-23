@@ -707,12 +707,13 @@
     .mobileSubMenu {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.3s linear;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       will-change: max-height, transform;
       contain: layout style paint;
 
       &.show {
-        max-height: vw(1600);
+        max-height: vw(3000);
+        transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
       }
     }
 

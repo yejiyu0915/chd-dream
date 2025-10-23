@@ -17,7 +17,7 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
   const scrollYRef = useRef(0);
 
   const { isMobileMenuOpen, toggleMobileMenu, stopLenis, startLenis } = useMobileMenu();
-  const [activeMobileMenu, setActiveMobileMenu] = useState<string | null>(null);
+  const [activeMobileMenu, setActiveMobileMenu] = useState<string[]>([]); // 배열로 변경 (여러 개 열기 가능)
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -50,7 +50,14 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
   }, [isMobileMenuOpen, stopLenis, startLenis]);
 
   const handleMobileMenuClick = (menuName: string) => {
-    setActiveMobileMenu(activeMobileMenu === menuName ? null : menuName);
+    const isOpen = activeMobileMenu.includes(menuName);
+
+    // 토글: 열려있으면 닫고, 닫혀있으면 열기
+    if (isOpen) {
+      setActiveMobileMenu(activeMobileMenu.filter((name) => name !== menuName));
+    } else {
+      setActiveMobileMenu([...activeMobileMenu, menuName]);
+    }
   };
 
   return (
@@ -64,7 +71,7 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
               <li key={index} className={h.mobileMenuItem}>
                 <button
                   type="button"
-                  className={`${h.mobileMenuButton} ${activeMobileMenu === menuItem.name ? h.active : ''}`}
+                  className={`${h.mobileMenuButton} ${activeMobileMenu.includes(menuItem.name) ? h.active : ''}`}
                   onClick={() => handleMobileMenuClick(menuItem.name)}
                 >
                   <span>{menuItem.name}</span>
@@ -73,7 +80,7 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
 
                 {menuItem.subMenu && (
                   <div
-                    className={`${h.mobileSubMenu} ${activeMobileMenu === menuItem.name ? h.show : ''}`}
+                    className={`${h.mobileSubMenu} ${activeMobileMenu.includes(menuItem.name) ? h.show : ''}`}
                   >
                     <div className={h.mobileSubMenuContent}>
                       <div className={h.mobileSubMenuTop}>
