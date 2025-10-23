@@ -116,7 +116,6 @@
       justify-content: space-between;
       width: 100%;
       height: vw(56);
-      margin-bottom: vw(24);
       padding-inline: vw(20) vw(10);
       border: vw(--border-width) solid var(--accent-tertiary);
       border-radius: vw(--border-radius);
@@ -127,7 +126,6 @@
 
       i {
         --icon-size: 1.5;
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
       &:hover {
@@ -135,51 +133,31 @@
       }
     }
 
-    // 닫혀있을 때 높이 제한
-    max-height: vw(56);
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
-
-    // 확장 시 높이 제한 해제
-    &Expanded {
-      max-height: vw(1800);
-      transition: max-height 0.35s ease-in-out;
-    }
-
     // 확장 시 아이콘 회전
     &Expanded &__toggle i {
       transform: rotate(180deg);
     }
 
-    // 필터와 리스트 컨테이너
+    // 필터와 리스트 컨테이너 (기본 숨김)
     &__filters,
     &__list,
     &__controls {
-      max-height: 0;
-      overflow: hidden;
-      opacity: 0;
-      visibility: hidden;
-      transition:
-        max-height 0.3s ease-out,
-        opacity 0.2s ease-in,
-        visibility 0.2s ease-in;
+      display: none;
     }
 
     // 확장 시 필터와 리스트 표시
     &Expanded &__filters,
     &Expanded &__list,
     &Expanded &__controls {
-      max-height: vw(2000);
-      opacity: 1;
-      visibility: visible;
-      transition:
-        max-height 0.35s ease-in-out,
-        opacity 0.25s ease-out 0.1s,
-        visibility 0.25s ease-out 0s;
+      display: flex;
+    }
+
+    &Expanded &__list {
+      display: grid;
     }
 
     &__filters {
-      margin-bottom: vw(24);
+      margin-block: vw(24);
       padding-block-start: vw(24);
       border-top: vw(--border-width) dashed var(--accent-border);
     }
