@@ -82,7 +82,7 @@ export default function TopButton() {
       onClick={scrollToTop}
       aria-label="맨 위로 이동"
     >
-      <Icon name="arrow-up" />
+      <Icon name="arrow-top" />
     </button>
   );
 }
