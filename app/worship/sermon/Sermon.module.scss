@@ -1,0 +1,260 @@
+@use '@/common/styles/mixins/function' as *;
+
+// 메인 컨테이너
+.inner {
+  display: flex;
+  gap: vw(40);
+  padding-block: vw(120) vw(200);
+  @include mq(pc-sm) {
+    gap: vw(32);
+    padding-block: vw(48) vw(120);
+  }
+  @include mq(mo) {
+    gap: vw(56);
+    flex-direction: column;
+    padding-block: vw(48) vw(80);
+  }
+}
+
+// 왼쪽 내비게이션
+.nav {
+  width: 24%;
+  min-width: vw(240);
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__item {
+    border-bottom: 1px solid var(--accent-border);
+  }
+
+  &__button {
+    display: block;
+    width: 100%;
+    padding: 0.75em 1.5em;
+    background: var(--accent-secondary);
+    font-size: vw(24);
+    line-height: 1.4;
+    text-align: left;
+    cursor: pointer;
+
+    &.active {
+      background: var(--accent-brand);
+      font-weight: 600;
+      color: var(--text-inverse);
+      &::before {
+        content: '→ ';
+      }
+    }
+  }
+
+  &__desc {
+    margin-block-start: 2em;
+    padding-inline: 3em 1em;
+    @include font-vw(16);
+    line-height: 1.5;
+    color: var(--text-placeholder);
+    text-indent: -2.3em;
+  }
+
+  @include mq(pc-sm) {
+    &__button {
+      font-size: vw(18);
+    }
+    &__desc {
+      @include font-vw(14);
+    }
+  }
+  @include mq(mo) {
+    width: 100%;
+    &__button {
+      font-size: vw(16);
+    }
+    &__desc {
+      margin-block-start: 1em;
+      @include font-vw(12);
+    }
+  }
+}
+
+// 오른쪽 본문
+.content {
+  flex: 1;
+  padding: vw(84) vw(60) vw(120);
+  border: 1px solid var(--accent-border-subtle);
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: vw(10);
+    background-color: var(--accent-brand);
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: vw(10);
+    background-color: var(--accent-brand);
+  }
+
+  &__header {
+    margin-block: 0.4em 1.75em;
+    padding-bottom: 0.5em;
+    border-bottom: vw(4) dashed var(--accent-border);
+    font-family: var(--font-family-useol);
+    @include font-vw(64, $color: var(--accent-brand));
+    line-height: 1.3;
+  }
+
+  &__speaker {
+    margin-block-start: 1em;
+    font-family: var(--font-family);
+    @include font-vw(20, $color: var(--accent-brand));
+    line-height: 1.3;
+    text-align: right;
+  }
+
+  &__body {
+    font-size: vw(20);
+    line-height: 1.7;
+    color: var(--text-body);
+    hr {
+      margin-block: 5em;
+      border: none;
+      border-top: vw(4) dashed var(--accent-border);
+    }
+    h3 {
+      margin-block: 2.5em 1.2em;
+      font-size: 2em;
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+    p {
+      margin-block: 1.5em;
+      text-indent: 0.5em;
+      em {
+        font-style: normal;
+        font-size: 1.2em;
+        color: var(--accent-brand);
+        text-decoration: underline;
+        text-underline-offset: 0.3em;
+        strong {
+          font-weight: 600;
+          &:has(br) {
+            line-height: 1.85;
+          }
+        }
+      }
+    }
+    blockquote {
+      margin-block: 3em;
+      padding: 0.1em 1.5em;
+      border-left: vw(4) solid var(--accent-tertiary);
+      background-color: var(--accent-secondary);
+      color: var(--accent-brand);
+      + blockquote {
+        margin-block-start: -1.5em;
+      }
+      p {
+        text-indent: 0;
+      }
+      em {
+        font-style: normal;
+        font-family: var(--font-family-useol);
+        font-size: 1em;
+        text-decoration: none;
+      }
+    }
+  }
+
+  @include mq(pc-sm) {
+    padding: vw(48) vw(32) vw(60);
+    &__header {
+      font-size: vw(56);
+    }
+    &__speaker {
+      @include font-vw(18);
+    }
+    &__body {
+      font-size: vw(18);
+    }
+  }
+  @include mq(mo) {
+    padding: vw(36) 0 vw(48);
+    border: none;
+    &::before,
+    &::after {
+      height: vw(5);
+    }
+    &__header {
+      border-bottom-width: vw(2);
+      font-size: vw(40);
+      text-align: center;
+    }
+    &__speaker {
+      margin-block-start: 1.5em;
+      @include font-vw(14);
+      text-align: center;
+    }
+    &__body {
+      font-size: vw(16);
+    }
+  }
+}
+
+// 모바일 하단 네비게이션
+.mobileNav {
+  display: none; // 기본적으로 숨김 (PC/태블릿)
+
+  @include mq(mo) {
+    display: flex;
+    flex-direction: column;
+    border-radius: vw(10);
+    border: 1px solid var(--accent-border-subtle);
+    background-color: #f9f9f9;
+  }
+
+  &__button {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    width: 100%;
+    padding: 1em;
+    border: none;
+    background: transparent;
+    @include font-vw(16);
+    color: var(--accent-brand);
+    text-align: left;
+    cursor: pointer;
+
+    i {
+      --icon-size: 1.7;
+      --icon-margin: 0;
+      flex: 0 0 vw(28);
+    }
+
+    &:first-child {
+      border-bottom: 1px solid var(--accent-border-subtle);
+    }
+  }
+
+  &__title {
+    display: inline-block;
+    font-weight: 700;
+    white-space: normal;
+    line-height: 1.5;
+    color: var(--text-main);
+  }
+
+  &__empty {
+    display: none; // 이전/다음이 없을 때 빈 공간
+  }
+}

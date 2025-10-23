@@ -11,3 +11,4 @@ export async function GET(request: NextRequest) {
     '최신 주보 데이터를 가져오는 데 실패했습니다.'
   );
 }
+

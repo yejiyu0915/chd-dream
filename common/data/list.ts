@@ -28,5 +28,9 @@ export const pageMeta: Record<string, PageMeta> = {
     title: '온라인 주보',
     description: '주보 내용을 간단하게 확인하세요.',
   },
+  '/worship/sermon': {
+    title: '생명의 말씀',
+    description: '하나님의 말씀을 나눕니다.',
+  },
   // 여기에 추가적인 info 페이지들의 메타데이터를 정의합니다.
 };

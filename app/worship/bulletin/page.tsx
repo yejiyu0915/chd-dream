@@ -165,37 +165,34 @@ export default function BulletinPage() {
     setCurrentPage(1); // 필터 적용 시 첫 페이지로 이동
   };
 
-  // Lenis를 활용한 스크롤 함수
-  const scrollToContent = useCallback(() => {
-    if (!contentRef.current) return;
-
-    // 약간의 지연을 두어 상태 업데이트 완료 보장
-    setTimeout(() => {
-      const target = contentRef.current;
-      if (typeof window !== 'undefined' && window.lenis && target) {
+  // 스크롤 함수 (재사용)
+  const scrollToTop = useCallback(() => {
+    const target = contentRef.current;
+    if (target) {
+      if (typeof window !== 'undefined' && window.lenis) {
         // Lenis 스무스 스크롤 사용
-        // 요소의 위치를 계산하여 스크롤
         const targetPosition = target.getBoundingClientRect().top + window.scrollY - 80;
         window.lenis.scrollTo(targetPosition, {
-          duration: 1.2, // 1.2초 부드러운 스크롤
+          duration: 0.8,
         });
-      } else if (target) {
+      } else {
         // Lenis가 없으면 기본 스크롤
         target.scrollIntoView({
           behavior: 'smooth',
           block: 'start',
         });
       }
-    }, 100);
+    }
   }, []);
 
   // 주보 아이템 클릭 핸들러 (최적화된 버전)
   const handleBulletinClick = useCallback(
     async (item: BulletinItem) => {
-      // 이미 같은 주보가 선택되어 있고 내용이 있다면 중복 로드 방지
+      // 클릭 즉시 상단으로 스크롤
+      scrollToTop();
+
+      // 이미 같은 주보가 선택되어 있고 내용이 있다면 데이터 로드 생략
       if (selectedBulletin?.id === item.id && bulletinContent) {
-        // 같은 항목 클릭 시에도 상단으로 스크롤 (모바일 UX 개선)
-        scrollToContent();
         return;
       }
 
@@ -229,6 +226,11 @@ export default function BulletinPage() {
 
           setLoadingStep('완료!');
           setBulletinContent(processedHtml);
+
+          // 컨텐츠 로드 완료 후 스크롤 위치 재조정 (높이 변화 보정)
+          setTimeout(() => {
+            scrollToTop();
+          }, 100);
         }
       } catch (error) {
         if (error instanceof Error && error.name === 'AbortError') {
@@ -241,7 +243,7 @@ export default function BulletinPage() {
         setLoadingStep('');
       }
     },
-    [selectedBulletin?.id, bulletinContent, scrollToContent]
+    [selectedBulletin?.id, bulletinContent, scrollToTop]
   );
 
   // itemsPerPage나 필터가 변경될 때 totalPages 재계산
@@ -264,14 +266,6 @@ export default function BulletinPage() {
       return () => clearTimeout(timer);
     }
   }, [latestBulletin, selectedBulletin, handleBulletinClick]);
-
-  // 주보 선택 시 자동 스크롤 (모바일 UX 개선)
-  useEffect(() => {
-    // 주보가 선택되고, 로딩이 완료되었을 때만 스크롤
-    if (selectedBulletin && !contentLoading && bulletinContent) {
-      scrollToContent();
-    }
-  }, [selectedBulletin, contentLoading, bulletinContent, scrollToContent]);
 
   // 로딩 상태 처리 (초기 로드 시에만)
   if (loading && bulletinList.length === 0) {
@@ -325,17 +319,15 @@ export default function BulletinPage() {
     <>
       <PageTitleSetter title="온라인 주보" />
       <div className={`${b.bulletin} detail-inner`}>
-        <div className={b.inner}>
-          <div ref={contentRef}>
-            <BulletinContent
-              selectedBulletin={selectedBulletin}
-              latestBulletin={latestBulletin}
-              bulletinContent={bulletinContent}
-              contentLoading={contentLoading}
-              loadingStep={loadingStep}
-              formatDate={formatDate}
-            />
-          </div>
+        <div className={b.inner} ref={contentRef}>
+          <BulletinContent
+            selectedBulletin={selectedBulletin}
+            latestBulletin={latestBulletin}
+            bulletinContent={bulletinContent}
+            contentLoading={contentLoading}
+            loadingStep={loadingStep}
+            formatDate={formatDate}
+          />
 
           <BulletinList
             loading={loading}

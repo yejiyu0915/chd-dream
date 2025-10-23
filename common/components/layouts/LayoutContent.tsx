@@ -6,6 +6,7 @@ import Footer from '@/common/components/layouts/Footer/Footer';
 import SmoothScroll from '@/common/components/utils/SmoothScroll';
 import { useMobileMenu } from '@/common/components/layouts/Header/MobileMenuContext';
 import PopupModal from '@/common/components/layouts/Popup/PopupModal';
+import TopButton from '@/common/components/utils/TopButton';
 import { NewsItem } from '@/lib/notion';
 
 interface LayoutContentProps {
@@ -116,6 +117,9 @@ export default function LayoutContent({ children }: LayoutContentProps) {
 
         {/* 팝업 모달 */}
         {showPopup && <PopupModal newsItem={popupNews} onClose={handleClosePopup} />}
+
+        {/* Top 버튼 */}
+        <TopButton />
       </div>
     </SmoothScroll>
   );

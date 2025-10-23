@@ -428,6 +428,7 @@
 
 .content {
   flex: 0 0 60%;
+  width: 100%;
   min-height: vw(900);
   border-radius: vw(--border-radius);
   border: vw(--border-width) solid var(--accent-border-subtle);
@@ -526,9 +527,6 @@
     word-break: keep-all !important;
     h3 {
       color: var(--accent-brand);
-      &::before {
-        content: '＃ ';
-      }
     }
     h4 {
       font-family: var(--font-family-useol);
