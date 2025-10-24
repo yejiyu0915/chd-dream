@@ -2,11 +2,12 @@
 .bulletin {
   width: 100%;
   position: relative;
+  overflow: hidden;
   border-radius: calc(var(--inner-padding) * 1.5) calc(var(--inner-padding) * 1.5) 0 0;
   background-color: var(--bg-page);
-  background-image: url('/main/bulltein3-1.jpg');
+  background-image: url('/main/bulltein14.jpg');
   background-repeat: no-repeat;
-  background-position: center bottom;
+  background-position: center 5%;
   background-size: cover;
   letter-spacing: -0.05em;
   &::before {
@@ -23,6 +24,7 @@
     padding: calc(var(--inner-padding) * 6) calc(var(--inner-padding) * 4)
       calc(var(--inner-padding) * 4);
     position: relative;
+    background-color: rgba(255, 255, 255, 0.65);
   }
   .content {
     display: flex;
@@ -37,8 +39,8 @@
     border-left: cqi(5) solid var(--bg-overlay);
   }
   .eyebrow {
-    @include font-cqi(28, 44, $min: 16);
-    color: var(--text-placeholder);
+    @include font-cqi(28, 44, $min: 16, $weight: 500);
+    color: var(--accent-brand);
     &__icon {
       --icon-size: 1.25;
       --icon-margin: 0;
@@ -56,8 +58,8 @@
   .desc {
     margin-block-start: cqi(48);
     padding-inline-start: cqi(64);
-    @include font-cqi(24, 38, $min: 16);
-    color: var(--text-placeholder);
+    @include font-cqi(24, 38, $min: 16, $weight: 500);
+    color: var(--accent-brand);
   }
   .praise {
     font-weight: 600;
@@ -70,16 +72,16 @@
       display: flex;
       flex-direction: column;
       gap: cqi(16);
-      @include font-cqi(28, $min: 16);
+      @include font-cqi(28, $min: 16, $color: var(--accent-brand));
     }
     a {
       display: block;
       height: cqi(80);
       padding-inline: cqi(32);
       border-radius: cqi(20);
-      border: cqi(3) solid var(--accent-border-subtle);
+      border: cqi(3) solid var(--accent-tertiary);
       box-sizing: content-box;
-      background-color: var(--bg-section);
+      background-color: var(--accent-secondary);
       line-height: cqi(80);
       &.thisWeek {
         border-color: var(--accent-brand);
@@ -105,7 +107,7 @@
         display: inline-block;
         padding-inline-end: cqi(12);
         @include font-cqi(16, $min: 12);
-        color: var(--text-placeholder);
+        color: var(--accent-brand);
         transform: translateY(-0.3em);
       }
     }
@@ -115,8 +117,8 @@
   }
   .footnote {
     margin-block-start: cqi(40);
-    @include font-cqi(18, 28, $min: 14);
-    color: var(--text-placeholder);
+    @include font-cqi(18, 28, $min: 14, $weight: 500);
+    color: var(--accent-brand);
     text-align: right;
     &__icon {
       --icon-size: 1.25;
@@ -260,7 +262,10 @@
   }
   @include mq(mo) {
     // background-size: auto 100%;
-    background-image: url('/main/bulltein3.jpg');
+    // background-image: url('/main/bulltein3.jpg');
+    &::before {
+      background: linear-gradient(to top, rgba(255, 255, 255, 1) 3%, rgba(255, 255, 255, 0) 20%);
+    }
     .inner {
       padding: calc(var(--inner-padding) * 4) var(--inner-padding) calc(var(--inner-padding) * 2);
     }
