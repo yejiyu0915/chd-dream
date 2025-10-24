@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
   experimental: {
     reactCompiler: true,
   },
+  // 환경변수 명시적 설정 (클라이언트에서 사용)
+  env: {
+    NEXT_PUBLIC_KAKAO_MAP_KEY: process.env.NEXT_PUBLIC_KAKAO_MAP_KEY,
+  },
   // 캐싱 최적화 설정 (Next.js 15에서는 isrMemoryCacheSize 옵션이 제거됨)
   images: {
     // Notion 외부 이미지 도메인 추가 (Notion 내부 URL은 필요 없음)
@@ -36,6 +40,12 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com', // Cloudinary 이미지 호스트 추가
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 't1.daumcdn.net', // 카카오맵 타일 이미지
         port: '',
         pathname: '/**',
       },

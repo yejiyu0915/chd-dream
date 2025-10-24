@@ -32,5 +32,9 @@ export const pageMeta: Record<string, PageMeta> = {
     title: '생명의 말씀',
     description: '하나님의 말씀을 나눕니다.',
   },
+  '/location': {
+    title: '오시는 길',
+    description: '행복으로가는교회로 찾아오시는 길을 안내합니다.',
+  },
   // 여기에 추가적인 info 페이지들의 메타데이터를 정의합니다.
 };

@@ -1,0 +1,87 @@
+@use '@/common/styles/mixins/function' as *;
+
+// 레이아웃 배경 오버라이드 (info 레이아웃 재사용 시)
+.locationLayout {
+  [class*='titleSection'] {
+    background: url('/main/bg2.jpg') no-repeat center center / cover;
+
+    @include mq(mo) {
+      background-size: 200% auto;
+    }
+
+    // 배경 이미지를 다른 이미지로 변경하려면 여기를 수정하세요
+    // 예: background: url('/location/location-bg.jpg') no-repeat center center / cover;
+  }
+}
+
+.inner {
+  padding-block: vw(100) vw(160);
+}
+
+.title {
+  margin-block-end: vw(36);
+  @include font-vw(48, 64, $weight: 600, $color: var(--text-main));
+}
+
+// 맵 섹션
+.map {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-block-end: vw(120);
+
+  &__wrapper {
+    width: 100%;
+    height: vw(600);
+    // box-sizing: content-box;
+    // border-radius: vw(20);
+    border: vw(6) solid var(--accent-border-subtle);
+    overflow: hidden;
+  }
+
+  &__detail {
+    @include font-vw(28, 45, $weight: 600, $color: var(--text-main));
+    margin-block: vw(40);
+  }
+
+  &__links {
+    display: flex;
+    gap: vw(20);
+  }
+
+  &__linkItem {
+    a {
+      display: flex;
+      align-items: center;
+      gap: vw(16);
+      padding: vw(12) vw(24) vw(12) vw(12);
+      border-radius: vw(10);
+      background-color: var(--bg-section);
+    }
+    img {
+      border-radius: vw(10);
+    }
+    span {
+      @include font-vw(24, 36, $weight: 500, $color: var(--text-main));
+    }
+  }
+
+  @include mq(pc-sm) {
+    &__wrapper {
+      height: vw(500);
+      border-radius: vw(12);
+    }
+  }
+
+  @include mq(mo) {
+    margin-block-end: vw(40);
+
+    &__wrapper {
+      height: vw(400);
+      border-radius: vw(8);
+      box-shadow: 0 vw(2) vw(12) rgba(0, 0, 0, 0.06);
+    }
+  }
+}
+
+// 정보 섹션

@@ -486,17 +486,28 @@
   flex: 0 0 60%;
   width: 100%;
   min-height: vw(900);
+  position: relative;
   border-radius: vw(--border-radius);
   border: vw(--border-width) solid var(--accent-border-subtle);
-  background-image: url('/main/bulltein3-1.jpg');
-  background-size: 100% auto;
+  background-image: url('/main/bulltein14.jpg');
+  background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.75);
+  }
 }
 
 .latest {
+  position: relative;
+  z-index: 1;
   padding: vw(80) vw(60);
-  // background-color: rgba(255, 255, 255, 0.25);
 
   &__title {
     display: flex;
@@ -550,14 +561,14 @@
 
   &__summary,
   &__praise {
-    @include font-vw(24, $color: var(--text-main));
+    @include font-vw(24, $color: var(--text-main), $weight: 500);
     line-height: 1.4;
   }
 
   &__content {
     margin-top: vw(80);
     padding-top: vw(24);
-    border-top: vw(--border-width) solid var(--accent-border);
+    border-top: vw(--border-width) solid var(--accent-brand);
   }
 
   &__contentTitle {
@@ -577,9 +588,12 @@
 
   &__contentBody {
     // MDX 스타일은 mdxContent 클래스에서 처리됨
+    // --table-border-color: var(--accent-border);
+    --table-border-color: #ddd;
     margin-block: 0 !important;
     padding-block-end: 0 !important;
     border: 0 !important;
+    font-weight: 500 !important;
     word-break: keep-all !important;
     h3 {
       color: var(--accent-brand);
@@ -591,6 +605,14 @@
     th {
       width: 30%;
       min-width: vw(80);
+      border-color: var(--table-border-color) !important;
+      background-color: var(--accent-brand) !important;
+      font-weight: 600 !important;
+      color: var(--text-inverse) !important;
+    }
+    td {
+      border-color: var(--table-border-color) !important;
+      background-color: var(--bg-page) !important;
     }
   }
 
