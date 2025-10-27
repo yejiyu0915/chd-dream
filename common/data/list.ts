@@ -36,5 +36,13 @@ export const pageMeta: Record<string, PageMeta> = {
     title: '오시는 길',
     description: '행복으로가는교회로 찾아오시는 길을 안내합니다.',
   },
-  // 여기에 추가적인 info 페이지들의 메타데이터를 정의합니다.
+  '/about': {
+    title: '교회 소개',
+    description: '행복으로가는교회를 소개합니다.',
+  },
+  '/about/history': {
+    title: '교회 연혁',
+    description: '행복으로가는교회의 발자취를 소개합니다.',
+  },
+  // 여기에 추가적인 페이지들의 메타데이터를 정의합니다.
 };
