@@ -6,6 +6,7 @@ import Lenis from '@studio-freight/lenis';
 interface MobileMenuContextType {
   isMobileMenuOpen: boolean;
   toggleMobileMenu: () => void;
+  closeMobileMenu: () => void;
   lenisInstance: Lenis | null;
   setLenisInstance: (lenis: Lenis | null) => void;
   stopLenis: () => void;
@@ -24,6 +25,10 @@ export function MobileMenuProvider({ children }: { children: ReactNode }) {
     setIsMobileMenuOpen((prev) => !prev);
   };
 
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
   const stopLenis = () => {
     lenisInstance?.stop();
   };
@@ -37,6 +42,7 @@ export function MobileMenuProvider({ children }: { children: ReactNode }) {
       value={{
         isMobileMenuOpen,
         toggleMobileMenu,
+        closeMobileMenu,
         lenisInstance,
         setLenisInstance,
         stopLenis,

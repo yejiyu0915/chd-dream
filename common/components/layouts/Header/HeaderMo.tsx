@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import Icon from '@/common/components/utils/Icons';
 import h from '@/common/components/layouts/Header/Header.module.scss';
 import { useMobileMenu } from '@/common/components/layouts/Header/MobileMenuContext';
@@ -15,9 +16,20 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
   'use memo'; // React 컴파일러 최적화 적용
 
   const scrollYRef = useRef(0);
+  const pathname = usePathname();
 
-  const { isMobileMenuOpen, toggleMobileMenu, stopLenis, startLenis } = useMobileMenu();
+  const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu, stopLenis, startLenis } =
+    useMobileMenu();
   const [activeMobileMenu, setActiveMobileMenu] = useState<string[]>([]); // 배열로 변경 (여러 개 열기 가능)
+
+  // pathname 변경 시 메뉴 닫기
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      closeMobileMenu();
+      setActiveMobileMenu([]); // 서브메뉴도 모두 닫기
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -87,11 +99,7 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
                         <ul className={h.mobileSubMenuList}>
                           {menuItem.subMenu.map((subItem, subIndex) => (
                             <li key={subIndex} className={h.mobileSubMenuItem}>
-                              <Link
-                                href={subItem.href}
-                                className={h.mobileSubMenuLink}
-                                onClick={toggleMobileMenu}
-                              >
+                              <Link href={subItem.href} className={h.mobileSubMenuLink}>
                                 {subItem.name}
                               </Link>
                             </li>
