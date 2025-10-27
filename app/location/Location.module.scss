@@ -154,7 +154,7 @@
   &__content {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: vw(100);
+    gap: vw(140) vw(100);
     &Title {
       margin-block: 0 0.5em;
       @include font-vw(36, 54, $weight: 600, $color: var(--text-main));
@@ -206,7 +206,7 @@
       }
     }
     @include mq(pc-sm) {
-      gap: vw(64) vw(80);
+      gap: vw(100) vw(80);
       &Title {
         @include font-vw(24);
       }
@@ -233,7 +233,7 @@
     }
     @include mq(mo) {
       grid-template-columns: 1fr;
-      // gap: vw(48) vw(64);
+      gap: vw(80) vw(64);
       &Title {
         @include font-vw(20);
       }

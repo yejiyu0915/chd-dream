@@ -99,7 +99,18 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
                         <ul className={h.mobileSubMenuList}>
                           {menuItem.subMenu.map((subItem, subIndex) => (
                             <li key={subIndex} className={h.mobileSubMenuItem}>
-                              <Link href={subItem.href} className={h.mobileSubMenuLink}>
+                              <Link
+                                href={subItem.href}
+                                className={h.mobileSubMenuLink}
+                                onClick={(e) => {
+                                  // 같은 페이지 링크인 경우 메뉴 닫기
+                                  if (pathname === subItem.href) {
+                                    e.preventDefault();
+                                    closeMobileMenu();
+                                    setActiveMobileMenu([]);
+                                  }
+                                }}
+                              >
                                 {subItem.name}
                               </Link>
                             </li>
