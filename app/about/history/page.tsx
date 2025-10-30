@@ -102,17 +102,34 @@ export default function HistoryPage() {
     const section = sectionRefs.current.get(sectionId);
     if (!section) return;
 
-    // 클릭 플래그 설정 및 섹션 즉시 활성화
+    // 클릭 플래그를 먼저 설정 (스크롤 감지 즉시 중단)
     isClickScrolling.current = true;
     clickedSection.current = sectionId;
+
+    // 섹션 즉시 활성화
     setActiveSection(sectionId);
+
+    // 첫 번째 섹션(2020)은 최상단으로 이동
+    if (sectionId === historyData[0]?.id) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      setTimeout(() => {
+        isClickScrolling.current = false;
+        clickedSection.current = null;
+      }, 1500);
+      return;
+    }
 
     // sidebar 리렌더링 후 스크롤 계산
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         const windowWidth = window.innerWidth;
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const sectionTop = section.getBoundingClientRect().top + scrollTop;
+        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const sectionTop = section.getBoundingClientRect().top + currentScrollTop;
+
+        // header 높이 계산
+        const headerElement = document.querySelector('header');
+        const headerHeight = headerElement ? headerElement.offsetHeight : 80;
 
         let offset: number;
 
@@ -120,7 +137,6 @@ export default function HistoryPage() {
           // 모바일: sidebar 하단 + 섹션 여백 절반(80)
           if (sidebarRef.current) {
             const sidebarRect = sidebarRef.current.getBoundingClientRect();
-            // 섹션 시작 - 80(여백 절반) 지점이 sidebar 하단에 오도록
             offset = sidebarRect.bottom + 80;
           } else {
             offset = 250; // fallback
@@ -130,14 +146,28 @@ export default function HistoryPage() {
           offset = 200;
         }
 
+        // titleSection 높이 계산
+        const timelineElement = document.querySelector(`.${h.timeline}`);
+        if (timelineElement) {
+          const timelineTop = timelineElement.getBoundingClientRect().top;
+          // timeline의 viewport 위치 = header + titleSection
+          // titleSection 높이 = timeline위치 - header높이
+          const titleSectionHeight = timelineTop - headerHeight;
+
+          // titleSection이 화면에 보이면 (timeline이 sticky 안 붙었으면) 고려
+          if (titleSectionHeight > 0) {
+            offset += titleSectionHeight - titleSectionHeight * 2.2;
+          }
+        }
+
         const targetScroll = sectionTop - offset;
         window.scrollTo({ top: Math.max(0, targetScroll), behavior: 'smooth' });
 
-        // 스크롤 완료 후 플래그 해제 (1초 후)
+        // 스크롤 완료 후 플래그 해제 (1.5초 후 - smooth 스크롤 완료 대기)
         setTimeout(() => {
           isClickScrolling.current = false;
           clickedSection.current = null;
-        }, 1000);
+        }, 1500);
       });
     });
   };
