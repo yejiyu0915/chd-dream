@@ -11,6 +11,8 @@ export default function HistoryPage() {
   const [activeSection, setActiveSection] = useState<string>(historyData[0]?.id || '');
   const sectionRefs = useRef<Map<string, HTMLElement>>(new Map());
   const sidebarRef = useRef<HTMLElement>(null); // sidebar 참조
+  const isClickScrolling = useRef(false); // 클릭으로 스크롤 중인지 플래그
+  const clickedSection = useRef<string | null>(null); // 클릭된 섹션 ID
 
   useEffect(() => {
     setPageTitle('교회 연혁');
@@ -21,27 +23,30 @@ export default function HistoryPage() {
     let ticking = false;
 
     const updateActiveSection = () => {
+      // 클릭으로 스크롤 중에는 감지 로직 실행 안 함
+      if (isClickScrolling.current) {
+        ticking = false;
+        return;
+      }
+
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       const windowHeight = window.innerHeight;
       const windowWidth = window.innerWidth;
 
-      // 반응형 triggerPoint 계산
+      // 반응형 triggerPoint 계산 (모든 값 정수로 반올림)
       let triggerPoint: number;
 
       if (windowWidth <= 768) {
-        // 모바일: 앵커 클릭 기준과 동일하게 (sidebar.height * 1.5)
+        // 모바일: sidebar 하단 기준
         if (sidebarRef.current) {
           const sidebarRect = sidebarRef.current.getBoundingClientRect();
-          // 클릭 시 section이 화면의 sidebar.height * 1.5 위치에 오므로
-          // 이 위치를 triggerPoint로 설정
-          triggerPoint = scrollTop + sidebarRect.height * 1.5;
+          triggerPoint = Math.round(scrollTop + sidebarRect.bottom);
         } else {
-          // sidebar ref가 없으면 상단 기준
-          triggerPoint = scrollTop + windowHeight * 0.25;
+          triggerPoint = Math.round(scrollTop + windowHeight * 0.25);
         }
       } else {
         // 데스크톱/태블릿: 화면 상단 1/3 지점
-        triggerPoint = scrollTop + windowHeight / 3;
+        triggerPoint = Math.round(scrollTop + windowHeight / 3);
       }
 
       // 각 섹션의 위치를 확인하여 현재 보이는 섹션 찾기
@@ -49,10 +54,13 @@ export default function HistoryPage() {
 
       sectionRefs.current.forEach((element, id) => {
         const rect = element.getBoundingClientRect();
-        const elementTop = rect.top + scrollTop;
+        const elementTop = Math.round(rect.top + scrollTop);
 
-        // triggerPoint에 이미 offset이 포함되어 있음
-        if (elementTop <= triggerPoint) {
+        // 모바일: 섹션 시작점 - 80 (여백 절반) 지점에서 전환
+        // PC: 섹션 시작점 기준
+        const sectionTriggerPoint = windowWidth <= 768 ? elementTop - 80 : elementTop;
+
+        if (sectionTriggerPoint <= triggerPoint) {
           currentSection = id;
         }
       });
@@ -91,31 +99,47 @@ export default function HistoryPage() {
 
   // 타임라인 클릭 시 해당 섹션으로 스크롤
   const handleTimelineClick = (sectionId: string) => {
-    // 클릭한 섹션을 즉시 활성화 (sidebar 높이 변화 문제 해결)
+    const section = sectionRefs.current.get(sectionId);
+    if (!section) return;
+
+    // 클릭 플래그 설정 및 섹션 즉시 활성화
+    isClickScrolling.current = true;
+    clickedSection.current = sectionId;
     setActiveSection(sectionId);
 
-    const section = sectionRefs.current.get(sectionId);
-    if (section) {
-      const windowWidth = window.innerWidth;
-      let yOffset: number;
+    // sidebar 리렌더링 후 스크롤 계산
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const windowWidth = window.innerWidth;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const sectionTop = section.getBoundingClientRect().top + scrollTop;
 
-      if (windowWidth <= 768) {
-        // 모바일: sidebar 높이 + 여백 고려
-        if (sidebarRef.current) {
-          const sidebarRect = sidebarRef.current.getBoundingClientRect();
-          // sidebar가 고정되어 있으므로 그 높이만큼 빼기
-          yOffset = -(sidebarRect.height * 1.5); // sidebar 높이 + 여유값
+        let offset: number;
+
+        if (windowWidth <= 768) {
+          // 모바일: sidebar 하단 + 섹션 여백 절반(80)
+          if (sidebarRef.current) {
+            const sidebarRect = sidebarRef.current.getBoundingClientRect();
+            // 섹션 시작 - 80(여백 절반) 지점이 sidebar 하단에 오도록
+            offset = sidebarRect.bottom + 80;
+          } else {
+            offset = 250; // fallback
+          }
         } else {
-          yOffset = -200;
+          // PC: 헤더 + 타임라인 높이
+          offset = 200;
         }
-      } else {
-        // PC: 헤더 + 타임라인 높이
-        yOffset = -200;
-      }
 
-      const y = section.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
+        const targetScroll = sectionTop - offset;
+        window.scrollTo({ top: Math.max(0, targetScroll), behavior: 'smooth' });
+
+        // 스크롤 완료 후 플래그 해제 (1초 후)
+        setTimeout(() => {
+          isClickScrolling.current = false;
+          clickedSection.current = null;
+        }, 1000);
+      });
+    });
   };
 
   // 날짜 포맷팅 함수

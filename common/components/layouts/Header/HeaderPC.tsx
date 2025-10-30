@@ -2,11 +2,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import Icon from '@/common/components/utils/Icons';
 import h from '@/common/components/layouts/Header/Header.module.scss';
 import { useMobileMenu } from '@/common/components/layouts/Header/MobileMenuContext';
 import { menuData } from '@/common/data/info';
-// import { usePathname } from 'next/navigation'; // usePathname import는 Header.tsx로 이동
 
 interface HeaderPCProps {
   isScrolled: boolean;
@@ -18,9 +18,9 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [isMenuHovered, setIsMenuHovered] = useState(false);
   const [mounted, setMounted] = useState(false);
-  // const pathname = usePathname(); // Header.tsx에서 관리
+  const pathname = usePathname(); // 현재 경로 가져오기
 
-  const { isMobileMenuOpen, toggleMobileMenu } = useMobileMenu();
+  const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useMobileMenu();
 
   useEffect(() => {
     // 스크롤 로직은 Header.tsx에서 관리하므로 여기서는 제거
@@ -194,7 +194,16 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
         <div className={h.util} style={{ opacity: mounted ? 1 : 0 }}>
           <ul>
             <li>
-              <Link href="/location">
+              <Link
+                href="/location"
+                onClick={(e) => {
+                  // 같은 페이지(오시는 길)에서 클릭 시 모바일 메뉴 닫기
+                  if (pathname === '/location' && isMobileMenuOpen) {
+                    e.preventDefault();
+                    closeMobileMenu();
+                  }
+                }}
+              >
                 <Icon name="map" className={h.icon} /> <span className="only-pc">오시는 길</span>
               </Link>
             </li>
