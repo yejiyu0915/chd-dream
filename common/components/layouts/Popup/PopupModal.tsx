@@ -136,7 +136,7 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
 
   return (
     <div className={`${styles.overlay} ${isVisible ? styles.visible : ''}`}>
-      <div className={`${styles.modal} ${isVisible ? styles.visible : ''}`} data-lenis-prevent>
+      <div className={`${styles.modal} ${isVisible ? styles.visible : ''}`}>
         {/* 모달 헤더 */}
         <div className={styles.header}>
           <div className={styles.badge}>

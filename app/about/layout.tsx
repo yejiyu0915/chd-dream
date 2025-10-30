@@ -1,17 +1,10 @@
 'use client';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { usePathname } from 'next/navigation';
 import Breadcrumbs from '@/common/components/layouts/Breadcrumbs';
 import { usePageTitle, PageTitleProvider } from '@/app/about/utils/title-context';
 import about from '@/app/about/aboutLayout.module.scss';
 import { pageMeta } from '@/common/data/list';
-import Lenis from '@studio-freight/lenis';
-
-declare global {
-  interface Window {
-    lenis?: Lenis | null;
-  }
-}
 
 interface AboutLayoutProps {
   children: React.ReactNode;
@@ -37,23 +30,6 @@ function AboutLayoutContent({ children }: AboutLayoutProps) {
     pageMeta[matchedPath]?.description ||
     pageMeta['/about']?.description ||
     '행복으로가는교회를 소개합니다.';
-
-  // 스크롤 상단 이동 (페이지 이동 시) - lenis와 충돌 방지
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (
-        typeof window !== 'undefined' &&
-        window.lenis &&
-        typeof window.lenis.scrollTo === 'function'
-      ) {
-        window.lenis.scrollTo(0, { duration: 0.7 });
-      } else if (typeof window !== 'undefined') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [pathname]);
 
   return (
     <main className={about.aboutLayout}>

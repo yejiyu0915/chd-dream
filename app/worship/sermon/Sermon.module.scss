@@ -4,6 +4,7 @@
 .inner {
   display: flex;
   gap: vw(40);
+  position: relative;
   padding-block: vw(120) vw(200);
   @include mq(pc-sm) {
     gap: vw(32);
@@ -20,6 +21,10 @@
 .nav {
   width: 24%;
   min-width: vw(240);
+  position: sticky;
+  top: calc(vw(--header-height) + vw(20)); // 헤더 높이 + 여백
+  align-self: flex-start; // flex 컨테이너 내에서 sticky 동작을 위해 필수
+  height: fit-content;
 
   &__list {
     display: flex;
@@ -69,6 +74,7 @@
   }
   @include mq(mo) {
     width: 100%;
+    position: static; // 모바일에서는 sticky 해제
     &__button {
       font-size: vw(16);
     }

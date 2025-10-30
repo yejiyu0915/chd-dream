@@ -26,6 +26,10 @@
 
 .items {
   flex: 1;
+  align-self: flex-start;
+  height: fit-content;
+  position: sticky;
+  top: calc(vw(--header-height) + vw(20)); // 헤더 높이 + 여백
 
   // 모바일 토글 버튼 (기본적으로 숨김)
   &__toggle {
@@ -109,6 +113,7 @@
   }
 
   @include mq(ta) {
+    position: static;
     // 태블릿부터 토글 버튼 표시
     &__toggle {
       display: flex;

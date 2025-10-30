@@ -19,24 +19,9 @@ export default function SermonContent({
 }: SermonContentProps) {
   const ContentComponent = data.component; // 동적 컴포넌트 할당
 
-  // 모바일 네비게이션 클릭 시 최상단으로 스크롤하는 핸들러
+  // 모바일 네비게이션 클릭 핸들러
   const handleNavClick = (id: string) => {
-    // 먼저 스크롤을 최상단으로 이동 (리렌더링 전에 실행)
-    if (window.lenis) {
-      window.lenis.scrollTo(0, {
-        duration: 0.6,
-      });
-    } else {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
-    }
-
-    // 스크롤 후 설교 변경 (약간의 딜레이를 주어 충돌 방지)
-    setTimeout(() => {
-      onSelect?.(id);
-    }, 50);
+    onSelect?.(id);
   };
 
   return (

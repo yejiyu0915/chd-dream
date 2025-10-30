@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Icon from '@/common/components/utils/Icons';
 import h from '@/common/components/layouts/Header/Header.module.scss';
@@ -15,11 +15,9 @@ interface HeaderMoProps {
 export default function HeaderMo({ isScrolled }: HeaderMoProps) {
   'use memo'; // React 컴파일러 최적화 적용
 
-  const scrollYRef = useRef(0);
   const pathname = usePathname();
 
-  const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu, stopLenis, startLenis } =
-    useMobileMenu();
+  const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useMobileMenu();
   const [activeMobileMenu, setActiveMobileMenu] = useState<string[]>([]); // 배열로 변경 (여러 개 열기 가능)
 
   // pathname 변경 시 메뉴 닫기
@@ -31,35 +29,16 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
+  // 모바일 메뉴 열림/닫힘에 따른 body 스크롤 제어
   useEffect(() => {
     if (isMobileMenuOpen) {
-      // 스크롤 위치 저장
-      scrollYRef.current = window.scrollY;
-
-      // body에 스크롤 위치를 data 속성으로 저장
-      document.body.setAttribute('data-scroll-y', scrollYRef.current.toString());
-
-      // 메뉴 열릴 때 무조건 스크롤 상태 유지 (플리커 방지)
-      document.body.style.setProperty('top', `-${scrollYRef.current}px`, 'important');
+      // 메뉴 열릴 때 body 스크롤 차단
       document.body.classList.add('mobile-menu-open');
-      stopLenis();
     } else {
-      // 저장된 스크롤 위치 복원
-      const savedScrollY = document.body.getAttribute('data-scroll-y');
-      const scrollY = savedScrollY ? parseInt(savedScrollY, 10) : scrollYRef.current;
-
-      // body 스타일 초기화
-      document.body.style.removeProperty('top');
+      // 메뉴 닫힐 때 body 스크롤 복원
       document.body.classList.remove('mobile-menu-open');
-      document.body.removeAttribute('data-scroll-y');
-
-      // 다음 프레임에서 스크롤 복원 (DOM 업데이트 후)
-      requestAnimationFrame(() => {
-        window.scrollTo(0, scrollY);
-        startLenis();
-      });
     }
-  }, [isMobileMenuOpen, stopLenis, startLenis]);
+  }, [isMobileMenuOpen]);
 
   const handleMobileMenuClick = (menuName: string) => {
     const isOpen = activeMobileMenu.includes(menuName);
@@ -76,7 +55,7 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
     <div
       className={`${h.mobileMenuOverlay} ${isMobileMenuOpen ? h.open : ''} ${isMobileMenuOpen || isScrolled ? h.scroll : ''}`}
     >
-      <div className={h.mobileMenuContent} data-lenis-prevent>
+      <div className={h.mobileMenuContent}>
         <nav className={h.mobileNav}>
           <ul className={h.mobileMenuList}>
             {menuData.map((menuItem, index) => (

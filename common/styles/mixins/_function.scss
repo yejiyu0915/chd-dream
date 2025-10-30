@@ -44,37 +44,73 @@ $media-queries: (
   landscape: 1024px, // Landscape breakpoint
 );
 
+// @mixin mq($breakpoint) {
+//   @if $breakpoint == fhd {
+//     @container wrapper (min-width: #{map.get($media-queries, fhd)}) {
+//       @content;
+//     }
+//   } @else if $breakpoint == pc {
+//     @container wrapper (max-width: #{map.get($media-queries, pc)}) {
+//       @content;
+//     }
+//   } @else if $breakpoint == pc-sm {
+//     @container wrapper (max-width: #{map.get($media-queries, pc-sm)}) {
+//       @content;
+//     }
+//   } @else if $breakpoint == ta {
+//     @container wrapper (max-width: #{map.get($media-queries, ta)}) {
+//       @content;
+//     }
+//   } @else if $breakpoint == mo {
+//     @container wrapper (max-width: #{map.get($media-queries, mo)}) {
+//       @content;
+//     }
+//   } @else if $breakpoint == mo-sm {
+//     @container wrapper (max-width: #{map.get($media-queries, mo-sm)}) {
+//       @content;
+//     }
+//   } @else if $breakpoint == mo-xs {
+//     @container wrapper (max-width: #{map.get($media-queries, mo-xs)}) {
+//       @content;
+//     }
+//   } @else if $breakpoint == landscape {
+//     @container wrapper (min-width: #{map.get($media-queries, landscape)}) and (orientation: landscape) {
+//       @content;
+//     }
+//   }
+// }
+
 @mixin mq($breakpoint) {
   @if $breakpoint == fhd {
-    @container wrapper (min-width: #{map.get($media-queries, fhd)}) {
+    @media screen and (min-width: #{map.get($media-queries, fhd)}) {
       @content;
     }
   } @else if $breakpoint == pc {
-    @container wrapper (max-width: #{map.get($media-queries, pc)}) {
+    @media screen and (max-width: #{map.get($media-queries, pc)}) {
       @content;
     }
   } @else if $breakpoint == pc-sm {
-    @container wrapper (max-width: #{map.get($media-queries, pc-sm)}) {
+    @media screen and (max-width: #{map.get($media-queries, pc-sm)}) {
       @content;
     }
   } @else if $breakpoint == ta {
-    @container wrapper (max-width: #{map.get($media-queries, ta)}) {
+    @media screen and (max-width: #{map.get($media-queries, ta)}) {
       @content;
     }
   } @else if $breakpoint == mo {
-    @container wrapper (max-width: #{map.get($media-queries, mo)}) {
+    @media screen and (max-width: #{map.get($media-queries, mo)}) {
       @content;
     }
   } @else if $breakpoint == mo-sm {
-    @container wrapper (max-width: #{map.get($media-queries, mo-sm)}) {
+    @media screen and (max-width: #{map.get($media-queries, mo-sm)}) {
       @content;
     }
   } @else if $breakpoint == mo-xs {
-    @container wrapper (max-width: #{map.get($media-queries, mo-xs)}) {
+    @media screen and (max-width: #{map.get($media-queries, mo-xs)}) {
       @content;
     }
   } @else if $breakpoint == landscape {
-    @container wrapper (min-width: #{map.get($media-queries, landscape)}) and (orientation: landscape) {
+    @media screen and (min-width: #{map.get($media-queries, landscape)}) and (orientation: landscape) {
       @content;
     }
   }
