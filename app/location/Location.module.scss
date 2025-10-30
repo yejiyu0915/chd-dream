@@ -16,11 +16,32 @@
 
 .inner {
   padding-block: vw(100) vw(160);
+  @include mq(pc-sm) {
+    padding-block: vw(48) vw(160);
+  }
+  @include mq(mo) {
+    padding-block: vw(36) vw(120);
+  }
 }
 
 .title {
-  margin-block-end: vw(36);
-  @include font-vw(48, 64, $weight: 600, $color: var(--text-main));
+  margin-block: 1em 1.5em;
+  padding-inline-start: 0.5em;
+  border-left: vw(5) solid var(--accent-brand);
+  @include font-vw(56, $ls: -0.02, $weight: 600, $color: var(--accent-brand));
+  @include mq(pc-sm) {
+    @include font-vw(40);
+  }
+  @include mq(mo) {
+    display: inline-block;
+    width: fit-content;
+    padding-block: 0.5em;
+    padding-inline-start: 0;
+    border-left: 0;
+    border-top: vw(3) solid var(--accent-brand);
+    @include font-vw(28);
+    text-align: center;
+  }
 }
 
 // 맵 섹션
@@ -28,20 +49,21 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-block-end: vw(120);
+  margin-block-end: vw(240);
 
   &__wrapper {
     width: 100%;
     height: vw(600);
     // box-sizing: content-box;
     // border-radius: vw(20);
-    border: vw(6) solid var(--accent-border-subtle);
-    overflow: hidden;
+    // border: vw(6) solid var(--accent-border-subtle);
+    // overflow: hidden;
+    box-shadow: 0 vw(2) vw(12) rgba(0, 0, 0, 0.06);
   }
 
   &__detail {
-    @include font-vw(28, 45, $weight: 600, $color: var(--text-main));
-    margin-block: vw(40);
+    margin-block: vw(40) vw(80);
+    @include font-vw(28, 42, $weight: 600, $color: var(--text-body));
   }
 
   &__links {
@@ -54,34 +76,188 @@
       display: flex;
       align-items: center;
       gap: vw(16);
-      padding: vw(12) vw(24) vw(12) vw(12);
-      border-radius: vw(10);
-      background-color: var(--bg-section);
+      padding: vw(16) vw(24) vw(16) vw(16);
+      border-radius: vw(20);
+      border: vw(2) solid var(--accent-border-subtle);
+      &:hover {
+        background-color: var(--bg-section);
+      }
     }
     img {
-      border-radius: vw(10);
+      border-radius: vw(20);
     }
     span {
-      @include font-vw(24, 36, $weight: 500, $color: var(--text-main));
+      @include font-vw(22, 36, $weight: 600, $color: var(--text-body));
     }
   }
 
   @include mq(pc-sm) {
+    margin-block-end: vw(160);
     &__wrapper {
       height: vw(500);
-      border-radius: vw(12);
+    }
+    &__detail {
+      margin-block: vw(24) vw(40);
+      @include font-vw(24);
+      text-align: center;
+    }
+    &__links {
+      gap: vw(16);
+    }
+    &__linkItem {
+      a {
+        padding: vw(12) vw(16) vw(12) vw(12);
+        border-radius: vw(12);
+        border-width: 1px;
+      }
+      img {
+        border-radius: vw(12);
+      }
+      span {
+        @include font-vw(18);
+      }
     }
   }
 
   @include mq(mo) {
-    margin-block-end: vw(40);
+    margin-block-end: vw(120);
 
     &__wrapper {
       height: vw(400);
-      border-radius: vw(8);
-      box-shadow: 0 vw(2) vw(12) rgba(0, 0, 0, 0.06);
+    }
+    &__detail {
+      @include font-vw(18);
+    }
+    &__links {
+      flex-direction: column;
+      gap: vw(12);
+    }
+    &__linkItem {
+      a {
+        padding: vw(8) vw(12) vw(8) vw(8);
+        border-radius: vw(10);
+      }
+      img {
+        width: vw(40);
+        height: vw(40);
+        border-radius: vw(10);
+      }
+      span {
+        @include font-vw(16);
+      }
     }
   }
 }
 
 // 정보 섹션
+.info {
+  &__content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: vw(140) vw(100);
+    &Title {
+      margin-block: 0 0.5em;
+      @include font-vw(36, 54, $weight: 600, $color: var(--text-main));
+    }
+    &Desc {
+      @include font-vw(24, 36, $color: var(--text-body));
+    }
+    &List {
+      display: flex;
+      flex-direction: column;
+      gap: vw(16);
+    }
+    &Item {
+      display: flex;
+      align-items: center;
+      gap: vw(16);
+      flex-wrap: wrap;
+      @include font-vw(24, 36, $color: var(--text-body));
+      &:nth-child(n + 2) {
+        padding-block-start: vw(16);
+        border-top: vw(2) dashed var(--accent-border-subtle);
+      }
+      &Title {
+        display: flex;
+        gap: vw(8);
+      }
+      span {
+        display: inline-block;
+        padding: 0.5em 1em;
+        border-radius: 2.5em;
+        border: vw(4) solid var(--accent-border-subtle);
+        background-color: var(--transport-color, var(--accent-border-subtle));
+        @include font-vw(20, 30, $weight: 700, $color: var(--text-inverse));
+      }
+      .subway1 {
+        --transport-color: #5f8fcc;
+      }
+      .subway2 {
+        --transport-color: #ec8600;
+      }
+      .busBlue {
+        --transport-color: #1e7bdb;
+      }
+      .busGreen {
+        --transport-color: #59be0a;
+      }
+      .busRed {
+        --transport-color: #e53607;
+      }
+    }
+    @include mq(pc-sm) {
+      gap: vw(100) vw(80);
+      &Title {
+        @include font-vw(24);
+      }
+      &Desc {
+        @include font-vw(18);
+      }
+      &List {
+        gap: vw(12);
+      }
+      &Item {
+        gap: vw(12);
+        @include font-vw(18);
+        &:nth-child(n + 2) {
+          padding-block-start: vw(12);
+          // border-top: vw(1) dashed var(--accent-border-subtle);
+        }
+        &Title {
+          gap: vw(6);
+        }
+        span {
+          @include font-vw(16);
+        }
+      }
+    }
+    @include mq(mo) {
+      grid-template-columns: 1fr;
+      gap: vw(80) vw(64);
+      &Title {
+        @include font-vw(20);
+      }
+      &Desc {
+        @include font-vw(16);
+      }
+      &List {
+        gap: vw(10);
+      }
+      &Item {
+        gap: vw(10);
+        @include font-vw(16);
+        &:nth-child(n + 2) {
+          padding-block-start: vw(10);
+        }
+        &Title {
+          flex-wrap: wrap;
+          gap: vw(4);
+        }
+        span {
+          border-width: vw(2);
+          @include font-vw(12);
+        }
+      }
+    }
+  }
+}

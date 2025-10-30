@@ -56,7 +56,7 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
 
   return (
     <header
-      className={`${h.header} ${isMenuHovered ? h.hover : ''} ${isMobileMenuOpen ? h.scroll : h.default} ${isScrolled ? h.scroll : ''} ${mounted ? h.mounted : ''}`}
+      className={`${h.header} ${isMenuHovered ? h.hover : ''} ${isMobileMenuOpen || isScrolled ? h.scroll : ''} ${mounted ? h.mounted : ''}`}
     >
       <div className={h.overlay}></div>
       <div className={h.inner}>

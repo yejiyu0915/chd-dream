@@ -63,7 +63,55 @@ export default function LocationPage() {
 
         {/* 정보 섹션 */}
         <div className={l.info}>
-          <h2 className={l.title}>대중 교통 이용 안내</h2>
+          <h2 className={l.title}>오시는 길</h2>
+          <div className={l.info__content}>
+            <div>
+              <h3 className={l.info__contentTitle}>지하철</h3>
+              <ul className={l.info__contentList}>
+                <li className={l.info__contentItem}>
+                  <p className={l.info__contentItemTitle}>
+                    <span className={l.subway1}>인천 1호선</span>
+                  </p>
+                  <p className={l.info__contentItemValue}>인천시청역 9번 출구(도보 5분)</p>
+                </li>
+                <li className={l.info__contentItem}>
+                  <p className={l.info__contentItemTitle}>
+                    <span className={l.subway2}>인천 2호선</span>
+                  </p>
+                  <p className={l.info__contentItemValue}>인천시청역 8번 출구(도보 4분)</p>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className={l.info__contentTitle}>버스</h3>
+              <ul className={l.info__contentList}>
+                <li className={l.info__contentItem}>
+                  <p className={l.info__contentItemTitle}>
+                    <span className={l.busBlue}>33번</span>
+                    <span className={l.busBlue}>8번</span>
+                    <span className={l.busGreen}>540번</span>
+                    <span className={l.busGreen}>566번</span>
+                    <span className={l.busRed}>1601번</span>
+                  </p>
+                  <p className={l.info__contentItemValue}>극동.금호아파트 정류장(도보 5분)</p>
+                </li>
+                <li className={l.info__contentItem}>
+                  <p className={l.info__contentItemTitle}>
+                    <span className={l.busGreen}>540번</span>
+                  </p>
+                  <p className={l.info__contentItemValue}>석산로 정류장(도보 4분)</p>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className={l.info__contentTitle}>자차 이용 안내</h3>
+              <p className={l.info__contentDesc}>서울외곽도로 - 서창IC(남동공단) - 시청방향</p>
+            </div>
+            <div>
+              <h3 className={l.info__contentTitle}>차량 운행 안내</h3>
+              <p className={l.info__contentDesc}>차량 운행은 부속실로 문의주세요.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

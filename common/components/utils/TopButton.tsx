@@ -61,16 +61,7 @@ export default function TopButton() {
 
   // 최상단으로 스크롤하는 핸들러
   const scrollToTop = () => {
-    // Lenis 라이브러리가 있으면 부드러운 스크롤 사용
-    if (window.lenis) {
-      window.lenis.scrollTo(0, {
-        duration: 0.4,
-        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      });
-    } else {
-      // Lenis가 없으면 기본 스크롤 사용
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // 버튼 표시 조건: 스크롤이 300px 이상이고, footer가 보이지 않을 때

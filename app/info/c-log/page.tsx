@@ -9,15 +9,8 @@ import CLogCategoryFilter from '@/app/info/c-log/components/CLogCategoryFilter';
 import CLogSortFilter from '@/app/info/c-log/components/CLogSortFilter'; // CLogSortFilter 컴포넌트 임포트 (경로 변경)
 import CLogViewModeFilter from '@/app/info/c-log/components/CLogViewModeFilter'; // CLogViewModeFilter 컴포넌트 임포트 (경로 변경)
 import c from '@/app/info/c-log/CLogList.module.scss';
-import { useRouter, useSearchParams } from 'next/navigation'; // useRouter와 useSearchParams 임포트
-import { usePageTitle } from '@/app/info/utils/title-context'; // usePageTitle 훅 임포트 (경로 변경 반영)
-// import Lenis from '@studio-freight/lenis'; // Lenis 타입 임포트 (window.lenis 사용을 위해)
-
-// declare global {
-//   interface Window {
-//     lenis?: Lenis | null; // Lenis 인스턴스를 window 객체에 접근 가능하도록 선언 (null도 허용)
-//   }
-// }
+import { useRouter, useSearchParams } from 'next/navigation';
+import { usePageTitle } from '@/app/info/utils/title-context';
 
 export default function CLogListPage() {
   const router = useRouter();
@@ -26,21 +19,7 @@ export default function CLogListPage() {
 
   // 페이지 제목 설정
   useEffect(() => {
-    setPageTitle('C-Log'); // C-Log 리스트 페이지 제목 설정
-    // 페이지 마운트 시 스크롤을 최상단으로 이동 (0.3초 딜레이 추가)
-    const timer = setTimeout(() => {
-      if (
-        typeof window !== 'undefined' &&
-        window.lenis &&
-        typeof window.lenis.scrollTo === 'function'
-      ) {
-        window.lenis.scrollTo(0, { duration: 0.7 }); // Lenis 스크롤 사용 (부드러운 이동을 위해 duration 0.7초로 조정)
-      } else if (typeof window !== 'undefined') {
-        window.scrollTo({ top: 0, behavior: 'smooth' }); // 일반 스크롤 사용 시 부드럽게 이동
-      }
-    }, 300); // 0.3초 (300ms) 딜레이
-
-    return () => clearTimeout(timer); // 컴포넌트 언마운트 시 타이머 정리
+    setPageTitle('C-Log');
   }, [setPageTitle]);
 
   // URL 파라미터에서 초기 상태 설정

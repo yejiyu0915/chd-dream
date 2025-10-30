@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { usePathname } from 'next/navigation';
 import Breadcrumbs from '@/common/components/layouts/Breadcrumbs';
 import info from '@/app/info/infoLayout.module.scss'; // info 레이아웃 스타일 재사용
@@ -19,11 +19,6 @@ export default function LocationLayout({ children }: LocationLayoutProps) {
     title: '오시는 길',
     description: '행복으로가는교회를 찾아오시는 길을 안내합니다.',
   };
-
-  // 스크롤 상단 이동 (페이지 이동 시)
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
 
   return (
     <main className={`${info.infoLayout} ${l.locationLayout}`}>

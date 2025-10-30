@@ -1,15 +1,11 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import Lenis from '@studio-freight/lenis';
 
 interface MobileMenuContextType {
   isMobileMenuOpen: boolean;
   toggleMobileMenu: () => void;
-  lenisInstance: Lenis | null;
-  setLenisInstance: (lenis: Lenis | null) => void;
-  stopLenis: () => void;
-  startLenis: () => void;
+  closeMobileMenu: () => void;
 }
 
 const MobileMenuContext = createContext<MobileMenuContextType | undefined>(undefined);
@@ -18,18 +14,13 @@ export function MobileMenuProvider({ children }: { children: ReactNode }) {
   'use memo'; // React 컴파일러 최적화 적용
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [lenisInstance, setLenisInstance] = useState<Lenis | null>(null);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen((prev) => !prev);
   };
 
-  const stopLenis = () => {
-    lenisInstance?.stop();
-  };
-
-  const startLenis = () => {
-    lenisInstance?.start();
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
   };
 
   return (
@@ -37,10 +28,7 @@ export function MobileMenuProvider({ children }: { children: ReactNode }) {
       value={{
         isMobileMenuOpen,
         toggleMobileMenu,
-        lenisInstance,
-        setLenisInstance,
-        stopLenis,
-        startLenis,
+        closeMobileMenu,
       }}
     >
       {children}

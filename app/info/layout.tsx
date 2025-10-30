@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { usePathname } from 'next/navigation';
 import Breadcrumbs from '@/common/components/layouts/Breadcrumbs';
 import { usePageTitle } from '@/app/info/utils/title-context';
@@ -30,11 +30,6 @@ export default function InfoLayout({ children }: InfoLayoutProps) {
     pageMeta[matchedPath]?.description ||
     pageMeta['/info']?.description ||
     '교회의 다양한 이야기를 소개합니다.';
-
-  // 스크롤 상단 이동 (페이지 이동 시)
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
 
   return (
     <main className={info.infoLayout}>

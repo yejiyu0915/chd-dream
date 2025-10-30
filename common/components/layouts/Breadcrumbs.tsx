@@ -32,6 +32,8 @@ export default function Breadcrumbs({ className, isDetail }: BreadcrumbsProps) {
     bulletin: '온라인 주보',
     sermon: '생명의 말씀',
     location: '오시는 길',
+    about: '교회 소개',
+    history: '교회 연혁',
     // 다른 경로에 대한 이름 추가
   };
 

@@ -3,8 +3,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Header from '@/common/components/layouts/Header/Header';
 import Footer from '@/common/components/layouts/Footer/Footer';
-import SmoothScroll from '@/common/components/utils/SmoothScroll';
-import { useMobileMenu } from '@/common/components/layouts/Header/MobileMenuContext';
 import PopupModal from '@/common/components/layouts/Popup/PopupModal';
 import TopButton from '@/common/components/utils/TopButton';
 import { NewsItem } from '@/lib/notion';
@@ -14,7 +12,6 @@ interface LayoutContentProps {
 }
 
 export default function LayoutContent({ children }: LayoutContentProps) {
-  const { setLenisInstance, stopLenis, startLenis } = useMobileMenu();
   const [popupNews, setPopupNews] = useState<NewsItem | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const scrollYRef = useRef(0);
@@ -68,9 +65,8 @@ export default function LayoutContent({ children }: LayoutContentProps) {
   // 팝업 상태에 따른 스크롤 제어
   useEffect(() => {
     if (showPopup) {
-      // 스크롤 위치 저장 및 Lenis 중지
+      // 스크롤 위치 저장
       scrollYRef.current = window.scrollY;
-      stopLenis();
 
       // body 스크롤 차단
       document.body.classList.add('popup-open');
@@ -80,12 +76,11 @@ export default function LayoutContent({ children }: LayoutContentProps) {
       document.body.classList.remove('popup-open');
       document.body.style.top = '';
 
-      // 스크롤 위치 복원 및 Lenis 재시작
+      // 스크롤 위치 복원
       const currentScrollY = scrollYRef.current;
       window.scrollTo(0, currentScrollY);
-      startLenis();
     }
-  }, [showPopup, stopLenis, startLenis]);
+  }, [showPopup]);
 
   // 팝업 닫기 핸들러
   const handleClosePopup = (dontShowAgain: boolean = false) => {
@@ -109,18 +104,16 @@ export default function LayoutContent({ children }: LayoutContentProps) {
   };
 
   return (
-    <SmoothScroll setLenisInstance={setLenisInstance}>
-      <div className="wrapper">
-        <Header />
-        {children}
-        <Footer />
+    <div className="wrapper">
+      <Header />
+      {children}
+      <Footer />
 
-        {/* 팝업 모달 */}
-        {showPopup && <PopupModal newsItem={popupNews} onClose={handleClosePopup} />}
+      {/* 팝업 모달 */}
+      {showPopup && <PopupModal newsItem={popupNews} onClose={handleClosePopup} />}
 
-        {/* Top 버튼 */}
-        <TopButton />
-      </div>
-    </SmoothScroll>
+      {/* Top 버튼 */}
+      <TopButton />
+    </div>
   );
 }

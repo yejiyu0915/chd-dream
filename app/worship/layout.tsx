@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { usePathname } from 'next/navigation';
 import Breadcrumbs from '@/common/components/layouts/Breadcrumbs';
 import { usePageTitle, PageTitleProvider } from '@/app/worship/utils/title-context';
@@ -30,11 +30,6 @@ function WorshipLayoutContent({ children }: WorshipLayoutProps) {
     pageMeta[matchedPath]?.description ||
     pageMeta['/worship']?.description ||
     '교회의 예배와 관련된 정보를 제공합니다.';
-
-  // 스크롤 상단 이동 (페이지 이동 시)
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
 
   return (
     <main className={worship.worshipLayout}>

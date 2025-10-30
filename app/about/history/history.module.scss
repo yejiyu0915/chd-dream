@@ -1,0 +1,527 @@
+@use '@/common/styles/mixins/function' as *;
+
+// 간단한 sticky 기반 레이아웃 (media query 사용)
+
+.historyPage {
+  --border-width: 4;
+  padding-block-start: vw(40);
+  @include mq(pc-sm) {
+    --border-width: 3;
+    padding-block-start: vw(24);
+  }
+  @include mq(mo) {
+    --border-width: 2;
+    padding-block-start: 0;
+  }
+}
+
+// 상단 타임라인 네비게이션 (sticky)
+.timeline {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  padding-block: vw(32) vw(24);
+  padding-inline: var(--inner-padding);
+  position: sticky;
+  top: vw(--header-height); // header height
+  background-color: var(--bg-page);
+  box-shadow: 0 vw(10) vw(10) rgba(0, 0, 0, 0.02);
+  z-index: 50;
+
+  // 타임라인 수평선
+  &::before {
+    content: '';
+    width: 100%;
+    height: vw(2);
+    position: absolute;
+    top: vw(43);
+    left: 0;
+    background-color: var(--accent-border);
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    // 타임라인 점
+    &::before {
+      content: '';
+      width: vw(24);
+      height: vw(24);
+      margin-block-end: vw(12);
+      border-radius: 50%;
+      border: vw(--border-width) solid var(--bg-page);
+      background-color: var(--accent-border);
+      transition: all 0.3s ease;
+    }
+
+    // 활성화 상태
+    &.active {
+      &::before {
+        background-color: var(--accent-brand);
+      }
+
+      .timeline__year {
+        color: var(--accent-brand);
+        font-weight: 600;
+      }
+    }
+
+    // 호버 상태
+    &:hover {
+      &::before {
+        background-color: var(--accent-brand);
+      }
+    }
+  }
+
+  &__year {
+    @include font-vw(20, 28, $weight: 600);
+    color: var(--text-body);
+    transition: all 0.3s ease;
+  }
+
+  &__label {
+    margin-block-start: vw(4);
+    @include font-vw(16, 24);
+    color: var(--text-body);
+  }
+
+  @include mq(pc-sm) {
+    padding-block: vw(24) vw(16);
+    &::before {
+      top: vw(33);
+    }
+    &__item {
+      // 타임라인 점
+      &::before {
+        width: vw(20);
+        height: vw(20);
+        margin-block-end: vw(8);
+      }
+    }
+
+    &__year {
+      @include font-vw(18, 24);
+    }
+
+    &__label {
+      margin-block-start: vw(2);
+      @include font-vw(14);
+    }
+  }
+
+  @include mq(mo) {
+    padding-block: vw(16) vw(12);
+    box-shadow: none;
+    &::before {
+      height: 1px;
+      top: vw(22);
+    }
+    &__item {
+      // 타임라인 점
+      &::before {
+        width: vw(14);
+        height: vw(14);
+        margin-block-end: vw(4);
+      }
+    }
+
+    &__year {
+      @include font-vw(14);
+    }
+
+    &__label {
+      @include font-vw(10);
+    }
+  }
+}
+
+// 메인 히스토리 컨테이너 (2컬럼 레이아웃)
+.history {
+  display: grid;
+  grid-template-columns: vw(360) 1px 1fr;
+  gap: vw(60);
+  margin-block-start: vw(80);
+  padding-block: 0 vw(100);
+
+  // 왼쪽 사이드바 (sticky)
+  .sidebar {
+    position: sticky;
+    top: calc(vw(--header-height) + vw(158) + vw(20));
+    z-index: 2;
+    align-self: flex-start;
+    height: fit-content;
+    padding: vw(20) vw(20) vw(40);
+    background-color: var(--bg-page);
+    text-align: right;
+
+    // 연결선 (순차적 애니메이션)
+    &::before {
+      content: '';
+      width: vw(36);
+      height: vw(--border-width);
+      border-radius: vw(2);
+      background-color: var(--accent-brand);
+      position: absolute;
+      top: vw(54);
+      left: calc(100% + vw(60));
+      animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      animation-delay: 0.35s;
+      animation-fill-mode: backwards;
+    }
+
+    // 포인트 (순차적 애니메이션)
+    &::after {
+      content: '';
+      width: vw(20);
+      height: vw(20);
+      border: vw(--border-width) solid var(--accent-brand);
+      background-color: var(--accent-secondary);
+      border-radius: 50%;
+      position: absolute;
+      top: vw(47);
+      left: calc(100% + vw(50));
+      animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      animation-delay: 0.4s;
+      animation-fill-mode: backwards;
+    }
+  }
+
+  .sidebarContent {
+    opacity: 1;
+  }
+
+  // 중앙 구분선
+  .divider {
+    width: 1px;
+    background-color: var(--accent-border);
+  }
+
+  // 오른쪽 메인 컨텐츠
+  .main {
+    min-width: 0;
+  }
+
+  // 각 섹션
+  .section {
+    &:not(:last-child) {
+      margin-block-end: vw(160);
+    }
+  }
+
+  // 기간 헤더
+  .periodHeader {
+    margin-block-end: vw(24);
+
+    &__period {
+      margin-block-end: vw(8);
+      @include font-vw(56, 72, $weight: 600);
+      color: var(--accent-brand);
+      animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      animation-delay: 0s;
+    }
+
+    &__label {
+      margin-block-end: vw(12);
+      @include font-vw(16);
+      color: var(--text-body);
+      animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      animation-delay: 0.15s;
+      animation-fill-mode: backwards;
+    }
+
+    &__title {
+      @include font-vw(32, $weight: 700);
+      color: var(--text-main);
+      line-height: 1.4;
+      animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      animation-delay: 0.3s;
+      animation-fill-mode: backwards;
+    }
+  }
+
+  // 이미지 영역
+  .periodImage {
+    width: 100%;
+    max-width: vw(320);
+    margin-block-start: vw(32);
+    border-radius: vw(12);
+    overflow: hidden;
+    background-color: var(--surface-secondary);
+    animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    animation-delay: 0.45s;
+    animation-fill-mode: backwards;
+
+    &__img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    &__caption {
+      padding: vw(12) vw(16);
+      @include font-vw(14);
+      color: var(--text-placeholder);
+      text-align: center;
+    }
+  }
+
+  // 연혁 리스트
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: vw(60);
+    padding-block: vw(40) vw(80);
+
+    &__item {
+      display: flex;
+      gap: vw(36);
+      position: relative;
+    }
+
+    &__date {
+      min-width: vw(160);
+      flex-shrink: 0;
+      @include font-vw(24, 32, $weight: 800);
+      color: var(--text-body);
+    }
+
+    &__content {
+      flex: 1;
+    }
+
+    &__title {
+      @include font-vw(24, 32, $weight: 500);
+      color: var(--text-body);
+    }
+
+    &__subItems {
+      display: flex;
+      flex-direction: column;
+      gap: vw(12);
+      margin-block-start: vw(20);
+      padding-inline-start: vw(16);
+    }
+
+    &__subItem {
+      position: relative;
+      @include font-vw(18, 28);
+      color: var(--text-body);
+
+      // 2depth 항목 불릿
+      &::before {
+        content: '·';
+        position: absolute;
+        left: vw(-12);
+      }
+    }
+  }
+
+  @include mq(pc-sm) {
+    grid-template-columns: vw(320) 1px 1fr;
+    gap: vw(32);
+    margin-block-start: vw(60);
+    padding-block: 0 vw(60);
+
+    // 왼쪽 사이드바 (sticky)
+    .sidebar {
+      top: calc(vw(--header-height) + vw(118) + vw(20));
+      padding: vw(22) vw(16) vw(24) 0;
+
+      // 연결선 (순차적 애니메이션)
+      &::before {
+        width: vw(24);
+        top: vw(48);
+        left: calc(100% + vw(30));
+      }
+
+      // 포인트 (순차적 애니메이션)
+      &::after {
+        width: vw(16);
+        height: vw(16);
+        top: vw(42);
+        left: calc(100% + vw(25));
+      }
+    }
+    // 각 섹션
+    .section {
+      &:not(:last-child) {
+        margin-block-end: vw(120);
+      }
+    }
+
+    // 기간 헤더
+    .periodHeader {
+      margin-block-end: vw(20);
+
+      &__period {
+        @include font-vw(48);
+      }
+
+      &__label {
+        margin-block-end: vw(8);
+        @include font-vw(14);
+      }
+
+      &__title {
+        @include font-vw(28);
+      }
+    }
+
+    // 이미지 영역
+    .periodImage {
+      max-width: vw(320);
+      margin-block-start: vw(32);
+      border-radius: vw(12);
+
+      &__caption {
+        padding: vw(12) vw(16);
+        @include font-vw(14);
+      }
+    }
+
+    // 연혁 리스트
+    .list {
+      gap: vw(40);
+      padding-block: vw(36) vw(60);
+
+      &__item {
+        gap: vw(24);
+      }
+
+      &__date {
+        min-width: vw(120);
+        @include font-vw(20);
+      }
+
+      &__title {
+        @include font-vw(20);
+      }
+
+      &__subItems {
+        gap: vw(8);
+        margin-block-start: vw(16);
+        padding-inline-start: vw(12);
+      }
+
+      &__subItem {
+        @include font-vw(16);
+      }
+    }
+  }
+
+  @include mq(ta) {
+    grid-template-columns: vw(240) 1px 1fr;
+  }
+
+  @include mq(mo) {
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-block-start: 0;
+    // 왼쪽 사이드바 (sticky)
+    .sidebar {
+      top: calc(vw(--header-height) + vw(64));
+      padding: vw(16) 0;
+      border-bottom: 1px solid var(--accent-border);
+      text-align: left;
+      box-shadow: 0 vw(10) vw(10) rgba(0, 0, 0, 0.02);
+
+      // 연결선 (순차적 애니메이션)
+      &::before {
+        display: none;
+      }
+
+      // 포인트 (순차적 애니메이션)
+      &::after {
+        display: none;
+      }
+    }
+    // 각 섹션
+    .section {
+      &:not(:last-child) {
+        margin-block-end: vw(160);
+      }
+    }
+
+    // 기간 헤더
+    .periodHeader {
+      margin-block-end: vw(16);
+
+      &__period {
+        margin-block-end: vw(4);
+        @include font-vw(32);
+      }
+
+      &__label {
+        @include font-vw(10);
+      }
+
+      &__title {
+        @include font-vw(20);
+      }
+    }
+
+    // 이미지 영역
+    .periodImage {
+      max-width: 100%;
+      margin-block-start: vw(16);
+      border-radius: vw(12);
+
+      &__caption {
+        padding: vw(8) vw(12);
+        @include font-vw(12);
+      }
+    }
+
+    // 연혁 리스트
+    .list {
+      gap: vw(28);
+      padding-block: vw(24) vw(32);
+
+      &__item {
+        flex-direction: column;
+        gap: vw(8);
+      }
+
+      &__date {
+        min-width: vw(80);
+        @include font-vw(15);
+      }
+
+      &__content {
+        padding-inline-start: vw(12);
+      }
+
+      &__title {
+        @include font-vw(15);
+      }
+
+      &__subItems {
+        gap: vw(4);
+        margin-block-start: vw(8);
+        padding-inline-start: vw(8);
+      }
+
+      &__subItem {
+        @include font-vw(13);
+      }
+    }
+  }
+}
+
+// 사이드바 컨텐츠 슬라이드 업 애니메이션
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(vw(20));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
