@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { usePageTitle } from '@/app/worship/utils/title-context';
 
 interface PageTitleSetterProps {
@@ -10,7 +10,8 @@ interface PageTitleSetterProps {
 export default function PageTitleSetter({ title }: PageTitleSetterProps) {
   const { setPageTitle } = usePageTitle();
 
-  useEffect(() => {
+  // useLayoutEffect로 변경: 브라우저가 화면을 그리기 전에 동기적으로 실행되어 Suspense 경계 문제 해결
+  useLayoutEffect(() => {
     setPageTitle(title);
   }, [setPageTitle, title]);
 

@@ -113,6 +113,7 @@
   }
 
   @include mq(ta) {
+    width: 100%;
     position: static;
     // 태블릿부터 토글 버튼 표시
     &__toggle {

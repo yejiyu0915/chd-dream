@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PageTitleSetter from '@/app/worship/components/PageTitleSetter';
 import { sermonData } from '@/app/worship/sermon/data/sermonData';
 import SermonNav from '@/app/worship/sermon/components/SermonNav';
@@ -13,6 +13,11 @@ export default function SermonPage() {
 
   // 현재 선택된 데이터 찾기
   const activeData = sermonData.find((item) => item.id === activeId) || sermonData[0];
+
+  // activeId 변경 시 스크롤 최상단으로 즉시 이동 (smooth 효과 없이)
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [activeId]);
 
   // 현재 인덱스 찾기
   const currentIndex = sermonData.findIndex((item) => item.id === activeId);
