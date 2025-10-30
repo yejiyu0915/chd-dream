@@ -23,7 +23,7 @@
   padding-block: vw(32) vw(24);
   padding-inline: var(--inner-padding);
   position: sticky;
-  top: vw(--header-height); // header height
+  top: calc(vw(--header-height) - 1px); // header height
   background-color: var(--bg-page);
   box-shadow: 0 vw(10) vw(10) rgba(0, 0, 0, 0.02);
   z-index: 50;
@@ -425,7 +425,7 @@
     margin-block-start: 0;
     // 왼쪽 사이드바 (sticky)
     .sidebar {
-      top: calc(vw(--header-height) + vw(64));
+      top: calc(vw(--header-height) + vw(63));
       padding: vw(16) 0;
       border-bottom: 1px solid var(--accent-border);
       text-align: left;
