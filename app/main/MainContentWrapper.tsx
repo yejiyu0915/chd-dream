@@ -3,16 +3,20 @@
 import { useState } from 'react';
 import KV from '@/app/main/KV/KV';
 import MainContentInner from '@/app/main/MainContentInner';
-import { KVSliderItem, BulletinItem } from '@/lib/notion';
+import { KVSliderItem, BulletinItem, CLogItem, NewsItem } from '@/lib/notion';
 
 interface MainContentWrapperProps {
   kvSliderItems: KVSliderItem[];
   bulletinData: BulletinItem;
+  cLogData: CLogItem[];
+  newsData: NewsItem[];
 }
 
 export default function MainContentWrapper({
   kvSliderItems,
   bulletinData,
+  cLogData,
+  newsData,
 }: MainContentWrapperProps) {
   'use memo'; // React 컴파일러 최적화 적용
 
@@ -20,8 +24,16 @@ export default function MainContentWrapper({
 
   return (
     <>
-      <KV kvSliderItems={kvSliderItems} setKvHeightState={setKvHeight} />
-      <MainContentInner bulletinData={bulletinData} kvHeight={kvHeight} />
+      <KV
+        kvSliderItems={kvSliderItems}
+        newsData={newsData}
+        setKvHeightState={setKvHeight}
+      />
+      <MainContentInner
+        bulletinData={bulletinData}
+        cLogData={cLogData}
+        kvHeight={kvHeight}
+      />
     </>
   );
 }

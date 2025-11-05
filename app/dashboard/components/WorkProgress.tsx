@@ -231,7 +231,7 @@ export default function WorkProgress() {
       depth1: '예배 안내',
       depth2: '예배 시간표',
       depth3: '',
-      link: '/worship/schedule',
+      link: '/worship/timetable',
       startDate: '-',
       progress: 'not-started',
       completionDate: '',

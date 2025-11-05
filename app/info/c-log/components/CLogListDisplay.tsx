@@ -142,8 +142,7 @@ export default function CLogList({
       <div className={c.cLogList}>
         <div className={c.loadingState}>
           {' '}
-          {/* 로딩 상태를 위한 새로운 wrapper */}
-          <Spinner size="lg" /> {/* Spinner 컴포넌트 사용 */}
+          <Spinner size="lg" />
         </div>
       </div>
     );

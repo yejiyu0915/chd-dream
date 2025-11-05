@@ -19,7 +19,7 @@ export default function QuickLink() {
           <div className={q.list}>
             <div className={q.list__row}>
               <div className={`${q.list__item} ${q.list__itemLg}`}>
-                <Link href="/worship/schedule">
+                <Link href="/worship/timetable">
                   <p className={q.list__title}>
                     <Icon name="book" /> 예배 안내
                   </p>
@@ -32,7 +32,7 @@ export default function QuickLink() {
                 </Link>
               </div>
               <div className={q.list__item}>
-                <Link href="/info/video">
+                <Link href="">
                   <p className={q.list__title}>
                     <Icon name="users" /> 교구 소개
                   </p>

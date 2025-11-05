@@ -8,7 +8,11 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import CLogSkeleton from '@/app/main/c-log/CLogSkeleton';
 import { useRef } from 'react';
 
-export default function CLog() {
+interface CLogProps {
+  initialCLogData: CLogItem[];
+}
+
+export default function CLog({ initialCLogData }: CLogProps) {
   'use memo'; // React 컴파일러 최적화 적용
 
   const queryClient = useQueryClient();
@@ -48,7 +52,8 @@ export default function CLog() {
   } = useQuery<CLogItem[], Error>({
     queryKey: ['cLogItems'],
     queryFn: fetchCLogItems,
-    staleTime: 0, // 메인 페이지는 항상 최신 데이터를 가져오도록 staleTime 설정
+    initialData: initialCLogData, // 서버에서 받은 데이터를 초기값으로 사용 (즉시 렌더링)
+    staleTime: 1000 * 60 * 5, // 5분간 fresh 상태 유지 (재fetch 방지)
     // refetchInterval: 60 * 1000, // 1분(60초)마다 데이터를 자동으로 다시 가져옵니다. -> 새로고침 시에만 반영되도록 제거
   });
 

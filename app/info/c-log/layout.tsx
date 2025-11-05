@@ -1,13 +1,5 @@
-import { getCLogData } from '@/lib/notion';
-import React, { Suspense } from 'react';
-
-export async function generateStaticParams() {
-  const clogItems = await getCLogData();
-  return clogItems.map((item) => ({
-    slug: item.slug,
-  }));
-}
+import React from 'react';
 
 export default function CLogLayout({ children }: { children: React.ReactNode }) {
-  return <Suspense fallback={<div></div>}>{children}</Suspense>;
+  return <>{children}</>;
 }

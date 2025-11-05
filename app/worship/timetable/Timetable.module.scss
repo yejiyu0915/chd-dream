@@ -1,0 +1,159 @@
+@use '@/common/styles/mixins/function' as *;
+
+// 메인 컨테이너
+.inner {
+  padding-block: vw(100) vw(160);
+  @include mq(pc-sm) {
+    padding-block: vw(48) vw(160);
+  }
+  @include mq(mo) {
+    padding-block: vw(36) vw(120);
+  }
+}
+
+.title {
+  margin-block: 1em 1.5em;
+  padding-inline-start: 0.5em;
+  border-left: vw(5) solid var(--accent-brand);
+  @include font-vw(56, $ls: -0.02, $weight: 600, $color: var(--accent-brand));
+  @include mq(pc-sm) {
+    @include font-vw(40);
+  }
+  @include mq(mo) {
+    display: inline-block;
+    width: fit-content;
+    margin-block: 1em;
+    padding-block: 0.5em;
+    padding-inline-start: 0;
+    border-left: 0;
+    border-top: vw(3) solid var(--accent-brand);
+    @include font-vw(28);
+    text-align: center;
+  }
+}
+
+// 테이블 스타일
+.table {
+  --border-width: 2;
+  --border-width-bold: var(--border-width) * 2;
+  width: 100%;
+  margin-block-end: vw(200);
+  border-collapse: collapse;
+  border: vw(--border-width) solid var(--accent-border);
+  background-color: var(--bg-main);
+
+  &:last-child {
+    margin-block-end: 0;
+  }
+
+  // 테이블 헤더
+  thead {
+    background-color: var(--accent-brand);
+
+    th {
+      padding: 1em;
+      @include font-vw(28, $weight: 600, $color: var(--text-inverse));
+      text-align: center;
+      border: vw(--border-width) solid var(--accent-border);
+    }
+  }
+
+  // 테이블 바디
+  tbody {
+    tr {
+      border-bottom: vw(--border-width) solid var(--accent-border);
+
+      // &:hover {
+      //   background-color: #f9f9f9;
+      // }
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &.borderBottom {
+        border-bottom: vw(--border-width-bold) solid var(--accent-border);
+      }
+    }
+
+    td,
+    th {
+      padding: 1.5em 1em;
+      @include font-vw(24, 32, $color: var(--text-body));
+      text-align: center;
+      border: vw(--border-width) solid var(--accent-border);
+    }
+
+    th {
+      font-weight: 600;
+      color: var(--accent-brand);
+      &.assemblyTitle {
+        background-color: var(--accent-secondary);
+      }
+    }
+
+    td {
+      &.assemblyTime {
+        font-weight: 600;
+        color: var(--text-main);
+      }
+    }
+  }
+
+  @include mq(pc-sm) {
+    margin-block-end: vw(120);
+
+    // 테이블 헤더
+    thead {
+      th {
+        @include font-vw(24);
+      }
+    }
+
+    // 테이블 바디
+    tbody {
+      td,
+      th {
+        @include font-vw(20);
+      }
+    }
+  }
+
+  @include mq(mo) {
+    --border-width: 1;
+    margin-block-end: vw(60);
+
+    // 테이블 헤더
+    thead {
+      th {
+        @include font-vw(16);
+      }
+    }
+
+    // 테이블 바디
+    tbody {
+      td,
+      th {
+        padding: 1em 0.5em;
+        @include font-vw(16);
+      }
+    }
+  }
+
+  @include mq(mo-sm) {
+    // 테이블 헤더
+    thead {
+      th {
+        @include font-vw(14);
+      }
+    }
+
+    // 테이블 바디
+    tbody {
+      td,
+      th {
+        @include font-vw(14);
+      }
+    }
+  }
+}

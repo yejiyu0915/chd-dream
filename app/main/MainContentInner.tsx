@@ -6,14 +6,19 @@ import Bulletin from '@/app/main/bulletin/Bulletin';
 import CLog from '@/app/main/c-log/CLog';
 import QuickLink from '@/app/main/quick-link/QuickLink';
 // import Instagram from '@/app/main/Instagram/Instagram';
-import { BulletinItem } from '@/lib/notion';
+import { BulletinItem, CLogItem } from '@/lib/notion';
 
 interface MainContentInnerProps {
   bulletinData: BulletinItem;
+  cLogData: CLogItem[];
   kvHeight: string;
 }
 
-export default function MainContentInner({ bulletinData, kvHeight }: MainContentInnerProps) {
+export default function MainContentInner({
+  bulletinData,
+  cLogData,
+  kvHeight,
+}: MainContentInnerProps) {
   'use memo'; // React 컴파일러 최적화 적용
 
   // kvHeight가 'vh' 단위인지 'px' 단위인지 확인하여 0.95를 곱합니다.
@@ -23,10 +28,10 @@ export default function MainContentInner({ bulletinData, kvHeight }: MainContent
 
   return (
     <div className={m.main__content} style={{ paddingTop: calculatedPaddingTop }}>
-      <Bulletin />
+      <Bulletin initialBulletinData={bulletinData} />
       <div style={{ backgroundColor: 'var(--bg-page)' }}>
         <Intro />
-        <CLog />
+        <CLog initialCLogData={cLogData} />
         <QuickLink />
         {/* <Instagram /> */}
       </div>

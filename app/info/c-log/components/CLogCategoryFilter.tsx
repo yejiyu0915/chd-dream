@@ -150,10 +150,10 @@ export default function CLogCategoryFilter({
             onClick={handleScroll}
             aria-label="다음 카테고리"
           >
-            <Icon name="arrow-next" size="lg" /> {/* nav-next로 수정 */}
+            <Icon name="arrow-next" size="lg" />
           </button>
         )}
-        {showRightArrow && <div className={c.categoryFilter__gradient}></div>} {/* 그라데이션 */}
+        {showRightArrow && <div className={c.categoryFilter__gradient}></div>}
       </div>
     </div>
   );

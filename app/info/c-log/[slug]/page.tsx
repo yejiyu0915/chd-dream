@@ -1,69 +1,46 @@
 import { notFound } from 'next/navigation';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-
-import remarkGfm from 'remark-gfm';
-import rehypeSanitize from 'rehype-sanitize';
-import rehypePrettyCode from 'rehype-pretty-code';
-import rehypeSlug from 'rehype-slug';
+import { Suspense } from 'react';
 import rehypeExtractToc from '@stefanprobst/rehype-extract-toc';
 import withTocExport from '@stefanprobst/rehype-extract-toc/mdx';
+import rehypeSlug from 'rehype-slug';
 
 import { compile } from '@mdx-js/mdx';
 
 import { getNotionPageAndContentBySlug, notion, getPrevNextCLogPosts } from '@/lib/notion';
 import { NotionToMarkdown } from 'notion-to-md';
-import mdx from 'common/styles/mdx/MdxContent.module.scss';
 import PageTitleSetter from '@/app/info/components/PageTitleSetter';
 import l from 'common/styles/mdx/MdxLayout.module.scss';
 import CLogDetailHeader from '@/app/info/c-log/[slug]/components/CLogDetailHeader';
 import CLogDetailFooter from '@/app/info/c-log/[slug]/components/CLogDetailFooter';
-import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'; // React Query 임포트
-import { PageObjectResponse, BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints'; // Notion API 타입 임포트
+import CLogContent from '@/app/info/c-log/[slug]/components/CLogContent';
+import ContentSkeleton from '@/common/components/skeletons/ContentSkeleton';
 
 interface CLogDetailPageProps {
   params: { slug: string };
 }
 
-// C-Log 상세 페이지 캐싱 설정 - 1시간마다 재검증
-export const revalidate = 3600;
+// 캐싱 설정 - 5분마다 재검증 (빌드 독립적)
+export const revalidate = 300;
 
-export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
-  const resolvedParams = await params;
-  const slug = resolvedParams.slug as string;
+// 빌드 시에 없던 새로운 slug도 런타임에 자동 생성 (빌드 불필요)
+export const dynamicParams = true;
 
-  if (!slug) {
-    notFound();
-  }
+// generateStaticParams 제거 - 빌드에 의존하지 않음
+// 모든 페이지는 첫 요청 시 on-demand로 생성되고 캐싱됨
 
-  const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery({
-    queryKey: ['clog-detail', slug],
-    queryFn: () => getNotionPageAndContentBySlug('NOTION_CLOG_ID', slug),
-  });
-
-  const notionData = queryClient.getQueryData(['clog-detail', slug]) as
-    | { page: PageObjectResponse; blocks: BlockObjectResponse[] }
-    | undefined;
+// 메타데이터만 먼저 가져오는 함수 (blocks 제외 - 진짜 Streaming!)
+async function getPageMetadata(slug: string) {
+  const notionData = await getNotionPageAndContentBySlug('NOTION_CLOG_ID', slug);
 
   if (!notionData) {
-    notFound();
+    return null;
   }
-
-  const n2m = new NotionToMarkdown({
-    notionClient: notion,
-  });
-
-  const { parent: markdown } = n2m.toMarkdownString(await n2m.blocksToMarkdown(notionData.blocks));
-  await compile(markdown, {
-    rehypePlugins: [rehypeSlug, rehypeExtractToc, withTocExport],
-  });
 
   const { page } = notionData;
   const titleProperty = page.properties.Title;
   const categoryProperty = page.properties.Category;
   const dateProperty = page.properties.Date;
-  const tagsProperty = page.properties.Tags; // Tags 속성 추가
+  const tagsProperty = page.properties.Tags;
 
   const title =
     (titleProperty?.type === 'title' && titleProperty.title[0]?.plain_text) || '제목 없음';
@@ -78,9 +55,9 @@ export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
   const tags =
     (tagsProperty?.type === 'multi_select' &&
       tagsProperty.multi_select?.map((tag: { name: string }) => tag.name)) ||
-    []; // 태그 추출, 없으면 빈 배열
+    [];
 
-  let imageUrl = '/no-image.svg'; // 기본 이미지
+  let imageUrl = '/no-image.svg';
   if (page.cover) {
     if (page.cover.type === 'external') {
       imageUrl = page.cover.external.url || '/no-image.svg';
@@ -89,36 +66,83 @@ export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
     }
   }
 
-  const { prev: prevPost, next: nextPost } = await getPrevNextCLogPosts(slug);
+  return { title, category, date, tags, imageUrl };
+}
+
+// Markdown 콘텐츠를 생성하는 함수 (무거운 작업 - Suspense 안에서 실행)
+async function getMarkdownContent(slug: string) {
+  // Suspense 안에서 blocks를 가져옴 (진짜 Streaming!)
+  const notionData = await getNotionPageAndContentBySlug('NOTION_CLOG_ID', slug);
+
+  if (!notionData) {
+    return '';
+  }
+
+  const n2m = new NotionToMarkdown({
+    notionClient: notion,
+  });
+
+  const { parent: markdown } = n2m.toMarkdownString(await n2m.blocksToMarkdown(notionData.blocks));
+  await compile(markdown, {
+    rehypePlugins: [rehypeSlug, rehypeExtractToc, withTocExport],
+  });
+
+  return markdown;
+}
+
+export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug as string;
+
+  if (!slug) {
+    notFound();
+  }
+
+  // 1단계: 메타데이터만 먼저 가져오기 (초고속 - 헤더 즉시 표시!)
+  const metadata = await getPageMetadata(slug);
+
+  if (!metadata) {
+    notFound();
+  }
+
+  const { title, category, date, tags, imageUrl } = metadata;
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className={l.container}>
-        <PageTitleSetter title={title} />
-        <CLogDetailHeader
-          title={title}
-          category={category}
-          date={date}
-          imageUrl={imageUrl}
-          tags={tags}
-        />
-        <section className={`${mdx.mdxContent} detail-inner`}>
-          <MDXRemote
-            source={markdown} // mdxSource 대신 markdown 직접 전달
-            options={{
-              mdxOptions: {
-                remarkPlugins: [remarkGfm],
-                rehypePlugins: [rehypeSlug, rehypeSanitize, rehypePrettyCode],
-              },
-            }}
-          />
-        </section>
-        <CLogDetailFooter prevPost={prevPost} nextPost={nextPost} />
-        <aside className="relative hidden md:block">
-          {/* 목차 */}
-          {/* 목차 주석 처리된 부분 유지 */}
-        </aside>
-      </div>
-    </HydrationBoundary>
+    <div className={l.container}>
+      <PageTitleSetter title={title} />
+
+      {/* 즉시 표시: 헤더 (LCP 개선) */}
+      <CLogDetailHeader
+        title={title}
+        category={category}
+        date={date}
+        imageUrl={imageUrl}
+        tags={tags}
+      />
+
+      {/* 2단계: 콘텐츠 Streaming (무거운 작업 - 이제 진짜 스트리밍!) */}
+      <Suspense fallback={<ContentSkeleton />}>
+        <ContentSection slug={slug} />
+      </Suspense>
+
+      {/* 3단계: Footer Streaming */}
+      <Suspense fallback={<div style={{ minHeight: '200px', backgroundColor: 'transparent' }} />}>
+        <FooterSection slug={slug} />
+      </Suspense>
+
+      <aside className="relative hidden md:block">{/* 목차 */}</aside>
+    </div>
   );
+}
+
+// 콘텐츠 섹션 (비동기 컴포넌트 - Suspense 안에서 blocks 가져옴)
+async function ContentSection({ slug }: { slug: string }) {
+  const markdown = await getMarkdownContent(slug);
+  return <CLogContent markdown={markdown} />;
+}
+
+// Footer 섹션 (비동기 컴포넌트)
+async function FooterSection({ slug }: { slug: string }) {
+  const { prev: prevPost, next: nextPost } = await getPrevNextCLogPosts(slug);
+  return <CLogDetailFooter prevPost={prevPost} nextPost={nextPost} />;
 }

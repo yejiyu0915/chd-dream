@@ -23,10 +23,12 @@ export const menuData: MenuItem[] = [
       { name: '교회 연혁', href: '/about/history' },
       { name: '교회 비전(to-be)', href: '/about/vision' },
       { name: '담임 목사 소개(to-be)', href: '/about/pastor' },
-      { name: '교구 소개(to-be)', href: '/about/group' },
-      { name: '섬기는 분들(to-be)', href: '/about/servant' },
-      { name: '활동 안내(to-be)', href: '/about/activity' },
-      { name: '시설 안내(to-be)', href: '/about/facility' },
+      { name: '교구 소개(준비중)', href: '' },
+      { name: '섬기는 분들(준비중)', href: '' },
+      // { name: '교구 소개(준비중)', href: '/about/group' },
+      // { name: '섬기는 분들(준비중)', href: '/about/servant' },
+      // { name: '활동 안내(to-be)', href: '/about/activity' },
+      // { name: '시설 안내(to-be)', href: '/about/facility' },
     ],
     content: {
       image: '/main/church-building.jpg',
@@ -37,7 +39,7 @@ export const menuData: MenuItem[] = [
   {
     name: '예배 안내',
     subMenu: [
-      { name: '예배 시간표(to-be)', href: '/worship/schedule' },
+      { name: '예배 시간표', href: '/worship/timetable' },
       { name: '온라인 주보', href: '/worship/bulletin' },
       { name: '생명의 말씀', href: '/worship/sermon' },
     ],
@@ -52,8 +54,8 @@ export const menuData: MenuItem[] = [
     subMenu: [
       { name: 'NEWS', href: '/info/news' },
       { name: 'C-log', href: '/info/c-log' },
-      { name: '영상(to-be)', href: '/info/video' },
-      { name: 'SNS(to-be)', href: '/info/sns' },
+      // { name: '영상(to-be)', href: '/info/video' },
+      // { name: 'SNS(to-be)', href: '/info/sns' },
       { name: '일정', href: '/info/schedule' },
       { name: '공지사항', href: '/info/notice' },
     ],

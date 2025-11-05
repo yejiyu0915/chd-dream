@@ -9,12 +9,12 @@ import { Autoplay, Parallax, Pagination, Navigation, EffectFade } from 'swiper/m
 import { KVSliderItem } from '@/lib/notion';
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Swiper as SwiperCore } from 'swiper/types';
-import { useMobileMenu } from '@/common/components/layouts/Header/MobileMenuContext';
 import { useQuery, useQueryClient } from '@tanstack/react-query'; // useQueryClient 임포트 추가
 // import KVSliderSkeleton from '@/app/main/KV/KVSliderSkeleton'; // KVSliderSkeleton 임포트 제거
 
 interface KVSliderProps {
   kvHeight: string;
+  initialKvSliderItems: KVSliderItem[]; // 서버에서 받은 초기 데이터
 }
 
 // Swiper styles
@@ -24,28 +24,17 @@ import 'swiper/css/navigation';
 import 'swiper/css/effect-fade';
 import 'swiper/css/parallax';
 
-// KV 섹션이 뷰포트에 보이는지 확인하는 헬퍼 함수
-const checkIfKvVisible = (element: HTMLElement | null): boolean => {
-  if (!element) return false;
-  const { height } = element.getBoundingClientRect();
-  return window.scrollY < height;
-};
-
-export default function KVSlider({ kvHeight }: KVSliderProps) {
+export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderProps) {
   'use memo'; // React 컴파일러 최적화 적용
 
   const sliderRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<SwiperCore | null>(null);
-  const { isMobileMenuOpen } = useMobileMenu();
   const [progressWidth, setProgressWidth] = useState(0); // 프로그레스 바 너비 상태
-  const [isPlaying, setIsPlaying] = useState(true); // 재생/일시정지 상태 추가
-  const autoplayDelay = 8000; // Autoplay delay
+  const [isPlaying, setIsPlaying] = useState(true); // 재생/일시정지 상태
+  const autoplayDelay = 8000; // Autoplay delay (8초)
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const queryClient = useQueryClient(); // QueryClient 인스턴스 가져오기
   const lastModifiedHeaderValue = useRef<string | null>(null); // Last-Modified 헤더 값을 저장할 ref
-
-  // 자동 재생 및 프로그레스 바 활성화 상태를 추적하는 Ref
-  const isAutoplayAndProgressActiveRef = useRef(false);
 
   // KV Slider 데이터 가져오기 (React Query) - Hooks는 항상 최상단에서 호출
   const fetchKVSliderData = async (): Promise<KVSliderItem[]> => {
@@ -82,15 +71,22 @@ export default function KVSlider({ kvHeight }: KVSliderProps) {
   } = useQuery<KVSliderItem[], Error>({
     queryKey: ['kvSliderItems'],
     queryFn: fetchKVSliderData,
+    initialData: initialKvSliderItems, // 서버에서 받은 데이터를 초기값으로 사용 (즉시 렌더링)
+    staleTime: 1000 * 60 * 5, // 5분간 fresh 상태 유지 (재fetch 방지)
     // refetchInterval: 60 * 1000, // 1분(60초)마다 데이터를 자동으로 다시 가져옵니다. -> 새로고침 시에만 반영되도록 제거
   });
 
   // useCallback 훅들도 Hooks 규칙을 따르도록 최상단에 선언
-  const startProgressBar = useCallback(() => {
-    setProgressWidth(0); // 시작 시 0으로 초기화
+  // reset: true면 0%부터 시작, false면 현재 위치에서 계속
+  const startProgressBar = useCallback((reset: boolean = true) => {
+    if (reset) {
+      setProgressWidth(0); // 슬라이드 변경 시 0으로 초기화
+    }
+    
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
+    
     intervalRef.current = setInterval(() => {
       setProgressWidth((prevWidth) => {
         const targetWidth = 50; // 목표 너비를 50%로 설정
@@ -116,50 +112,23 @@ export default function KVSlider({ kvHeight }: KVSliderProps) {
     if (!swiperRef.current) return;
 
     if (isPlaying) {
+      // pause: autoplay와 프로그레스바 멈춤 (현재 위치 유지)
       swiperRef.current.autoplay?.stop();
       stopProgressBar();
-      isAutoplayAndProgressActiveRef.current = false; // 수동으로 멈출 때 플래그 업데이트
     } else {
+      // play: 멈춘 위치부터 계속 진행 (reset=false)
       swiperRef.current.autoplay?.start();
-      startProgressBar();
-      isAutoplayAndProgressActiveRef.current = true; // 수동으로 재생할 때 플래그 업데이트
+      startProgressBar(false); // 현재 위치에서 재개
     }
     setIsPlaying(!isPlaying);
   }, [isPlaying, startProgressBar, stopProgressBar]);
 
-  // useEffect 훅도 최상단에 선언
+  // cleanup: 컴포넌트 언마운트 시 프로그레스바 정리
   useEffect(() => {
-    const handleScroll = () => {
-      const currentKvIsVisible = checkIfKvVisible(sliderRef.current);
-
-      const shouldBeActive = currentKvIsVisible && !isMobileMenuOpen && isPlaying;
-
-      if (shouldBeActive && !isAutoplayAndProgressActiveRef.current) {
-        // 비활성화 상태에서 활성화되어야 할 때만 실행
-        if (swiperRef.current?.autoplay) {
-          swiperRef.current.autoplay.start();
-        }
-        startProgressBar();
-        isAutoplayAndProgressActiveRef.current = true;
-      } else if (!shouldBeActive && isAutoplayAndProgressActiveRef.current) {
-        // 활성화 상태에서 비활성화되어야 할 때만 실행
-        if (swiperRef.current?.autoplay) {
-          swiperRef.current.autoplay.stop();
-        }
-        stopProgressBar();
-        isAutoplayAndProgressActiveRef.current = false;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // 초기 로드 시 실행
-
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      stopProgressBar();
-      isAutoplayAndProgressActiveRef.current = false; // 컴포넌트 언마운트 시 초기화
+      stopProgressBar(); // 인터벌 정리
     };
-  }, [isMobileMenuOpen, isPlaying, startProgressBar, stopProgressBar]);
+  }, [stopProgressBar]);
 
   // Hooks 호출이 모두 완료된 후에 조건부 렌더링 처리
   if (isLoading && !kvSliderItems) {
@@ -206,12 +175,10 @@ export default function KVSlider({ kvHeight }: KVSliderProps) {
         modules={[Autoplay, Pagination, Navigation, Parallax, EffectFade]}
         onSwiper={(swiper) => {
           swiperRef.current = swiper;
-          // 초기 재생 상태에 따라 프로그레스 바 시작
+          // 초기 로드 시 autoplay와 프로그레스바 시작
           if (isPlaying && swiperRef.current?.autoplay) {
-            // autoplay 존재 여부 확인 추가
-            swiperRef.current.autoplay.start(); // onSwiper에서 직접 시작
-            startProgressBar();
-            isAutoplayAndProgressActiveRef.current = true; // 초기 활성화 시 플래그 업데이트
+            swiperRef.current.autoplay.start();
+            startProgressBar(true); // 처음 시작이므로 0%부터
           }
         }}
         spaceBetween={0}
@@ -239,14 +206,9 @@ export default function KVSlider({ kvHeight }: KVSliderProps) {
         parallax={true}
         className={kv.slider}
         onSlideChange={() => {
-          if (swiperRef.current) {
-            if (swiperRef.current.autoplay) {
-              // autoplay 존재 여부 확인 추가
-              swiperRef.current.autoplay.start();
-            }
-            setIsPlaying(true);
-            startProgressBar();
-            isAutoplayAndProgressActiveRef.current = true; // 슬라이드 변경 시 활성화
+          // 슬라이드 변경 시 (화살표 클릭 또는 autoplay) 프로그레스바를 0%부터 시작
+          if (isPlaying) {
+            startProgressBar(true); // 새 슬라이드이므로 0%부터 시작
           }
         }}
       >

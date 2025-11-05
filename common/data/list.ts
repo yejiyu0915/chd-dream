@@ -20,7 +20,7 @@ export const pageMeta: Record<string, PageMeta> = {
     title: '일정',
     description: '교회의 다양한 일정과 행사를 확인하세요.',
   },
-  '/worship/schedule': {
+  '/worship/timetable': {
     title: '예배 안내',
     description: '예배 시간표를 확인하세요.',
   },
