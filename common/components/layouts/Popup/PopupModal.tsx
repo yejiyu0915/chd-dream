@@ -1,31 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { NewsItem } from '@/lib/notion';
+import { PopupData } from '@/lib/notion';
+import { BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 import Icon from '@/common/components/utils/Icons';
-import Spinner from '@/common/components/utils/Spinner';
 import styles from '@/common/components/layouts/Popup/PopupModal.module.scss';
 
-// 뉴스 컨텐츠 타입 정의
-interface NewsContent {
-  page: {
-    id: string;
-    title: string;
-    date: string;
-    slug: string;
-  };
-  blocks: Array<{
-    id: string;
-    type: string;
-    content?: string;
-    language?: string;
-    url?: string;
-    caption?: string;
-  }>;
-}
-
 interface PopupModalProps {
-  newsItem: NewsItem | null;
+  newsItem: PopupData | null;
   onClose: (dontShowAgain?: boolean) => void;
 }
 
@@ -33,15 +15,10 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
   'use memo'; // React 컴파일러 최적화 적용
 
   const [isVisible, setIsVisible] = useState(false);
-  const [newsContent, setNewsContent] = useState<NewsContent | null>(null);
-  const [isLoadingContent, setIsLoadingContent] = useState(false);
   const [dontShowAgain, setDontShowAgain] = useState(false);
 
   useEffect(() => {
     if (newsItem) {
-      // 뉴스 컨텐츠 가져오기
-      fetchNewsContent(newsItem.slug, newsItem);
-
       // 모달이 표시될 때 애니메이션을 위해 약간의 지연
       const timer = setTimeout(() => {
         setIsVisible(true);
@@ -50,37 +27,8 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
       return () => clearTimeout(timer);
     } else {
       setIsVisible(false);
-      setNewsContent(null);
     }
   }, [newsItem]);
-
-  // 컨텐츠 가져오기 함수 (News 또는 Notice)
-  const fetchNewsContent = async (slug: string, item: NewsItem) => {
-    try {
-      setIsLoadingContent(true);
-
-      // 링크를 기반으로 API 엔드포인트 결정
-      // Notice 항목인지 확인 (slug가 'notice'로 시작하거나 link에 '/info/notice/'가 포함된 경우)
-      const isNotice =
-        slug === 'notice9' ||
-        item.link.includes('/info/notice/') ||
-        slug.startsWith('notice') ||
-        slug.includes('notice') ||
-        item.title.includes('공지사항');
-      const apiEndpoint = isNotice ? `/api/notice-content/${slug}` : `/api/news-content/${slug}`;
-
-      const response = await fetch(apiEndpoint);
-
-      if (response.ok) {
-        const content = await response.json();
-        setNewsContent(content);
-      }
-    } catch {
-      // 컨텐츠 가져오기 실패 시 무시
-    } finally {
-      setIsLoadingContent(false);
-    }
-  };
 
   // 모달이 없으면 렌더링하지 않음
   if (!newsItem) {
@@ -97,40 +45,80 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
     }, 300);
   };
 
-  // 블록 렌더링 함수
-  const renderBlock = (block: any) => {
-    switch (block.type) {
-      case 'paragraph':
-        return block.content ? <p className={styles.paragraph}>{block.content}</p> : null;
-      case 'heading_1':
-        return block.content ? <h1 className={styles.heading1}>{block.content}</h1> : null;
-      case 'heading_2':
-        return block.content ? <h2 className={styles.heading2}>{block.content}</h2> : null;
-      case 'heading_3':
-        return block.content ? <h3 className={styles.heading3}>{block.content}</h3> : null;
-      case 'bulleted_list_item':
-        return block.content ? <li className={styles.listItem}>• {block.content}</li> : null;
-      case 'numbered_list_item':
-        return block.content ? <li className={styles.listItem}>{block.content}</li> : null;
-      case 'quote':
-        return block.content ? (
-          <blockquote className={styles.quote}>{block.content}</blockquote>
-        ) : null;
-      case 'code':
-        return block.content ? (
+  // 블록 렌더링 함수 (Notion BlockObjectResponse를 받아서 렌더링)
+  const renderBlock = (block: BlockObjectResponse) => {
+    const blockType = block.type;
+
+    // 타입별로 콘텐츠 추출 및 렌더링
+    switch (blockType) {
+      case 'paragraph': {
+        const paragraph = block.paragraph;
+        const text = paragraph.rich_text.map((t) => t.plain_text).join('');
+        return text ? <p className={styles.paragraph}>{text}</p> : null;
+      }
+      case 'heading_1': {
+        const heading = block.heading_1;
+        const text = heading.rich_text.map((t) => t.plain_text).join('');
+        return text ? <h1 className={styles.heading1}>{text}</h1> : null;
+      }
+      case 'heading_2': {
+        const heading = block.heading_2;
+        const text = heading.rich_text.map((t) => t.plain_text).join('');
+        return text ? <h2 className={styles.heading2}>{text}</h2> : null;
+      }
+      case 'heading_3': {
+        const heading = block.heading_3;
+        const text = heading.rich_text.map((t) => t.plain_text).join('');
+        return text ? <h3 className={styles.heading3}>{text}</h3> : null;
+      }
+      case 'bulleted_list_item': {
+        const listItem = block.bulleted_list_item;
+        const text = listItem.rich_text.map((t) => t.plain_text).join('');
+        return text ? <li className={styles.listItem}>• {text}</li> : null;
+      }
+      case 'numbered_list_item': {
+        const listItem = block.numbered_list_item;
+        const text = listItem.rich_text.map((t) => t.plain_text).join('');
+        return text ? <li className={styles.listItem}>{text}</li> : null;
+      }
+      case 'quote': {
+        const quote = block.quote;
+        const text = quote.rich_text.map((t) => t.plain_text).join('');
+        return text ? <blockquote className={styles.quote}>{text}</blockquote> : null;
+      }
+      case 'code': {
+        const code = block.code;
+        const text = code.rich_text.map((t) => t.plain_text).join('');
+        return text ? (
           <pre className={styles.code}>
-            <code>{block.content}</code>
+            <code>{text}</code>
           </pre>
         ) : null;
-      case 'image':
-        return block.url ? (
+      }
+      case 'image': {
+        const image = block.image;
+        let imageUrl = '';
+        let caption = '';
+
+        if (image.type === 'external') {
+          imageUrl = image.external.url;
+        } else if (image.type === 'file') {
+          imageUrl = image.file.url;
+        }
+
+        if (image.caption && image.caption.length > 0) {
+          caption = image.caption.map((t) => t.plain_text).join('');
+        }
+
+        return imageUrl ? (
           <div className={styles.imageContainer}>
-            <img src={block.url} alt={block.caption || '이미지'} className={styles.image} />
-            {block.caption && <p className={styles.imageCaption}>{block.caption}</p>}
+            <img src={imageUrl} alt={caption || '이미지'} className={styles.image} />
+            {caption && <p className={styles.imageCaption}>{caption}</p>}
           </div>
         ) : null;
+      }
       default:
-        return block.content ? <p className={styles.paragraph}>{block.content}</p> : null;
+        return null;
     }
   };
 
@@ -170,16 +158,11 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
           <h2 className={styles.title}>{newsItem.title}</h2>
           <p className={styles.date}>{newsItem.date}</p>
 
-          {/* 뉴스 컨텐츠 표시 */}
+          {/* 뉴스 컨텐츠 표시 (서버에서 받은 blocks 사용) */}
           <div className={styles.newsContent}>
-            {isLoadingContent ? (
-              <div className={styles.loading}>
-                <Spinner size="md" color="var(--accent-brand)" />
-                <p>내용을 불러오는 중...</p>
-              </div>
-            ) : newsContent ? (
+            {newsItem.blocks && newsItem.blocks.length > 0 ? (
               <div className={styles.contentBlocks}>
-                {newsContent.blocks.map((block) => (
+                {newsItem.blocks.map((block) => (
                   <div key={block.id} className={styles.block}>
                     {renderBlock(block)}
                   </div>

@@ -6,10 +6,14 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'; // useQueryCli
 // import KVNewsSkeleton from '@/app/main/KV/KVNewsSkeleton'; // KVNewsSkeleton 임포트 제거
 import { useRef } from 'react'; // useRef 임포트 추가
 
+interface NewsSectionProps {
+  initialNewsData: NewsItem[];
+}
+
 // export default async function NewsSection() {
 //   const newsData: NewsItem[] = await getNewsData(); // 뉴스 데이터 가져오기
 
-export default function NewsSection() {
+export default function NewsSection({ initialNewsData }: NewsSectionProps) {
   const queryClient = useQueryClient(); // QueryClient 인스턴스 가져오기
   const lastModifiedHeaderValue = useRef<string | null>(null); // Last-Modified 헤더 값을 저장할 ref
 
@@ -47,10 +51,10 @@ export default function NewsSection() {
   } = useQuery<NewsItem[], Error>({
     queryKey: ['newsData'],
     queryFn: fetchNewsData,
-    refetchInterval: 5 * 60 * 1000, // 5분마다 데이터를 자동으로 다시 가져옵니다
-    staleTime: 2 * 60 * 1000, // 2분간 데이터를 fresh로 간주
+    initialData: initialNewsData, // 서버에서 받은 데이터를 초기값으로 사용 (즉시 렌더링)
+    staleTime: 1000 * 60 * 5, // 5분간 fresh 상태 유지 (재fetch 방지)
     gcTime: 10 * 60 * 1000, // 10분간 캐시 유지 (cacheTime -> gcTime)
-    refetchOnWindowFocus: true, // 창에 포커스할 때 데이터 갱신
+    refetchOnWindowFocus: false, // 초기 로딩 성능 개선을 위해 비활성화
   });
 
   // 데이터가 아직 없으면서 로딩 중인 경우 (초기 로딩)

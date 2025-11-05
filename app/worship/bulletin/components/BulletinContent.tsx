@@ -1,7 +1,8 @@
 'use client';
 
 import React, { memo } from 'react';
-import Spinner from '@/common/components/utils/Spinner';
+import BulletinContentSkeleton from '@/app/worship/bulletin/components/BulletinContentSkeleton';
+import BulletinHeaderSkeleton from '@/app/worship/bulletin/components/BulletinHeaderSkeleton';
 import b from '@/app/worship/bulletin/Bulletin.module.scss';
 import mdx from '@/common/styles/mdx/MdxContent.module.scss';
 
@@ -38,14 +39,19 @@ const BulletinContent = memo(function BulletinContent({
 }: BulletinContentProps) {
   const displayBulletin = selectedBulletin || latestBulletin;
 
+  // 데이터가 없을 때도 영역을 유지하여 CLS 방지
   if (!displayBulletin) {
-    return null;
+    return (
+      <div className={b.content}>
+        <BulletinHeaderSkeleton />
+      </div>
+    );
   }
 
   const formattedDate = formatDate(displayBulletin.date);
 
   return (
-    <div className={b.content} style={{ minHeight: contentLoading ? '60vh' : 'auto' }}>
+    <div className={b.content}>
       <div className={b.latest}>
         <div className={b.latest__title}>
           <span className={b.latest__dateMain}>{formattedDate.date}</span>
@@ -70,23 +76,24 @@ const BulletinContent = memo(function BulletinContent({
 
         {/* 선택된 주보의 본문 내용 */}
         {selectedBulletin && (
-          <div className={b.latest__content}>
-            <h2 className="sr-only">
-              {selectedBulletin && latestBulletin && selectedBulletin.slug === latestBulletin.slug
-                ? '이번 주 주보'
-                : '주보 내용'}
-            </h2>
+          <>
             {contentLoading ? (
-              <div className={b.latest__contentLoading}>
-                <Spinner />
-                <span>{loadingStep || '내용을 불러오는 중...'}</span>
-              </div>
+              <BulletinContentSkeleton />
             ) : (
-              <div className={`${mdx.mdxContent} ${b.latest__contentBody}`}>
-                <div dangerouslySetInnerHTML={{ __html: bulletinContent }} />
+              <div className={b.latest__content}>
+                <h2 className="sr-only">
+                  {selectedBulletin &&
+                  latestBulletin &&
+                  selectedBulletin.slug === latestBulletin.slug
+                    ? '이번 주 주보'
+                    : '주보 내용'}
+                </h2>
+                <div className={`${mdx.mdxContent} ${b.latest__contentBody}`}>
+                  <div dangerouslySetInnerHTML={{ __html: bulletinContent }} />
+                </div>
               </div>
             )}
-          </div>
+          </>
         )}
       </div>
     </div>

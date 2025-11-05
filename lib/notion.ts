@@ -1172,3 +1172,141 @@ export async function getNewsPosts(
     { revalidate: 60, tags: ['news-list'] }
   )(databaseIdEnvVar, pageSize);
 }
+
+// ===== 팝업 관련 함수 =====
+
+// 팝업 데이터 타입 (NewsItem + 콘텐츠 블록)
+export interface PopupData extends NewsItem {
+  blocks?: BlockObjectResponse[]; // 콘텐츠 블록 (선택적)
+}
+
+// 팝업 조건에 맞는 데이터 가져오기 (News + Notice 통합)
+export async function getPopupData(): Promise<PopupData | null> {
+  return unstable_cache(
+    async () => {
+      try {
+        // News와 Notice 데이터를 모두 가져오기
+        const [allNewsData, allNoticeData] = await Promise.all([
+          getNewsData(),
+          getNoticeData(),
+        ]);
+
+        // 현재 시간
+        const now = new Date();
+
+        // 팝업 조건에 맞는 데이터 필터링 (News + Notice)
+        const allPopupData = [...allNewsData, ...allNoticeData].filter((item) => {
+          // 1. popup이 true인 항목만
+          if (!item.popup) {
+            return false;
+          }
+
+          // 2. popupStartDate가 설정되어 있으면 현재 시간이 시작 시간 이후여야 함
+          if (item.popupStartDate && item.popupStartDate.trim() !== '') {
+            const startDate = new Date(item.popupStartDate);
+            if (now < startDate) {
+              return false;
+            }
+          }
+
+          // 3. 팝업 종료 날짜 체크
+          let endDate: Date;
+
+          if (item.popupEndDate && item.popupEndDate.trim() !== '') {
+            // 명시적으로 종료 날짜가 설정된 경우
+            endDate = new Date(item.popupEndDate);
+          } else {
+            // 종료 날짜가 설정되지 않은 경우, 작성일로부터 7일 후로 설정
+            if (item.rawDate) {
+              const itemDate = new Date(item.rawDate);
+              endDate = new Date(itemDate.getTime() + 7 * 24 * 60 * 60 * 1000); // 7일 후
+            } else {
+              // rawDate가 없는 경우 현재 시간으로부터 7일 후로 설정
+              endDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+            }
+          }
+
+          if (now > endDate) {
+            return false;
+          }
+
+          return true;
+        });
+
+        // 팝업 데이터가 없으면 null 반환
+        if (allPopupData.length === 0) {
+          return null;
+        }
+
+        // 팝업 데이터가 여러 개인 경우 우선순위에 따라 정렬
+        allPopupData.sort((a, b) => {
+          // 1. popupEndDate가 가장 늦은 것 우선
+          if (a.popupEndDate && b.popupEndDate) {
+            const aEndDate = new Date(a.popupEndDate);
+            const bEndDate = new Date(b.popupEndDate);
+            if (aEndDate.getTime() !== bEndDate.getTime()) {
+              return bEndDate.getTime() - aEndDate.getTime(); // 내림차순 (늦은 것이 먼저)
+            }
+          } else if (a.popupEndDate && !b.popupEndDate) {
+            return -1; // a가 종료일이 있으면 우선
+          } else if (!a.popupEndDate && b.popupEndDate) {
+            return 1; // b가 종료일이 있으면 우선
+          }
+
+          // 2. popupEndDate가 같거나 둘 다 없으면 Date가 가장 최신인 것 우선
+          const aDate = new Date(a.rawDate || a.date);
+          const bDate = new Date(b.rawDate || b.date);
+          return bDate.getTime() - aDate.getTime(); // 내림차순 (최신이 먼저)
+        });
+
+        // 가장 우선순위가 높은 항목 하나만 반환
+        return allPopupData[0];
+      } catch {
+        return null;
+      }
+    },
+    ['popup-data'],
+    { revalidate: 300, tags: ['popup-data'] } // 5분 캐시
+  )();
+}
+
+// 팝업 데이터 + 콘텐츠 블록 함께 가져오기
+export async function getPopupWithContent(): Promise<PopupData | null> {
+  return unstable_cache(
+    async () => {
+      try {
+        // 1. 팝업 메타데이터 가져오기
+        const popupData = await getPopupData();
+
+        if (!popupData) {
+          return null;
+        }
+
+        // 2. 콘텐츠 블록 가져오기
+        // link에서 타입 추론 (news인지 notice인지)
+        const isNotice = popupData.link.includes('/info/notice/');
+        const databaseIdEnvVar = isNotice ? 'NOTION_NOTICE_ID' : 'NOTION_NEWS_ID';
+
+        const contentData = await getNotionPageAndContentBySlug(
+          databaseIdEnvVar,
+          popupData.slug
+        );
+
+        if (!contentData) {
+          // 콘텐츠를 가져오지 못해도 메타데이터는 반환
+          return popupData;
+        }
+
+        // 3. 메타데이터 + 콘텐츠 통합
+        return {
+          ...popupData,
+          blocks: contentData.blocks,
+        };
+      } catch {
+        return null;
+      }
+    },
+    ['popup-with-content'],
+    { revalidate: 300, tags: ['popup-data', 'popup-content'] } // 5분 캐시
+  )();
+}

@@ -346,6 +346,7 @@
       }
       &__title {
         @include font-vw(36);
+        transform: translateY(15%);
         i {
           flex: 0 0 vw(36);
         }

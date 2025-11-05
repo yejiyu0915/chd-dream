@@ -15,7 +15,7 @@ export default function CLogSortFilter({ sortOrder, onSortChange }: CLogSortFilt
         onClick={() => onSortChange('desc')}
         className={`${c.sortFilter__button} ${sortOrder === 'desc' ? c.active : ''}`}
       >
-        <Icon name="sort-desc" /> {/* Icon 컴포넌트 사용 */}
+        <Icon name="sort-desc" />
         최신순
       </button>
       <button
@@ -23,7 +23,7 @@ export default function CLogSortFilter({ sortOrder, onSortChange }: CLogSortFilt
         onClick={() => onSortChange('asc')}
         className={`${c.sortFilter__button} ${sortOrder === 'asc' ? c.active : ''}`}
       >
-        <Icon name="sort-asc" /> {/* Icon 컴포넌트 사용 */}
+        <Icon name="sort-asc" />
         오래된순
       </button>
     </div>

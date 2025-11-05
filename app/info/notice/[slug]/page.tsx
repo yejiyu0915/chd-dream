@@ -1,63 +1,37 @@
 import { notFound } from 'next/navigation';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-
-import remarkGfm from 'remark-gfm';
-import rehypeSanitize from 'rehype-sanitize';
-import rehypePrettyCode from 'rehype-pretty-code';
-import rehypeSlug from 'rehype-slug';
+import { Suspense } from 'react';
 import rehypeExtractToc from '@stefanprobst/rehype-extract-toc';
 import withTocExport from '@stefanprobst/rehype-extract-toc/mdx';
+import rehypeSlug from 'rehype-slug';
 
 import { compile } from '@mdx-js/mdx';
 
 import { getNotionPageAndContentBySlug, notion, getPrevNextNoticePosts } from '@/lib/notion';
 import { NotionToMarkdown } from 'notion-to-md';
-import mdx from '@/common/styles/mdx/MdxContent.module.scss';
 import PageTitleSetter from '@/app/info/components/PageTitleSetter';
 import l from '@/common/styles/mdx/MdxLayout.module.scss';
 import NoticeDetailHeader from '@/app/info/notice/[slug]/components/NoticeDetailHeader';
 import NoticeDetailFooter from '@/app/info/notice/[slug]/components/NoticeDetailFooter';
-import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
-import { PageObjectResponse, BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints';
+import NoticeContent from '@/app/info/notice/[slug]/components/NoticeContent';
+import ContentSkeleton from '@/common/components/skeletons/ContentSkeleton';
 
 interface NoticeDetailPageProps {
   params: { slug: string };
 }
 
-// 공지사항 상세 페이지 캐싱 설정 - 1시간마다 재검증
-export const revalidate = 3600;
+// 캐싱 설정 - 5분마다 재검증 (빌드 독립적)
+export const revalidate = 300;
 
-export default async function NoticeDetailPage({ params }: NoticeDetailPageProps) {
-  const resolvedParams = await params;
-  const slug = resolvedParams.slug as string;
+// 빌드 시에 없던 새로운 slug도 런타임에 자동 생성 (빌드 불필요)
+export const dynamicParams = true;
 
-  if (!slug) {
-    notFound();
-  }
-
-  const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery({
-    queryKey: ['notice-detail', slug],
-    queryFn: () => getNotionPageAndContentBySlug('NOTION_NOTICE_ID', slug),
-  });
-
-  const notionData = queryClient.getQueryData(['notice-detail', slug]) as
-    | { page: PageObjectResponse; blocks: BlockObjectResponse[] }
-    | undefined;
+// 메타데이터만 먼저 가져오는 함수 (blocks 제외 - 진짜 Streaming!)
+async function getPageMetadata(slug: string) {
+  const notionData = await getNotionPageAndContentBySlug('NOTION_NOTICE_ID', slug);
 
   if (!notionData) {
-    notFound();
+    return null;
   }
-
-  const n2m = new NotionToMarkdown({
-    notionClient: notion,
-  });
-
-  const { parent: markdown } = n2m.toMarkdownString(await n2m.blocksToMarkdown(notionData.blocks));
-  await compile(markdown, {
-    rehypePlugins: [rehypeSlug, rehypeExtractToc, withTocExport],
-  });
 
   const { page } = notionData;
   const titleProperty = page.properties.Title;
@@ -78,36 +52,89 @@ export default async function NoticeDetailPage({ params }: NoticeDetailPageProps
       tagsProperty.multi_select?.map((tag: { name: string }) => tag.name)) ||
     [];
 
-  let imageUrl = '/no-image.svg';
+  let imageUrl = '/info/info-bg.jpg';
   if (page.cover) {
     if (page.cover.type === 'external') {
-      imageUrl = page.cover.external.url || '/no-image.svg';
+      imageUrl = page.cover.external.url || '/info/info-bg.jpg';
     } else if (page.cover.type === 'file') {
       imageUrl = `/api/notion-image?pageId=${page.id}&type=cover`;
     }
   }
 
-  const { prev: prevPost, next: nextPost } = await getPrevNextNoticePosts(slug);
+  return { title, date, tags, imageUrl };
+}
+
+// Markdown 콘텐츠를 생성하는 함수 (무거운 작업 - Suspense 안에서 실행)
+async function getMarkdownContent(slug: string) {
+  // Suspense 안에서 blocks를 가져옴 (진짜 Streaming!)
+  const notionData = await getNotionPageAndContentBySlug('NOTION_NOTICE_ID', slug);
+  
+  if (!notionData) {
+    return '';
+  }
+
+  const n2m = new NotionToMarkdown({
+    notionClient: notion,
+  });
+
+  const { parent: markdown } = n2m.toMarkdownString(await n2m.blocksToMarkdown(notionData.blocks));
+  await compile(markdown, {
+    rehypePlugins: [rehypeSlug, rehypeExtractToc, withTocExport],
+  });
+
+  return markdown;
+}
+
+export default async function NoticeDetailPage({ params }: NoticeDetailPageProps) {
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug as string;
+
+  if (!slug) {
+    notFound();
+  }
+
+  // 1단계: 메타데이터만 먼저 가져오기 (초고속 - 헤더 즉시 표시!)
+  const metadata = await getPageMetadata(slug);
+
+  if (!metadata) {
+    notFound();
+  }
+
+  const { title, date, tags, imageUrl } = metadata;
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className={l.container}>
-        <PageTitleSetter title={title} />
-        <NoticeDetailHeader title={title} date={date} imageUrl={imageUrl} tags={tags} />
-        <section className={`${mdx.mdxContent} detail-inner`}>
-          <MDXRemote
-            source={markdown}
-            options={{
-              mdxOptions: {
-                remarkPlugins: [remarkGfm],
-                rehypePlugins: [rehypeSlug, rehypeSanitize, rehypePrettyCode],
-              },
-            }}
-          />
-        </section>
-        <NoticeDetailFooter prevPost={prevPost} nextPost={nextPost} />
-        <aside className="relative hidden md:block">{/* 목차 */}</aside>
-      </div>
-    </HydrationBoundary>
+    <div className={l.container}>
+      <PageTitleSetter title={title} />
+
+      {/* 즉시 표시: 헤더 (LCP 개선) */}
+      <NoticeDetailHeader title={title} date={date} imageUrl={imageUrl} tags={tags} />
+
+      {/* 2단계: 콘텐츠 Streaming (무거운 작업 - 이제 진짜 스트리밍!) */}
+      <Suspense fallback={<ContentSkeleton />}>
+        <ContentSection slug={slug} />
+      </Suspense>
+
+      {/* 3단계: Footer Streaming */}
+      <Suspense
+        fallback={<div style={{ minHeight: '200px', backgroundColor: 'transparent' }} />}
+      >
+        <FooterSection slug={slug} />
+      </Suspense>
+
+      <aside className="relative hidden md:block"></aside>
+    </div>
   );
 }
+
+// 콘텐츠 섹션 (비동기 컴포넌트 - Suspense 안에서 blocks 가져옴)
+async function ContentSection({ slug }: { slug: string }) {
+  const markdown = await getMarkdownContent(slug);
+  return <NoticeContent markdown={markdown} />;
+}
+
+// Footer 섹션 (비동기 컴포넌트)
+async function FooterSection({ slug }: { slug: string }) {
+  const { prev: prevPost, next: nextPost } = await getPrevNextNoticePosts(slug);
+  return <NoticeDetailFooter prevPost={prevPost} nextPost={nextPost} />;
+}
+

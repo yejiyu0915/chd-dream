@@ -13,13 +13,12 @@ export default function CLogViewModeFilter({
 }: CLogViewModeFilterProps) {
   return (
     <div className={c.viewModeFilter}>
-      {/* View Mode 버튼 자리 */}
       <button
         type="button"
         onClick={() => onViewModeChange('grid')}
         className={`${c.viewModeFilter__button} ${viewMode === 'grid' ? c.active : ''}`}
       >
-        <Icon name="sort-grid" /> {/* Icon 컴포넌트 사용 */}
+        <Icon name="sort-grid" />
         <span className="sr-only">그리드 뷰</span>
       </button>
       <button
@@ -27,7 +26,7 @@ export default function CLogViewModeFilter({
         onClick={() => onViewModeChange('list')}
         className={`${c.viewModeFilter__button} ${viewMode === 'list' ? c.active : ''}`}
       >
-        <Icon name="sort-list" /> {/* Icon 컴포넌트 사용 */}
+        <Icon name="sort-list" />
         <span className="sr-only">리스트 뷰</span>
       </button>
     </div>

@@ -14,11 +14,10 @@ export default function NewsDetailHeader({ title, date, imageUrl, tags }: NewsDe
   return (
     <>
       <div className={l.header}>
-        {imageUrl && imageUrl !== '/no-image.svg' && (
-          <div className={l.image}>
-            <Image src={imageUrl} alt={title} priority width={1440} height={400} sizes="100vw" />
-          </div>
-        )}
+        {/* 이미지는 항상 표시 (기본 이미지 포함) */}
+        <div className={l.image}>
+          <Image src={imageUrl} alt={title} priority width={1440} height={400} sizes="100vw" />
+        </div>
         <div className={`detail-inner ${l.content}`}>
           <h1 className={l.title}>{title}</h1>
           <p className={l.date}>{date}</p>

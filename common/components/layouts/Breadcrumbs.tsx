@@ -34,6 +34,7 @@ export default function Breadcrumbs({ className, isDetail }: BreadcrumbsProps) {
     location: '오시는 길',
     about: '교회 소개',
     history: '교회 연혁',
+    timetable: '예배 시간표',
     // 다른 경로에 대한 이름 추가
   };
 

@@ -1,18 +1,10 @@
-import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query';
-import { getScheduleData } from '@/lib/notion';
 import React from 'react';
 
 interface ScheduleLayoutProps {
   children: React.ReactNode;
 }
 
-export default async function ScheduleLayout({ children }: ScheduleLayoutProps) {
-  const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery({
-    queryKey: ['schedule-list'],
-    queryFn: () => getScheduleData(),
-  });
-
-  return <HydrationBoundary state={dehydrate(queryClient)}>{children}</HydrationBoundary>;
+// layout을 단순화 - prefetch 제거 (page.tsx에서 직접 데이터 가져오기)
+export default function ScheduleLayout({ children }: ScheduleLayoutProps) {
+  return <>{children}</>;
 }

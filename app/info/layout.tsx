@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Breadcrumbs from '@/common/components/layouts/Breadcrumbs';
 import { usePageTitle } from '@/app/info/utils/title-context';
@@ -12,7 +12,7 @@ interface InfoLayoutProps {
 
 export default function InfoLayout({ children }: InfoLayoutProps) {
   const pathname = usePathname();
-  const { currentPageTitle } = usePageTitle();
+  const { currentPageTitle, setPageTitle } = usePageTitle();
 
   // /info/<category>/<slug> 패턴을 확인하여 상세 페이지인지 여부를 판단
   const isInfoDetailPage = /\/info\/[^/]+\/[^/]+/.test(pathname);
@@ -30,6 +30,14 @@ export default function InfoLayout({ children }: InfoLayoutProps) {
     pageMeta[matchedPath]?.description ||
     pageMeta['/info']?.description ||
     '교회의 다양한 이야기를 소개합니다.';
+
+  // pathname이 변경될 때마다 자동으로 제목 설정 (상세 페이지 제외)
+  useEffect(() => {
+    if (!isInfoDetailPage) {
+      const pageTitle = pageMeta[matchedPath]?.title || 'INFO';
+      setPageTitle(pageTitle);
+    }
+  }, [pathname, isInfoDetailPage, matchedPath, setPageTitle]);
 
   return (
     <main className={info.infoLayout}>

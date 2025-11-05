@@ -9,7 +9,11 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import BulletinSkeleton from '@/app/main/bulletin/BulletinSkeleton';
 import { useRef } from 'react';
 
-export default function Bulletin() {
+interface BulletinProps {
+  initialBulletinData: BulletinItem | null;
+}
+
+export default function Bulletin({ initialBulletinData }: BulletinProps) {
   'use memo'; // React 컴파일러 최적화 적용
 
   const queryClient = useQueryClient();
@@ -48,6 +52,8 @@ export default function Bulletin() {
   } = useQuery<BulletinItem | null, Error>({
     queryKey: ['bulletinData'],
     queryFn: fetchBulletinData,
+    initialData: initialBulletinData, // 서버에서 받은 데이터를 초기값으로 사용 (즉시 렌더링)
+    staleTime: 1000 * 60 * 5, // 5분간 fresh 상태 유지 (재fetch 방지)
   });
 
   if (isLoading && !bulletinData) {
@@ -124,7 +130,7 @@ export default function Bulletin() {
               </li>
             </ul>
           </div>
-          <div className={s.pastor}>
+          {/* <div className={s.pastor}>
             <Image
               src="/main/pastor.jpg"
               alt="설교 목사"
@@ -136,7 +142,7 @@ export default function Bulletin() {
             <p className={s.pastor__name}>
               <span className={s.pastor__nameDesc}>담임 목사</span> 김영구
             </p>
-          </div>
+          </div> */}
         </div>
         <p className={s.footnote}>
           <Icon name="info" className={s.footnote__icon} /> 말씀 영상은 네이버 밴드 가입 승인 후

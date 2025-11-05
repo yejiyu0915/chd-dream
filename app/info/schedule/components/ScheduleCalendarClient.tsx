@@ -3,7 +3,8 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { ScheduleItem } from '@/lib/notion';
 import { CalendarDay, SpanningEvent } from '@/app/info/schedule/types/types';
-import { useHolidayInfo, useScheduleData } from '@/app/info/schedule/types/hooks';
+import { useHolidayInfo } from '@/app/info/schedule/types/hooks';
+import { useQuery } from '@tanstack/react-query';
 import CalendarHeader from '@/app/info/schedule/components/CalendarHeader';
 import CalendarGrid from '@/app/info/schedule/components/CalendarGrid';
 import EventPanel from '@/app/info/schedule/components/EventPanel';
@@ -12,10 +13,14 @@ import SchedulePeriodFilter from '@/app/info/schedule/components/SchedulePeriodF
 import ScheduleListView from '@/app/info/schedule/components/ScheduleListView';
 import s from '@/app/info/schedule/Schedule.module.scss';
 
-// 고정 px 값 사용 - 리사이즈 시 재계산으로 안정성 확보
+interface ScheduleCalendarClientProps {
+  initialScheduleData: ScheduleItem[];
+}
 
-export default function ScheduleCalendar() {
-  'use memo'; // React 컴파일러 최적화 적용
+export default function ScheduleCalendarClient({
+  initialScheduleData,
+}: ScheduleCalendarClientProps) {
+  'use memo';
 
   const [currentDate, setCurrentDate] = useState<Date | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -23,11 +28,29 @@ export default function ScheduleCalendar() {
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
   const [period, setPeriod] = useState<'1month' | '3months' | '6months' | '1year'>('1month');
 
-  // 캐시 제거 - 리사이즈할 때마다 재계산으로 안정성 확보
-
-  // 커스텀 훅 사용
   const { getHolidayInfo } = useHolidayInfo();
-  const { data: scheduleData, isLoading, isError, error, refetch } = useScheduleData();
+
+  // 서버에서 받은 데이터를 initialData로 사용 (즉시 렌더링)
+  const {
+    data: scheduleData,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery<ScheduleItem[]>({
+    queryKey: ['schedule-list'],
+    queryFn: async () => {
+      const response = await fetch('/api/schedule');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    },
+    initialData: initialScheduleData, // 서버에서 받은 데이터를 초기값으로 사용
+    staleTime: 1000 * 60 * 5, // 5분간 fresh 상태 유지
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  });
 
   // 연속 일정의 높이를 동기화하는 함수 (고정 px 기반)
   const syncSpanningEventHeights = useCallback(() => {
@@ -396,7 +419,6 @@ export default function ScheduleCalendar() {
 
   return (
     <div className={s.calendarContainer}>
-      {/* 필터 그룹 */}
       <div className={s.filterGroup}>
         <ScheduleViewModeFilter viewMode={viewMode} onViewModeChange={setViewMode} />
         {viewMode === 'list' && <SchedulePeriodFilter period={period} onPeriodChange={setPeriod} />}
@@ -418,7 +440,6 @@ export default function ScheduleCalendar() {
               onDateClick={handleDateClick}
             />
 
-            {/* 일정 상세 패널 */}
             {isMobilePanelOpen && selectedDate && (
               <EventPanel selectedDate={selectedDate} events={getSelectedDateEvents()} />
             )}
@@ -442,3 +463,4 @@ export default function ScheduleCalendar() {
     </div>
   );
 }
+

@@ -1,30 +1,29 @@
-'use client';
-
-import React, { useEffect } from 'react';
-import dynamic from 'next/dynamic';
-import { usePageTitle } from '@/app/info/utils/title-context';
+import React, { Suspense } from 'react';
+import { getScheduleData } from '@/lib/notion';
 import s from '@/app/info/schedule/Schedule.module.scss';
-import ScheduleLoading from '@/app/info/schedule/loading';
+import ScheduleCalendarClient from '@/app/info/schedule/components/ScheduleCalendarClient';
+import ScheduleSkeleton from '@/app/info/schedule/components/ScheduleSkeleton';
 
-// 코드 스플리팅: ScheduleCalendar를 필요할 때만 로드
-// dynamic import 자체가 Suspense를 내부적으로 처리하므로 추가 Suspense 불필요
-const ScheduleCalendar = dynamic(() => import('@/app/info/schedule/components/ScheduleCalendar'), {
-  loading: () => <ScheduleLoading />,
-  ssr: false, // 클라이언트에서만 렌더링
-});
-
-export default function SchedulePage() {
-  const { setPageTitle } = usePageTitle();
-
-  useEffect(() => {
-    setPageTitle('일정');
-  }, [setPageTitle]);
+// 데이터 로딩 컴포넌트 (Suspense 내부에서 실행)
+async function ScheduleContent() {
+  // 서버에서 일정 데이터를 가져옴
+  const scheduleData = await getScheduleData();
 
   return (
+    <div className={`detail-inner`}>
+      <ScheduleCalendarClient initialScheduleData={scheduleData} />
+    </div>
+  );
+}
+
+// 메인 페이지 컴포넌트 (InfoLayout이 자동으로 제목 설정)
+export default function SchedulePage() {
+  return (
     <section className={s.scheduleMain}>
-      <div className={`detail-inner`}>
-        <ScheduleCalendar />
-      </div>
+      {/* Streaming: 데이터 로딩 중 스켈레톤 표시 */}
+      <Suspense fallback={<ScheduleSkeleton />}>
+        <ScheduleContent />
+      </Suspense>
     </section>
   );
 }
