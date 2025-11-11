@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { useState, useEffect, useCallback } from 'react';
 import BulletinList from '@/app/worship/bulletin/components/BulletinList';
 import BulletinContent from '@/app/worship/bulletin/components/BulletinContent';
 import Spinner from '@/common/components/utils/Spinner';
@@ -28,8 +27,11 @@ interface BulletinClientProps {
 }
 
 export default function BulletinClient({ initialBulletinList }: BulletinClientProps) {
-  const queryClient = useQueryClient();
-  const lastModifiedHeaderValue = useRef<string | null>(null);
+  // 서버에서 받은 데이터를 직접 사용 (useQuery 제거)
+  const bulletinList = initialBulletinList || [];
+  const loading = false;
+  const isError = false;
+  const error = null;
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -48,50 +50,6 @@ export default function BulletinClient({ initialBulletinList }: BulletinClientPr
   const [selectedMonth, setSelectedMonth] = useState<string>('all');
 
   const itemsPerPage = 6; // 2x3 그리드
-
-  // 주보 리스트 데이터 가져오기 (If-Modified-Since 헤더 사용)
-  const fetchBulletinListData = async (): Promise<BulletinItem[]> => {
-    const headers: HeadersInit = {};
-    if (lastModifiedHeaderValue.current) {
-      headers['If-Modified-Since'] = lastModifiedHeaderValue.current;
-    }
-
-    const response = await fetch('/api/bulletin', { headers });
-
-    // 304 응답: 데이터가 변경되지 않음 - 캐시된 데이터 반환
-    if (response.status === 304) {
-      return (queryClient.getQueryData(['bulletin-list']) as BulletinItem[]) || [];
-    }
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Last-Modified 헤더 저장
-    const newLastModified = response.headers.get('Last-Modified');
-    if (newLastModified) {
-      lastModifiedHeaderValue.current = newLastModified;
-    }
-
-    const data = await response.json();
-    // API 응답이 배열인 경우와 객체인 경우 모두 처리
-    return Array.isArray(data) ? data : data.items || [];
-  };
-
-  // React Query로 주보 리스트 관리 (서버에서 받은 데이터를 initialData로 사용)
-  const {
-    data: bulletinList = [],
-    isLoading: loading,
-    isError,
-    error,
-  } = useQuery<BulletinItem[], Error>({
-    queryKey: ['bulletin-list'],
-    queryFn: fetchBulletinListData,
-    initialData: initialBulletinList, // 서버에서 받은 데이터를 초기값으로 사용
-    staleTime: 1000 * 60 * 5, // 5분간 fresh 상태 유지
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-  });
 
   // 최신 주보 설정
   useEffect(() => {

@@ -2,60 +2,17 @@
 
 import kv from '@/app/main/KV/KV.module.scss';
 import { NewsItem } from '@/lib/notion';
-import { useQuery, useQueryClient } from '@tanstack/react-query'; // useQueryClient 임포트 추가
-// import KVNewsSkeleton from '@/app/main/KV/KVNewsSkeleton'; // KVNewsSkeleton 임포트 제거
-import { useRef } from 'react'; // useRef 임포트 추가
 
 interface NewsSectionProps {
   initialNewsData: NewsItem[];
 }
 
-// export default async function NewsSection() {
-//   const newsData: NewsItem[] = await getNewsData(); // 뉴스 데이터 가져오기
-
 export default function NewsSection({ initialNewsData }: NewsSectionProps) {
-  const queryClient = useQueryClient(); // QueryClient 인스턴스 가져오기
-  const lastModifiedHeaderValue = useRef<string | null>(null); // Last-Modified 헤더 값을 저장할 ref
-
-  const fetchNewsData = async (): Promise<NewsItem[]> => {
-    const headers: HeadersInit = {};
-    if (lastModifiedHeaderValue.current) {
-      headers['If-Modified-Since'] = lastModifiedHeaderValue.current;
-    }
-
-    const response = await fetch('/api/news', { headers }); // API 라우트에서 데이터 가져오기
-
-    if (response.status === 304) {
-      // 304 Not Modified 응답이면 캐시된 데이터를 반환
-      return (queryClient.getQueryData(['newsData']) as NewsItem[]) || [];
-    }
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Last-Modified 헤더 값 저장
-    const newLastModified = response.headers.get('Last-Modified');
-    if (newLastModified) {
-      lastModifiedHeaderValue.current = newLastModified;
-    }
-
-    return response.json(); // API에서 이미 2개만 반환하므로 slice 불필요
-  };
-
-  const {
-    data: newsData,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<NewsItem[], Error>({
-    queryKey: ['newsData'],
-    queryFn: fetchNewsData,
-    initialData: initialNewsData, // 서버에서 받은 데이터를 초기값으로 사용 (즉시 렌더링)
-    staleTime: 1000 * 60 * 5, // 5분간 fresh 상태 유지 (재fetch 방지)
-    gcTime: 10 * 60 * 1000, // 10분간 캐시 유지 (cacheTime -> gcTime)
-    refetchOnWindowFocus: false, // 초기 로딩 성능 개선을 위해 비활성화
-  });
+  // 서버에서 받은 데이터를 직접 사용 (useQuery 제거)
+  const newsData = initialNewsData;
+  const isLoading = false;
+  const isError = false;
+  const error = null;
 
   // 데이터가 아직 없으면서 로딩 중인 경우 (초기 로딩)
   if (isLoading && !newsData) {

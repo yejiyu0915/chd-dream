@@ -72,9 +72,11 @@
     }
 
     // 호버 상태
-    &:hover {
-      &::before {
-        background-color: var(--accent-brand);
+    @media (hover: hover) {
+      &:hover {
+        &::before {
+          background-color: var(--accent-brand);
+        }
       }
     }
   }

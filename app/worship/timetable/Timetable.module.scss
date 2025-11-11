@@ -63,10 +63,6 @@
     tr {
       border-bottom: vw(--border-width) solid var(--accent-border);
 
-      // &:hover {
-      //   background-color: #f9f9f9;
-      // }
-
       &:last-child {
         border-bottom: none;
       }

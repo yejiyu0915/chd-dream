@@ -2,21 +2,15 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
-import { usePageTitle } from '@/app/about/utils/title-context';
 import { historyData } from './historyData';
 import h from './history.module.scss';
 
 export default function HistoryPage() {
-  const { setPageTitle } = usePageTitle();
   const [activeSection, setActiveSection] = useState<string>(historyData[0]?.id || '');
   const sectionRefs = useRef<Map<string, HTMLElement>>(new Map());
   const sidebarRef = useRef<HTMLElement>(null); // sidebar 참조
   const isClickScrolling = useRef(false); // 클릭으로 스크롤 중인지 플래그
   const clickedSection = useRef<string | null>(null); // 클릭된 섹션 ID
-
-  useEffect(() => {
-    setPageTitle('교회 연혁');
-  }, [setPageTitle]);
 
   // activeSection 자동 추적 (스크롤 위치 기반)
   useEffect(() => {

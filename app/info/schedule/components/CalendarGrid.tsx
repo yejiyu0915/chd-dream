@@ -4,7 +4,7 @@ import s from '@/app/info/schedule/Schedule.module.scss';
 
 interface CalendarGridProps {
   calendarData: CalendarDay[];
-  selectedDate: Date | null;
+  selectedDate: Date;
   onDateClick: (date: Date) => void;
 }
 
@@ -36,9 +36,9 @@ export default function CalendarGrid({
             !day.isCurrentMonth ? s.otherMonth : ''
           } ${day.isToday ? s.today : ''} ${day.date.getDay() === 0 ? s.sunday : ''} ${
             day.holidayInfo.isHoliday ? s.holiday : ''
-          } ${selectedDate && day.date.getTime() === selectedDate.getTime() ? s.selected : ''}`}
-          data-selected={selectedDate && day.date.getTime() === selectedDate.getTime()}
-          data-debug-selected={selectedDate ? selectedDate.getTime() : 'null'}
+          } ${day.date.getTime() === selectedDate.getTime() ? s.selected : ''}`}
+          data-selected={day.date.getTime() === selectedDate.getTime()}
+          data-debug-selected={selectedDate.getTime()}
           data-debug-day={day.date.getTime()}
           onClick={() => onDateClick(day.date)}
           style={{

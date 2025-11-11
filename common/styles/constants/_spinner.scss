@@ -1,32 +1,30 @@
-.spinner-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: calc(var(--spinner-size) / 4); // 점들 사이의 간격
-  width: var(--spinner-size);
-  height: var(--spinner-size);
-  /* position: relative; */
-}
-
-.spinner-dot {
-  width: calc(var(--spinner-size) / 5); // 각 점의 크기
-  height: calc(var(--spinner-size) / 5);
-  background-color: var(--spinner-color); // 점 색상
-  border-radius: 50%;
-  aspect-ratio: 1 / 1; // 완벽한 원을 위해 가로세로 비율 강제
-  animation: spinner-pulse 1.4s infinite ease-in-out both;
-}
-
-.spinner-dot-1 {
-  animation-delay: -0.32s;
-}
-
-.spinner-dot-2 {
-  animation-delay: -0.16s;
-}
-
-.spinner-dot-3 {
-  animation-delay: 0s;
+.spinner {
+  &__wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: calc(var(--spinner-size) / 4); // 점들 사이의 간격
+    width: var(--spinner-size);
+    height: var(--spinner-size);
+    /* position: relative; */
+  }
+  &__dot {
+    width: calc(var(--spinner-size) / 5); // 각 점의 크기
+    height: calc(var(--spinner-size) / 5);
+    background-color: var(--spinner-color); // 점 색상
+    border-radius: 50%;
+    aspect-ratio: 1 / 1; // 완벽한 원을 위해 가로세로 비율 강제
+    animation: spinner-pulse 1.4s infinite ease-in-out both;
+    &--1 {
+      animation-delay: -0.32s;
+    }
+    &--2 {
+      animation-delay: -0.16s;
+    }
+    &--3 {
+      animation-delay: 0s;
+    }
+  }
 }
 
 @keyframes spinner-pulse {

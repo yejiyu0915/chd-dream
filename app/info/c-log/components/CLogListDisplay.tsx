@@ -160,7 +160,7 @@ export default function CLogList({
           <div className={c.loadMoreWrapper}>
             {' '}
             {/* wrapper는 유지 */}
-            <Button onClick={handleLoadMore} className="load-more-button" icon="arrow-down">
+            <Button onClick={handleLoadMore} className="load-more__button" icon="arrow-down">
               다시 시도
             </Button>
           </div>
@@ -219,11 +219,11 @@ export default function CLogList({
               ))}
             </ul>
             {hasMoreItems && (
-              <div className="load-more-wrapper">
+              <div className="load-more__wrapper">
                 <Button
                   type="button"
                   onClick={handleLoadMore}
-                  className="load-more-button"
+                  className="load-more__button"
                   icon="arrow-down"
                 >
                   더보기

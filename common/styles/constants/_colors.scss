@@ -12,15 +12,47 @@
   --bg-overlay: #111; // 오버레이 배경 (기존 --bg-dark)
   --bg-interactive: rgba(0, 0, 0, 0.05); // 인터랙티브 배경 (기존 --bg-hover)
 
-  // === 액센트 색상 ===
+  // === 액센트 색상 (기본값: 겨울) ===
   --accent-brand: #624580; // 브랜드 색상 (기존 --primary)
   --accent-secondary: rgb(250, 247, 252); // 보조 색상 (기존 --secondary)
   --accent-tertiary: #ede4f5; // 삼차 색상 (기존 --tertiary)
-  --accent-border: #e0e0e0; // 기본 경계선 (기존 --border)
+  --accent-border: #eceaef; // 기본 경계선 (기존 --border)
   --accent-border-subtle: #f0f0f0; // 연한 경계선 (기존 --border-light)
+}
 
-  // === 상태 색상 ===
-  --state-success: #21c531; // 성공 상태 (푸터 녹색에서 추출)
-  --state-error: #ff0033; // 에러 상태 (푸터 빨간색에서 추출)
-  --state-warning: #fdcf00; // 경고 상태 (로고 노란색)
+// === 계절별 액센트 색상 오버라이드 ===
+
+// 봄 테마 (3~5월: 분홍)
+html[data-season='spring'] {
+  --accent-brand: #ff5c81;
+  --accent-secondary: #fff6f8;
+  --accent-tertiary: #ffdae3;
+  --accent-border: #f1e9eb;
+  --accent-border-subtle: #f0f0f0;
+  // --footer-big-text: rgba(255, 255, 255, 0.1);
+}
+
+// 여름 테마 (6~8월: 연두~초록)
+html[data-season='summer'] {
+  --accent-brand: #009cd4;
+  --accent-secondary: #f5fcff;
+  --accent-tertiary: #c5eefc;
+  --accent-border: #ebeded;
+  // --footer-big-text: rgba(255, 255, 255, 0.12);
+}
+
+// 가을 테마 (9~11월: 브라운~적갈색)
+html[data-season='autumn'] {
+  --accent-brand: #9f5500;
+  --accent-secondary: #fffbf5;
+  --accent-tertiary: #f6dbbd;
+  --accent-border: #e6e6e5;
+  // --footer-big-text: rgba(255, 255, 255, 0.1);
+}
+
+// 겨울 테마 (12~2월: 보라색) - 현재 기본값과 동일
+html[data-season='winter'] {
+  --accent-brand: #624580;
+  --accent-secondary: rgb(250, 247, 252);
+  --accent-tertiary: #ede4f5;
 }

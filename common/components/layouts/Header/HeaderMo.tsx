@@ -53,34 +53,34 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
 
   return (
     <div
-      className={`${h.mobileMenuOverlay} ${isMobileMenuOpen ? h.open : ''} ${isMobileMenuOpen || isScrolled ? h.scroll : ''}`}
+      className={`${h.mobileMenu__overlay} ${isMobileMenuOpen ? h.open : ''} ${isMobileMenuOpen || isScrolled ? h.scroll : ''}`}
     >
-      <div className={h.mobileMenuContent}>
+      <div className={h.mobileMenu__content}>
         <nav className={h.mobileNav}>
-          <ul className={h.mobileMenuList}>
+          <ul className={h.mobileMenu__list}>
             {menuData.map((menuItem, index) => (
-              <li key={index} className={h.mobileMenuItem}>
+              <li key={index} className={h.mobileMenu__item}>
                 <button
                   type="button"
-                  className={`${h.mobileMenuButton} ${activeMobileMenu.includes(menuItem.name) ? h.active : ''}`}
+                  className={`${h.mobileMenu__button} ${activeMobileMenu.includes(menuItem.name) ? h.active : ''}`}
                   onClick={() => handleMobileMenuClick(menuItem.name)}
                 >
                   <span>{menuItem.name}</span>
-                  <Icon name="accordion" className={h.mobileMenuIcon} />
+                  <Icon name="accordion" className={h.mobileMenu__icon} />
                 </button>
 
                 {menuItem.subMenu && (
                   <div
                     className={`${h.mobileSubMenu} ${activeMobileMenu.includes(menuItem.name) ? h.show : ''}`}
                   >
-                    <div className={h.mobileSubMenuContent}>
-                      <div className={h.mobileSubMenuTop}>
-                        <ul className={h.mobileSubMenuList}>
+                    <div className={h.mobileSubMenu__content}>
+                      <div className={h.mobileSubMenu__top}>
+                        <ul className={h.mobileSubMenu__list}>
                           {menuItem.subMenu.map((subItem, subIndex) => (
-                            <li key={subIndex} className={h.mobileSubMenuItem}>
+                            <li key={subIndex} className={h.mobileSubMenu__item}>
                               <Link
                                 href={subItem.href}
-                                className={h.mobileSubMenuLink}
+                                className={h.mobileSubMenu__link}
                                 onClick={(e) => {
                                   // 같은 페이지 링크인 경우 메뉴 닫기
                                   if (pathname === subItem.href) {
@@ -96,11 +96,14 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
                           ))}
                         </ul>
                       </div>
-                      <div className={h.mobileSubMenuBottom}>
-                        <div className={h.mobileSubMenuVisual}>
-                          <div className={h.mobileVisualImage} style={{ position: 'relative' }}>
+                      <div className={h.mobileSubMenu__bottom}>
+                        <div className={h.mobileSubMenu__visual}>
+                          <div
+                            className={h.mobileSubMenu__visualImage}
+                            style={{ position: 'relative' }}
+                          >
                             <Image
-                              src={`/common/gnb-${index + 1}.jpg`}
+                              src={`/images/common/gnb-${index + 1}.jpg`}
                               alt={`${menuItem.name} 서브메뉴 이미지`}
                               fill
                               style={{
@@ -111,7 +114,7 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
                               priority={false}
                             />
                           </div>
-                          <div className={h.mobileVisualContent}>
+                          <div className={h.mobileSubMenu__visualContent}>
                             <p>
                               {menuItem.content?.description || '하나님의 사랑으로 함께하는 교회'}
                             </p>
@@ -125,34 +128,34 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
             ))}
           </ul>
           <div className={h.mobileSns}>
-            <ul className={h.mobileSnsList}>
+            <ul className={h.mobileSns__list}>
               {snsLinks.map((snsLink, index) => (
-                <li key={index} className={h.mobileSnsItem}>
-                  <Link href={snsLink.href} className={h.mobileSnsLink} target="_blank">
+                <li key={index} className={h.mobileSns__item}>
+                  <Link href={snsLink.href} className={h.mobileSns__link} target="_blank">
                     <span className="sr-only">{snsLink.name}</span>{' '}
-                    <Icon name={snsLink.icon} className={h.mobileSnsIcon} />
+                    <Icon name={snsLink.icon} className={h.mobileSns__icon} />
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className={h.mobilePrevLinks}>
+          <div className={h.mobilePrev__links}>
             {prevLinks.map((prevInfo, index) => (
-              <div key={index} className={h.mobilePrevGroup}>
-                <div className={h.mobilePrevRow}>
-                  <h4 className={h.mobilePrevTitle}>{prevInfo.name}</h4>
-                  <ul className={h.mobilePrevList}>
+              <div key={index} className={h.mobilePrev__group}>
+                <div className={h.mobilePrev__row}>
+                  <p className={h.mobilePrev__title}>{prevInfo.name}</p>
+                  <ul className={h.mobilePrev__list}>
                     {prevInfo.links.map((link, linkIndex) => (
-                      <li key={linkIndex} className={h.mobilePrevItem}>
+                      <li key={linkIndex} className={h.mobilePrev__item}>
                         <Link
                           href={link.href}
-                          className={h.mobilePrevLink}
+                          className={h.mobilePrev__link}
                           target="_blank"
                           title={`${link.name} 바로가기`}
                         >
                           <span className="sr-only">{link.name}</span>
-                          <Icon name={link.icon} className={h.mobilePrevIcon} />
+                          <Icon name={link.icon} className={h.mobilePrev__icon} />
                         </Link>
                       </li>
                     ))}

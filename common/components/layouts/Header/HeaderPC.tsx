@@ -165,7 +165,7 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
                               style={{ position: 'relative' }}
                             >
                               <Image
-                                src={`/common/gnb-${index + 1}.jpg`}
+                                src={`/images/common/gnb-${index + 1}.jpg`}
                                 alt={`${menuItem.name} 서브메뉴 이미지`}
                                 fill
                                 style={{
@@ -211,10 +211,10 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
               <button
                 type="button"
                 onClick={toggleMobileMenu}
-                className={h.hamburgerButton}
+                className={h.hamburger__button}
                 aria-label="메뉴 열기/닫기"
               >
-                <Icon name={isMobileMenuOpen ? 'close' : 'hamburger'} className={h.hamburgerIcon} />
+                <Icon name={isMobileMenuOpen ? 'close' : 'hamburger'} className={h.hamburger__icon} />
               </button>
             </li>
           </ul>

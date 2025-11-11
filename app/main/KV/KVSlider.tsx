@@ -9,8 +9,6 @@ import { Autoplay, Parallax, Pagination, Navigation, EffectFade } from 'swiper/m
 import { KVSliderItem } from '@/lib/notion';
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Swiper as SwiperCore } from 'swiper/types';
-import { useQuery, useQueryClient } from '@tanstack/react-query'; // useQueryClient 임포트 추가
-// import KVSliderSkeleton from '@/app/main/KV/KVSliderSkeleton'; // KVSliderSkeleton 임포트 제거
 
 interface KVSliderProps {
   kvHeight: string;
@@ -27,54 +25,19 @@ import 'swiper/css/parallax';
 export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderProps) {
   'use memo'; // React 컴파일러 최적화 적용
 
+  // 서버에서 받은 데이터를 직접 사용 (useQuery 제거)
+  const kvSliderItems = initialKvSliderItems || [];
+  const isLoading = false;
+  const isError = false;
+  const error = null;
+
   const sliderRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<SwiperCore | null>(null);
   const [progressWidth, setProgressWidth] = useState(0); // 프로그레스 바 너비 상태
   const [isPlaying, setIsPlaying] = useState(true); // 재생/일시정지 상태
   const autoplayDelay = 8000; // Autoplay delay (8초)
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const queryClient = useQueryClient(); // QueryClient 인스턴스 가져오기
-  const lastModifiedHeaderValue = useRef<string | null>(null); // Last-Modified 헤더 값을 저장할 ref
-
-  // KV Slider 데이터 가져오기 (React Query) - Hooks는 항상 최상단에서 호출
-  const fetchKVSliderData = async (): Promise<KVSliderItem[]> => {
-    const headers: HeadersInit = {};
-    if (lastModifiedHeaderValue.current) {
-      headers['If-Modified-Since'] = lastModifiedHeaderValue.current;
-    }
-
-    const response = await fetch('/api/kv-slider', { headers }); // API 라우트에서 데이터 가져오기
-
-    if (response.status === 304) {
-      // 304 Not Modified 응답이면 캐시된 데이터를 반환
-      return (queryClient.getQueryData(['kvSliderItems']) as KVSliderItem[]) || [];
-    }
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Last-Modified 헤더 값 저장
-    const newLastModified = response.headers.get('Last-Modified');
-    if (newLastModified) {
-      lastModifiedHeaderValue.current = newLastModified;
-    }
-
-    return response.json();
-  };
-
-  const {
-    data: kvSliderItems,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<KVSliderItem[], Error>({
-    queryKey: ['kvSliderItems'],
-    queryFn: fetchKVSliderData,
-    initialData: initialKvSliderItems, // 서버에서 받은 데이터를 초기값으로 사용 (즉시 렌더링)
-    staleTime: 1000 * 60 * 5, // 5분간 fresh 상태 유지 (재fetch 방지)
-    // refetchInterval: 60 * 1000, // 1분(60초)마다 데이터를 자동으로 다시 가져옵니다. -> 새로고침 시에만 반영되도록 제거
-  });
+  const isInitializedRef = useRef(false); // Swiper 초기화 여부를 추적하는 ref
 
   // useCallback 훅들도 Hooks 규칙을 따르도록 최상단에 선언
   // reset: true면 0%부터 시작, false면 현재 위치에서 계속
@@ -175,10 +138,11 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
         modules={[Autoplay, Pagination, Navigation, Parallax, EffectFade]}
         onSwiper={(swiper) => {
           swiperRef.current = swiper;
-          // 초기 로드 시 autoplay와 프로그레스바 시작
-          if (isPlaying && swiperRef.current?.autoplay) {
+          // 초기 로드 시에만 autoplay와 프로그레스바 시작 (리렌더링 시에는 실행하지 않음)
+          if (!isInitializedRef.current && isPlaying && swiperRef.current?.autoplay) {
             swiperRef.current.autoplay.start();
             startProgressBar(true); // 처음 시작이므로 0%부터
+            isInitializedRef.current = true; // 초기화 완료 표시
           }
         }}
         spaceBetween={0}

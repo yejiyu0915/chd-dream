@@ -4,9 +4,7 @@ import Image from 'next/image';
 import Icon from '@/common/components/utils/Icons';
 import c from '@/app/main/c-log/CLog.module.scss';
 import { CLogItem } from '@/lib/notion';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import CLogSkeleton from '@/app/main/c-log/CLogSkeleton';
-import { useRef } from 'react';
 
 interface CLogProps {
   initialCLogData: CLogItem[];
@@ -15,55 +13,11 @@ interface CLogProps {
 export default function CLog({ initialCLogData }: CLogProps) {
   'use memo'; // React 컴파일러 최적화 적용
 
-  const queryClient = useQueryClient();
-  const lastModifiedHeaderValue = useRef<string | null>(null);
-
-  const fetchCLogItems = async (): Promise<CLogItem[]> => {
-    const headers: HeadersInit = {};
-    if (lastModifiedHeaderValue.current) {
-      headers['If-Modified-Since'] = lastModifiedHeaderValue.current;
-    }
-
-    const response = await fetch('/api/c-log-main', { headers }); // API 엔드포인트 변경
-
-    if (response.status === 304) {
-      // 304 Not Modified 응답이면 캐시된 데이터를 반환
-      return (queryClient.getQueryData(['cLogItems']) as CLogItem[]) || [];
-    }
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Last-Modified 헤더 값 저장
-    const newLastModified = response.headers.get('Last-Modified');
-    if (newLastModified) {
-      lastModifiedHeaderValue.current = newLastModified;
-    }
-
-    return response.json();
-  };
-
-  const {
-    data: cLogData,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<CLogItem[], Error>({
-    queryKey: ['cLogItems'],
-    queryFn: fetchCLogItems,
-    initialData: initialCLogData, // 서버에서 받은 데이터를 초기값으로 사용 (즉시 렌더링)
-    staleTime: 1000 * 60 * 5, // 5분간 fresh 상태 유지 (재fetch 방지)
-    // refetchInterval: 60 * 1000, // 1분(60초)마다 데이터를 자동으로 다시 가져옵니다. -> 새로고침 시에만 반영되도록 제거
-  });
-
-  // 디버깅을 위한 console.log 추가 (임시)
-  // console.log('Main CLog Debug:', {
-  //   cLogData,
-  //   isLoading,
-  //   isError,
-  //   error,
-  // });
+  // 서버에서 받은 데이터를 직접 사용 (useQuery 제거)
+  const cLogData = initialCLogData;
+  const isLoading = false;
+  const isError = false;
+  const error = null;
 
   if (isLoading) {
     return (

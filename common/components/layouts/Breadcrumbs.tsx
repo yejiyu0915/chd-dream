@@ -1,11 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation'; // usePathname 다시 추가
-
-interface BreadcrumbNames {
-  [key: string]: string;
-}
+import { usePathname } from 'next/navigation';
+import { getBreadcrumbName } from '@/common/data/list';
 
 interface BreadcrumbItem {
   name: string;
@@ -17,32 +14,21 @@ interface BreadcrumbsProps {
   isDetail?: boolean; // 상세페이지 여부를 나타내는 prop 추가
 }
 
+/**
+ * Breadcrumbs 컴포넌트
+ * list.ts의 pageMeta 정보를 활용하여 자동으로 breadcrumb 이름을 표시합니다.
+ */
 export default function Breadcrumbs({ className, isDetail }: BreadcrumbsProps) {
   const pathname = usePathname();
   const pathSegments = pathname.split('/').filter(Boolean);
 
-  // 각 경로 세그먼트에 대한 표시 이름 정의 (옵션)
-  const breadcrumbNames: BreadcrumbNames = {
-    info: '교회 소식',
-    'c-log': 'C-Log',
-    news: 'NEWS',
-    notice: '공지사항',
-    schedule: '일정',
-    worship: '예배 안내',
-    bulletin: '온라인 주보',
-    sermon: '생명의 말씀',
-    location: '오시는 길',
-    about: '교회 소개',
-    history: '교회 연혁',
-    timetable: '예배 시간표',
-    // 다른 경로에 대한 이름 추가
-  };
-
+  // 각 경로 세그먼트에 대한 breadcrumb 생성
   const breadcrumbs: BreadcrumbItem[] = [
     { name: 'Home', href: '/' },
     ...pathSegments.map((segment, index) => {
       const href = '/' + pathSegments.slice(0, index + 1).join('/');
-      const name = breadcrumbNames[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
+      // list.ts의 getBreadcrumbName 함수를 사용하여 이름 가져오기
+      const name = getBreadcrumbName(segment, href);
       return { name, href };
     }),
   ];

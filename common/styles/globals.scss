@@ -29,8 +29,10 @@ a {
 button,
 a,
 [role='button'] {
-  &:hover {
-    opacity: 0.8;
+  @media (hover: hover) {
+    &:hover {
+      opacity: 0.8;
+    }
   }
 }
 
@@ -52,51 +54,32 @@ a,
 
 main {
   min-height: 100vh;
-}
-
-/* ----- 전역 로딩 스피너 스타일 ----- */
-.loaderContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: var(--text-main);
-  z-index: 9999;
-  animation: fadeIn 3s ease-in forwards;
-}
-
-.loaderContainer.fadeOut {
-  animation: fadeOut 1s 2s ease-out forwards;
-  pointer-events: none;
-}
-
-.loadingLogo {
-  width: cqi(60);
-  height: auto;
-  margin-bottom: 0;
-  filter: invert(1);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
+  &:not(:has([class*='main__content'])) {
+    margin-block-end: vw(688);
+    padding-block-end: vw(60);
+    position: relative;
+    z-index: 1;
+    border-radius: 0 0 vw(40) vw(40);
+    background-color: var(--bg-page);
+    border-bottom: 1px solid var(--accent-brand);
+    box-shadow: 0 vw(20) vw(12) vw(-15) rgba(0, 0, 0, 0.06);
+    @include mq(pc) {
+      margin-block-end: vw(711);
+    }
+    @include mq(pc-sm) {
+      margin-block-end: vw(660);
+    }
+    @include mq(ta) {
+      margin-block-end: vw(630);
+    }
+    @include mq(mo) {
+      margin-block-end: vw(584);
+      padding-block-end: vw(40);
+      border-radius: 0 0 vw(20) vw(20);
+    }
+    @include mq(mo-sm) {
+      margin-block-end: vw(555);
+    }
   }
 }
 
@@ -105,6 +88,7 @@ main {
   --color: var(--accent-brand);
   --active-color: var(--text-main);
   --hover-color: var(--accent-brand);
+  --square-color: var(--accent-brand);
   position: absolute;
   top: vw(--breadcrumb-height);
   z-index: 2;
@@ -125,7 +109,7 @@ main {
       width: 1em;
       height: 1em;
       margin-inline-end: 1em;
-      background-color: var(--color);
+      background-color: var(--square-color);
     }
   }
   &__item {
@@ -184,46 +168,40 @@ main {
 
 /* 404 Not Found Page Styles */
 .not-found {
-  &-icon {
+  &__icon {
     --icon-size: 0.9;
     --icon-margin: 0.2;
     margin-bottom: 0.15em;
   }
-  &-container {
+  &__container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 50em;
+    min-height: 95vh;
     padding-block: 8em 4em;
     text-align: center;
     @include font-vw(16);
-    @include mq(pc-sm) {
-      @include font-vw(14);
-    }
-    @include mq(mo) {
-      @include font-vw(12);
-    }
   }
-  &-title {
+  &__title {
     margin-bottom: 0.5em;
     font-size: 3.5em;
     font-weight: 500;
     color: var(--accent-brand);
   }
-  &-subtitle {
+  &__subtitle {
     margin-bottom: 0.75em;
     font-size: 2.25em;
     font-weight: 500;
     line-height: 1.3;
   }
-  &-message {
+  &__message {
     margin-bottom: 4em;
     font-size: 1.125em;
     font-weight: 400;
     line-height: 1.5;
   }
-  &-link {
+  &__link {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -251,66 +229,72 @@ main {
         transform: translateY(-0.05em);
       }
     }
-    @include mq(mo) {
+  }
+  @include mq(pc-sm) {
+    &__container {
+      @include font-vw(14);
+    }
+  }
+  @include mq(mo) {
+    &__container {
+      @include font-vw(12);
+    }
+    &__link {
       width: 100%;
     }
   }
 }
 
 /* Load More Button Styles */
-.load-more-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-block-start: vw(60);
-}
-.load-more-button {
-  margin-block-start: vw(60);
-  padding: vw(20) vw(60) vw(20) vw(80);
-  border-radius: vw(20);
-  background-color: var(--accent-brand);
-  color: var(--text-inverse);
-  @include font-vw(24, $weight: 700);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  i {
-    --icon-size: 1.75;
-    --icon-margin: 0.1;
-  }
-}
-
-@include mq(pc-sm) {
-  .load-more-wrapper {
+.load-more {
+  &__wrapper {
     display: flex;
     justify-content: center;
-    margin-block-start: vw(36);
+    margin-block-start: vw(60);
   }
-  .load-more-button {
-    margin-block-start: vw(36);
-    padding: vw(12) vw(36) vw(12) vw(48);
-    border-radius: vw(12);
-    @include font-vw(16);
+  &__button {
+    margin-block-start: vw(60);
+    padding: vw(20) vw(60) vw(20) vw(80);
+    border-radius: vw(20);
+    background-color: var(--accent-brand);
+    color: var(--text-inverse);
+    @include font-vw(24, $weight: 700);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    i {
+      --icon-size: 1.75;
+      --icon-margin: 0.1;
+    }
   }
-}
 
-@include mq(mo) {
-  .load-more-wrapper {
-    margin-block-start: vw(18);
+  @include mq(pc-sm) {
+    &__wrapper {
+      display: flex;
+      justify-content: center;
+      margin-block-start: vw(36);
+    }
+    &__button {
+      margin-block-start: vw(36);
+      padding: vw(12) vw(36) vw(12) vw(48);
+      border-radius: vw(12);
+      @include font-vw(16);
+    }
   }
-  .load-more-button {
-    margin-block-start: vw(18);
-    padding: vw(9) vw(24) vw(9) vw(36);
-    border-radius: vw(10);
-    @include font-vw(14);
+
+  @include mq(mo) {
+    &__wrapper {
+      margin-block-start: vw(18);
+    }
+    &__button {
+      margin-block-start: vw(18);
+      padding: vw(9) vw(24) vw(9) vw(36);
+      border-radius: vw(10);
+      @include font-vw(14);
+    }
   }
 }
 
 /* Footer Button Styles */
-.footer-button-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-block-start: vw(60);
-}
-
 .footer-button {
   padding: vw(27.5) vw(60);
   border-radius: vw(20);
@@ -320,155 +304,156 @@ main {
   cursor: pointer;
   transition: all 0.2s ease;
   display: inline-block; /* Link 컴포넌트가 버튼처럼 보이도록 */
-}
 
-@include mq(pc-sm) {
-  .footer-button-wrapper {
-    margin-block-start: vw(36);
+  &__wrapper {
+    display: flex;
+    justify-content: center;
+    margin-block-start: vw(60);
   }
-  .footer-button {
+
+  @include mq(pc-sm) {
     padding: vw(18) vw(48);
     border-radius: vw(12);
     @include font-vw(16);
+    &__wrapper {
+      margin-block-start: vw(36);
+    }
   }
-}
 
-@include mq(mo) {
-  .footer-button-wrapper {
-    margin-block-start: vw(18);
-  }
-  .footer-button {
+  @include mq(mo) {
     padding: vw(14.25) vw(36);
     border-radius: vw(10);
     @include font-vw(14);
+    &__wrapper {
+      margin-block-start: vw(18);
+    }
   }
 }
 
 /* Common Button Base Styles */
-.button-base {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5em;
-  border: none;
-  text-decoration: none;
-  font-family: inherit;
-  /* 기본 transition */
-  transition: all 0.2s ease;
-}
-
-.button-primary {
-  background-color: var(--accent-brand);
-  color: var(--text-inverse);
-}
-
-.button-secondary {
-  background-color: var(--bg-section);
-  color: var(--text-body);
-  border: 1px solid var(--accent-border);
-}
-
-.button-ghost {
-  background-color: transparent;
-  color: var(--text-main);
-  &:hover {
-    background-color: var(--bg-section);
+.button {
+  &--base {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    border: none;
+    text-decoration: none;
+    font-family: inherit;
+    /* 기본 transition */
+    transition: all 0.2s ease;
   }
-}
-
-.button-link {
-  background-color: transparent;
-  color: var(--accent-brand);
-  text-decoration: underline;
-  &:hover {
+  &--primary {
+    background-color: var(--accent-brand);
+    color: var(--text-inverse);
+  }
+  &--secondary {
+    background-color: var(--bg-section);
+    color: var(--text-body);
+    border: 1px solid var(--accent-border);
+  }
+  &--ghost {
+    background-color: transparent;
+    color: var(--text-main);
+    @media (hover: hover) {
+      &:hover {
+        background-color: var(--bg-section);
+      }
+    }
+  }
+  &--link {
+    background-color: transparent;
     color: var(--accent-brand);
+    text-decoration: underline;
+    @media (hover: hover) {
+      &:hover {
+        color: var(--accent-brand);
+      }
+    }
   }
 }
 
 /* List Navigation Buttons Styles */
-.list-nav-buttons {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  margin-block-start: vw(40);
-  border-radius: vw(10);
-  border: 1px solid var(--accent-border-subtle);
-  background-color: #f9f9f9;
+.list-nav {
+  &__buttons {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    margin-block-start: vw(40);
+    border-radius: vw(10);
+    border: 1px solid var(--accent-border-subtle);
+    background-color: #f9f9f9;
+  }
+  &__link {
+    flex: 1;
+    @include font-vw(24);
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 1em;
+    color: var(--accent-brand);
 
-  @include mq(pc-sm) {
-    margin-block-start: vw(36);
-  }
-  @include mq(mo) {
-    margin-block-start: vw(24);
-  }
-}
-
-.list-nav-link {
-  flex: 1;
-  @include font-vw(24);
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
-  padding: 1em;
-  color: var(--accent-brand);
-
-  &__title {
-    display: inline-block;
-    font-weight: 700;
-    white-space: normal;
-    line-height: 1.5;
-    color: var(--text-main);
-  }
-  i {
-    --icon-size: 1.7;
-    --icon-margin: 0;
-    flex: 0 0 vw(34);
-  }
-  &:nth-child(2) {
-    border-top: 1px solid var(--accent-border-subtle);
-  }
-
-  @include mq(pc-sm) {
-    @include font-vw(18);
+    &-title {
+      display: inline-block;
+      font-weight: 700;
+      white-space: normal;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
     i {
-      flex: 0 0 vw(31);
+      --icon-size: 1.7;
+      --icon-margin: 0;
+      flex: 0 0 vw(34);
+    }
+    &:nth-child(2) {
+      border-top: 1px solid var(--accent-border-subtle);
+    }
+  }
+
+  @include mq(pc-sm) {
+    &__buttons {
+      margin-block-start: vw(36);
+    }
+    &__link {
+      @include font-vw(18);
+      i {
+        flex: 0 0 vw(31);
+      }
     }
   }
   @include mq(mo) {
-    @include font-vw(14);
-    i {
-      flex: 0 0 vw(28);
+    &__buttons {
+      margin-block-start: vw(24);
+    }
+    &__link {
+      @include font-vw(14);
+      i {
+        flex: 0 0 vw(28);
+      }
     }
   }
 }
 
 /* Top Button Styles */
 .top-button {
-  // opacity / visibility / display
   opacity: 0;
   visibility: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  // width / height
   width: vw(72);
   height: vw(72);
-  // position
   position: fixed;
   z-index: 900;
   right: vw(40);
-  bottom: vw(40);
-  // border
-  border: vw(2) solid var(--bg-page);
+  bottom: vw(56);
+  // border: vw(2) solid var(--bg-page);
+  box-shadow: 0 vw(4) vw(4) rgba(0, 0, 0, 0.03);
   border-radius: 50%;
-  // background
   background-color: var(--accent-brand);
-  // font
   @include font-vw(24);
   color: var(--text-inverse);
-  // transform
   transform: translateY(vw(60));
-  // transition
   transition:
     opacity 0.3s ease-in-out 0s,
     visibility 0.3s ease-in-out 0s,
@@ -476,7 +461,6 @@ main {
     background-color 0.3s ease,
     color 0.3s ease,
     border-color 0.3s ease;
-  // 기타
   cursor: pointer;
   pointer-events: none;
 
@@ -485,23 +469,23 @@ main {
     --icon-margin: 0;
   }
 
-  &:hover {
-    border-color: var(--accent-brand);
-    background-color: var(--bg-page);
-    color: var(--accent-brand);
+  @media (hover: hover) {
+    &:hover {
+      border-color: var(--accent-brand);
+      background-color: var(--bg-page);
+      color: var(--accent-brand);
+    }
   }
 
   &:active {
     transform: translateY(0);
   }
 
-  // 버튼 표시 상태 (아래에서 올라오는 애니메이션 + opacity fade)
   &--visible {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
     pointer-events: auto;
-    // 등장할 때는 동시에 작동하도록 delay 제거
     transition:
       opacity 0.4s ease-in-out 0.15s,
       visibility 0.4s ease-in-out 0s,
@@ -515,14 +499,17 @@ main {
     width: vw(64);
     height: vw(64);
     right: vw(32);
-    bottom: vw(32);
+    bottom: vw(42);
     @include font-vw(20);
   }
 
   @include mq(mo) {
-    width: vw(56);
-    height: vw(56);
+    width: vw(48);
+    height: vw(48);
     right: vw(20);
-    bottom: vw(20);
+    bottom: vw(32);
+  }
+  @include mq(mo-sm) {
+    bottom: vw(26);
   }
 }

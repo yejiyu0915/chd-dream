@@ -5,9 +5,9 @@ import Image from 'next/image';
 import Icon from '@/common/components/utils/Icons';
 import s from '@/app/main/bulletin/Bulletin.module.scss';
 import { BulletinItem } from '@/lib/notion';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import BulletinSkeleton from '@/app/main/bulletin/BulletinSkeleton';
-import { useRef } from 'react';
+import { getClientSeason } from '@/common/utils/season';
+import { useState, useEffect } from 'react';
 
 interface BulletinProps {
   initialBulletinData: BulletinItem | null;
@@ -16,45 +16,32 @@ interface BulletinProps {
 export default function Bulletin({ initialBulletinData }: BulletinProps) {
   'use memo'; // React 컴파일러 최적화 적용
 
-  const queryClient = useQueryClient();
-  const lastModifiedHeaderValue = useRef<string | null>(null);
+  // 서버에서 받은 데이터를 직접 사용 (useQuery 제거)
+  const bulletinData = initialBulletinData;
+  const isLoading = false;
+  const isError = false;
+  const error = null;
+  
+  // 계절별 배경 이미지 자동 설정 (개발자 도구에서 data-season 변경 시 반응)
+  const [backgroundImage, setBackgroundImage] = useState(`/images/bulletin/winter.jpg`);
 
-  const fetchBulletinData = async (): Promise<BulletinItem | null> => {
-    const headers: HeadersInit = {};
-    if (lastModifiedHeaderValue.current) {
-      headers['If-Modified-Since'] = lastModifiedHeaderValue.current;
-    }
-
-    const response = await fetch('/api/bulletin-latest', { headers });
-
-    if (response.status === 304) {
-      return (queryClient.getQueryData(['bulletinData']) as BulletinItem) || null;
-    }
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const newLastModified = response.headers.get('Last-Modified');
-    if (newLastModified) {
-      lastModifiedHeaderValue.current = newLastModified;
-    }
-
-    const data = await response.json();
-    return data;
-  };
-
-  const {
-    data: bulletinData,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<BulletinItem | null, Error>({
-    queryKey: ['bulletinData'],
-    queryFn: fetchBulletinData,
-    initialData: initialBulletinData, // 서버에서 받은 데이터를 초기값으로 사용 (즉시 렌더링)
-    staleTime: 1000 * 60 * 5, // 5분간 fresh 상태 유지 (재fetch 방지)
-  });
+  useEffect(() => {
+    const season = getClientSeason();
+    setBackgroundImage(`/images/bulletin/${season}.jpg`);
+    
+    // data-season 속성 변경 감지 (개발자 도구에서 테스트용)
+    const observer = new MutationObserver(() => {
+      const newSeason = getClientSeason();
+      setBackgroundImage(`/images/bulletin/${newSeason}.jpg`);
+    });
+    
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-season'],
+    });
+    
+    return () => observer.disconnect();
+  }, []);
 
   if (isLoading && !bulletinData) {
     return <BulletinSkeleton />;
@@ -66,7 +53,7 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
       errorMessage = error.message;
     }
     return (
-      <section className={s.bulletin}>
+      <section className={s.bulletin} style={{ backgroundImage: `url(${backgroundImage})` }}>
         <div className={s.inner}>
           <p className={s.error}>에러: {errorMessage}</p>
         </div>
@@ -76,7 +63,7 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
 
   if (!bulletinData) {
     return (
-      <section className={s.bulletin}>
+      <section className={s.bulletin} style={{ backgroundImage: `url(${backgroundImage})` }}>
         <div className={s.inner}>
           <p className={s.emptyState}>이번 주 주보 데이터를 불러올 수 없습니다.</p>
         </div>
@@ -85,7 +72,7 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
   }
 
   return (
-    <section className={s.bulletin}>
+    <section className={s.bulletin} style={{ backgroundImage: `url(${backgroundImage})` }}>
       <div className={s.inner}>
         <div className={s.content}>
           <div className={s.text}>

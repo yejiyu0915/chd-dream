@@ -28,10 +28,10 @@ export default function Spinner({
   } as React.CSSProperties; // 타입 단언으로 Custom Property 허용
 
   return (
-    <div className={`spinner-wrapper ${className}`} style={spinnerVars}>
-      <div className="spinner-dot spinner-dot-1"></div>
-      <div className="spinner-dot spinner-dot-2"></div>
-      <div className="spinner-dot spinner-dot-3"></div>
+    <div className={`spinner__wrapper ${className}`} style={spinnerVars}>
+      <div className="spinner__dot spinner__dot--1"></div>
+      <div className="spinner__dot spinner__dot--2"></div>
+      <div className="spinner__dot spinner__dot--3"></div>
     </div>
   );
 }
