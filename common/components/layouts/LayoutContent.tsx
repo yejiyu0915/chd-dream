@@ -58,7 +58,10 @@ export default function LayoutContent({ children, initialPopupData }: LayoutCont
       // body 스크롤 차단
       document.body.classList.add('popup-open');
       document.body.style.top = `-${scrollYRef.current}px`;
-    } else {
+    } else if (scrollYRef.current > 0) {
+      // 팝업이 열렸다가 닫힌 경우에만 스크롤 복원
+      // (페이지 전환 시에는 scrollYRef가 0이므로 실행 안 됨)
+      
       // body 스크롤 복원
       document.body.classList.remove('popup-open');
       document.body.style.top = '';
@@ -66,6 +69,13 @@ export default function LayoutContent({ children, initialPopupData }: LayoutCont
       // 스크롤 위치 복원
       const currentScrollY = scrollYRef.current;
       window.scrollTo(0, currentScrollY);
+      
+      // 복원 후 ref 초기화
+      scrollYRef.current = 0;
+    } else {
+      // 팝업이 없는 경우 (초기 진입 시)
+      document.body.classList.remove('popup-open');
+      document.body.style.top = '';
     }
   }, [showPopup]);
 

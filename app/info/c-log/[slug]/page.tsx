@@ -8,7 +8,6 @@ import { compile } from '@mdx-js/mdx';
 
 import { getNotionPageAndContentBySlug, notion, getPrevNextCLogPosts } from '@/lib/notion';
 import { NotionToMarkdown } from 'notion-to-md';
-import PageTitleSetter from '@/app/info/components/PageTitleSetter';
 import l from 'common/styles/mdx/MdxLayout.module.scss';
 import CLogDetailHeader from '@/app/info/c-log/[slug]/components/CLogDetailHeader';
 import CLogDetailFooter from '@/app/info/c-log/[slug]/components/CLogDetailFooter';
@@ -109,8 +108,6 @@ export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
 
   return (
     <div className={l.container}>
-      <PageTitleSetter title={title} />
-
       {/* 즉시 표시: 헤더 (LCP 개선) */}
       <CLogDetailHeader
         title={title}

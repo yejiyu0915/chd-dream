@@ -101,8 +101,10 @@
         @include smooth-transition;
         position: relative;
 
-        &:hover {
-          color: var(--header-color);
+        @media (hover: hover) {
+          &:hover {
+            color: var(--accent-brand);
+          }
         }
 
         // 하단 바 애니메이션
@@ -113,7 +115,7 @@
           left: 50%;
           width: 0;
           height: vw(3);
-          background: var(--header-color);
+          background: var(--accent-brand);
           transform: translateX(-50%);
           @include smooth-transition;
         }
@@ -122,7 +124,7 @@
       // 활성 상태 스타일
       &.active {
         .menu__link {
-          color: var(--header-color);
+          color: var(--accent-brand);
           opacity: 1;
 
           &::after {
@@ -132,9 +134,11 @@
       }
 
       // 호버 시 하단 바 표시
-      &:hover {
-        .menu__link::after {
-          width: 100%;
+      @media (hover: hover) {
+        &:hover {
+          .menu__link::after {
+            width: 100%;
+          }
         }
       }
     }
@@ -203,20 +207,21 @@
       @include smooth-transition;
       position: relative;
 
-      &:hover {
-        font-weight: 700;
-        color: var(--text-main);
-        text-decoration: underline;
-        text-underline-offset: vw(4);
+      @media (hover: hover) {
+        &:hover {
+          color: var(--accent-brand);
+          text-decoration: underline;
+          text-underline-offset: vw(4);
 
-        &::before {
-          content: '·';
-          position: absolute;
-          left: vw(8);
-          top: 50%;
-          transform: translateY(-50%);
-          color: var(--text-main);
-          @include font-vw(24);
+          &::before {
+            content: '·';
+            position: absolute;
+            left: vw(8);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-brand);
+            @include font-vw(24);
+          }
         }
       }
     }
@@ -255,7 +260,7 @@
         position: relative;
 
         p {
-          @include font-vw(14, 21, $ls: -0.02, $color: var(--accent-brand));
+          @include font-vw(14, 21, $ls: -0.02, $color: var(--text-caption));
         }
       }
     }
@@ -267,6 +272,9 @@
     @include font-vw(18, $weight: 500);
     color: var(--header-color);
     @include smooth-transition;
+    a {
+      display: block;
+    }
     .icon {
       --icon-size: 1.25;
       --icon-margin: 0.1;
@@ -274,22 +282,23 @@
     }
 
     // 햄버거 버튼 스타일
-    .mobileMenuToggle {
+    .mobileMenu__toggle {
       display: none; // 기본적으로 숨김
     }
 
-    .hamburgerButton {
-      display: none;
-      justify-content: center;
-      align-items: center;
-      width: vw(28);
-      height: vw(28);
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-
-      .hamburgerIcon {
+    .hamburger {
+      &__button {
+        display: none;
+        justify-content: center;
+        align-items: center;
+        width: vw(28);
+        height: vw(28);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+      }
+      &__icon {
         --icon-size: 2;
         --icon-margin: 0;
         --icon-color: var(--header-color);
@@ -299,19 +308,21 @@
     }
   }
 
-  &.hover {
-    --header-color: var(--text-main);
-    .overlay {
-      opacity: 1;
-      visibility: visible;
-      transition: opacity 0.1s;
-    }
-    .menu .item .menuLink {
-      font-weight: 600;
-    }
-    .util {
-      .icon {
-        --icon-color: var(--header-color);
+  @media (hover: hover) {
+    &.hover {
+      --header-color: var(--text-main);
+      .overlay {
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 0.1s;
+      }
+      .menu .item .menuLink {
+        font-weight: 600;
+      }
+      .util {
+        .icon {
+          --icon-color: var(--header-color);
+        }
       }
     }
   }
@@ -378,15 +389,6 @@
   }
 
   @include mq(pc) {
-    // PC에서는 모바일 메뉴 숨김
-    .mobileMenuOverlay {
-      display: none;
-    }
-
-    .mobileLocation {
-      display: none;
-    }
-
     &,
     &.scroll {
       --header-color: var(--text-main);
@@ -441,9 +443,6 @@
         animation: none;
         .icon {
           --icon-color: var(--header-color);
-        }
-        .hamburgerButton {
-          display: flex;
         }
       }
     }
@@ -520,9 +519,11 @@
           padding: vw(8) vw(20);
           @include font-vw(15);
 
-          &:hover {
-            &::before {
-              @include font-vw(20);
+          @media (hover: hover) {
+            &:hover {
+              &::before {
+                @include font-vw(20);
+              }
             }
           }
         }
@@ -589,16 +590,24 @@
       }
       .util {
         @include font-vw(15);
+        a {
+          width: vw(28);
+          height: vw(28);
+        }
         .icon {
           --icon-size: 1.8;
+          --icon-margin: 0;
           --icon-color: var(--header-color);
           transform: translateY(0.05em);
         }
-        .mobileMenuToggle {
+        .mobileMenu__toggle {
           display: block !important;
         }
-        .hamburgerButton {
-          .hamburgerIcon {
+        .hamburger {
+          &__button {
+            display: flex;
+          }
+          &__icon {
             --icon-color: var(--header-color);
           }
         }
@@ -613,7 +622,12 @@
   }
 }
 
-.mobileMenuOverlay {
+$moMenu: '.mobileMenu';
+$moSubMenu: '.mobileSubMenu';
+$moPrev: '.mobilePrev';
+$moSns: '.mobileSns';
+
+#{$moMenu}__overlay {
   display: none;
   visibility: hidden;
   opacity: 0;
@@ -623,29 +637,28 @@
     opacity 0.3s ease-in-out,
     visibility 0s linear 0.3s; // 모바일 메뉴 오버레이 트랜지션 수정
 }
-
 @include mq(mo) {
-  // 모바일 메뉴 오버레이
-  .mobileMenuOverlay {
-    display: block;
-    position: fixed;
-    top: vw(--header-height);
-    left: 0;
-    width: 100vw;
-    height: calc(100vh - vw(--header-height));
-    background: var(--bg-page);
-    z-index: 1001; // 헤더보다 높은 z-index로 설정 (명시적으로 재설정)
-    touch-action: auto; // 터치 스크롤 허용
-    -webkit-overflow-scrolling: touch;
-    transition: none; // 모바일에서는 트랜지션 제거
+  #{$moMenu} {
+    &__overlay {
+      display: block;
+      position: fixed;
+      top: vw(--header-height);
+      left: 0;
+      width: 100vw;
+      height: calc(100vh - vw(--header-height));
+      background: var(--bg-page);
+      z-index: 1001; // 헤더보다 높은 z-index로 설정 (명시적으로 재설정)
+      touch-action: auto; // 터치 스크롤 허용
+      -webkit-overflow-scrolling: touch;
+      transition: none; // 모바일에서는 트랜지션 제거
 
-    &.open {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto; // 클릭 이벤트 활성화
+      &.open {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto; // 클릭 이벤트 활성화
+      }
     }
-
-    .mobileMenuContent {
+    &__content {
       height: 100%;
       display: flex;
       flex-direction: column;
@@ -658,22 +671,19 @@
         padding-block-end: vw(200);
       }
     }
-
-    .mobileMenuList {
+    &__list {
       list-style: none;
       margin: 0;
       padding: 0;
     }
-
-    .mobileMenuItem {
+    &__item {
       border-bottom: 1px solid var(--accent-border);
 
       &:last-child {
         border-bottom: none;
       }
     }
-
-    .mobileMenuButton {
+    &__button {
       width: 100%;
       display: flex;
       justify-content: space-between;
@@ -684,13 +694,17 @@
       cursor: pointer;
       @include font-vw(18, $weight: 700, $color: var(--text-main));
       text-align: left;
+      overflow: hidden;
 
       &.active {
         color: var(--accent-brand);
+        #{$moMenu}__icon {
+          transform: rotate(180deg);
+          --icon-color: var(--accent-brand);
+        }
       }
     }
-
-    .mobileMenuIcon {
+    &__icon {
       --icon-size: 1.8;
       --icon-margin: 0;
       --icon-color: var(--text-main);
@@ -698,170 +712,152 @@
       height: vw(28);
       transition: transform 0.3s ease-in-out;
     }
+  }
 
-    .mobileMenuButton.active .mobileMenuIcon {
-      transform: rotate(180deg);
-      --icon-color: var(--accent-brand);
+  #{$moSubMenu} {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: max-height, transform;
+    contain: layout style paint;
+
+    &.show {
+      max-height: vw(3000);
+      transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .mobileSubMenu {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      will-change: max-height, transform;
-      contain: layout style paint;
-
-      &.show {
-        max-height: vw(3000);
-        transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-    }
-
-    .mobileSubMenuContent {
+    &__content {
       display: flex;
       flex-direction: column;
       gap: vw(24);
       padding-block-end: vw(40);
     }
 
-    .mobileSubMenuTop {
-      .mobileSubMenuList {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        border-left: vw(3) solid var(--accent-brand);
-      }
+    &__list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      border-left: vw(3) solid var(--accent-brand);
+    }
 
-      .mobileSubMenuItem {
-        .mobileSubMenuLink {
-          display: block;
-          padding: vw(16) vw(32);
-          border-top: 1px solid #e9e9e9;
-          background-color: var(--accent-secondary);
-          @include font-vw(16, $color: var(--text-body));
-          text-decoration: none;
-          @include smooth-transition;
+    &__link {
+      display: block;
+      padding: vw(16) vw(32);
+      border-top: 1px solid #e9e9e9;
+      background-color: var(--accent-secondary);
+      @include font-vw(16, $color: var(--text-body));
+      text-decoration: none;
+      @include smooth-transition;
 
-          &:hover {
-            color: var(--accent-brand);
-            font-weight: 600;
-          }
+      @media (hover: hover) {
+        &:hover {
+          color: var(--accent-brand);
+          font-weight: 600;
         }
       }
     }
 
-    .mobileSubMenuBottom {
-      .mobileSubMenuVisual {
-        padding-inline-start: vw(32);
-        .mobileVisualImage {
-          position: relative;
-          width: 100%;
-          height: vw(160);
-          border-radius: vw(8);
-          overflow: hidden;
-          background: linear-gradient(
-            135deg,
-            var(--gradient-light-start),
-            var(--gradient-light-end)
-          );
-          margin-bottom: vw(12);
-        }
+    &__visual {
+      padding-inline-start: vw(32);
+      &Image {
+        position: relative;
+        width: 100%;
+        height: vw(160);
+        border-radius: vw(8);
+        overflow: hidden;
+        background: linear-gradient(135deg, var(--gradient-light-start), var(--gradient-light-end));
+        margin-bottom: vw(12);
+      }
 
-        .mobileVisualContent {
-          p {
-            @include font-vw(14, 20, $ls: -0.02, $color: var(--text-caption));
-          }
+      &Content {
+        p {
+          @include font-vw(14, 20, $ls: -0.02, $color: var(--text-caption));
         }
       }
     }
+  }
 
-    // 이전 교회 링크 영역
-    .mobilePrevLinks {
+  // 이전 교회 링크 영역
+  #{$moPrev} {
+    &__links {
       display: flex;
       flex-direction: column;
       gap: vw(4);
       border-top: 1px solid var(--text-main);
       padding-block: vw(20) 0;
-      .mobilePrevGroup {
-        width: 100%;
-      }
+    }
+    &__group {
+      width: 100%;
+    }
+    &__row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: vw(16);
+      padding: vw(8) vw(16);
+      border-radius: vw(20);
+      background-color: rgba(0, 0, 0, 0.03);
+    }
+    &__title {
+      margin: 0;
+      min-width: vw(80);
+      @include font-vw(14, $color: #999);
+      @include ellipsis;
+    }
+    &__list {
+      display: flex;
+      gap: vw(4);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    &__link {
+      display: block;
+      padding: vw(4);
+      transition: background-color 0.2s ease;
+    }
+    &__icon {
+      --icon-margin: 0;
+      width: vw(20);
+      height: vw(20);
+      opacity: 0.4;
+    }
+  }
 
-      .mobilePrevRow {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: vw(16);
-        padding: vw(8) vw(16);
-        border-radius: vw(20);
-        background-color: rgba(0, 0, 0, 0.03);
-      }
+  // SNS 링크 영역
+  #{$moSns} {
+    padding-block: vw(20);
+    border-top: 1px solid var(--accent-border-subtle);
 
-      .mobilePrevTitle {
-        @include font-vw(14, $color: #999);
-        margin: 0;
-        min-width: vw(80);
-        @include ellipsis;
-      }
+    &__list {
+      display: flex;
+      gap: vw(12);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
 
-      .mobilePrevList {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        gap: vw(4);
-      }
+    &__link {
+      display: flex;
+      align-items: center;
+      gap: vw(8);
+      @include font-vw(16, $color: var(--text-body));
+      text-decoration: none;
+      @include smooth-transition;
 
-      .mobilePrevItem {
-        .mobilePrevLink {
-          display: block;
-          padding: vw(4);
-          transition: background-color 0.2s ease;
+      @media (hover: hover) {
+        &:hover {
+          color: var(--accent-brand);
         }
-      }
-
-      .mobilePrevIcon {
-        --icon-margin: 0;
-        width: vw(20);
-        height: vw(20);
-        opacity: 0.4;
       }
     }
 
-    // SNS 링크 영역
-    .mobileSns {
-      border-top: 1px solid var(--accent-border-subtle);
-      padding-block: vw(20);
-
-      .mobileSnsList {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        gap: vw(12);
-      }
-
-      .mobileSnsItem {
-        .mobileSnsLink {
-          display: flex;
-          align-items: center;
-          gap: vw(8);
-          @include font-vw(16, $color: var(--text-body));
-          text-decoration: none;
-          @include smooth-transition;
-
-          &:hover {
-            color: var(--accent-brand);
-          }
-        }
-      }
-
-      .mobileSnsIcon {
-        --icon-margin: 0;
-        width: vw(28);
-        height: vw(28);
-      }
+    &__icon {
+      --icon-margin: 0;
+      width: vw(28);
+      height: vw(28);
     }
   }
 }

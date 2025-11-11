@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import PageTitleSetter from '@/app/worship/components/PageTitleSetter';
 import { sermonData } from '@/app/worship/sermon/data/sermonData';
 import SermonNav from '@/app/worship/sermon/components/SermonNav';
 import SermonContent from '@/app/worship/sermon/components/SermonContent';
@@ -28,9 +27,6 @@ export default function SermonPage() {
 
   return (
     <>
-      {/* 페이지 타이틀 설정 */}
-      <PageTitleSetter title="생명의 말씀" />
-
       <div className={`${s.sermon} detail-inner`}>
         <div className={s.inner}>
           {/* 왼쪽 내비게이션 */}

@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { CLogItem } from '@/lib/notion';
-import { useQuery } from '@tanstack/react-query';
 import CLogTagFilter from '@/app/info/c-log/components/CLogTagFilter';
 import CLogListDisplay from '@/app/info/c-log/components/CLogListDisplay';
 import CLogCategoryFilter from '@/app/info/c-log/components/CLogCategoryFilter';
@@ -18,6 +17,9 @@ interface CLogListClientProps {
 export default function CLogListClient({ initialCLogData }: CLogListClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  // 서버에서 받은 데이터를 그대로 사용 (useQuery 제거)
+  const allCLogData = initialCLogData;
 
   // State 초기값은 고정값으로 설정 (Hydration 에러 방지)
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -61,26 +63,6 @@ export default function CLogListClient({ initialCLogData }: CLogListClientProps)
     setSortOrder((prev) => (prev !== currentSortOrder ? currentSortOrder : prev));
     setViewMode((prev) => (prev !== currentViewMode ? currentViewMode : prev));
   }, [searchParams]);
-
-  const fetchCLogItems = async (): Promise<CLogItem[]> => {
-    const response = await fetch('/api/c-log');
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json();
-  };
-
-  const {
-    data: allCLogData,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<CLogItem[], Error>({
-    queryKey: ['cLogListItems'],
-    queryFn: fetchCLogItems,
-    initialData: initialCLogData, // 서버에서 받은 데이터를 초기값으로 사용 (즉시 렌더링)
-    staleTime: 1000 * 60 * 5, // 5분간 fresh 상태 유지 (재fetch 방지)
-  });
 
   // 카테고리 개수 계산
   const categoryCounts = useMemo(() => {
@@ -219,9 +201,9 @@ export default function CLogListClient({ initialCLogData }: CLogListClientProps)
         </div>
         <CLogListDisplay
           cLogData={filteredCLogData}
-          isLoading={isLoading}
-          isError={isError}
-          error={error}
+          isLoading={false}
+          isError={false}
+          error={null}
           viewMode={viewMode}
         />
       </div>

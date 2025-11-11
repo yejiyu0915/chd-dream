@@ -7,10 +7,8 @@ const nextConfig: NextConfig = {
     // 경고: 타입 에러가 있어도 프로덕션 빌드를 허용
     ignoreBuildErrors: true,
   },
-  // React 컴파일러 활성화 (실험적 기능)
-  experimental: {
-    reactCompiler: true,
-  },
+  // React 컴파일러 활성화 (Next.js 16에서 최상위로 이동)
+  reactCompiler: true,
   // 환경변수 명시적 설정 (클라이언트에서 사용)
   env: {
     NEXT_PUBLIC_KAKAO_MAP_KEY: process.env.NEXT_PUBLIC_KAKAO_MAP_KEY,

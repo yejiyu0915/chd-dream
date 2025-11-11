@@ -1,0 +1,49 @@
+'use client';
+
+import React from 'react';
+import { ScheduleItem } from '@/lib/notion';
+import { ScheduleProvider } from '@/app/info/schedule/context/ScheduleContext';
+import { useScheduleContext } from '@/app/info/schedule/context/ScheduleContext';
+import ScheduleCalendarView from '@/app/info/schedule/components/ScheduleCalendarView';
+import ScheduleViewModeFilter from '@/app/info/schedule/components/ScheduleViewModeFilter';
+import SchedulePeriodFilter from '@/app/info/schedule/components/SchedulePeriodFilter';
+import s from '@/app/info/schedule/Schedule.module.scss';
+
+interface ScheduleClientWrapperProps {
+  initialScheduleData: ScheduleItem[];
+}
+
+// 필터 컴포넌트 (Context 사용)
+function ScheduleFilters() {
+  const { viewMode, period, setViewMode, setPeriod } = useScheduleContext();
+
+  return (
+    <div className={s.filterGroup}>
+      <ScheduleViewModeFilter viewMode={viewMode} onViewModeChange={setViewMode} />
+      {viewMode === 'list' && <SchedulePeriodFilter period={period} onPeriodChange={setPeriod} />}
+    </div>
+  );
+}
+
+// 메인 일정 컨텐츠 (서버에서 받은 데이터만 사용)
+function ScheduleContent({ scheduleData }: { scheduleData: ScheduleItem[] }) {
+  // Next.js가 자동으로 스크롤 복원을 처리하므로 제거
+  
+  return (
+    <>
+      <ScheduleFilters />
+      <ScheduleCalendarView scheduleData={scheduleData} />
+    </>
+  );
+}
+
+// 클라이언트 래퍼 (Provider 포함)
+export default function ScheduleClientWrapper({
+  initialScheduleData,
+}: ScheduleClientWrapperProps) {
+  return (
+    <ScheduleProvider>
+      <ScheduleContent scheduleData={initialScheduleData} />
+    </ScheduleProvider>
+  );
+}

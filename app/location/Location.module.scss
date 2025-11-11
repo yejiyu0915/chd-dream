@@ -1,19 +1,5 @@
 @use '@/common/styles/mixins/function' as *;
 
-// 레이아웃 배경 오버라이드 (info 레이아웃 재사용 시)
-.locationLayout {
-  [class*='titleSection'] {
-    background: url('/main/bg2.jpg') no-repeat center center / cover;
-
-    @include mq(mo) {
-      background-size: 200% auto;
-    }
-
-    // 배경 이미지를 다른 이미지로 변경하려면 여기를 수정하세요
-    // 예: background: url('/location/location-bg.jpg') no-repeat center center / cover;
-  }
-}
-
 .inner {
   padding-block: vw(100) vw(160);
   @include mq(pc-sm) {
@@ -79,8 +65,10 @@
       padding: vw(16) vw(24) vw(16) vw(16);
       border-radius: vw(20);
       border: vw(2) solid var(--accent-border-subtle);
-      &:hover {
-        background-color: var(--bg-section);
+      @media (hover: hover) {
+        &:hover {
+          background-color: var(--bg-section);
+        }
       }
     }
     img {

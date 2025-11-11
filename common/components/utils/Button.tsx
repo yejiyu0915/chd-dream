@@ -21,18 +21,18 @@ export default function Button({
   variant = 'primary',
   ...props
 }: ButtonProps) {
-  const baseClasses = `button-base ${className}`;
+  const baseClasses = `button--base ${className}`;
 
   const getVariantClasses = (buttonVariant: string) => {
     switch (buttonVariant) {
       case 'primary':
-        return 'button-primary';
+        return 'button--primary';
       case 'secondary':
-        return 'button-secondary';
+        return 'button--secondary';
       case 'ghost':
-        return 'button-ghost';
+        return 'button--ghost';
       case 'link':
-        return 'button-link';
+        return 'button--link';
       case 'footer-button': // 새로운 variant 추가
         return 'footer-button';
       default:

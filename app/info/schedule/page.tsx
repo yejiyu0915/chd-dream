@@ -1,29 +1,19 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import { getScheduleData } from '@/lib/notion';
+import ScheduleClientWrapper from '@/app/info/schedule/components/ScheduleClientWrapper';
 import s from '@/app/info/schedule/Schedule.module.scss';
-import ScheduleCalendarClient from '@/app/info/schedule/components/ScheduleCalendarClient';
-import ScheduleSkeleton from '@/app/info/schedule/components/ScheduleSkeleton';
 
-// 데이터 로딩 컴포넌트 (Suspense 내부에서 실행)
-async function ScheduleContent() {
+// 서버 컴포넌트 - 데이터를 서버에서 미리 fetch
+export default async function SchedulePage() {
   // 서버에서 일정 데이터를 가져옴
   const scheduleData = await getScheduleData();
 
   return (
-    <div className={`detail-inner`}>
-      <ScheduleCalendarClient initialScheduleData={scheduleData} />
-    </div>
-  );
-}
-
-// 메인 페이지 컴포넌트 (InfoLayout이 자동으로 제목 설정)
-export default function SchedulePage() {
-  return (
     <section className={s.scheduleMain}>
-      {/* Streaming: 데이터 로딩 중 스켈레톤 표시 */}
-      <Suspense fallback={<ScheduleSkeleton />}>
-        <ScheduleContent />
-      </Suspense>
+      <div className={`detail-inner`}>
+        {/* 클라이언트 컴포넌트로 데이터 전달 */}
+        <ScheduleClientWrapper initialScheduleData={scheduleData} />
+      </div>
     </section>
   );
 }

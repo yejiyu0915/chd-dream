@@ -275,6 +275,9 @@ $list: '.list';
       @include font-vw(16);
     }
   }
+  &__toggleButton {
+    display: none;
+  }
 
   @include mq(pc-sm) {
     margin-block-start: 0;
@@ -376,6 +379,9 @@ $list: '.list';
       color: var(--accent-brand);
       font-weight: 700;
     }
+  }
+  &__arrow {
+    display: none;
   }
   @include mq(pc-sm) {
     margin-block-end: vw(24);

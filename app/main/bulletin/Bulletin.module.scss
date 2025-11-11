@@ -5,7 +5,7 @@
   overflow: hidden;
   border-radius: calc(var(--inner-padding) * 1.5) calc(var(--inner-padding) * 1.5) 0 0;
   background-color: var(--bg-page);
-  background-image: url('/main/bulltein14.jpg');
+  // 배경 이미지는 컴포넌트에서 inline style로 동적 처리
   background-repeat: no-repeat;
   background-position: center 5%;
   background-size: cover;

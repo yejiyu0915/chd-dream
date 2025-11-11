@@ -37,8 +37,8 @@ export default function ScheduleListView({
 }: ScheduleListViewProps) {
   'use memo'; // React 컴파일러 최적화 적용
 
-  // 아코디언 상태 관리 (기본적으로 모든 섹션 펼침)
-  const [expandedDates, setExpandedDates] = useState<Set<string>>(new Set(['ongoing']));
+  // 아코디언 상태 관리 (lazy initialization)
+  const [expandedDates, setExpandedDates] = useState<Set<string>>(() => new Set(['ongoing']));
 
   // 날짜 토글 함수
   const toggleDate = (dateKey: string) => {
@@ -170,14 +170,15 @@ export default function ScheduleListView({
 
   // 기간 내 일정들의 날짜 키들을 기본적으로 펼침 상태로 설정
   useEffect(() => {
-    if (groupedScheduleData.length > 0) {
-      const dateKeys = groupedScheduleData.map(({ date }) => date.toISOString().split('T')[0]);
-      setExpandedDates((prev) => {
-        const newSet = new Set(prev);
-        dateKeys.forEach((key) => newSet.add(key));
-        return newSet;
-      });
-    }
+    if (groupedScheduleData.length === 0) return;
+    
+    const dateKeys = groupedScheduleData.map(({ date }) => date.toISOString().split('T')[0]);
+    
+    setExpandedDates((prev) => {
+      const newSet = new Set(prev);
+      dateKeys.forEach((key) => newSet.add(key));
+      return newSet;
+    });
   }, [groupedScheduleData]);
 
   if (isLoading) {

@@ -8,12 +8,12 @@ import { compile } from '@mdx-js/mdx';
 
 import { getNotionPageAndContentBySlug, notion, getPrevNextNoticePosts } from '@/lib/notion';
 import { NotionToMarkdown } from 'notion-to-md';
-import PageTitleSetter from '@/app/info/components/PageTitleSetter';
 import l from '@/common/styles/mdx/MdxLayout.module.scss';
 import NoticeDetailHeader from '@/app/info/notice/[slug]/components/NoticeDetailHeader';
 import NoticeDetailFooter from '@/app/info/notice/[slug]/components/NoticeDetailFooter';
 import NoticeContent from '@/app/info/notice/[slug]/components/NoticeContent';
 import ContentSkeleton from '@/common/components/skeletons/ContentSkeleton';
+import { getCurrentSeason } from '@/common/utils/season';
 
 interface NoticeDetailPageProps {
   params: { slug: string };
@@ -52,10 +52,14 @@ async function getPageMetadata(slug: string) {
       tagsProperty.multi_select?.map((tag: { name: string }) => tag.name)) ||
     [];
 
-  let imageUrl = '/info/info-bg.jpg';
+  // 계절별 기본 이미지 경로 생성
+  const currentSeason = getCurrentSeason();
+  const defaultImageUrl = `/images/title/${currentSeason}/info.jpg`;
+
+  let imageUrl = defaultImageUrl;
   if (page.cover) {
     if (page.cover.type === 'external') {
-      imageUrl = page.cover.external.url || '/info/info-bg.jpg';
+      imageUrl = page.cover.external.url || defaultImageUrl;
     } else if (page.cover.type === 'file') {
       imageUrl = `/api/notion-image?pageId=${page.id}&type=cover`;
     }
@@ -68,7 +72,7 @@ async function getPageMetadata(slug: string) {
 async function getMarkdownContent(slug: string) {
   // Suspense 안에서 blocks를 가져옴 (진짜 Streaming!)
   const notionData = await getNotionPageAndContentBySlug('NOTION_NOTICE_ID', slug);
-  
+
   if (!notionData) {
     return '';
   }
@@ -104,8 +108,6 @@ export default async function NoticeDetailPage({ params }: NoticeDetailPageProps
 
   return (
     <div className={l.container}>
-      <PageTitleSetter title={title} />
-
       {/* 즉시 표시: 헤더 (LCP 개선) */}
       <NoticeDetailHeader title={title} date={date} imageUrl={imageUrl} tags={tags} />
 
@@ -115,9 +117,7 @@ export default async function NoticeDetailPage({ params }: NoticeDetailPageProps
       </Suspense>
 
       {/* 3단계: Footer Streaming */}
-      <Suspense
-        fallback={<div style={{ minHeight: '200px', backgroundColor: 'transparent' }} />}
-      >
+      <Suspense fallback={<div style={{ minHeight: '200px', backgroundColor: 'transparent' }} />}>
         <FooterSection slug={slug} />
       </Suspense>
 
@@ -137,4 +137,3 @@ async function FooterSection({ slug }: { slug: string }) {
   const { prev: prevPost, next: nextPost } = await getPrevNextNoticePosts(slug);
   return <NoticeDetailFooter prevPost={prevPost} nextPost={nextPost} />;
 }
-

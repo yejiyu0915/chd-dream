@@ -4,6 +4,7 @@ import { Providers } from '@/app/providers';
 import { MobileMenuProvider } from '@/common/components/layouts/Header/MobileMenuContext';
 import LayoutContent from '@/common/components/layouts/LayoutContent';
 import { getPopupWithContent } from '@/lib/notion';
+import { getCurrentSeason } from '@/common/utils/season';
 
 export const metadata: Metadata = {
   title: '행복으로가는교회',
@@ -18,8 +19,12 @@ export default async function RootLayout({
   // 서버에서 팝업 데이터 + 콘텐츠 미리 가져오기 (메타데이터 + 블록)
   const popupData = await getPopupWithContent();
 
+  // 현재 계절 판단 (서버에서 초기값 설정, 개발자 도구에서 수동 변경 가능)
+  const currentSeason = getCurrentSeason();
+
   return (
-    <html lang="ko">
+    <html lang="ko" data-season={currentSeason}>
+      {/* 개발자 도구에서 수동 변경 가능 */}
       <body>
         <Providers>
           <MobileMenuProvider>

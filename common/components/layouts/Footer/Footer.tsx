@@ -36,7 +36,7 @@ export default function Footer() {
               {prevLinks.map((prevInfo, index) => (
                 <div key={index} className={f.prevGroup}>
                   <div className={f.prevRow}>
-                    <h4 className={f.prevTitle}>{prevInfo.name}</h4>
+                    <p className={f.prevTitle}>{prevInfo.name}</p>
                     <ul className={f.prevList}>
                       {prevInfo.links.map((link, linkIndex) => (
                         <li key={linkIndex} className={getSnsClassName(link.name)}>

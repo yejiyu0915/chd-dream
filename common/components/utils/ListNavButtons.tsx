@@ -17,19 +17,19 @@ interface ListNavButtonsProps {
 
 export default function ListNavButtons({ prevPost, nextPost, basePath }: ListNavButtonsProps) {
   return (
-    <div className="list-nav-buttons">
+    <div className="list-nav__buttons">
       {prevPost ? (
-        <Link href={`${basePath}/${prevPost.slug}`} className="list-nav-link">
+        <Link href={`${basePath}/${prevPost.slug}`} className="list-nav__link">
           <Icon name="arrow-up" />
-          이전글: <span className="list-nav-link__title">{prevPost.title}</span>
+          이전글: <span className="list-nav__link-title">{prevPost.title}</span>
         </Link>
       ) : (
         ''
       )}
       {nextPost ? (
-        <Link href={`${basePath}/${nextPost.slug}`} className="list-nav-link">
+        <Link href={`${basePath}/${nextPost.slug}`} className="list-nav__link">
           <Icon name="arrow-down" />
-          다음글: <span className="list-nav-link__title">{nextPost.title}</span>
+          다음글: <span className="list-nav__link-title">{nextPost.title}</span>
         </Link>
       ) : (
         ''

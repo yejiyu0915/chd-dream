@@ -138,8 +138,8 @@ export default function NoticeListDisplay({
               ))}
             </ul>
             {hasMore && (
-              <div className="load-more-wrapper">
-                <Button onClick={handleLoadMore} className="load-more-button" icon="arrow-down">
+              <div className="load-more__wrapper">
+                <Button onClick={handleLoadMore} className="load-more__button" icon="arrow-down">
                   더보기
                 </Button>
               </div>

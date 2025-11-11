@@ -26,7 +26,7 @@ export const historyData: HistoryGroup[] = [
     period: '2020~',
     startYear: 2020,
     mainTitle: '주님과 함께 동행하는 교회',
-    image: '/main/test1.jpg',
+    image: '/images/common/history-1.jpg',
     items: [
       {
         year: 2025,
@@ -199,7 +199,7 @@ export const historyData: HistoryGroup[] = [
     period: '2015~',
     startYear: 2015,
     mainTitle: '주의 뜻대로 성장하는 교회',
-    image: '/main/test2.jpg',
+    image: '/images/common/history-2.jpg',
     items: [
       {
         year: 2019,
@@ -392,7 +392,7 @@ export const historyData: HistoryGroup[] = [
     period: '2010~',
     startYear: 2010,
     mainTitle: '주님 안에서 하나되는 교회',
-    image: '/main/test3.jpg',
+    image: '/images/common/history-3.jpg',
     items: [
       {
         year: 2014,
@@ -604,7 +604,7 @@ export const historyData: HistoryGroup[] = [
     period: '2004~',
     startYear: 2004,
     mainTitle: '은혜와 축복으로 시작된 교회',
-    image: '/main/test4.jpg',
+    image: '/images/common/history-4.jpg',
     items: [
       {
         year: 2009,

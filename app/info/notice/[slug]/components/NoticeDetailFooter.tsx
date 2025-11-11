@@ -14,7 +14,7 @@ export default function NoticeDetailFooter({ prevPost, nextPost }: NoticeDetailF
   return (
     <div className={`${l.footer} detail-inner`}>
       {/* 목록으로 돌아가기 버튼 */}
-      <div className="footer-button-wrapper">
+      <div className="footer-button__wrapper">
         <Button href="/info/notice" variant="footer-button">
           목록으로
         </Button>

@@ -53,9 +53,9 @@
 
   &__item {
     --item-bg-color: var(--text-inverse);
-    --item-border-color: var(--accent-tertiary);
-    --item-border-color2: var(--accent-secondary);
-    --item-text-color: var(--accent-brand);
+    --item-border-color: #e2e2e2;
+    --item-border-color2: var(--accent-border);
+    --item-text-color: #666;
     width: 100%;
     height: vw(240);
     border-radius: vw(--border-radius) 0 0 vw(--border-radius);
@@ -63,19 +63,30 @@
     position: relative;
     border: vw(--border-width) solid var(--item-border-color);
     background-color: var(--item-bg-color);
-    &::before {
-      content: '';
-      position: absolute;
-      right: vw(4);
-      top: 0;
-      width: vw(4);
-      height: 100%;
-      box-sizing: content-box;
-      border: vw(--border-width) solid var(--item-border-color);
-      border-top: 0;
-      border-bottom: 0;
-      background-color: var(--item-border-color2);
-    }
+    box-shadow: 0 vw(4) vw(4) rgba(0, 0, 0, 0.03);
+    // &::before {
+    //   content: '';
+    //   position: absolute;
+    //   right: vw(4);
+    //   top: 0;
+    //   width: vw(4);
+    //   height: 100%;
+    //   box-sizing: content-box;
+    //   border: vw(--border-width) solid var(--item-border-color);
+    //   border-top: 0;
+    //   border-bottom: 0;
+    //   // background-color: var(--item-border-color2);
+    // }
+    // &::before {
+    //   content: '';
+    //   position: absolute;
+    //   right: 0;
+    //   top: 0;
+    //   width: vw(6);
+    //   height: 100%;
+    //   box-sizing: content-box;
+    //   background-color: var(--item-border-color);
+    // }
 
     &Active {
       --item-bg-color: var(--accent-brand);
@@ -377,11 +388,11 @@
     }
 
     &__dateMain {
-      @include font-vw(16);
+      @include font-vw(14);
     }
 
     &__dateWeek {
-      @include font-vw(12);
+      @include font-vw(11);
     }
   }
 }
@@ -495,7 +506,7 @@
   position: relative;
   border-radius: vw(--border-radius);
   border: vw(--border-width) solid var(--accent-border-subtle);
-  background-image: url('/main/bulltein14.jpg');
+  // 배경 이미지는 컴포넌트에서 inline style로 동적 처리
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
@@ -755,7 +766,7 @@
     }
 
     &__dateMain {
-      @include font-vw(18);
+      @include font-vw(16);
     }
 
     &__dateWeek {
