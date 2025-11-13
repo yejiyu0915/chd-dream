@@ -13,6 +13,7 @@ import CLogDetailHeader from '@/app/info/c-log/[slug]/components/CLogDetailHeade
 import CLogDetailFooter from '@/app/info/c-log/[slug]/components/CLogDetailFooter';
 import CLogContent from '@/app/info/c-log/[slug]/components/CLogContent';
 import ContentSkeleton from '@/common/components/skeletons/ContentSkeleton';
+import { getCurrentSeason } from '@/common/utils/season';
 
 interface CLogDetailPageProps {
   params: { slug: string };
@@ -56,10 +57,12 @@ async function getPageMetadata(slug: string) {
       tagsProperty.multi_select?.map((tag: { name: string }) => tag.name)) ||
     [];
 
-  let imageUrl = '/no-image.svg';
+  // 현재 계절을 가져와서 기본 이미지 경로 설정
+  const currentSeason = getCurrentSeason();
+  let imageUrl = `/images/title/${currentSeason}/info.jpg`;
   if (page.cover) {
     if (page.cover.type === 'external') {
-      imageUrl = page.cover.external.url || '/no-image.svg';
+      imageUrl = page.cover.external.url || `/images/title/${currentSeason}/info.jpg`;
     } else if (page.cover.type === 'file') {
       imageUrl = `/api/notion-image?pageId=${page.id}&type=cover`;
     }

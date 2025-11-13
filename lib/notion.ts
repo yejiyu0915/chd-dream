@@ -10,6 +10,7 @@ import type {
   // PartialBlockObjectResponse,
 } from '@notionhq/client';
 import { unstable_cache } from 'next/cache';
+import { getCurrentSeason } from '@/common/utils/season';
 
 export const notion = new Client({
   auth: process.env.NOTION_TOKEN,
@@ -329,11 +330,13 @@ const mapPageToCLogItem: ItemMapper<CLogItem> = (page) => {
   const slugProperty = properties.Slug as NotionProperty | undefined; // Slug 속성 추가
   const descriptionProperty = properties.Description as NotionProperty | undefined; // Description 속성 추가
 
-  let imageUrlToUse = '/no-image.svg';
+  // 현재 계절을 가져와서 기본 이미지 경로 설정
+  const currentSeason = getCurrentSeason();
+  let imageUrlToUse = `/images/title/${currentSeason}/info.jpg`;
 
   if (page.cover) {
     if (page.cover.type === 'external') {
-      imageUrlToUse = page.cover.external.url || '/no-image.svg';
+      imageUrlToUse = page.cover.external.url || `/images/title/${currentSeason}/info.jpg`;
     } else if (page.cover.type === 'file') {
       imageUrlToUse = `/api/notion-image?pageId=${page.id}&type=cover`;
     }
@@ -589,7 +592,7 @@ const mapPageToKVSliderItem: ItemMapper<KVSliderItem> = (page) => {
 
   const titleProperty = properties.Title as NotionProperty | undefined;
   const descriptionProperty = properties.Summary as NotionProperty | undefined;
-  const linkProperty = properties.Link as NotionProperty | undefined;
+  const linkProperty = properties.URL as NotionProperty | undefined; // 'Link'가 아닌 'URL' 필드 사용
   const imageProperty = properties.Image as NotionProperty | undefined;
 
   let imageUrlToUse = '/main/kv.jpg';
@@ -790,12 +793,17 @@ export async function getMainNoticeData(): Promise<NoticeItem[]> {
 
 // Notion 데이터베이스에서 최신 KV Slider 데이터 가져오기
 export async function getKVSliderData(): Promise<KVSliderItem[]> {
+  // 개발 환경에서는 캐시를 비활성화
+  if (process.env.NODE_ENV === 'development') {
+    return getPublishedNotionData<KVSliderItem>('NOTION_KV_ID', mapPageToKVSliderItem);
+  }
+
   return unstable_cache(
     async () => {
       return getPublishedNotionData<KVSliderItem>('NOTION_KV_ID', mapPageToKVSliderItem);
     },
     ['kv-slider-data'],
-    { revalidate: 600, tags: ['kv-slider-list'] } // 10분 캐시, 태그 기반 재검증
+    { revalidate: 60, tags: ['kv-slider-list'] } // 1분 캐시, 메인 콘텐츠와 동일
   )();
 }
 
@@ -1186,10 +1194,7 @@ export async function getPopupData(): Promise<PopupData | null> {
     async () => {
       try {
         // News와 Notice 데이터를 모두 가져오기
-        const [allNewsData, allNoticeData] = await Promise.all([
-          getNewsData(),
-          getNoticeData(),
-        ]);
+        const [allNewsData, allNoticeData] = await Promise.all([getNewsData(), getNoticeData()]);
 
         // 현재 시간
         const now = new Date();
@@ -1287,10 +1292,7 @@ export async function getPopupWithContent(): Promise<PopupData | null> {
         const isNotice = popupData.link.includes('/info/notice/');
         const databaseIdEnvVar = isNotice ? 'NOTION_NOTICE_ID' : 'NOTION_NEWS_ID';
 
-        const contentData = await getNotionPageAndContentBySlug(
-          databaseIdEnvVar,
-          popupData.slug
-        );
+        const contentData = await getNotionPageAndContentBySlug(databaseIdEnvVar, popupData.slug);
 
         if (!contentData) {
           // 콘텐츠를 가져오지 못해도 메타데이터는 반환

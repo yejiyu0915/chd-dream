@@ -89,16 +89,18 @@ export interface SnsLink {
   name: string;
   href: string;
   icon: string;
+  disabled?: boolean; // 준비중인 SNS 링크 표시용
 }
 
 export const snsLinks: SnsLink[] = [
   { name: 'Band', href: 'https://band.us/band/5843149', icon: 'sns-band' },
   {
     name: 'Youtube',
-    href: 'https://youtube.com/channel/UCMxS1A66oRGM6038-6m52uA',
+    href: '',
     icon: 'sns-youtube',
+    disabled: true, // 준비중
   },
-  { name: 'Instagram', href: 'https://www.instagram.com/chd_dream', icon: 'sns-instagram' },
+  { name: 'Instagram', href: '', icon: 'sns-instagram', disabled: true }, // 준비중
 ];
 
 export interface PrevInfo {

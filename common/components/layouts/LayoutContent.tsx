@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '@/common/components/layouts/Header/Header';
 import Footer from '@/common/components/layouts/Footer/Footer';
 import PopupModal from '@/common/components/layouts/Popup/PopupModal';
@@ -15,7 +15,6 @@ interface LayoutContentProps {
 export default function LayoutContent({ children, initialPopupData }: LayoutContentProps) {
   const [popupNews, setPopupNews] = useState<PopupData | null>(null);
   const [showPopup, setShowPopup] = useState(false);
-  const scrollYRef = useRef(0);
 
   // localStorage 체크 및 팝업 표시 (서버에서 받은 데이터 사용)
   useEffect(() => {
@@ -52,30 +51,11 @@ export default function LayoutContent({ children, initialPopupData }: LayoutCont
   // 팝업 상태에 따른 스크롤 제어
   useEffect(() => {
     if (showPopup) {
-      // 스크롤 위치 저장
-      scrollYRef.current = window.scrollY;
-
-      // body 스크롤 차단
+      // 팝업이 열릴 때: body 스크롤만 차단
       document.body.classList.add('popup-open');
-      document.body.style.top = `-${scrollYRef.current}px`;
-    } else if (scrollYRef.current > 0) {
-      // 팝업이 열렸다가 닫힌 경우에만 스크롤 복원
-      // (페이지 전환 시에는 scrollYRef가 0이므로 실행 안 됨)
-      
-      // body 스크롤 복원
-      document.body.classList.remove('popup-open');
-      document.body.style.top = '';
-
-      // 스크롤 위치 복원
-      const currentScrollY = scrollYRef.current;
-      window.scrollTo(0, currentScrollY);
-      
-      // 복원 후 ref 초기화
-      scrollYRef.current = 0;
     } else {
-      // 팝업이 없는 경우 (초기 진입 시)
+      // 팝업이 닫힐 때: body 스크롤 활성화
       document.body.classList.remove('popup-open');
-      document.body.style.top = '';
     }
   }, [showPopup]);
 
