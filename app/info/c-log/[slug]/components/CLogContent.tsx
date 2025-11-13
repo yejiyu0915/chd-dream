@@ -4,6 +4,7 @@ import rehypeSanitize from 'rehype-sanitize';
 import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeSlug from 'rehype-slug';
 import mdx from 'common/styles/mdx/MdxContent.module.scss';
+import { mdxComponents } from '@/common/config/mdx-components';
 
 interface CLogContentProps {
   markdown: string;
@@ -21,6 +22,7 @@ export default function CLogContent({ markdown }: CLogContentProps) {
             rehypePlugins: [rehypeSlug, rehypeSanitize, rehypePrettyCode],
           },
         }}
+        components={mdxComponents}
       />
     </section>
   );

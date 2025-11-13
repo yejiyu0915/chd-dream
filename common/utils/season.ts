@@ -7,7 +7,7 @@ export type Season = 'spring' | 'summer' | 'autumn' | 'winter';
  * 개발/테스트용 계절 고정 (null이면 실제 날짜 기준으로 판단)
  * 테스트할 계절로 변경: 'spring' | 'summer' | 'autumn' | 'winter' | null
  */
-const TEST_SEASON: Season | null = 'winter';
+const TEST_SEASON: Season | null = 'spring';
 
 /**
  * 현재 날짜 기준으로 계절을 판단하는 함수

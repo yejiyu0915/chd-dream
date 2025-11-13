@@ -13,6 +13,7 @@
       &[class*='detail'],
       &[class*='detail'] * {
         --color: rgba(255, 255, 255, 0.7);
+        --square-color: rgba(255, 255, 255, 0.7);
       }
     }
 
@@ -63,7 +64,7 @@
     .titleSection {
       // Breadcrumbs 화이트 텍스트 (about 전용)
       [class*='breadcrumb'] {
-        --color: rgba(255, 255, 255, 0.5);
+        --color: rgba(255, 255, 255, 0.7);
         --active-color: var(--text-inverse);
         --square-color: var(--text-inverse);
       }

@@ -52,9 +52,20 @@ export default function Footer() {
             </div>
             <ul className={f.sns}>
               {snsLinks.map((snsLink, index) => (
-                <li key={index} className={getSnsClassName(snsLink.name)}>
-                  <Link href={snsLink.href} target="_blank">
-                    {snsLink.name} <Icon name="external-link" className={f.icon} />
+                <li
+                  key={index}
+                  className={`${getSnsClassName(snsLink.name)} ${snsLink.disabled ? f.disabled : ''}`}
+                >
+                  <Link
+                    href={snsLink.disabled ? '' : snsLink.href}
+                    target={snsLink.disabled ? undefined : '_blank'}
+                  >
+                    {snsLink.name}{' '}
+                    {snsLink.disabled ? (
+                      <span className={f.disabled__mark}>준비중</span>
+                    ) : (
+                      <Icon name="external-link" className={f.icon} />
+                    )}
                   </Link>
                 </li>
               ))}

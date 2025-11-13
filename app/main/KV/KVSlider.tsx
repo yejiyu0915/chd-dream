@@ -38,6 +38,7 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
   const autoplayDelay = 8000; // Autoplay delay (8초)
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const isInitializedRef = useRef(false); // Swiper 초기화 여부를 추적하는 ref
+  const currentSlideRef = useRef<number>(0); // 현재 슬라이드 인덱스를 추적하는 ref
 
   // useCallback 훅들도 Hooks 규칙을 따르도록 최상단에 선언
   // reset: true면 0%부터 시작, false면 현재 위치에서 계속
@@ -140,6 +141,7 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
           swiperRef.current = swiper;
           // 초기 로드 시에만 autoplay와 프로그레스바 시작 (리렌더링 시에는 실행하지 않음)
           if (!isInitializedRef.current && isPlaying && swiperRef.current?.autoplay) {
+            currentSlideRef.current = swiper.realIndex; // 현재 슬라이드 인덱스 저장
             swiperRef.current.autoplay.start();
             startProgressBar(true); // 처음 시작이므로 0%부터
             isInitializedRef.current = true; // 초기화 완료 표시
@@ -169,10 +171,17 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
         loop={true}
         parallax={true}
         className={kv.slider}
-        onSlideChange={() => {
-          // 슬라이드 변경 시 (화살표 클릭 또는 autoplay) 프로그레스바를 0%부터 시작
-          if (isPlaying) {
-            startProgressBar(true); // 새 슬라이드이므로 0%부터 시작
+        onSlideChange={(swiper) => {
+          // 실제로 슬라이드 인덱스가 변경되었을 때만 프로그레스바를 리셋
+          const newSlideIndex = swiper.realIndex;
+          
+          if (currentSlideRef.current !== newSlideIndex) {
+            // 슬라이드가 실제로 변경된 경우에만 프로그레스바를 0%부터 시작
+            currentSlideRef.current = newSlideIndex;
+            
+            if (isPlaying) {
+              startProgressBar(true); // 새 슬라이드이므로 0%부터 시작
+            }
           }
         }}
       >

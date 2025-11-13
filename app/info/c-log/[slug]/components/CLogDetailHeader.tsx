@@ -21,7 +21,7 @@ export default function CLogDetailHeader({
   return (
     <>
       <div className={l.header}>
-        {imageUrl && imageUrl !== '/no-image.svg' && (
+        {imageUrl && (
           <div className={l.image}>
             <Image src={imageUrl} alt={title} priority width={1440} height={400} sizes="100vw" />
           </div>
