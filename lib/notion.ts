@@ -227,7 +227,7 @@ export interface KVSliderItem {
   description: string;
   image: string;
   imageAlt: string;
-  link: string;
+  link: string | null; // URL이 없을 수 있으므로 null 허용
 }
 
 interface NotionProperty {
@@ -623,7 +623,7 @@ const mapPageToKVSliderItem: ItemMapper<KVSliderItem> = (page) => {
     link:
       linkProperty && 'url' in linkProperty && typeof linkProperty.url === 'string'
         ? linkProperty.url
-        : '/',
+        : null, // URL이 없으면 null 반환
   };
 };
 
