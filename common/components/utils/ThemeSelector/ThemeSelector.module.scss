@@ -1,0 +1,362 @@
+@use '@/common/styles/mixins/function' as *;
+
+// 테마 선택기 (BEM 방법론)
+.theme {
+  // Floating 테마 변경 버튼
+  &__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: vw(72);
+    height: vw(72);
+    position: fixed;
+    z-index: 900;
+    right: vw(40);
+    bottom: vw(148); // top-button 위에 배치
+    border-radius: 50%;
+    background-color: var(--accent-brand);
+    @include font-vw(24);
+    color: var(--text-inverse);
+    box-shadow: 0 vw(4) vw(4) rgba(0, 0, 0, 0.03);
+    transition:
+      opacity 0.3s ease,
+      background-color 0.3s ease,
+      color 0.3s ease,
+      transform 0.2s ease;
+    cursor: pointer;
+
+    i {
+      --icon-size: 1.5;
+      --icon-margin: 0;
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: var(--bg-page);
+        color: var(--accent-brand);
+        transform: scale(1.05);
+      }
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    @include mq(pc-sm) {
+      width: vw(64);
+      height: vw(64);
+      right: vw(32);
+      bottom: vw(126); // top-button 위에 배치
+      @include font-vw(20);
+    }
+
+    @include mq(mo) {
+      width: vw(48);
+      height: vw(48);
+      right: vw(20);
+      bottom: vw(96); // top-button 위에 배치
+    }
+
+    @include mq(mo-sm) {
+      bottom: vw(90);
+    }
+  }
+
+  // 모달 오버레이
+  &__overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.2s ease;
+  }
+
+  // 모달
+  &__modal {
+    display: flex;
+    flex-direction: column;
+    width: vw(560);
+    max-width: 90vw;
+    max-height: 90vh;
+    padding: vw(40);
+    border-radius: vw(20);
+    background-color: var(--bg-page);
+    box-shadow: 0 vw(20) vw(60) rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+
+    @include mq(pc-sm) {
+      width: vw(520);
+      padding: vw(36);
+      border-radius: vw(16);
+    }
+
+    @include mq(mo) {
+      width: 90vw;
+      padding: vw(24);
+      border-radius: vw(12);
+    }
+  }
+
+  // 모달 헤더
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: vw(32);
+
+    @include mq(pc-sm) {
+      margin-bottom: vw(24);
+    }
+
+    @include mq(mo) {
+      margin-bottom: vw(20);
+    }
+  }
+
+  // 모달 제목
+  &__title {
+    @include font-vw(32, $weight: 700);
+    color: var(--text-main);
+
+    @include mq(pc-sm) {
+      @include font-vw(28, $weight: 700);
+    }
+
+    @include mq(mo) {
+      @include font-vw(24, $weight: 700);
+    }
+  }
+
+  // 닫기 버튼
+  &__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: vw(40);
+    height: vw(40);
+    border-radius: 50%;
+    background-color: transparent;
+    @include font-vw(24);
+    color: var(--text-caption);
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+    cursor: pointer;
+
+    i {
+      --icon-size: 1.6;
+      --icon-margin: 0;
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: var(--bg-section);
+        color: var(--text-main);
+      }
+    }
+
+    @include mq(pc-sm) {
+      width: vw(36);
+      height: vw(36);
+      @include font-vw(20);
+    }
+
+    @include mq(mo) {
+      width: vw(32);
+      height: vw(32);
+      @include font-vw(18);
+    }
+  }
+
+  // 테마 옵션 리스트
+  &__options {
+    display: flex;
+    flex-direction: column;
+    gap: vw(12);
+    margin-bottom: vw(24);
+
+    @include mq(pc-sm) {
+      gap: vw(10);
+      margin-bottom: vw(20);
+    }
+
+    @include mq(mo) {
+      gap: vw(8);
+      margin-bottom: vw(16);
+    }
+  }
+
+  // 테마 옵션 (라디오 버튼)
+  &__option {
+    display: flex;
+    align-items: center;
+    padding: vw(20);
+    border: 1px solid var(--accent-border);
+    border-radius: vw(12);
+    background-color: var(--bg-page);
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--accent-brand);
+      background-color: var(--accent-secondary);
+    }
+
+    // 선택된 옵션 스타일
+    &:has(input:checked) {
+      border-color: var(--accent-brand);
+      border-width: 2px;
+      background-color: var(--accent-secondary);
+    }
+
+    @include mq(pc-sm) {
+      padding: vw(16);
+      border-radius: vw(10);
+    }
+
+    @include mq(mo) {
+      padding: vw(12);
+      border-radius: vw(8);
+    }
+  }
+
+  // 라디오 버튼 (숨김)
+  &__radio {
+    width: vw(24);
+    height: vw(24);
+    margin-right: vw(16);
+    border: 2px solid var(--accent-border);
+    border-radius: 50%;
+    background-color: var(--bg-page);
+    cursor: pointer;
+    appearance: none;
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+
+    &:checked {
+      border-color: var(--accent-brand);
+      border-width: vw(6);
+      background-color: var(--bg-page);
+    }
+
+    @include mq(pc-sm) {
+      width: vw(20);
+      height: vw(20);
+      margin-right: vw(14);
+    }
+
+    @include mq(mo) {
+      width: vw(18);
+      height: vw(18);
+      margin-right: vw(12);
+    }
+  }
+
+  // 라벨 텍스트
+  &__label {
+    @include font-vw(20, $weight: 500);
+    color: var(--text-body);
+
+    @include mq(pc-sm) {
+      @include font-vw(18, $weight: 500);
+    }
+
+    @include mq(mo) {
+      @include font-vw(16, $weight: 500);
+    }
+  }
+
+  // 설명 텍스트
+  &__desc {
+    margin-bottom: vw(24);
+    @include font-vw(16);
+    color: var(--text-caption);
+    text-align: center;
+
+    @include mq(pc-sm) {
+      margin-bottom: vw(20);
+      @include font-vw(14);
+    }
+
+    @include mq(mo) {
+      margin-bottom: vw(16);
+      @include font-vw(12);
+    }
+  }
+
+  // 저장 버튼
+  &__save {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: vw(20) vw(40);
+    border-radius: vw(12);
+    background-color: var(--accent-brand);
+    @include font-vw(20, $weight: 700);
+    color: var(--text-inverse);
+    transition:
+      background-color 0.2s ease,
+      transform 0.2s ease;
+    cursor: pointer;
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: var(--accent-brand);
+        transform: translateY(vw(-2));
+        opacity: 0.9;
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    @include mq(pc-sm) {
+      padding: vw(16) vw(32);
+      border-radius: vw(10);
+      @include font-vw(18, $weight: 700);
+    }
+
+    @include mq(mo) {
+      padding: vw(14) vw(28);
+      border-radius: vw(8);
+      @include font-vw(16, $weight: 700);
+    }
+  }
+}
+
+// 모달 오픈 시 body 스크롤 차단
+:global(body.theme-modal-open) {
+  overflow: hidden;
+}
+
+// 애니메이션
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(vw(20));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

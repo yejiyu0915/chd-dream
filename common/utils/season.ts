@@ -7,24 +7,16 @@ export type Season = 'spring' | 'summer' | 'autumn' | 'winter';
  * 개발/테스트용 계절 고정 (null이면 실제 날짜 기준으로 판단)
  * 테스트할 계절로 변경: 'spring' | 'summer' | 'autumn' | 'winter' | null
  */
-const TEST_SEASON: Season | null = 'spring';
+const TEST_SEASON: Season | null = null;
 
 /**
- * 현재 날짜 기준으로 계절을 판단하는 함수
+ * 실제 날짜 기준으로 계절을 판단하는 헬퍼 함수
  * - 봄(spring): 3~5월
  * - 여름(summer): 6~8월
  * - 가을(autumn): 9~11월
  * - 겨울(winter): 12~2월
- *
- * TEST_SEASON이 설정되어 있으면 해당 계절을 반환 (개발/테스트용)
  */
-export function getCurrentSeason(): Season {
-  // 테스트용 계절이 설정되어 있으면 우선 반환
-  if (TEST_SEASON !== null) {
-    return TEST_SEASON;
-  }
-
-  // 실제 날짜 기준으로 계절 판단
+function getSeasonByDate(): Season {
   const currentMonth = new Date().getMonth() + 1; // 0-based이므로 +1
 
   if (currentMonth >= 3 && currentMonth <= 5) {
@@ -36,6 +28,25 @@ export function getCurrentSeason(): Season {
   } else {
     return 'winter'; // 12, 1, 2월
   }
+}
+
+/**
+ * 현재 적용할 계절을 판단하는 함수 (서버/클라이언트 공통)
+ * 우선순위:
+ * 1. TEST_SEASON (개발/테스트용)
+ * 2. 실제 날짜 기준
+ *
+ * 주의: localStorage는 클라이언트에서만 확인 가능하므로
+ * ThemeManager 컴포넌트에서 별도로 처리됩니다.
+ */
+export function getCurrentSeason(): Season {
+  // 1. 테스트용 계절이 설정되어 있으면 반환
+  if (TEST_SEASON !== null) {
+    return TEST_SEASON;
+  }
+
+  // 2. 실제 날짜 기준으로 계절 판단
+  return getSeasonByDate();
 }
 
 /**

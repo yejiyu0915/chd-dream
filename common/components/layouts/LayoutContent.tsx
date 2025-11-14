@@ -5,6 +5,8 @@ import Header from '@/common/components/layouts/Header/Header';
 import Footer from '@/common/components/layouts/Footer/Footer';
 import PopupModal from '@/common/components/layouts/Popup/PopupModal';
 import TopButton from '@/common/components/utils/TopButton';
+import ThemeSelector from '@/common/components/utils/ThemeSelector/ThemeSelector';
+import ThemeManager from '@/common/components/utils/ThemeManager';
 import { PopupData } from '@/lib/notion';
 
 interface LayoutContentProps {
@@ -82,12 +84,18 @@ export default function LayoutContent({ children, initialPopupData }: LayoutCont
 
   return (
     <div className="wrapper">
+      {/* 테마 관리자 (localStorage 확인 및 테마 적용) */}
+      <ThemeManager />
+
       <Header />
       {children}
       <Footer />
 
       {/* 팝업 모달 */}
       {showPopup && <PopupModal newsItem={popupNews} onClose={handleClosePopup} />}
+
+      {/* 테마 선택기 (Top 버튼 위) */}
+      <ThemeSelector />
 
       {/* Top 버튼 */}
       <TopButton />

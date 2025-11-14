@@ -198,9 +198,17 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
             <div className={kv.overlay}></div>
             <div className={kv.content}>
               <div className={kv.content__text}>
-                <Link href={slide.link} className={kv.content__title}>
-                  <p>{slide.title}</p> <Icon name="arrow-up-right" />
-                </Link>
+                {slide.link ? (
+                  // URL이 있으면 링크로 렌더링
+                  <Link href={slide.link} className={kv.content__title}>
+                    <p>{slide.title}</p> <Icon name="arrow-up-right" />
+                  </Link>
+                ) : (
+                  // URL이 없으면 일반 div로 렌더링 (아이콘 없음)
+                  <div className={kv.content__title}>
+                    <p>{slide.title}</p>
+                  </div>
+                )}
                 <p className={kv.content__desc}>{slide.description}</p>
               </div>
             </div>
