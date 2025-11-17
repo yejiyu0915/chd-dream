@@ -1,10 +1,10 @@
 'use client';
 import Link from 'next/link';
-import Image from 'next/image';
 import Icon from '@/common/components/utils/Icons';
 import c from '@/app/main/c-log/CLog.module.scss';
 import { CLogItem } from '@/lib/notion';
 import CLogSkeleton from '@/app/main/c-log/CLogSkeleton';
+import CLogImageWithTheme from '@/app/info/c-log/components/CLogImageWithTheme';
 
 interface CLogProps {
   initialCLogData: CLogItem[];
@@ -73,14 +73,13 @@ export default function CLog({ initialCLogData }: CLogProps) {
                       {' '}
                       {/* Link 컴포넌트 사용 및 href 설정 */}
                       <div className={c.list__imageContainer}>
-                        <Image
+                        <CLogImageWithTheme
                           src={item.imageUrl}
                           alt={item.imageAlt}
                           className={c.list__image}
                           width={400} // 이미지 너비 설정 (필요에 따라 조절)
                           height={300} // 이미지 높이 설정 (필요에 따라 조절)
                           priority
-                          sizes="(max-width: 768px) 100vw, 33vw" // 반응형 이미지 크기 설정
                         />
                       </div>
                       <div className={c.list__content}>

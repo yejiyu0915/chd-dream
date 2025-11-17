@@ -20,7 +20,7 @@ export default async function Main() {
   ]);
 
   return (
-    <main className={m.main}>
+    <main id="main-content" className={m.main}>
       <MainContentWrapper
         kvSliderItems={kvSliderItems}
         bulletinData={bulletinData}

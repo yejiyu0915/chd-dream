@@ -100,7 +100,7 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
                 </Link>
               </li>
               <li className={s.link__item}>
-                <Link href="#" target="_blank">
+                <Link href="https://band.us/band/5843149" target="_blank" rel="noopener noreferrer">
                   <span className={s.link__text}>
                     네이버 밴드
                     <Icon name="external-link" className={s.link__icon} />

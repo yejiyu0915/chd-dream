@@ -511,3 +511,56 @@ main {
     bottom: vw(26);
   }
 }
+
+/* Skip Navigation Link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  z-index: 9999;
+  padding: vw(12) vw(24);
+  background-color: var(--accent-brand);
+  color: var(--text-inverse);
+  text-decoration: none;
+  font-weight: 600;
+  @include font-vw(16);
+  border-radius: 0 0 vw(8) 0;
+  transition: top 0.3s ease;
+
+  &:focus {
+    top: 0;
+    outline: 2px solid var(--text-inverse);
+    outline-offset: -4px;
+  }
+
+  @include mq(mo) {
+    @include font-vw(14);
+    padding: vw(10) vw(20);
+  }
+}
+
+/* Focus Styles - 웹 접근성 강화 */
+*:focus-visible {
+  outline: 2px solid var(--accent-brand);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[role='button']:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--accent-brand);
+  outline-offset: 2px;
+}
+
+/* 키보드 포커스 스타일 강화 */
+button:focus-visible,
+a:focus-visible,
+[role='button']:focus-visible {
+  outline: 2px solid var(--accent-brand);
+  outline-offset: 2px;
+  transition: outline 0.2s ease;
+}

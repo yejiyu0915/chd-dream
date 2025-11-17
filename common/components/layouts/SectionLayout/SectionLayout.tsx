@@ -74,6 +74,7 @@ export default function SectionLayout({
 
   return (
     <main 
+      id="main-content"
       className={s.sectionLayout} 
       style={{ '--bg-image': `url(${currentBgImage})` } as React.CSSProperties}
       data-light-text={isLightText}

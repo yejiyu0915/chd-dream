@@ -40,7 +40,8 @@ export default function Footer() {
                     <ul className={f.prevList}>
                       {prevInfo.links.map((link, linkIndex) => (
                         <li key={linkIndex} className={getSnsClassName(link.name)}>
-                          <Link href={link.href} target="_blank" title={`${link.name} 바로가기`}>
+                          <Link href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`${prevInfo.name} ${link.name} 바로가기`}>
+                            <span className="sr-only">{link.name}</span>
                             <Icon name={link.icon} className={f.icon} />
                           </Link>
                         </li>
@@ -59,12 +60,14 @@ export default function Footer() {
                   <Link
                     href={snsLink.disabled ? '' : snsLink.href}
                     target={snsLink.disabled ? undefined : '_blank'}
+                    rel={snsLink.disabled ? undefined : 'noopener noreferrer'}
+                    aria-label={snsLink.disabled ? `${snsLink.name} (준비중)` : `${snsLink.name} 바로가기`}
                   >
                     {snsLink.name}{' '}
                     {snsLink.disabled ? (
                       <span className={f.disabled__mark}>준비중</span>
                     ) : (
-                      <Icon name="external-link" className={f.icon} />
+                      <Icon name="external-link" className={f.icon} aria-hidden="true" />
                     )}
                   </Link>
                 </li>

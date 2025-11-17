@@ -218,12 +218,12 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
           <>
             {' '}
             <div className={kv.buttonWrap}>
-              <div className={kv.buttonNext} role="button" tabIndex={0}>
+              <button type="button" className={kv.buttonNext} aria-label="다음 슬라이드">
                 <Icon name="nav-next" />
-              </div>
-              <div className={kv.buttonPrev} role="button" tabIndex={0}>
+              </button>
+              <button type="button" className={kv.buttonPrev} aria-label="이전 슬라이드">
                 <Icon name="nav-prev" />
-              </div>
+              </button>
             </div>
             <div className={kv.controls}>
               <div className={kv.pagination}></div>

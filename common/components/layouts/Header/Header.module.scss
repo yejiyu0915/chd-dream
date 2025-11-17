@@ -559,7 +559,7 @@
     }
   }
 
-  @include mq(mo) {
+  @include mq(ta) {
     &,
     &.scroll {
       --header-color: var(--text-main);
@@ -599,6 +599,9 @@
           --icon-margin: 0;
           --icon-color: var(--header-color);
           transform: translateY(0.05em);
+          + span {
+            display: none;
+          }
         }
         .mobileMenu__toggle {
           display: block !important;
@@ -637,7 +640,7 @@ $moSns: '.mobileSns';
     opacity 0.3s ease-in-out,
     visibility 0s linear 0.3s; // 모바일 메뉴 오버레이 트랜지션 수정
 }
-@include mq(mo) {
+@include mq(ta) {
   #{$moMenu} {
     &__overlay {
       display: block;

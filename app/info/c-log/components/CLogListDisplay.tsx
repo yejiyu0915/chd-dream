@@ -8,6 +8,7 @@ import { CLogItem } from '@/lib/notion';
 import Spinner from '@/common/components/utils/Spinner'; // Spinner 컴포넌트 임포트
 import c from '@/app/info/c-log/CLogList.module.scss'; // infoLayout.module.scss 사용
 import Button from '@/common/components/utils/Button'; // Button 컴포넌트 임포트
+import CLogImageWithTheme from './CLogImageWithTheme'; // 테마 반응형 이미지 컴포넌트
 
 interface CLogListProps {
   cLogData: CLogItem[] | undefined;
@@ -188,7 +189,7 @@ export default function CLogList({
                     onTouchStart={() => handleTouchStart(item.link || '#')}
                   >
                     {item.imageUrl && (
-                      <Image
+                      <CLogImageWithTheme
                         src={item.imageUrl}
                         alt={item.imageAlt || 'C-log 이미지'}
                         width={500}

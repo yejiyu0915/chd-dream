@@ -116,8 +116,7 @@
 
 // 날짜
 .date {
-  @include font-vw(16);
-  color: #999;
+  @include font-vw(16, $color: var(--text-body));
   margin: 0 0 vw(20) 0;
 }
 

@@ -1,6 +1,8 @@
 'use client';
 
-import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { getClientSeason } from '@/common/utils/season';
+import CLogImageWithTheme from '../../components/CLogImageWithTheme';
 import l from 'common/styles/mdx/MdxLayout.module.scss';
 
 interface CLogDetailHeaderProps {
@@ -23,7 +25,13 @@ export default function CLogDetailHeader({
       <div className={l.header}>
         {imageUrl && (
           <div className={l.image}>
-            <Image src={imageUrl} alt={title} priority width={1440} height={400} sizes="100vw" />
+            <CLogImageWithTheme
+              src={imageUrl}
+              alt={title}
+              width={1440}
+              height={400}
+              priority
+            />
           </div>
         )}
         <div className={`detail-inner ${l.content}`}>

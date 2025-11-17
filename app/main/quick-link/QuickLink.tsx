@@ -57,15 +57,15 @@ export default function QuickLink() {
                 </Link>
               </div>
               <div className={q.list__item}>
-                <Link href="">
+                <div style={{ opacity: 0.6, cursor: 'not-allowed' }}>
                   <p className={q.list__title}>
                     <Icon name="users" /> 교구 소개
                   </p>
-                  <p className={q.list__desc}>교구 소개와 교구 활동을 확인할 수 있습니다.</p>
+                  <p className={q.list__desc}>교구 소개와 교구 활동을 확인할 수 있습니다. <span style={{ fontSize: '0.9em', color: 'var(--accent-brand)' }}>(준비중)</span></p>
                   <div className={q.list__icon}>
                     <Icon name="arrow-up-right" />
                   </div>
-                </Link>
+                </div>
               </div>
             </div>
             <div className={q.list__row}>
