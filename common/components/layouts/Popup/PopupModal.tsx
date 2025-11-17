@@ -85,14 +85,23 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
           }
         }
 
-        // 2. Skip Navigation 링크로 이동
+        // 2. 이전 포커스 위치가 없으면 (마우스 사용자) 아무것도 하지 않음
+        // 키보드 사용자는 previousActiveElement가 항상 저장되어 있음
+        if (!previousActiveElement.current) {
+          return false;
+        }
+
+        // 3. 이전 요소가 제거되었거나 유효하지 않은 경우에만 대체 로직 실행
+        // (키보드 사용자를 위한 폴백)
+
+        // Skip Navigation 링크로 이동
         const skipLink = document.querySelector<HTMLElement>('.skip-link');
         if (skipLink) {
           skipLink.focus();
           return true;
         }
 
-        // 3. 메인 콘텐츠로 이동
+        // 메인 콘텐츠로 이동
         const mainContent = document.querySelector<HTMLElement>('#main-content');
         if (mainContent) {
           mainContent.setAttribute('tabindex', '-1');
@@ -104,19 +113,10 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
           return true;
         }
 
-        // 4. 헤더의 첫 번째 링크(로고)로 이동
+        // 헤더의 첫 번째 링크(로고)로 이동
         const headerLogo = document.querySelector<HTMLElement>('header a[href="/"]');
         if (headerLogo) {
           headerLogo.focus();
-          return true;
-        }
-
-        // 5. 페이지의 첫 번째 포커스 가능한 요소
-        const firstFocusable = document.querySelector<HTMLElement>(
-          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        );
-        if (firstFocusable) {
-          firstFocusable.focus();
           return true;
         }
 

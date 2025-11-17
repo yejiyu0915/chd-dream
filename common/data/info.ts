@@ -148,3 +148,48 @@ export const menuPathMap: Record<string, string> = {
 export function getMenuPath(menuName: string): string {
   return menuPathMap[menuName] || '/';
 }
+
+// QuickLink 아이템 인터페이스
+export interface QuickLinkItem {
+  title: string;
+  icon: string;
+  href: string;
+  description: string;
+  size?: 'lg'; // lg 사이즈 여부
+  disabled?: boolean; // 준비중 여부
+}
+
+// QuickLink 데이터 (2x2 그리드 구조)
+export const quickLinkData: QuickLinkItem[][] = [
+  [
+    {
+      title: '예배 안내',
+      icon: 'book',
+      href: '/worship/timetable',
+      description: '주일 예배, 학생부 예배, 평일 기도회 일정을 안내합니다.',
+      size: 'lg',
+    },
+    {
+      title: '교구 소개',
+      icon: 'users',
+      href: '/info/schedule',
+      description: '교구 소개와 교구 활동을 확인할 수 있습니다. (준비중)',
+      disabled: true,
+    },
+  ],
+  [
+    {
+      title: '교회 일정',
+      icon: 'calendar',
+      href: '/info/schedule',
+      description: '교회의 주요 일정을 확인할 수 있습니다.',
+    },
+    {
+      title: '오시는 길',
+      icon: 'map',
+      href: '/location',
+      description: '교회 주소 및 교회까지 오시는 대중교통 정보를 확인할 수 있습니다.',
+      size: 'lg',
+    },
+  ],
+];
