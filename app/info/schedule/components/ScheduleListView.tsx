@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ScheduleItem } from '@/lib/notion';
 import { formatTimeInfo } from '@/app/info/schedule/types/utils';
 import Icon from '@/common/components/utils/Icons';
@@ -181,6 +182,33 @@ export default function ScheduleListView({
     });
   }, [groupedScheduleData]);
 
+  // 애니메이션 variants
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (index: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: [0.22, 1, 0.36, 1] as const,
+        delay: index * 0.1, // 각 섹션마다 0.1초 간격
+      },
+    }),
+  };
+
+  const eventVariants = {
+    hidden: { opacity: 0, x: -10 },
+    visible: (index: number) => ({
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.4,
+        ease: [0.22, 1, 0.36, 1] as const,
+        delay: index * 0.05, // 각 이벤트마다 0.05초 간격
+      },
+    }),
+  };
+
   if (isLoading) {
     return (
       <div className={s.scheduleListContainer}>
@@ -277,7 +305,14 @@ export default function ScheduleListView({
         <div className={s.scheduleList}>
           {/* 진행 중인 일정 섹션 */}
           {ongoingEvents.length > 0 && (
-            <div className={s.scheduleListDay}>
+            <motion.div
+              className={s.scheduleListDay}
+              custom={0}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '50px' }}
+              variants={sectionVariants}
+            >
               <div
                 className={s.scheduleListDayHeader}
                 onClick={() => toggleDate('ongoing')}
@@ -289,14 +324,25 @@ export default function ScheduleListView({
                   <Icon name={expandedDates.has('ongoing') ? 'arrow-down' : 'arrow-up'} />
                 </div>
               </div>
+              <AnimatePresence>
               {expandedDates.has('ongoing') && (
-                <div className={s.scheduleListEvents}>
-                  {ongoingEvents.map((event) => {
+                  <motion.div
+                    className={s.scheduleListEvents}
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {ongoingEvents.map((event, eventIndex) => {
                     const timeInfo = formatTimeInfo(event);
                     return (
-                      <div
+                      <motion.div
                         key={event.id}
                         className={`${s.scheduleListEvent} ${event.important ? s.important : ''} ${s.ongoingEvent}`}
+                        custom={eventIndex}
+                        initial="hidden"
+                        animate="visible"
+                        variants={eventVariants}
                       >
                         <div className={s.scheduleListEventContent}>
                           <div className={s.scheduleListEventTitle}>{event.title}</div>
@@ -314,21 +360,30 @@ export default function ScheduleListView({
                             </div>
                           )}
                         </div>
-                      </div>
+                      </motion.div>
                     );
                   })}
-                </div>
+                  </motion.div>
               )}
-            </div>
+              </AnimatePresence>
+            </motion.div>
           )}
 
           {/* 기간 내 일정 섹션 */}
-          {groupedScheduleData.map(({ date, events }) => {
+          {groupedScheduleData.map(({ date, events }, sectionIndex) => {
             const dateKey = date.toISOString().split('T')[0];
             const isExpanded = expandedDates.has(dateKey);
 
             return (
-              <div key={date.toISOString()} className={s.scheduleListDay}>
+              <motion.div
+                key={date.toISOString()}
+                className={s.scheduleListDay}
+                custom={sectionIndex + (ongoingEvents.length > 0 ? 1 : 0)}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: '50px' }}
+                variants={sectionVariants}
+              >
                 <div
                   className={s.scheduleListDayHeader}
                   onClick={() => toggleDate(dateKey)}
@@ -354,14 +409,25 @@ export default function ScheduleListView({
                     <Icon name={isExpanded ? 'arrow-down' : 'arrow-up'} />
                   </div>
                 </div>
+                <AnimatePresence>
                 {isExpanded && (
-                  <div className={s.scheduleListEvents}>
-                    {events.map((event) => {
+                    <motion.div
+                      className={s.scheduleListEvents}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {events.map((event, eventIndex) => {
                       const timeInfo = formatTimeInfo(event);
                       return (
-                        <div
+                          <motion.div
                           key={event.id}
                           className={`${s.scheduleListEvent} ${event.important ? s.important : ''}`}
+                            custom={eventIndex}
+                            initial="hidden"
+                            animate="visible"
+                            variants={eventVariants}
                         >
                           <div className={s.scheduleListEventContent}>
                             <div className={s.scheduleListEventTitle}>{event.title}</div>
@@ -379,12 +445,13 @@ export default function ScheduleListView({
                               </div>
                             )}
                           </div>
-                        </div>
+                        </motion.div>
                       );
                     })}
-                  </div>
+                    </motion.div>
                 )}
-              </div>
+                </AnimatePresence>
+              </motion.div>
             );
           })}
         </div>

@@ -5,6 +5,7 @@ import { PopupData } from '@/lib/notion';
 import { BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 import Icon from '@/common/components/utils/Icons';
 import styles from '@/common/components/layouts/Popup/PopupModal.module.scss';
+import { motion } from 'framer-motion';
 
 interface PopupModalProps {
   newsItem: PopupData | null;
@@ -252,6 +253,30 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
     return isNotice ? '공지사항' : 'NEWS';
   })();
 
+  // 컨텐츠 애니메이션 variants - 팝업 내부 요소들만
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08, // 각 요소가 0.08초 간격으로 등장
+        delayChildren: 0.1, // 팝업 열린 후 0.1초 뒤 시작
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.4,
+        ease: [0.22, 1, 0.36, 1] as const,
+      },
+    },
+  };
+
   return (
     <>
       {/* 스크린 리더를 위한 ARIA live 알림 */}
@@ -301,17 +326,22 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
             </button>
           </div>
 
-          {/* 모달 내용 */}
-          <div className={styles.content}>
-            <h2 id="popup-title" className={styles.title}>
+          {/* 모달 내용 - 순차 애니메이션 */}
+          <motion.div
+            className={styles.content}
+            variants={containerVariants}
+            initial="hidden"
+            animate={isVisible ? 'visible' : 'hidden'}
+          >
+            <motion.h2 id="popup-title" className={styles.title} variants={itemVariants}>
               {newsItem.title}
-            </h2>
-            <p id="popup-date" className={styles.date}>
+            </motion.h2>
+            <motion.p id="popup-date" className={styles.date} variants={itemVariants}>
               {newsItem.date}
-            </p>
+            </motion.p>
 
             {/* 뉴스 컨텐츠 표시 (서버에서 받은 blocks 사용) */}
-            <div id="popup-content" className={styles.newsContent}>
+            <motion.div id="popup-content" className={styles.newsContent} variants={itemVariants}>
               {newsItem.blocks && newsItem.blocks.length > 0 ? (
                 <div className={styles.contentBlocks}>
                   {newsItem.blocks.map((block) => (
@@ -325,10 +355,10 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
                   <p>내용을 불러올 수 없습니다.</p>
                 </div>
               )}
-            </div>
+            </motion.div>
 
             {/* 다시 보지 않기 체크박스 */}
-            <div className={styles.checkboxContainer}>
+            <motion.div className={styles.checkboxContainer} variants={itemVariants}>
               <label className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
@@ -343,8 +373,8 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
                 />
                 <span className={styles.checkboxText}>다시 보지 않기</span>
               </label>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </>

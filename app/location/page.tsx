@@ -3,22 +3,75 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import KakaoMap from '@/app/location/components/KakaoMap';
 import { contactInfo } from '@/common/data/info';
 import l from '@/app/location/Location.module.scss';
 
 export default function LocationPage() {
+  // 애니메이션 variants
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: (index: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.22, 1, 0.36, 1] as const,
+        delay: index * 0.15, // 각 섹션마다 0.15초 간격
+      },
+    }),
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: (index: number) => ({
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.5,
+        ease: [0.22, 1, 0.36, 1] as const,
+        delay: index * 0.1, // 각 아이템마다 0.1초 간격
+      },
+    }),
+  };
+
+  const linkVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: (index: number) => ({
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.4,
+        ease: [0.22, 1, 0.36, 1] as const,
+        delay: index * 0.1, // 각 링크마다 0.1초 간격
+      },
+    }),
+  };
+
   return (
     <>
       <div className={`${l.inner} detail-inner`}>
         {/* 지도 섹션 */}
-        <div className={l.map}>
+        <motion.div
+          className={l.map}
+          custom={0}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '50px' }}
+          variants={sectionVariants}
+        >
           <h2 className={l.title}>교회 위치</h2>
           <div className={l.map__wrapper}>
             <KakaoMap latitude={37.459679} longitude={126.70066} address={contactInfo.address} />
           </div>
           <p className={l.map__detail}>{contactInfo.address}</p>
-          <ul className={l.map__links}>
+          <motion.ul
+            className={l.map__links}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '50px' }}
+          >
             {[
               {
                 href: 'https://kko.kakao.com/bU0BvqiluB',
@@ -38,22 +91,34 @@ export default function LocationPage() {
                 alt: '구글지도 길찾기',
                 label: '구글지도 길찾기',
               },
-            ].map((item) => (
-              <li className={l.map__linkItem} key={item.href}>
+            ].map((item, index) => (
+              <motion.li
+                className={l.map__linkItem}
+                key={item.href}
+                custom={index}
+                variants={linkVariants}
+              >
                 <Link href={item.href} target="_blank">
                   <Image src={item.imgSrc} alt={item.alt} width={50} height={50} />
                   <span>{item.label}</span>
                 </Link>
-              </li>
+              </motion.li>
             ))}
-          </ul>
-        </div>
+          </motion.ul>
+        </motion.div>
 
         {/* 정보 섹션 */}
-        <div className={l.info}>
+        <motion.div
+          className={l.info}
+          custom={1}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '50px' }}
+          variants={sectionVariants}
+        >
           <h2 className={l.title}>오시는 길</h2>
           <div className={l.info__content}>
-            <div>
+            <motion.div custom={0} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '50px' }} variants={itemVariants}>
               <h3 className={l.info__contentTitle}>지하철</h3>
               <ul className={l.info__contentList}>
                 <li className={l.info__contentItem}>
@@ -69,8 +134,8 @@ export default function LocationPage() {
                   <p className={l.info__contentItemValue}>인천시청역 8번 출구(도보 4분)</p>
                 </li>
               </ul>
-            </div>
-            <div>
+            </motion.div>
+            <motion.div custom={1} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '50px' }} variants={itemVariants}>
               <h3 className={l.info__contentTitle}>버스</h3>
               <ul className={l.info__contentList}>
                 <li className={l.info__contentItem}>
@@ -90,17 +155,17 @@ export default function LocationPage() {
                   <p className={l.info__contentItemValue}>석산로 정류장(도보 4분)</p>
                 </li>
               </ul>
-            </div>
-            <div>
+            </motion.div>
+            <motion.div custom={2} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '50px' }} variants={itemVariants}>
               <h3 className={l.info__contentTitle}>자차 이용 안내</h3>
               <p className={l.info__contentDesc}>서울외곽도로 - 서창IC(남동공단) - 시청방향</p>
-            </div>
-            <div>
+            </motion.div>
+            <motion.div custom={3} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '50px' }} variants={itemVariants}>
               <h3 className={l.info__contentTitle}>차량 운행 안내</h3>
               <p className={l.info__contentDesc}>차량 운행은 부속실로 문의주세요.</p>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </>
   );

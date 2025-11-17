@@ -4,11 +4,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { CLogItem } from '@/lib/notion';
 import Spinner from '@/common/components/utils/Spinner'; // Spinner 컴포넌트 임포트
 import c from '@/app/info/c-log/CLogList.module.scss'; // infoLayout.module.scss 사용
 import Button from '@/common/components/utils/Button'; // Button 컴포넌트 임포트
-import CLogImageWithTheme from './CLogImageWithTheme'; // 테마 반응형 이미지 컴포넌트
+import ImageWithTheme from '@/common/components/utils/ImageWithTheme'; // 테마 반응형 이미지 컴포넌트
 
 interface CLogListProps {
   cLogData: CLogItem[] | undefined;
@@ -130,6 +131,20 @@ export default function CLogList({
 
   const hasMoreItems = cLogData && visibleItemCount < cLogData.length;
 
+  // C-log 아이템 애니메이션 variants
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (index: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: [0.22, 1, 0.36, 1] as const,
+        delay: index * 0.08, // 각 아이템마다 0.08초 간격
+      },
+    }),
+  };
+
   // 디버깅을 위한 console.log 추가 (임시)
   // console.log('CLogList Debug:', {
   //   cLogDataLength: cLogData?.length,
@@ -180,7 +195,16 @@ export default function CLogList({
             {/* viewMode prop에 따라 c.list--grid 또는 c.list--list 클래스 추가 */}
             <ul className={`${c[`list--${_viewMode}`]}`}>
               {cLogData.slice(0, visibleItemCount).map((item, index) => (
-                <li key={item.id} className={c.list__item} data-prefetch-href={item.link || '#'}>
+                <motion.li
+                  key={item.id}
+                  className={c.list__item}
+                  data-prefetch-href={item.link || '#'}
+                  custom={index}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: '100px' }}
+                  variants={itemVariants}
+                >
                   <Link
                     href={item.link || '#'}
                     className={c.list__link}
@@ -189,7 +213,7 @@ export default function CLogList({
                     onTouchStart={() => handleTouchStart(item.link || '#')}
                   >
                     {item.imageUrl && (
-                      <CLogImageWithTheme
+                      <ImageWithTheme
                         src={item.imageUrl}
                         alt={item.imageAlt || 'C-log 이미지'}
                         width={500}
@@ -216,7 +240,7 @@ export default function CLogList({
                       </div>
                     </div>
                   </Link>
-                </li>
+                </motion.li>
               ))}
             </ul>
             {hasMoreItems && (

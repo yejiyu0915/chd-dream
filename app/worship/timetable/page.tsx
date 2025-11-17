@@ -1,15 +1,46 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import t from '@/app/worship/timetable/Timetable.module.scss';
 
 export default function TimetablePage() {
+  // 애니메이션 variants
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: (index: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.22, 1, 0.36, 1] as const,
+        delay: index * 0.15, // 각 섹션마다 0.15초 간격
+      },
+    }),
+  };
+
   return (
     <>
       <div className={`${t.timetable} detail-inner`}>
         <div className={t.inner}>
-          {/* 예배 시간표 테이블 */}
-          <h2 className={t.title}>집회 안내</h2>
-          <table className={t.table}>
+          {/* 예배 시간표 테이블 - 집회 안내 */}
+          <motion.h2
+            className={t.title}
+            custom={0}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+            variants={itemVariants}
+          >
+            집회 안내
+          </motion.h2>
+          <motion.table
+            className={t.table}
+            custom={1}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+            variants={itemVariants}
+          >
             <thead>
               <tr>
                 <th colSpan={2}>구분</th>
@@ -53,9 +84,27 @@ export default function TimetablePage() {
                 <td>본당</td>
               </tr>
             </tbody>
-          </table>
-          <h2 className={t.title}>미래 세대</h2>
-          <table className={t.table}>
+          </motion.table>
+
+          {/* 미래 세대 */}
+          <motion.h2
+            className={t.title}
+            custom={2}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+            variants={itemVariants}
+          >
+            미래 세대
+          </motion.h2>
+          <motion.table
+            className={t.table}
+            custom={3}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+            variants={itemVariants}
+          >
             <thead>
               <tr>
                 <th>구분</th>
@@ -88,9 +137,27 @@ export default function TimetablePage() {
                 <td>4층 본당</td>
               </tr>
             </tbody>
-          </table>
-          <h2 className={t.title}>교회 활동</h2>
-          <table className={t.table}>
+          </motion.table>
+
+          {/* 교회 활동 */}
+          <motion.h2
+            className={t.title}
+            custom={4}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+            variants={itemVariants}
+          >
+            교회 활동
+          </motion.h2>
+          <motion.table
+            className={t.table}
+            custom={5}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+            variants={itemVariants}
+          >
             <thead>
               <tr>
                 <th>구분</th>
@@ -107,7 +174,7 @@ export default function TimetablePage() {
                 <td rowSpan={2}>4층 본당</td>
               </tr>
             </tbody>
-          </table>
+          </motion.table>
         </div>
       </div>
     </>

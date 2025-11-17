@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import Breadcrumbs from '@/common/components/layouts/Breadcrumbs';
 import { getPageMeta } from '@/common/data/list';
 import { getClientSeason } from '@/common/utils/season';
+import { motion } from 'framer-motion';
 import s from './SectionLayout.module.scss';
 
 interface SectionLayoutProps {
@@ -31,7 +32,7 @@ export default function SectionLayout({
   descriptionOverride,
 }: SectionLayoutProps) {
   const pathname = usePathname();
-  
+
   // 계절별 배경 이미지 (서버와 클라이언트 초기값 동일하게 설정)
   const [currentBgImage, setCurrentBgImage] = useState(
     backgroundImage || `/images/title/winter/${sectionName}.jpg`
@@ -40,24 +41,24 @@ export default function SectionLayout({
   // 클라이언트에서 실제 계절 이미지로 업데이트 + data-season 감지
   useEffect(() => {
     if (backgroundImage) return;
-    
+
     // 실제 계절 이미지로 업데이트
     const season = getClientSeason();
     setCurrentBgImage(`/images/title/${season}/${sectionName}.jpg`);
-    
+
     // data-season 속성 변경 감지 (개발자 도구에서 테스트용)
     const handleSeasonChange = () => {
       const newSeason = getClientSeason();
       setCurrentBgImage(`/images/title/${newSeason}/${sectionName}.jpg`);
     };
-    
+
     const observer = new MutationObserver(handleSeasonChange);
-    
+
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['data-season'],
     });
-    
+
     // cleanup: observer 연결 해제
     return () => observer.disconnect();
   }, [backgroundImage, sectionName]);
@@ -67,15 +68,41 @@ export default function SectionLayout({
 
   // list.ts의 getPageMeta를 사용하여 페이지 메타 정보 자동 가져오기
   const pageMeta = getPageMeta(pathname);
-  
+
   // override가 있으면 우선 사용, 없으면 pageMeta에서 가져오기
   const pageTitle = titleOverride || pageMeta?.title || '';
   const pageDescription = descriptionOverride || pageMeta?.description || '';
 
+  // 애니메이션 variants
+  const titleVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.22, 1, 0.36, 1] as const,
+      },
+    },
+  };
+
+  const descVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.7,
+        ease: [0.22, 1, 0.36, 1] as const,
+        delay: 0.15,
+      },
+    },
+  };
+
   return (
-    <main 
+    <main
       id="main-content"
-      className={s.sectionLayout} 
+      className={s.sectionLayout}
       style={{ '--bg-image': `url(${currentBgImage})` } as React.CSSProperties}
       data-light-text={isLightText}
       suppressHydrationWarning
@@ -88,8 +115,22 @@ export default function SectionLayout({
         {!isDetailPage && (
           <div className={`${s.inner} inner`}>
             <div className={s.title}>
-              <h1 className={s.pageTitle}>{pageTitle}</h1>
-              <p className={s.pageDesc}>{pageDescription}</p>
+              <motion.h1
+                className={s.pageTitle}
+                initial="hidden"
+                animate="visible"
+                variants={titleVariants}
+              >
+                {pageTitle}
+              </motion.h1>
+              <motion.p
+                className={s.pageDesc}
+                initial="hidden"
+                animate="visible"
+                variants={descVariants}
+              >
+                {pageDescription}
+              </motion.p>
             </div>
           </div>
         )}
@@ -98,4 +139,3 @@ export default function SectionLayout({
     </main>
   );
 }
-

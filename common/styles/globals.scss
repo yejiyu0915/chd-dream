@@ -34,6 +34,22 @@ a,
   }
 }
 
+/* 버튼 애니메이션 스타일 */
+.button--base,
+.button--primary,
+.button--secondary,
+.button--ghost,
+.footer-button {
+  position: relative;
+  cursor: pointer;
+
+  /* 텍스트는 상대 위치로 z-index 보정 */
+  .button__text {
+    position: relative;
+    z-index: 1;
+  }
+}
+
 .wrapper {
   /* 컨테이너 쿼리 사용을 위한 스타일 지정 */
   // container-type: inline-size; // 컨테이너 쿼리 활성화 (가로 크기 기준)

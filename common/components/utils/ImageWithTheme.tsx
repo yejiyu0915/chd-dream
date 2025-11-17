@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { getClientSeason } from '@/common/utils/season';
 
-interface CLogImageWithThemeProps {
+interface ImageWithThemeProps {
   src: string;
   alt: string;
   width: number;
@@ -16,10 +16,10 @@ interface CLogImageWithThemeProps {
 }
 
 /**
- * 테마에 반응하는 C-log 이미지 컴포넌트
- * default 이미지인 경우 현재 테마에 맞는 이미지로 자동 변경
+ * 테마에 반응하는 이미지 컴포넌트
+ * default 이미지인 경우 현재 테마(계절)에 맞는 이미지로 자동 변경
  */
-export default function CLogImageWithTheme({
+export default function ImageWithTheme({
   src,
   alt,
   width,
@@ -28,7 +28,7 @@ export default function CLogImageWithTheme({
   priority,
   loading,
   sizes,
-}: CLogImageWithThemeProps) {
+}: ImageWithThemeProps) {
   // 클라이언트에서 현재 테마에 맞는 이미지 URL 계산
   const [finalSrc, setFinalSrc] = useState(src);
 

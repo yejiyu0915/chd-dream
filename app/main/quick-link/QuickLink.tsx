@@ -6,6 +6,7 @@ import Icon from '@/common/components/utils/Icons';
 import { getClientSeason } from '@/common/utils/season';
 import { quickLinkData } from '@/common/data/info';
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import q from '@/app/main/quick-link/QuickLink.module.scss';
 
 export default function QuickLink() {
@@ -30,25 +31,63 @@ export default function QuickLink() {
     return () => observer.disconnect();
   }, []);
 
+  // 애니메이션 variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15, // 각 아이템이 0.15초 간격으로 나타남
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.22, 1, 0.36, 1] as const, // 부드러운 easing
+      },
+    },
+  };
+
   return (
     <section className={q.quickLink} style={{ backgroundImage: `url(${backgroundImage})` }}>
       <div className="inner">
-        <div className={q.title__wrap}>
+        {/* 타이틀 페이드업 */}
+        <motion.div
+          className={q.title__wrap}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as const }}
+        >
           <h2 className="sr-only">Quick Link</h2>
           <p className={q.title}>
             행복으로가는교회에 <br className="only-mo" />
             오신 여러분을 <br />
             진심으로 환영합니다
           </p>
-        </div>
+        </motion.div>
         <div className={q.content}>
-          <div className={q.list}>
+          {/* 리스트 아이템들 순차 애니메이션 */}
+          <motion.div
+            className={q.list}
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+          >
             {quickLinkData.map((row, rowIndex) => (
               <div key={rowIndex} className={q.list__row}>
                 {row.map((item, itemIndex) => (
-                  <div
+                  <motion.div
                     key={itemIndex}
                     className={`${q.list__item} ${item.size === 'lg' ? q.list__itemLg : ''}`}
+                    variants={itemVariants}
                   >
                     <Link href={item.href}>
                       <p className={q.list__title}>
@@ -59,19 +98,26 @@ export default function QuickLink() {
                         <Icon name="arrow-up-right" />
                       </div>
                     </Link>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             ))}
-          </div>
-          <div className={q.pic}>
+          </motion.div>
+          {/* 이미지 페이드인 */}
+          <motion.div
+            className={q.pic}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as const, delay: 0.2 }}
+          >
             <Image
               src="/images/common/quick-link.jpg"
               alt="행복으로가는교회"
               width={400}
               height={500}
             />
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

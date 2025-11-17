@@ -64,7 +64,7 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
       setActiveMenu(activeMenu === menuName ? null : menuName);
       setIsMenuHovered(activeMenu !== menuName);
     }
-    
+
     // ESC 키로 서브메뉴 닫기
     if (event.key === 'Escape') {
       setActiveMenu(null);
@@ -94,7 +94,7 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
   const handleMenuContainerBlur = (event: React.FocusEvent) => {
     // 포커스가 메뉴 전체(nav)를 벗어났는지 확인
     const currentTarget = event.currentTarget;
-    
+
     // 다음 프레임에서 확인 (포커스 이동이 완료된 후)
     requestAnimationFrame(() => {
       // 포커스가 메뉴 컨테이너 내부에 없으면 모든 서브메뉴 닫기
@@ -164,16 +164,16 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
             <span>행복으로가는교회</span>
           </Link>
         </div>
-        <nav 
-          className={h.menu} 
-          style={{ opacity: mounted ? 1 : 0 }} 
+        <nav
+          className={h.menu}
+          style={{ opacity: mounted ? 1 : 0 }}
           aria-label="주 메뉴"
           onBlur={handleMenuContainerBlur}
         >
           <ul className={h.menu__list}>
             {menuData.map((menuItem, index) => {
               const hasSubMenu = menuItem.subMenu && menuItem.subMenu.length > 0;
-              
+
               return (
                 <li
                   key={index}
@@ -194,80 +194,78 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
                       {menuItem.name}
                     </button>
                   ) : (
-                    <Link
-                      href={menuItem.href || '#'}
-                      className={h.menu__link}
-                    >
+                    <Link href={menuItem.href || '#'} className={h.menu__link}>
                       {menuItem.name}
                     </Link>
                   )}
-                {menuItem.subMenu && (
-                  <div 
-                    className={`${h.subMenu} ${activeMenu === menuItem.name ? h.show : ''}`}
-                    role="menu"
-                    aria-label={`${menuItem.name} 하위 메뉴`}
-                  >
-                    <div className={h.subMenu__container}>
-                      <div className={h.subMenu__content}>
-                        <div className={h.subMenu__left}>
-                          <div className={h.subMenu__columns}>
-                            {(() => {
-                              const columns = [];
-                              const itemsPerColumn = 3;
+                  {menuItem.subMenu && (
+                    <div
+                      className={`${h.subMenu} ${activeMenu === menuItem.name ? h.show : ''}`}
+                      role="menu"
+                      aria-label={`${menuItem.name} 하위 메뉴`}
+                    >
+                      <div className={h.subMenu__container}>
+                        <div className={h.subMenu__content}>
+                          <div className={h.subMenu__left}>
+                            <div className={h.subMenu__columns}>
+                              {(() => {
+                                const columns = [];
+                                const itemsPerColumn = 3;
 
-                              for (let i = 0; i < menuItem.subMenu.length; i += itemsPerColumn) {
-                                const columnItems = menuItem.subMenu.slice(i, i + itemsPerColumn);
-                                columns.push(
-                                  <ul key={i} className={h.subMenu__list} role="none">
-                                    {columnItems.map((subItem, subIndex) => (
-                                      <li key={subIndex} className={h.subMenu__item} role="none">
-                                        <Link 
-                                          href={subItem.href} 
-                                          className={h.subMenu__link}
-                                          role="menuitem"
-                                        >
-                                          {subItem.name}
-                                        </Link>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                );
-                              }
+                                for (let i = 0; i < menuItem.subMenu.length; i += itemsPerColumn) {
+                                  const columnItems = menuItem.subMenu.slice(i, i + itemsPerColumn);
+                                  columns.push(
+                                    <ul key={i} className={h.subMenu__list} role="none">
+                                      {columnItems.map((subItem, subIndex) => (
+                                        <li key={subIndex} className={h.subMenu__item} role="none">
+                                          <Link
+                                            href={subItem.href}
+                                            className={h.subMenu__link}
+                                            role="menuitem"
+                                          >
+                                            {subItem.name}
+                                          </Link>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  );
+                                }
 
-                              return columns;
-                            })()}
-                          </div>
-                        </div>
-                        <div className={h.subMenu__right}>
-                          <div className={h.subMenu__visual}>
-                            <div
-                              className={h.subMenu__visualImage}
-                              style={{ position: 'relative' }}
-                            >
-                              <Image
-                                src={`/images/common/gnb-${index + 1}.jpg`}
-                                alt={`${menuItem.name} 서브메뉴 이미지`}
-                                fill
-                                style={{
-                                  objectFit: 'cover',
-                                  objectPosition: 'center',
-                                }}
-                                sizes="(max-width: 768px) 100vw, 50vw"
-                                priority={false}
-                              />
+                                return columns;
+                              })()}
                             </div>
-                            <div className={h.subMenu__visualContent}>
-                              <p>
-                                {menuItem.content?.description || '하나님의 사랑으로 함께하는 교회'}
-                              </p>
+                          </div>
+                          <div className={h.subMenu__right}>
+                            <div className={h.subMenu__visual}>
+                              <div
+                                className={h.subMenu__visualImage}
+                                style={{ position: 'relative' }}
+                              >
+                                <Image
+                                  src={`/images/common/gnb-${index + 1}.jpg`}
+                                  alt={`${menuItem.name} 서브메뉴 이미지`}
+                                  fill
+                                  style={{
+                                    objectFit: 'cover',
+                                    objectPosition: 'center',
+                                  }}
+                                  sizes="(max-width: 768px) 100vw, 50vw"
+                                  priority={false}
+                                />
+                              </div>
+                              <div className={h.subMenu__visualContent}>
+                                <p>
+                                  {menuItem.content?.description ||
+                                    '하나님의 사랑으로 함께하는 교회'}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </li>
+                  )}
+                </li>
               );
             })}
           </ul>
@@ -296,7 +294,10 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
                 aria-label={isMobileMenuOpen ? '메뉴 닫기' : '메뉴 열기'}
                 aria-expanded={isMobileMenuOpen}
               >
-                <Icon name={isMobileMenuOpen ? 'close' : 'hamburger'} className={h.hamburger__icon} />
+                <Icon
+                  name={isMobileMenuOpen ? 'close' : 'hamburger'}
+                  className={h.hamburger__icon}
+                />
               </button>
             </li>
           </ul>

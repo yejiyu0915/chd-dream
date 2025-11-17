@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import Spinner from '@/common/components/utils/Spinner';
 import n from '@/app/info/news/NewsList.module.scss'; // NewsList.module.scss 사용
 import { NewsItem } from '@/lib/notion'; // NewsItem 인터페이스 임포트
@@ -132,6 +133,20 @@ export default function NewsListDisplay({
   const displayedNews = newsData ? newsData.slice(0, displayLimit) : [];
   const hasMore = newsData && displayedNews.length < newsData.length;
 
+  // 뉴스 아이템 애니메이션 variants
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (index: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: [0.22, 1, 0.36, 1] as const,
+        delay: index * 0.08, // 각 아이템마다 0.08초 간격
+      },
+    }),
+  };
+
   return (
     <div className={n.newsList}>
       {' '}
@@ -143,7 +158,16 @@ export default function NewsListDisplay({
               {' '}
               {/* 리스트 뷰로 고정, c.list--${_viewMode} 대신 n.list 사용 */}
               {displayedNews.map((item, _index) => (
-                <li key={item.id} className={n.list__item} data-prefetch-href={item.link || '#'}>
+                <motion.li
+                  key={item.id}
+                  className={n.list__item}
+                  data-prefetch-href={item.link || '#'}
+                  custom={_index}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: '100px' }}
+                  variants={itemVariants}
+                >
                   <Link
                     href={item.link || '#'}
                     className={n.list__link}
@@ -160,7 +184,7 @@ export default function NewsListDisplay({
                       <span className={n.list__date}>{item.date}</span>
                     </div>
                   </Link>
-                </li>
+                </motion.li>
               ))}
             </ul>
             {hasMore && (

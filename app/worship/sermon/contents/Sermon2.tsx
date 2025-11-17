@@ -1,6 +1,8 @@
+import AnimatedSermonWrapper from '@/app/worship/sermon/components/AnimatedSermonWrapper';
+
 export default function Sermon2() {
   return (
-    <div>
+    <AnimatedSermonWrapper>
       <p>
         마냥 행복할 수만은 없는 것이 우리의 인생입니다.
         <br />
@@ -262,6 +264,6 @@ export default function Sermon2() {
         <br />
         그리할때 하나님은 우리가 만난 어떤 쓴물도 달게 변화시켜 주실 것입니다.
       </p>
-    </div>
+    </AnimatedSermonWrapper>
   );
 }

@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { historyData } from './historyData';
+import { motion } from 'framer-motion';
 import h from './history.module.scss';
 
 export default function HistoryPage() {
@@ -148,21 +149,39 @@ export default function HistoryPage() {
     return historyData.find((group) => group.id === activeSection);
   }, [activeSection]);
 
+  // 타임라인 네비게이션 애니메이션 variants
+  const timelineItemVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: (index: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: [0.22, 1, 0.36, 1] as const,
+        delay: index * 0.1, // 각 버튼이 0.1초 간격으로 등장
+      },
+    }),
+  };
+
   return (
     <section className={h.historyPage}>
-      {/* 상단 타임라인 네비게이션 */}
+      {/* 상단 타임라인 네비게이션 - 순차 애니메이션 */}
       <nav className={h.timeline}>
-        {historyData.map((group) => (
-          <button
+        {historyData.map((group, index) => (
+          <motion.button
             key={group.id}
             type="button"
             className={`${h.timeline__item} ${activeSection === group.id ? h.active : ''}`}
             onClick={() => handleTimelineClick(group.id)}
             aria-label={`${group.period} 섹션으로 이동`}
+            custom={index}
+            initial="hidden"
+            animate="visible"
+            variants={timelineItemVariants}
           >
             <span className={h.timeline__year}>{group.startYear} ~</span>
             {group.periodLabel && <span className={h.timeline__label}>{group.periodLabel}</span>}
-          </button>
+          </motion.button>
         ))}
       </nav>
 
