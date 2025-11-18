@@ -39,7 +39,7 @@ export default function AnimatedSermonWrapper({ children }: AnimatedSermonWrappe
               custom={index}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: '120px' }}
+              viewport={{ margin: '120px' }}
               variants={itemVariants}
             >
               {child}

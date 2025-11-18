@@ -112,7 +112,7 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
+            viewport={{ margin: '-100px' }}
           >
             <motion.h2 className={s.eyebrow} variants={itemVariants}>
               <Icon name="book-open" className={s.eyebrow__icon} /> 주일 오전 예배
@@ -137,7 +137,7 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: '-100px' }}
+            viewport={{ margin: '-100px' }}
           >
             <ul className={s.link__list}>
               <motion.li className={s.link__item} variants={linkVariants}>
@@ -186,7 +186,7 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
           className={s.footnote}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '-50px' }}
+          viewport={{ margin: '-50px' }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as const, delay: 0.5 }}
         >
           <Icon name="info" className={s.footnote__icon} /> 말씀 영상은 네이버 밴드 가입 승인 후

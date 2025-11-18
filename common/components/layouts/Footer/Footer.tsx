@@ -60,7 +60,7 @@ export default function Footer() {
           className={f.top}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '-50px' }}
+          viewport={{ margin: '-50px' }}
           variants={containerVariants}
         >
           <motion.div className={f.group} variants={itemVariants}>
@@ -161,7 +161,7 @@ export default function Footer() {
           className={f.copyright}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '0px' }}
+          viewport={{ margin: '0px' }}
           variants={bottomVariants}
         >
           Copyright 2026 행복으로가는교회. All rights reserved.
@@ -170,7 +170,7 @@ export default function Footer() {
           className={f.text}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '0px' }}
+          viewport={{ margin: '0px' }}
           variants={bottomVariants}
         >
           CHURCH TO HAPPINESS.

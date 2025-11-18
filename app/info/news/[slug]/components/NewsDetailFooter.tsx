@@ -41,7 +41,7 @@ export default function NewsDetailFooter({ prevPost, nextPost }: NewsDetailFoote
       className={`${l.footer} detail-inner`}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: '100px' }}
+      viewport={{   margin: '100px' }}
       variants={containerVariants}
     >
       {/* 목록으로 돌아가기 버튼 */}

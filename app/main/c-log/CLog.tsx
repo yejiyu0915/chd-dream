@@ -57,7 +57,7 @@ function CLogCard({ item, index }: { item: CLogItem; index: number }) {
         className={c.list__item}
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-50px' }}
+        viewport={{ margin: '-50px' }}
         transition={{
           duration: 0.6,
           ease: [0.22, 1, 0.36, 1] as const,
@@ -182,7 +182,7 @@ export default function CLog({ initialCLogData }: CLogProps) {
           className={c.title}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
+          viewport={{ margin: '-100px' }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const }}
         >
           C-log
@@ -191,7 +191,7 @@ export default function CLog({ initialCLogData }: CLogProps) {
           className={c.desc}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
+          viewport={{ margin: '-100px' }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const, delay: 0.1 }}
         >
           교회의 다양한 이야기를 소개합니다.
@@ -199,7 +199,7 @@ export default function CLog({ initialCLogData }: CLogProps) {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
+          viewport={{ margin: '-100px' }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const, delay: 0.2 }}
         >
           <Link href="/info/c-log" className={c.link}>

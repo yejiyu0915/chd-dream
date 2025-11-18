@@ -165,7 +165,7 @@ export default function NewsListDisplay({
                   custom={_index}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, margin: '100px' }}
+                  viewport={{ margin: '100px' }}
                   variants={itemVariants}
                 >
                   <Link

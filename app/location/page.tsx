@@ -58,7 +58,7 @@ export default function LocationPage() {
           custom={0}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '50px' }}
+          viewport={{ margin: '50px' }}
           variants={sectionVariants}
         >
           <h2 className={l.title}>교회 위치</h2>
@@ -70,7 +70,7 @@ export default function LocationPage() {
             className={l.map__links}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: '50px' }}
+            viewport={{ margin: '50px' }}
           >
             {[
               {
@@ -113,12 +113,18 @@ export default function LocationPage() {
           custom={1}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: '50px' }}
+          viewport={{ margin: '50px' }}
           variants={sectionVariants}
         >
           <h2 className={l.title}>오시는 길</h2>
           <div className={l.info__content}>
-            <motion.div custom={0} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '50px' }} variants={itemVariants}>
+            <motion.div
+              custom={0}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ margin: '50px' }}
+              variants={itemVariants}
+            >
               <h3 className={l.info__contentTitle}>지하철</h3>
               <ul className={l.info__contentList}>
                 <li className={l.info__contentItem}>
@@ -135,7 +141,13 @@ export default function LocationPage() {
                 </li>
               </ul>
             </motion.div>
-            <motion.div custom={1} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '50px' }} variants={itemVariants}>
+            <motion.div
+              custom={1}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ margin: '50px' }}
+              variants={itemVariants}
+            >
               <h3 className={l.info__contentTitle}>버스</h3>
               <ul className={l.info__contentList}>
                 <li className={l.info__contentItem}>
@@ -156,11 +168,23 @@ export default function LocationPage() {
                 </li>
               </ul>
             </motion.div>
-            <motion.div custom={2} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '50px' }} variants={itemVariants}>
+            <motion.div
+              custom={2}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ margin: '50px' }}
+              variants={itemVariants}
+            >
               <h3 className={l.info__contentTitle}>자차 이용 안내</h3>
               <p className={l.info__contentDesc}>서울외곽도로 - 서창IC(남동공단) - 시청방향</p>
             </motion.div>
-            <motion.div custom={3} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '50px' }} variants={itemVariants}>
+            <motion.div
+              custom={3}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ margin: '50px' }}
+              variants={itemVariants}
+            >
               <h3 className={l.info__contentTitle}>차량 운행 안내</h3>
               <p className={l.info__contentDesc}>차량 운행은 부속실로 문의주세요.</p>
             </motion.div>

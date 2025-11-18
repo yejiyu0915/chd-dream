@@ -62,7 +62,7 @@ export default function QuickLink() {
           className={q.title__wrap}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
+          viewport={{ margin: '-100px' }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as const }}
         >
           <h2 className="sr-only">Quick Link</h2>
@@ -79,7 +79,7 @@ export default function QuickLink() {
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: '-50px' }}
+            viewport={{ margin: '-50px' }}
           >
             {quickLinkData.map((row, rowIndex) => (
               <div key={rowIndex} className={q.list__row}>
@@ -108,7 +108,7 @@ export default function QuickLink() {
             className={q.pic}
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: '-50px' }}
+            viewport={{ margin: '-50px' }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as const, delay: 0.2 }}
           >
             <Image
