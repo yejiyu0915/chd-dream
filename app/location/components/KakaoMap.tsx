@@ -83,14 +83,18 @@ export default function KakaoMap({
 
         {/* 커스텀 마커 (십자가 모양 핀) */}
         <CustomOverlayMap position={{ lat: latitude, lng: longitude }} yAnchor={1}>
-          <div
+          <button
             onClick={handleMarkerClick}
+            aria-label="카카오맵에서 행복으로가는교회 위치 보기"
             style={{
               cursor: 'pointer',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               transition: 'transform 0.2s ease',
+              background: 'none',
+              border: 'none',
+              padding: 0,
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'scale(1.1)';
@@ -163,7 +167,7 @@ export default function KakaoMap({
                 filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))',
               }}
             />
-          </div>
+          </button>
         </CustomOverlayMap>
 
         {/* 커스텀 오버레이 (교회 이름) */}

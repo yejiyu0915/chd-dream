@@ -2,6 +2,7 @@
 
 import type { SermonDataType } from '@/app/worship/sermon/data/sermonData';
 import Icon from '@/common/components/utils/Icons';
+import { motion } from 'framer-motion';
 import s from '@/app/worship/sermon/Sermon.module.scss';
 
 interface SermonContentProps {
@@ -24,17 +25,58 @@ export default function SermonContent({
     onSelect?.(id);
   };
 
+  // 애니메이션 variants
+  const headerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.22, 1, 0.36, 1] as const,
+      },
+    },
+  };
+
+  const bodyVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.7,
+        ease: [0.22, 1, 0.36, 1] as const,
+        delay: 0.15,
+      },
+    },
+  };
+
   return (
     <>
       <div className={s.content}>
-        <div className={s.content__header}>
+        {/* 헤더 - 제목과 담임목사 */}
+        <motion.div
+          className={s.content__header}
+          key={data.id} // 설교 변경 시 애니메이션 재실행
+          initial="hidden"
+          animate="visible"
+          variants={headerVariants}
+        >
           <h2 className={s.content__title}>{data.title}</h2>
           <p className={s.content__speaker}>담임목사: 김영구</p>
-        </div>
-        <div className={s.content__body}>
+        </motion.div>
+
+        {/* 본문 내용 */}
+        <motion.div
+          className={s.content__body}
+          key={`${data.id}-body`} // 설교 변경 시 애니메이션 재실행
+          initial="hidden"
+          animate="visible"
+          variants={bodyVariants}
+        >
           {/* 각 설교 컴포넌트 렌더링 */}
           <ContentComponent />
-        </div>
+        </motion.div>
       </div>
 
       {/* 모바일 하단 네비게이션 */}

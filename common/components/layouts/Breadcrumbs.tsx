@@ -33,6 +33,9 @@ export default function Breadcrumbs({ className, isDetail }: BreadcrumbsProps) {
     }),
   ];
 
+  // about 섹션에서는 4단계까지 표시 (index > 3), 그 외에는 3단계까지 (index > 2)
+  const maxIndex = pathname.startsWith('/about') ? 3 : 2;
+
   // 상세페이지인 경우 detail 클래스 추가
   const breadcrumbClasses = ['breadcrumb', className || '', isDetail ? 'detail' : '']
     .filter(Boolean)
@@ -42,7 +45,7 @@ export default function Breadcrumbs({ className, isDetail }: BreadcrumbsProps) {
     <nav className={breadcrumbClasses} aria-label="breadcrumb">
       <ol className="breadcrumb__list">
         {breadcrumbs.map((crumb, index) =>
-          index > 2 ? null : (
+          index > maxIndex ? null : (
             <li key={crumb.href} className="breadcrumb__item">
               {index === breadcrumbs.length - 1 ? (
                 <span className="breadcrumb__active">{crumb.name}</span>

@@ -42,29 +42,32 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
 
   // useCallback 훅들도 Hooks 규칙을 따르도록 최상단에 선언
   // reset: true면 0%부터 시작, false면 현재 위치에서 계속
-  const startProgressBar = useCallback((reset: boolean = true) => {
-    if (reset) {
-      setProgressWidth(0); // 슬라이드 변경 시 0으로 초기화
-    }
-    
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-    
-    intervalRef.current = setInterval(() => {
-      setProgressWidth((prevWidth) => {
-        const targetWidth = 50; // 목표 너비를 50%로 설정
-        const increment = targetWidth / (autoplayDelay / 100); // 100ms마다 증가할 값
-        const newWidth = prevWidth + increment;
+  const startProgressBar = useCallback(
+    (reset: boolean = true) => {
+      if (reset) {
+        setProgressWidth(0); // 슬라이드 변경 시 0으로 초기화
+      }
 
-        if (newWidth >= targetWidth) {
-          clearInterval(intervalRef.current!);
-          return targetWidth; // 최대 50%까지만 도달
-        }
-        return newWidth;
-      });
-    }, 100); // 100ms마다 업데이트
-  }, [autoplayDelay]);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+
+      intervalRef.current = setInterval(() => {
+        setProgressWidth((prevWidth) => {
+          const targetWidth = 50; // 목표 너비를 50%로 설정
+          const increment = targetWidth / (autoplayDelay / 100); // 100ms마다 증가할 값
+          const newWidth = prevWidth + increment;
+
+          if (newWidth >= targetWidth) {
+            clearInterval(intervalRef.current!);
+            return targetWidth; // 최대 50%까지만 도달
+          }
+          return newWidth;
+        });
+      }, 100); // 100ms마다 업데이트
+    },
+    [autoplayDelay]
+  );
 
   const stopProgressBar = useCallback(() => {
     if (intervalRef.current) {
@@ -174,11 +177,11 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
         onSlideChange={(swiper) => {
           // 실제로 슬라이드 인덱스가 변경되었을 때만 프로그레스바를 리셋
           const newSlideIndex = swiper.realIndex;
-          
+
           if (currentSlideRef.current !== newSlideIndex) {
             // 슬라이드가 실제로 변경된 경우에만 프로그레스바를 0%부터 시작
             currentSlideRef.current = newSlideIndex;
-            
+
             if (isPlaying) {
               startProgressBar(true); // 새 슬라이드이므로 0%부터 시작
             }
@@ -218,12 +221,12 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
           <>
             {' '}
             <div className={kv.buttonWrap}>
-              <div className={kv.buttonNext} role="button" tabIndex={0}>
+              <button type="button" className={kv.buttonNext} aria-label="다음 슬라이드">
                 <Icon name="nav-next" />
-              </div>
-              <div className={kv.buttonPrev} role="button" tabIndex={0}>
+              </button>
+              <button type="button" className={kv.buttonPrev} aria-label="이전 슬라이드">
                 <Icon name="nav-prev" />
-              </div>
+              </button>
             </div>
             <div className={kv.controls}>
               <div className={kv.pagination}></div>

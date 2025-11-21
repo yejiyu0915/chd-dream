@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import Spinner from '@/common/components/utils/Spinner';
 import n from '@/app/info/notice/NoticeList.module.scss';
 import { NoticeItem } from '@/lib/notion';
@@ -111,6 +112,20 @@ export default function NoticeListDisplay({
   const displayedNotices = noticeData ? noticeData.slice(0, displayLimit) : [];
   const hasMore = noticeData && displayedNotices.length < noticeData.length;
 
+  // 공지사항 아이템 애니메이션 variants
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (index: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: [0.22, 1, 0.36, 1] as const,
+        delay: index * 0.08, // 각 아이템마다 0.08초 간격
+      },
+    }),
+  };
+
   return (
     <div className={n.noticeList}>
       <div className={`detail-inner`}>
@@ -118,7 +133,16 @@ export default function NoticeListDisplay({
           <>
             <ul className={n.list}>
               {displayedNotices.map((item, _index) => (
-                <li key={item.id} className={n.list__item} data-prefetch-href={item.link || '#'}>
+                <motion.li
+                  key={item.id}
+                  className={n.list__item}
+                  data-prefetch-href={item.link || '#'}
+                  custom={_index}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ margin: '100px' }}
+                  variants={itemVariants}
+                >
                   <Link
                     href={item.link || '#'}
                     className={n.list__link}
@@ -134,7 +158,7 @@ export default function NoticeListDisplay({
                       <span className={n.list__date}>{item.date}</span>
                     </div>
                   </Link>
-                </li>
+                </motion.li>
               ))}
             </ul>
             {hasMore && (

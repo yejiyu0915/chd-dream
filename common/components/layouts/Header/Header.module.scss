@@ -22,6 +22,7 @@
   --gradient-light-start: #f8f9fa; // Header 그라데이션 시작
   --gradient-light-end: #e9ecef; // Header 그라데이션 끝
   --header-color: #fff;
+  --header-color-logo: #fff;
   position: fixed;
   top: 0;
   left: 0;
@@ -72,6 +73,9 @@
       color: var(--header-color);
       @include smooth-transition;
       transform: translateY(-0.05em);
+      * {
+        fill: var(--header-color);
+      }
     }
     span {
       @include font-vw(28, $weight: 700);
@@ -311,6 +315,7 @@
   @media (hover: hover) {
     &.hover {
       --header-color: var(--text-main);
+      --header-color-logo: var(--text-main);
       .overlay {
         opacity: 1;
         visibility: visible;
@@ -330,6 +335,7 @@
   // 스크롤 시 적용될 스타일
   &.scroll {
     --header-color: var(--text-main);
+    --header-color-logo: var(--accent-brand);
     height: vw(--header-height);
     .overlay {
       height: vw(--header-height);
@@ -392,6 +398,7 @@
     &,
     &.scroll {
       --header-color: var(--text-main);
+      --header-color-logo: var(--accent-brand);
       height: vw(--header-height);
       .overlay {
         height: vw(--header-height);
@@ -559,10 +566,11 @@
     }
   }
 
-  @include mq(mo) {
+  @include mq(ta) {
     &,
     &.scroll {
       --header-color: var(--text-main);
+      --header-color-logo: var(--accent-brand);
       // background-color: var(--bg-page);
       // border-bottom: 1px solid var(--accent-border);
       // backdrop-filter: blur(30px);
@@ -599,6 +607,9 @@
           --icon-margin: 0;
           --icon-color: var(--header-color);
           transform: translateY(0.05em);
+          + span {
+            display: none;
+          }
         }
         .mobileMenu__toggle {
           display: block !important;
@@ -615,6 +626,7 @@
     }
     &:not(.scroll) {
       --header-color: var(--bg-page);
+      --header-color-logo: var(--bg-page);
       .overlay {
         opacity: 0;
       }
@@ -637,7 +649,7 @@ $moSns: '.mobileSns';
     opacity 0.3s ease-in-out,
     visibility 0s linear 0.3s; // 모바일 메뉴 오버레이 트랜지션 수정
 }
-@include mq(mo) {
+@include mq(ta) {
   #{$moMenu} {
     &__overlay {
       display: block;

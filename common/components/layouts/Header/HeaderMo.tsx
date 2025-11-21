@@ -56,7 +56,7 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
       className={`${h.mobileMenu__overlay} ${isMobileMenuOpen ? h.open : ''} ${isMobileMenuOpen || isScrolled ? h.scroll : ''}`}
     >
       <div className={h.mobileMenu__content}>
-        <nav className={h.mobileNav}>
+        <nav className={h.mobileNav} aria-label="모바일 메뉴">
           <ul className={h.mobileMenu__list}>
             {menuData.map((menuItem, index) => (
               <li key={index} className={h.mobileMenu__item}>
@@ -132,7 +132,7 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
               {snsLinks.map((snsLink, index) => (
                 <li key={index} className={h.mobileSns__item}>
                   <Link href={snsLink.href} className={h.mobileSns__link} target="_blank">
-                    <span className="sr-only">{snsLink.name}</span>{' '}
+                    <span className="sr-only">행복으로가는교회 {snsLink.name} 바로가기</span>{' '}
                     <Icon name={snsLink.icon} className={h.mobileSns__icon} />
                   </Link>
                 </li>
@@ -152,7 +152,7 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
                           href={link.href}
                           className={h.mobilePrev__link}
                           target="_blank"
-                          title={`${link.name} 바로가기`}
+                          title={`${prevInfo.name} ${link.name} 바로가기`}
                         >
                           <span className="sr-only">{link.name}</span>
                           <Icon name={link.icon} className={h.mobilePrev__icon} />

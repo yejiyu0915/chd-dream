@@ -84,6 +84,11 @@ export default function LayoutContent({ children, initialPopupData }: LayoutCont
 
   return (
     <div className="wrapper">
+      {/* Skip Navigation 링크 */}
+      <a href="#main-content" className="skip-link">
+        본문으로 바로가기
+      </a>
+
       {/* 테마 관리자 (localStorage 확인 및 테마 적용) */}
       <ThemeManager />
 

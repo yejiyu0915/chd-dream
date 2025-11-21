@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ScheduleItem } from '@/lib/notion';
 import { formatTimeInfo } from '@/app/info/schedule/types/utils';
 import Icon from '@/common/components/utils/Icons';
@@ -171,15 +172,42 @@ export default function ScheduleListView({
   // 기간 내 일정들의 날짜 키들을 기본적으로 펼침 상태로 설정
   useEffect(() => {
     if (groupedScheduleData.length === 0) return;
-    
+
     const dateKeys = groupedScheduleData.map(({ date }) => date.toISOString().split('T')[0]);
-    
+
     setExpandedDates((prev) => {
       const newSet = new Set(prev);
       dateKeys.forEach((key) => newSet.add(key));
       return newSet;
     });
   }, [groupedScheduleData]);
+
+  // 애니메이션 variants
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (index: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: [0.22, 1, 0.36, 1] as const,
+        delay: index * 0.1, // 각 섹션마다 0.1초 간격
+      },
+    }),
+  };
+
+  const eventVariants = {
+    hidden: { opacity: 0, x: -10 },
+    visible: (index: number) => ({
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.4,
+        ease: [0.22, 1, 0.36, 1] as const,
+        delay: index * 0.05, // 각 이벤트마다 0.05초 간격
+      },
+    }),
+  };
 
   if (isLoading) {
     return (
@@ -277,7 +305,14 @@ export default function ScheduleListView({
         <div className={s.scheduleList}>
           {/* 진행 중인 일정 섹션 */}
           {ongoingEvents.length > 0 && (
-            <div className={s.scheduleListDay}>
+            <motion.div
+              className={s.scheduleListDay}
+              custom={0}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ margin: '50px' }}
+              variants={sectionVariants}
+            >
               <div
                 className={s.scheduleListDayHeader}
                 onClick={() => toggleDate('ongoing')}
@@ -289,46 +324,66 @@ export default function ScheduleListView({
                   <Icon name={expandedDates.has('ongoing') ? 'arrow-down' : 'arrow-up'} />
                 </div>
               </div>
-              {expandedDates.has('ongoing') && (
-                <div className={s.scheduleListEvents}>
-                  {ongoingEvents.map((event) => {
-                    const timeInfo = formatTimeInfo(event);
-                    return (
-                      <div
-                        key={event.id}
-                        className={`${s.scheduleListEvent} ${event.important ? s.important : ''} ${s.ongoingEvent}`}
-                      >
-                        <div className={s.scheduleListEventContent}>
-                          <div className={s.scheduleListEventTitle}>{event.title}</div>
-                          {timeInfo && <div className={s.scheduleListEventTime}>{timeInfo}</div>}
-                          {event.location && (
-                            <div className={s.scheduleListEventLocation}>📍 {event.location}</div>
-                          )}
-                          {event.tags && event.tags.length > 0 && (
-                            <div className={s.scheduleListEventTags}>
-                              {event.tags.map((tag, index) => (
-                                <span key={index} className={s.scheduleListEventTag}>
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+              <AnimatePresence>
+                {expandedDates.has('ongoing') && (
+                  <motion.div
+                    className={s.scheduleListEvents}
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {ongoingEvents.map((event, eventIndex) => {
+                      const timeInfo = formatTimeInfo(event);
+                      return (
+                        <motion.div
+                          key={event.id}
+                          className={`${s.scheduleListEvent} ${event.important ? s.important : ''} ${s.ongoingEvent}`}
+                          custom={eventIndex}
+                          initial="hidden"
+                          animate="visible"
+                          variants={eventVariants}
+                        >
+                          <div className={s.scheduleListEventContent}>
+                            <div className={s.scheduleListEventTitle}>{event.title}</div>
+                            {timeInfo && <div className={s.scheduleListEventTime}>{timeInfo}</div>}
+                            {event.location && (
+                              <div className={s.scheduleListEventLocation}>📍 {event.location}</div>
+                            )}
+                            {event.tags && event.tags.length > 0 && (
+                              <div className={s.scheduleListEventTags}>
+                                {event.tags.map((tag, index) => (
+                                  <span key={index} className={s.scheduleListEventTag}>
+                                    {tag}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           )}
 
           {/* 기간 내 일정 섹션 */}
-          {groupedScheduleData.map(({ date, events }) => {
+          {groupedScheduleData.map(({ date, events }, sectionIndex) => {
             const dateKey = date.toISOString().split('T')[0];
             const isExpanded = expandedDates.has(dateKey);
 
             return (
-              <div key={date.toISOString()} className={s.scheduleListDay}>
+              <motion.div
+                key={date.toISOString()}
+                className={s.scheduleListDay}
+                custom={sectionIndex + (ongoingEvents.length > 0 ? 1 : 0)}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ margin: '50px' }}
+                variants={sectionVariants}
+              >
                 <div
                   className={s.scheduleListDayHeader}
                   onClick={() => toggleDate(dateKey)}
@@ -354,37 +409,53 @@ export default function ScheduleListView({
                     <Icon name={isExpanded ? 'arrow-down' : 'arrow-up'} />
                   </div>
                 </div>
-                {isExpanded && (
-                  <div className={s.scheduleListEvents}>
-                    {events.map((event) => {
-                      const timeInfo = formatTimeInfo(event);
-                      return (
-                        <div
-                          key={event.id}
-                          className={`${s.scheduleListEvent} ${event.important ? s.important : ''}`}
-                        >
-                          <div className={s.scheduleListEventContent}>
-                            <div className={s.scheduleListEventTitle}>{event.title}</div>
-                            {timeInfo && <div className={s.scheduleListEventTime}>{timeInfo}</div>}
-                            {event.location && (
-                              <div className={s.scheduleListEventLocation}>📍 {event.location}</div>
-                            )}
-                            {event.tags && event.tags.length > 0 && (
-                              <div className={s.scheduleListEventTags}>
-                                {event.tags.map((tag, index) => (
-                                  <span key={index} className={s.scheduleListEventTag}>
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      className={s.scheduleListEvents}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {events.map((event, eventIndex) => {
+                        const timeInfo = formatTimeInfo(event);
+                        return (
+                          <motion.div
+                            key={event.id}
+                            className={`${s.scheduleListEvent} ${event.important ? s.important : ''}`}
+                            custom={eventIndex}
+                            initial="hidden"
+                            animate="visible"
+                            variants={eventVariants}
+                          >
+                            <div className={s.scheduleListEventContent}>
+                              <div className={s.scheduleListEventTitle}>{event.title}</div>
+                              {timeInfo && (
+                                <div className={s.scheduleListEventTime}>{timeInfo}</div>
+                              )}
+                              {event.location && (
+                                <div className={s.scheduleListEventLocation}>
+                                  📍 {event.location}
+                                </div>
+                              )}
+                              {event.tags && event.tags.length > 0 && (
+                                <div className={s.scheduleListEventTags}>
+                                  {event.tags.map((tag, index) => (
+                                    <span key={index} className={s.scheduleListEventTag}>
+                                      {tag}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             );
           })}
         </div>

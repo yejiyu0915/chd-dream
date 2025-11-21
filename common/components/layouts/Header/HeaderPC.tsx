@@ -54,6 +54,57 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
     setIsMenuHovered(false);
   };
 
+  // 키보드로 메뉴 토글
+  const handleMenuKeyDown = (event: React.KeyboardEvent, menuName: string, hasSubMenu: boolean) => {
+    if (!hasSubMenu) return;
+
+    // Enter 또는 Space 키로 서브메뉴 토글
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      setActiveMenu(activeMenu === menuName ? null : menuName);
+      setIsMenuHovered(activeMenu !== menuName);
+    }
+
+    // ESC 키로 서브메뉴 닫기
+    if (event.key === 'Escape') {
+      setActiveMenu(null);
+      setIsMenuHovered(false);
+    }
+
+    // 아래 화살표로 서브메뉴의 첫 번째 항목으로 이동
+    if (event.key === 'ArrowDown' && activeMenu === menuName) {
+      event.preventDefault();
+      const firstSubMenuItem = event.currentTarget.parentElement?.querySelector<HTMLElement>(
+        `.${h.subMenu__link}`
+      );
+      firstSubMenuItem?.focus();
+    }
+  };
+
+  // 포커스 시 서브메뉴 열기
+  const handleMenuFocus = (menuName: string, hasSubMenu: boolean) => {
+    if (hasSubMenu) {
+      // 다른 메뉴의 서브메뉴가 열려있으면 바로 전환
+      setActiveMenu(menuName);
+      setIsMenuHovered(true);
+    }
+  };
+
+  // 메뉴 전체 컨테이너에서 포커스가 벗어날 때만 서브메뉴 닫기
+  const handleMenuContainerBlur = (event: React.FocusEvent) => {
+    // 포커스가 메뉴 전체(nav)를 벗어났는지 확인
+    const currentTarget = event.currentTarget;
+
+    // 다음 프레임에서 확인 (포커스 이동이 완료된 후)
+    requestAnimationFrame(() => {
+      // 포커스가 메뉴 컨테이너 내부에 없으면 모든 서브메뉴 닫기
+      if (!currentTarget.contains(document.activeElement)) {
+        setActiveMenu(null);
+        setIsMenuHovered(false);
+      }
+    });
+  };
+
   return (
     <header
       className={`${h.header} ${isMenuHovered ? h.hover : ''} ${isMobileMenuOpen || isScrolled ? h.scroll : ''} ${mounted ? h.mounted : ''}`}
@@ -68,7 +119,10 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
               viewBox="0 0 257 342"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="행복으로가는교회 로고"
             >
+              <title>행복으로가는교회 로고</title>
               <g>
                 <path
                   d="M92.08 282.69L91.04 167.42L115.72 128.26C115.72 128.26 119.25 110.36 108.01 117.61L74.12 160.14L75.53 284L92.08 282.69Z"
@@ -110,87 +164,112 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
             <span>행복으로가는교회</span>
           </Link>
         </div>
-        <div className={h.menu} style={{ opacity: mounted ? 1 : 0 }}>
+        <nav
+          className={h.menu}
+          style={{ opacity: mounted ? 1 : 0 }}
+          aria-label="주 메뉴"
+          onBlur={handleMenuContainerBlur}
+        >
           <ul className={h.menu__list}>
-            {menuData.map((menuItem, index) => (
-              <li
-                key={index}
-                className={`${h.menu__item} ${activeMenu === menuItem.name ? h.active : ''}`}
-                onMouseEnter={() => handleMenuMouseEnter(menuItem.name)}
-                onMouseLeave={handleMenuMouseLeave}
-              >
-                <Link
-                  href={
-                    menuItem.subMenu && menuItem.subMenu.length > 0
-                      ? menuItem.subMenu[0].href
-                      : menuItem.href || '#'
-                  }
-                  className={h.menu__link}
+            {menuData.map((menuItem, index) => {
+              const hasSubMenu = menuItem.subMenu && menuItem.subMenu.length > 0;
+
+              return (
+                <li
+                  key={index}
+                  className={`${h.menu__item} ${activeMenu === menuItem.name ? h.active : ''}`}
+                  onMouseEnter={() => handleMenuMouseEnter(menuItem.name)}
+                  onMouseLeave={handleMenuMouseLeave}
                 >
-                  {menuItem.name}
-                </Link>
-                {menuItem.subMenu && (
-                  <div className={`${h.subMenu} ${activeMenu === menuItem.name ? h.show : ''}`}>
-                    <div className={h.subMenu__container}>
-                      <div className={h.subMenu__content}>
-                        <div className={h.subMenu__left}>
-                          <div className={h.subMenu__columns}>
-                            {(() => {
-                              const columns = [];
-                              const itemsPerColumn = 3;
+                  {hasSubMenu ? (
+                    <button
+                      type="button"
+                      className={h.menu__link}
+                      onKeyDown={(e) => handleMenuKeyDown(e, menuItem.name, hasSubMenu)}
+                      onFocus={() => handleMenuFocus(menuItem.name, hasSubMenu)}
+                      aria-expanded={activeMenu === menuItem.name}
+                      aria-haspopup="true"
+                      aria-label={`${menuItem.name} 메뉴 ${activeMenu === menuItem.name ? '닫기' : '열기'}`}
+                    >
+                      {menuItem.name}
+                    </button>
+                  ) : (
+                    <Link href={menuItem.href || '#'} className={h.menu__link}>
+                      {menuItem.name}
+                    </Link>
+                  )}
+                  {menuItem.subMenu && (
+                    <div
+                      className={`${h.subMenu} ${activeMenu === menuItem.name ? h.show : ''}`}
+                      role="menu"
+                      aria-label={`${menuItem.name} 하위 메뉴`}
+                    >
+                      <div className={h.subMenu__container}>
+                        <div className={h.subMenu__content}>
+                          <div className={h.subMenu__left}>
+                            <div className={h.subMenu__columns}>
+                              {(() => {
+                                const columns = [];
+                                const itemsPerColumn = 3;
 
-                              for (let i = 0; i < menuItem.subMenu.length; i += itemsPerColumn) {
-                                const columnItems = menuItem.subMenu.slice(i, i + itemsPerColumn);
-                                columns.push(
-                                  <ul key={i} className={h.subMenu__list}>
-                                    {columnItems.map((subItem, subIndex) => (
-                                      <li key={subIndex} className={h.subMenu__item}>
-                                        <Link href={subItem.href} className={h.subMenu__link}>
-                                          {subItem.name}
-                                        </Link>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                );
-                              }
+                                for (let i = 0; i < menuItem.subMenu.length; i += itemsPerColumn) {
+                                  const columnItems = menuItem.subMenu.slice(i, i + itemsPerColumn);
+                                  columns.push(
+                                    <ul key={i} className={h.subMenu__list} role="none">
+                                      {columnItems.map((subItem, subIndex) => (
+                                        <li key={subIndex} className={h.subMenu__item} role="none">
+                                          <Link
+                                            href={subItem.href}
+                                            className={h.subMenu__link}
+                                            role="menuitem"
+                                          >
+                                            {subItem.name}
+                                          </Link>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  );
+                                }
 
-                              return columns;
-                            })()}
-                          </div>
-                        </div>
-                        <div className={h.subMenu__right}>
-                          <div className={h.subMenu__visual}>
-                            <div
-                              className={h.subMenu__visualImage}
-                              style={{ position: 'relative' }}
-                            >
-                              <Image
-                                src={`/images/common/gnb-${index + 1}.jpg`}
-                                alt={`${menuItem.name} 서브메뉴 이미지`}
-                                fill
-                                style={{
-                                  objectFit: 'cover',
-                                  objectPosition: 'center',
-                                }}
-                                sizes="(max-width: 768px) 100vw, 50vw"
-                                priority={false}
-                              />
+                                return columns;
+                              })()}
                             </div>
-                            <div className={h.subMenu__visualContent}>
-                              <p>
-                                {menuItem.content?.description || '하나님의 사랑으로 함께하는 교회'}
-                              </p>
+                          </div>
+                          <div className={h.subMenu__right}>
+                            <div className={h.subMenu__visual}>
+                              <div
+                                className={h.subMenu__visualImage}
+                                style={{ position: 'relative' }}
+                              >
+                                <Image
+                                  src={`/images/common/gnb-${index + 1}.jpg`}
+                                  alt={`${menuItem.name} 서브메뉴 이미지`}
+                                  fill
+                                  style={{
+                                    objectFit: 'cover',
+                                    objectPosition: 'center',
+                                  }}
+                                  sizes="(max-width: 768px) 100vw, 50vw"
+                                  priority={false}
+                                />
+                              </div>
+                              <div className={h.subMenu__visualContent}>
+                                <p>
+                                  {menuItem.content?.description ||
+                                    '하나님의 사랑으로 함께하는 교회'}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </li>
-            ))}
+                  )}
+                </li>
+              );
+            })}
           </ul>
-        </div>
+        </nav>
         <div className={h.util} style={{ opacity: mounted ? 1 : 0 }}>
           <ul>
             <li>
@@ -212,9 +291,13 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
                 type="button"
                 onClick={toggleMobileMenu}
                 className={h.hamburger__button}
-                aria-label="메뉴 열기/닫기"
+                aria-label={isMobileMenuOpen ? '메뉴 닫기' : '메뉴 열기'}
+                aria-expanded={isMobileMenuOpen}
               >
-                <Icon name={isMobileMenuOpen ? 'close' : 'hamburger'} className={h.hamburger__icon} />
+                <Icon
+                  name={isMobileMenuOpen ? 'close' : 'hamburger'}
+                  className={h.hamburger__icon}
+                />
               </button>
             </li>
           </ul>

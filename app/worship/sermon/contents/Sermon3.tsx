@@ -1,6 +1,8 @@
+import AnimatedSermonWrapper from '@/app/worship/sermon/components/AnimatedSermonWrapper';
+
 export default function Sermon3() {
   return (
-    <div>
+    <AnimatedSermonWrapper>
       <h3>설교 3 소제목</h3>
       <p>설교 3 본문 내용입니다.</p>
       <p>여기에 자유롭게 마크업을 작성할 수 있습니다.</p>
@@ -17,6 +19,6 @@ export default function Sermon3() {
         <li>포인트 2</li>
         <li>포인트 3</li>
       </ul>
-    </div>
+    </AnimatedSermonWrapper>
   );
 }

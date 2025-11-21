@@ -1,6 +1,8 @@
+import AnimatedSermonWrapper from '@/app/worship/sermon/components/AnimatedSermonWrapper';
+
 export default function Sermon1() {
   return (
-    <div>
+    <AnimatedSermonWrapper>
       <p>교회에는 하나님께서 약속하신 복이 있습니다.</p>
       <blockquote>
         <p>
@@ -170,6 +172,6 @@ export default function Sermon1() {
         하나님을 섬기며 교회 중심을 살아가셔서 그를 통해 약속하신 모든 복을 받으시는 성도님들 되시길
         축복합니다.
       </p>
-    </div>
+    </AnimatedSermonWrapper>
   );
 }
