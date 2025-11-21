@@ -138,6 +138,18 @@ function CLogCard({ item, index }: { item: CLogItem; index: number }) {
 export default function CLog({ initialCLogData }: CLogProps) {
   'use memo'; // React 컴파일러 최적화 적용
 
+  // 모바일 체크
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // 서버에서 받은 데이터를 직접 사용 (useQuery 제거)
   const cLogData = initialCLogData;
   const isLoading = false;
@@ -197,10 +209,16 @@ export default function CLog({ initialCLogData }: CLogProps) {
           교회의 다양한 이야기를 소개합니다.
         </motion.p>
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ margin: '-100px' }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const, delay: 0.2 }}
+          viewport={{ margin: isMobile ? '0px' : '-100px' }}
+          transition={{
+            opacity: {
+              duration: isMobile ? 0.9 : 0.6,
+              ease: isMobile ? [0.25, 0.1, 0.25, 1] : [0.22, 1, 0.36, 1],
+              delay: isMobile ? 0.15 : 0.2,
+            },
+          }}
         >
           <Link href="/info/c-log" className={c.link}>
             전체 글 보기 <Icon name="arrow-up-right" className={c.link__icon} />

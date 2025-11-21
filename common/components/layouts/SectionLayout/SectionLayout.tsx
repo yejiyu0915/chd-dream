@@ -64,7 +64,10 @@ export default function SectionLayout({
   }, [backgroundImage, sectionName]);
 
   // /<sectionName>/<category>/<slug> 패턴을 확인하여 상세 페이지인지 여부를 판단
-  const isDetailPage = new RegExp(`/${sectionName}/[^/]+/[^/]+`).test(pathname);
+  // 단, /about/group 하위 페이지는 상세 페이지로 인식하지 않음 (titleSection 표시 필요)
+  const isDetailPage = 
+    new RegExp(`/${sectionName}/[^/]+/[^/]+`).test(pathname) &&
+    !pathname.startsWith('/about/group/');
 
   // list.ts의 getPageMeta를 사용하여 페이지 메타 정보 자동 가져오기
   const pageMeta = getPageMeta(pathname);

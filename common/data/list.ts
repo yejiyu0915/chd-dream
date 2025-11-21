@@ -64,6 +64,42 @@ export const pageMeta: Record<string, PageMeta> = {
     ...generatedMeta['/about/history'],
     description: '우리 교회의 연혁을 소개합니다.',
   },
+  '/about/vision': {
+    ...generatedMeta['/about/vision'],
+    description: '우리 교회의 비전을 소개합니다.',
+  },
+  '/about/pastor': {
+    ...generatedMeta['/about/pastor'],
+    description: '담임 목사님의 인사말을 전합니다.',
+  },
+  '/about/group': {
+    ...generatedMeta['/about/group'],
+    description: '우리 교회의 교구를 소개합니다.',
+  },
+  '/about/group/men': {
+    title: '남선교',
+    description: '남선교를 소개합니다.',
+  },
+  '/about/group/women': {
+    title: '여선교',
+    description: '여선교를 소개합니다.',
+  },
+  '/about/group/youth': {
+    title: '청년부',
+    description: '청년부를 소개합니다.',
+  },
+  '/about/group/student': {
+    title: '예꿈(초·중·고)',
+    description: '예꿈(초·중·고)을 소개합니다.',
+  },
+  '/about/group/newfamily': {
+    title: '새가족부',
+    description: '새가족부를 소개합니다.',
+  },
+  '/about/servant': {
+    ...generatedMeta['/about/servant'],
+    description: '우리 교회의 섬기는 분들을 소개합니다.',
+  },
 
   '/worship/timetable': {
     ...generatedMeta['/worship/timetable'],

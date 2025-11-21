@@ -11,7 +11,7 @@ export default function TimetablePage() {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.4,
+        duration: 0.6,
         ease: [0.22, 1, 0.36, 1] as const,
         delay: index * 0.15, // 각 섹션마다 0.15초 간격
       },
@@ -28,7 +28,7 @@ export default function TimetablePage() {
             custom={0}
             initial="hidden"
             whileInView="visible"
-            viewport={{ margin: '-20px' }}
+            viewport={{ margin: '-50px' }}
             variants={itemVariants}
           >
             집회 안내
@@ -38,7 +38,7 @@ export default function TimetablePage() {
             custom={1}
             initial="hidden"
             whileInView="visible"
-            viewport={{ margin: '-20px' }}
+            viewport={{ margin: '-50px' }}
             variants={itemVariants}
           >
             <thead>
@@ -92,7 +92,7 @@ export default function TimetablePage() {
             custom={2}
             initial="hidden"
             whileInView="visible"
-            viewport={{ margin: '-20px' }}
+            viewport={{ margin: '-50px' }}
             variants={itemVariants}
           >
             미래 세대
@@ -102,7 +102,7 @@ export default function TimetablePage() {
             custom={3}
             initial="hidden"
             whileInView="visible"
-            viewport={{ margin: '-20px' }}
+            viewport={{ margin: '-50px' }}
             variants={itemVariants}
           >
             <thead>
@@ -145,7 +145,7 @@ export default function TimetablePage() {
             custom={4}
             initial="hidden"
             whileInView="visible"
-            viewport={{ margin: '-20px' }}
+            viewport={{ margin: '-50px' }}
             variants={itemVariants}
           >
             교회 활동
@@ -155,7 +155,7 @@ export default function TimetablePage() {
             custom={5}
             initial="hidden"
             whileInView="visible"
-            viewport={{ margin: '-20px' }}
+            viewport={{ margin: '-50px' }}
             variants={itemVariants}
           >
             <thead>
