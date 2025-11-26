@@ -629,12 +629,12 @@
   justify-content: space-between;
   align-items: center;
   padding: vw(32) vw(80) vw(32) vw(40);
-  background: #e9ecef;
+  background: var(--accent-tertiary);
   transition: background-color 0.2s ease;
   position: relative;
 
   &:hover {
-    background: #dee2e6;
+    opacity: 0.8;
   }
 
   @include mq(ta) {
@@ -660,8 +660,8 @@
 
 .scheduleListDayCount {
   font-size: vw(20);
-  color: #666;
-  background: #f8f9fa;
+  color: var(--text-inverse);
+  background: var(--accent-brand);
   padding: vw(8) vw(12);
   border-radius: vw(4);
   @include mq(ta) {
