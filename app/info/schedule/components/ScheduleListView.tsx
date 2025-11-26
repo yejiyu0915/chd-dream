@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ScheduleItem } from '@/lib/notion';
 import { formatTimeInfo } from '@/app/info/schedule/types/utils';
 import Icon from '@/common/components/utils/Icons';
@@ -189,9 +189,9 @@ export default function ScheduleListView({
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.5,
-        ease: [0.22, 1, 0.36, 1] as const,
-        delay: index * 0.1, // 각 섹션마다 0.1초 간격
+        duration: 0.25, // 0.5초에서 0.25초로 단축
+        ease: [0.4, 0, 0.2, 1] as const, // 더 자연스러운 ease-in-out 느낌
+        delay: index * 0.05, // 각 섹션마다 0.05초 간격으로 단축 (0.1초에서)
       },
     }),
   };
@@ -202,9 +202,9 @@ export default function ScheduleListView({
       opacity: 1,
       x: 0,
       transition: {
-        duration: 0.4,
-        ease: [0.22, 1, 0.36, 1] as const,
-        delay: index * 0.05, // 각 이벤트마다 0.05초 간격
+        duration: 0.2, // 0.4초에서 0.2초로 단축
+        ease: [0.4, 0, 0.2, 1] as const, // 더 자연스러운 ease-in-out 느낌
+        delay: index * 0.02, // 각 이벤트마다 0.02초 간격으로 단축 (0.05초에서)
       },
     }),
   };
@@ -324,15 +324,8 @@ export default function ScheduleListView({
                   <Icon name={expandedDates.has('ongoing') ? 'arrow-down' : 'arrow-up'} />
                 </div>
               </div>
-              <AnimatePresence>
-                {expandedDates.has('ongoing') && (
-                  <motion.div
-                    className={s.scheduleListEvents}
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
+              {expandedDates.has('ongoing') && (
+                <div className={s.scheduleListEvents}>
                     {ongoingEvents.map((event, eventIndex) => {
                       const timeInfo = formatTimeInfo(event);
                       return (
@@ -363,9 +356,8 @@ export default function ScheduleListView({
                         </motion.div>
                       );
                     })}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -409,15 +401,8 @@ export default function ScheduleListView({
                     <Icon name={isExpanded ? 'arrow-down' : 'arrow-up'} />
                   </div>
                 </div>
-                <AnimatePresence>
-                  {isExpanded && (
-                    <motion.div
-                      className={s.scheduleListEvents}
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
+                {isExpanded && (
+                  <div className={s.scheduleListEvents}>
                       {events.map((event, eventIndex) => {
                         const timeInfo = formatTimeInfo(event);
                         return (
@@ -452,9 +437,8 @@ export default function ScheduleListView({
                           </motion.div>
                         );
                       })}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                  </div>
+                )}
               </motion.div>
             );
           })}
