@@ -2,6 +2,8 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
+import Icon from '@/common/components/utils/Icons';
 import s from './Servant.module.scss';
 import ServantNav from './components/ServantNav';
 import {
@@ -104,9 +106,15 @@ export default function ServantPage() {
                           {/* 이름 */}
                           <h3 className={s.card__name}>{servant.name}</h3>
                           {/* 담당 교구 (있는 경우만) */}
-                          {servant.department && (
-                            <p className={s.card__department}>{servant.department}</p>
-                          )}
+                          {servant.department &&
+                            (servant.groupLink ? (
+                              <Link href={servant.groupLink} className={s.card__departmentWrapper}>
+                                <p className={s.card__department}>{servant.department}</p>
+                                <Icon name="arrow-up-right" className={s.card__linkIcon} />
+                              </Link>
+                            ) : (
+                              <p className={s.card__department}>{servant.department}</p>
+                            ))}
                         </div>
                       </motion.div>
                     ))}
