@@ -26,6 +26,25 @@ export function getServantImage(id: string): string | undefined {
   return filename ? `${IMAGE_BASE_PATH}/${filename}` : undefined;
 }
 
+// 담당 교구와 교구소개 페이지 링크 매핑
+const departmentLinkMap: Record<string, string> = {
+  남선교: '/about/group/men',
+  '1여선교': '/about/group/women',
+  '2여선교': '/about/group/women',
+  '3여선교': '/about/group/women',
+  '4여선교': '/about/group/women',
+  청년부: '/about/group/youth',
+  학생부: '/about/group/student',
+  예꿈부: '/about/group/student',
+  새가족부: '/about/group/newfamily',
+};
+
+// 교구소개 링크 가져오기 헬퍼 함수
+export function getDepartmentLink(department?: string): string | undefined {
+  if (!department) return undefined;
+  return departmentLinkMap[department];
+}
+
 // 섬기는분 정보 타입
 export interface ServantType {
   id: string; // 고유 ID
@@ -33,6 +52,7 @@ export interface ServantType {
   category: '담임목사' | '총무목사' | '부목사' | '강도사' | '전도사'; // 카테고리
   department?: string; // 담당 교구 (있는 경우만)
   image?: string; // 이미지 경로 (자동으로 설정됨)
+  groupLink?: string; // 교구소개 페이지 링크 (자동으로 설정됨)
 }
 
 // 카테고리별로 그룹화된 데이터
@@ -65,6 +85,7 @@ export const servantData: ServantType[] = [
     category: '강도사',
     department: '남선교',
     image: getServantImage('license-pastor-1'),
+    groupLink: getDepartmentLink('남선교'),
   },
   // 전도사
   {
@@ -73,6 +94,7 @@ export const servantData: ServantType[] = [
     category: '전도사',
     department: '1여선교',
     image: getServantImage('evangelist-1'),
+    groupLink: getDepartmentLink('1여선교'),
   },
   {
     id: 'evangelist-2',
@@ -80,6 +102,7 @@ export const servantData: ServantType[] = [
     category: '전도사',
     department: '2여선교',
     image: getServantImage('evangelist-2'),
+    groupLink: getDepartmentLink('2여선교'),
   },
   {
     id: 'evangelist-3',
@@ -87,6 +110,7 @@ export const servantData: ServantType[] = [
     category: '전도사',
     department: '3여선교',
     image: getServantImage('evangelist-3'),
+    groupLink: getDepartmentLink('3여선교'),
   },
   {
     id: 'evangelist-4',
@@ -94,6 +118,7 @@ export const servantData: ServantType[] = [
     category: '전도사',
     department: '4여선교',
     image: getServantImage('evangelist-4'),
+    groupLink: getDepartmentLink('4여선교'),
   },
   {
     id: 'evangelist-5',
@@ -101,6 +126,7 @@ export const servantData: ServantType[] = [
     category: '전도사',
     department: '청년부',
     image: getServantImage('evangelist-5'),
+    groupLink: getDepartmentLink('청년부'),
   },
   {
     id: 'evangelist-6',
@@ -108,6 +134,7 @@ export const servantData: ServantType[] = [
     category: '전도사',
     department: '학생부',
     image: getServantImage('evangelist-6'),
+    groupLink: getDepartmentLink('학생부'),
   },
   {
     id: 'evangelist-7',
@@ -115,6 +142,7 @@ export const servantData: ServantType[] = [
     category: '전도사',
     department: '예꿈부',
     image: getServantImage('evangelist-7'),
+    groupLink: getDepartmentLink('예꿈부'),
   },
   {
     id: 'evangelist-8',
@@ -122,6 +150,7 @@ export const servantData: ServantType[] = [
     category: '전도사',
     department: '새가족부',
     image: getServantImage('evangelist-8'),
+    groupLink: getDepartmentLink('새가족부'),
   },
   {
     id: 'evangelist-9',
@@ -129,6 +158,7 @@ export const servantData: ServantType[] = [
     category: '전도사',
     department: '새가족부',
     image: getServantImage('evangelist-9'),
+    groupLink: getDepartmentLink('새가족부'),
   },
 ];
 
