@@ -30,6 +30,7 @@ main:not(:has([class*='main__content'])) ~ .footer {
   --footer-border-radius: 20;
   --footer-gap: 16;
   width: 100%;
+  min-width: 280px;
   padding-block: vw(40);
   position: relative;
   z-index: 2;
@@ -194,7 +195,7 @@ main:not(:has([class*='main__content'])) ~ .footer {
   }
   .info {
     dt {
-      margin-block: vw(12);
+      margin-block: vw(12) vw(8);
       @include font-vw(14, $weight: 700, $color: var(--accent-brand));
     }
     dd {
@@ -234,7 +235,7 @@ main:not(:has([class*='main__content'])) ~ .footer {
     @include font-vw(14, $color: var(--accent-brand));
   }
   .text {
-    font-size: cqi(130);
+    font-size: cqi(120);
     font-weight: 700;
     letter-spacing: -0.025em;
     line-height: 1;
@@ -243,7 +244,7 @@ main:not(:has([class*='main__content'])) ~ .footer {
 
   @include mq(fhd) {
     .text {
-      font-size: vw(130);
+      font-size: vw(120);
     }
   }
 
@@ -292,7 +293,7 @@ main:not(:has([class*='main__content'])) ~ .footer {
     }
     .info {
       dt {
-        margin-block: vw(8);
+        margin-block: vw(8) vw(4);
         @include font-vw(12);
       }
       dd {
@@ -319,7 +320,7 @@ main:not(:has([class*='main__content'])) ~ .footer {
   @include mq(pc-sm) {
     .top {
       > div {
-        height: vw(220);
+        height: vw(300);
       }
     }
   }
@@ -330,7 +331,7 @@ main:not(:has([class*='main__content'])) ~ .footer {
     .top {
       grid-template-columns: repeat(1, 1fr);
       > div {
-        height: vw(200);
+        height: vw(240);
       }
     }
     .box {
@@ -400,7 +401,7 @@ main:not(:has([class*='main__content'])) ~ .footer {
       }
     }
     .text {
-      font-size: cqi(120);
+      font-size: cqi(110);
     }
   }
 }

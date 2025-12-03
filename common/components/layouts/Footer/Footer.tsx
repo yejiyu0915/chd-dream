@@ -134,10 +134,10 @@ export default function Footer() {
               <p>행복으로가는교회는 언제나 열려있습니다.</p>
               <div className={f.link}>
                 <Link href={`tel:${contactInfo.phone1}`}>
-                  <Icon name="phone" className={f.icon} /> CONTACT #1
+                  <Icon name="phone" className={f.icon} /> {contactInfo.phone1}
                 </Link>
                 <Link href={`tel:${contactInfo.phone2}`}>
-                  <Icon name="phone" className={f.icon} /> CONTACT #2
+                  <Icon name="phone" className={f.icon} /> {contactInfo.phone2}
                 </Link>
               </div>
             </div>
@@ -148,8 +148,11 @@ export default function Footer() {
             <strong className={f.title}>Info</strong>
             <dl className={f.content}>
               <dt>NAME</dt>
-              <dd>{contactInfo.denomination}</dd>
-              <dd>{contactInfo.name}</dd>
+              <dd>
+                {contactInfo.denomination} {contactInfo.name}
+              </dd>
+              <dt>FAX</dt>
+              <dd>{contactInfo.fax}</dd>
               <dt>ADDRESS</dt>
               <dd>{contactInfo.address}</dd>
             </dl>
@@ -173,7 +176,7 @@ export default function Footer() {
           viewport={{ margin: '0px' }}
           variants={bottomVariants}
         >
-          CHURCH TO HAPPINESS.
+          The Church Toward Happiness
         </motion.p>
       </div>
     </footer>

@@ -169,7 +169,7 @@ export default function TimetablePage() {
               <tr>
                 <th className={t.assemblyTitle}>중보기도</th>
                 <td rowSpan={2} className={t.assemblyTime}>
-                  월~금 오전 10:00
+                  화~금 오전 10:00
                 </td>
                 <td rowSpan={2}>4층 본당</td>
               </tr>

@@ -140,6 +140,17 @@ const processBlockChunk = (blocks: unknown[]): string => {
       if (tableHtml) {
         result.push(tableHtml);
       }
+    } else if (
+      blockObj.type === 'quote' &&
+      blockObj.quote &&
+      typeof blockObj.quote === 'object'
+    ) {
+      flushCurrentListLocal();
+      const quote = blockObj.quote as Record<string, unknown>;
+      const text = extractText(quote.rich_text);
+      if (text) {
+        result.push(`<blockquote><p>${text}</p></blockquote>`);
+      }
     }
   });
 
@@ -159,4 +170,11 @@ export const processHtmlTags = (html: string): string => {
     .replace(/<\/h2>/g, '</h4>')
     .replace(/<h1>/g, '<h3>')
     .replace(/<\/h1>/g, '</h3>');
+};
+
+// HTML을 MDX 문자열로 변환 (blockquote 등 MDX 태그 지원)
+export const htmlToMdx = (html: string): string => {
+  // HTML을 그대로 MDX로 사용 (MDX는 HTML을 지원함)
+  // blockquote 태그는 MDX에서 그대로 사용 가능
+  return html;
 };

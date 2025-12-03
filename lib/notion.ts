@@ -842,118 +842,14 @@ export async function getNotionPageAndContentBySlug(
   databaseIdEnvVar: string,
   slug: string
 ): Promise<{ page: PageObjectResponse; blocks: BlockObjectResponse[] } | null> {
+  // 개발 환경에서는 캐시를 비활성화
+  if (process.env.NODE_ENV === 'development') {
+    return getNotionPageAndContentBySlugInternal(databaseIdEnvVar, slug);
+  }
+
   return unstable_cache(
     async (databaseIdEnvVar: string, slug: string) => {
-      const notionDatabaseId = process.env[databaseIdEnvVar];
-      if (!process.env.NOTION_TOKEN || !notionDatabaseId) {
-        return null;
-      }
-
-      try {
-        // 2025-09-03 버전업에 따라 data_source_id를 먼저 가져와야 함
-        const databaseInfo = await notion.databases.retrieve({ database_id: notionDatabaseId });
-
-        let dataSourceId: string | undefined;
-        if (
-          'data_sources' in databaseInfo &&
-          Array.isArray(databaseInfo.data_sources) &&
-          databaseInfo.data_sources.length > 0
-        ) {
-          dataSourceId = databaseInfo.data_sources[0].id; // 첫 번째 data_source_id 사용
-        } else {
-          dataSourceId = notionDatabaseId; // data_sources가 없거나 비어있는 경우, 이전처럼 database_id를 사용
-        }
-
-        // 1. 슬러그로 페이지 찾기
-        const response: any = await notion.dataSources.query({
-          // Notion SDK v5에서는 dataSources.query를 사용
-          data_source_id: dataSourceId as string, // data_source_id 사용
-          filter: {
-            property: 'Slug', // Notion 데이터베이스의 slug 속성 이름
-            rich_text: {
-              equals: slug,
-            },
-          },
-          page_size: 1, // 슬러그는 고유해야 하므로 하나만 가져옵니다.
-        });
-
-        if (response.results.length === 0) {
-          return null; // 페이지를 찾을 수 없으면 null 반환
-        }
-
-        const page = response.results[0]; // 첫 번째 결과가 페이지 객체여야 합니다.
-
-        // 2. 페이지의 모든 블록 가져오기 (최적화된 버전)
-        const getAllBlocksWithChildren = async (blockId: string, depth = 0): Promise<any[]> => {
-          // 최대 깊이 제한 (성능 최적화)
-          if (depth > 3) {
-            return [];
-          }
-
-          const allBlocks: any[] = [];
-          let cursor: string | null = null;
-
-          do {
-            const blockResponse = await notion.blocks.children.list({
-              block_id: blockId,
-              start_cursor: cursor || undefined,
-            });
-
-            const blocks = blockResponse.results as BlockObjectResponse[];
-
-            // 병렬 처리로 성능 개선
-            const blockPromises = blocks.map(async (block) => {
-              const blockWithChildren = { ...block } as any;
-
-              // children이 있는 블록 타입들만 재귀적으로 처리 (깊이 제한)
-              if (
-                (block.type === 'bulleted_list_item' ||
-                  block.type === 'numbered_list_item' ||
-                  block.type === 'toggle' ||
-                  block.type === 'callout') &&
-                depth < 2 // 중첩 깊이 제한
-              ) {
-                try {
-                  const childBlocks = await getAllBlocksWithChildren(block.id, depth + 1);
-                  blockWithChildren.children = childBlocks;
-                } catch (error) {
-                  // children을 가져올 수 없는 경우 무시
-                  console.warn(`Could not fetch children for block ${block.id}:`, error);
-                }
-              } else if (block.type === 'table') {
-                // 테이블의 경우 table_rows를 별도로 가져오기
-                try {
-                  const tableRowsResponse = await notion.blocks.children.list({
-                    block_id: block.id,
-                  });
-                  const tableRows = tableRowsResponse.results;
-                  blockWithChildren.table_rows = tableRows;
-                } catch (error) {
-                  console.warn(`Could not fetch table rows for block ${block.id}:`, error);
-                }
-              }
-
-              return blockWithChildren;
-            });
-
-            // 모든 블록을 병렬로 처리
-            const processedBlocks = await Promise.all(blockPromises);
-            allBlocks.push(...processedBlocks);
-
-            cursor = blockResponse.next_cursor;
-          } while (cursor);
-
-          return allBlocks;
-        };
-
-        const blocks = await getAllBlocksWithChildren(page.id);
-
-        return { page: page as PageObjectResponse, blocks };
-      } catch (error: unknown) {
-        void error;
-        // console.error(`Notion 페이지 및 콘텐츠 가져오기 중 오류 발생:`, error);
-        return null;
-      }
+      return getNotionPageAndContentBySlugInternal(databaseIdEnvVar, slug);
     },
     [`${databaseIdEnvVar}-detail-${slug}`],
     {
@@ -961,6 +857,123 @@ export async function getNotionPageAndContentBySlug(
       tags: [`${databaseIdEnvVar}-post-${slug}`, 'bulletin-content'],
     }
   )(databaseIdEnvVar, slug);
+}
+
+// 실제 데이터 가져오기 로직을 분리한 내부 함수
+async function getNotionPageAndContentBySlugInternal(
+  databaseIdEnvVar: string,
+  slug: string
+): Promise<{ page: PageObjectResponse; blocks: BlockObjectResponse[] } | null> {
+  const notionDatabaseId = process.env[databaseIdEnvVar];
+  if (!process.env.NOTION_TOKEN || !notionDatabaseId) {
+    return null;
+  }
+
+  try {
+    // 2025-09-03 버전업에 따라 data_source_id를 먼저 가져와야 함
+    const databaseInfo = await notion.databases.retrieve({ database_id: notionDatabaseId });
+
+    let dataSourceId: string | undefined;
+    if (
+      'data_sources' in databaseInfo &&
+      Array.isArray(databaseInfo.data_sources) &&
+      databaseInfo.data_sources.length > 0
+    ) {
+      dataSourceId = databaseInfo.data_sources[0].id; // 첫 번째 data_source_id 사용
+    } else {
+      dataSourceId = notionDatabaseId; // data_sources가 없거나 비어있는 경우, 이전처럼 database_id를 사용
+    }
+
+    // 1. 슬러그로 페이지 찾기
+    const response: any = await notion.dataSources.query({
+      // Notion SDK v5에서는 dataSources.query를 사용
+      data_source_id: dataSourceId as string, // data_source_id 사용
+      filter: {
+        property: 'Slug', // Notion 데이터베이스의 slug 속성 이름
+        rich_text: {
+          equals: slug,
+        },
+      },
+      page_size: 1, // 슬러그는 고유해야 하므로 하나만 가져옵니다.
+    });
+
+    if (response.results.length === 0) {
+      return null; // 페이지를 찾을 수 없으면 null 반환
+    }
+
+    const page = response.results[0]; // 첫 번째 결과가 페이지 객체여야 합니다.
+
+    // 2. 페이지의 모든 블록 가져오기 (최적화된 버전)
+    const getAllBlocksWithChildren = async (blockId: string, depth = 0): Promise<any[]> => {
+      // 최대 깊이 제한 (성능 최적화)
+      if (depth > 3) {
+        return [];
+      }
+
+      const allBlocks: any[] = [];
+      let cursor: string | null = null;
+
+      do {
+        const blockResponse = await notion.blocks.children.list({
+          block_id: blockId,
+          start_cursor: cursor || undefined,
+        });
+
+        const blocks = blockResponse.results as BlockObjectResponse[];
+
+        // 병렬 처리로 성능 개선
+        const blockPromises = blocks.map(async (block) => {
+          const blockWithChildren = { ...block } as any;
+
+          // children이 있는 블록 타입들만 재귀적으로 처리 (깊이 제한)
+          if (
+            (block.type === 'bulleted_list_item' ||
+              block.type === 'numbered_list_item' ||
+              block.type === 'toggle' ||
+              block.type === 'callout') &&
+            depth < 2 // 중첩 깊이 제한
+          ) {
+            try {
+              const childBlocks = await getAllBlocksWithChildren(block.id, depth + 1);
+              blockWithChildren.children = childBlocks;
+            } catch (error) {
+              // children을 가져올 수 없는 경우 무시
+              console.warn(`Could not fetch children for block ${block.id}:`, error);
+            }
+          } else if (block.type === 'table') {
+            // 테이블의 경우 table_rows를 별도로 가져오기
+            try {
+              const tableRowsResponse = await notion.blocks.children.list({
+                block_id: block.id,
+              });
+              const tableRows = tableRowsResponse.results;
+              blockWithChildren.table_rows = tableRows;
+            } catch (error) {
+              console.warn(`Could not fetch table rows for block ${block.id}:`, error);
+            }
+          }
+
+          return blockWithChildren;
+        });
+
+        // 모든 블록을 병렬로 처리
+        const processedBlocks = await Promise.all(blockPromises);
+        allBlocks.push(...processedBlocks);
+
+        cursor = blockResponse.next_cursor;
+      } while (cursor);
+
+      return allBlocks;
+    };
+
+    const blocks = await getAllBlocksWithChildren(page.id);
+
+    return { page: page as PageObjectResponse, blocks };
+  } catch (error: unknown) {
+    void error;
+    // console.error(`Notion 페이지 및 콘텐츠 가져오기 중 오류 발생:`, error);
+    return null;
+  }
 }
 
 export async function getPrevNextCLogPosts(currentSlug: string): Promise<{

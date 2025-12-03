@@ -151,12 +151,14 @@
     background: var(--accent-brand);
     opacity: 0.3;
     z-index: 1;
-    mix-blend-mode: screen;
+    mix-blend-mode: plus-lighter;
   }
   img {
-    width: auto;
+    // width: auto;
+    width: 100%;
     height: vw(500);
     object-fit: cover;
+    object-position: center 80%;
   }
 }
 
@@ -283,8 +285,10 @@
     flex: 1;
     border-radius: vw(10);
     img {
-      width: 100%;
+      // width: 100%;
       height: auto;
+      // height: 15%;
+      aspect-ratio: 500 / 300;
     }
   }
 }

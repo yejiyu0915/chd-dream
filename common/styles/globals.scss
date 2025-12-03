@@ -81,18 +81,18 @@ main {
       margin-block-end: vw(711);
     }
     @include mq(pc-sm) {
-      margin-block-end: vw(660);
+      margin-block-end: vw(800);
     }
     @include mq(ta) {
-      margin-block-end: vw(630);
+      margin-block-end: vw(780);
     }
     @include mq(mo) {
-      margin-block-end: vw(584);
+      margin-block-end: vw(640);
       padding-block-end: vw(40);
       border-radius: 0 0 vw(20) vw(20);
     }
     @include mq(mo-sm) {
-      margin-block-end: vw(555);
+      margin-block-end: vw(620);
     }
   }
 }
@@ -397,6 +397,9 @@ main {
     border-radius: vw(10);
     border: 1px solid var(--accent-border-subtle);
     background-color: #f9f9f9;
+    &:not(:has(.list-nav__link)) {
+      display: none;
+    }
   }
   &__link {
     flex: 1;

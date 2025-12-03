@@ -21,8 +21,8 @@ export const menuData: MenuItem[] = [
     name: '교회 소개',
     subMenu: [
       { name: '교회 연혁', href: '/about/history' },
-      { name: '교회 비전(to-be)', href: '/about/vision' },
-      { name: '담임 목사 소개(to-be)', href: '/about/pastor' },
+      { name: '교회 비전', href: '/about/vision' },
+      { name: '담임 목사 인사말', href: '/about/pastor' },
       { name: '교구 소개', href: '/about/group' },
       { name: '섬기는 분들 ', href: '/about/servant' },
       // { name: '교구 소개(준비중)', href: '/about/group' },
@@ -77,12 +77,12 @@ export interface ContactInfo {
 }
 
 export const contactInfo: ContactInfo = {
-  phone1: '032-463-9004',
-  phone2: '032-441-0176',
+  phone1: '032-472-9004',
+  phone2: '032-463-9004',
   address: '21552 인천 남동구 문화로 227 (간석동, 행복으로가는교회)',
   fax: '032-465-9004',
   name: '행복으로가는교회',
-  denomination: '기독교대한하나님의성회(순복음)',
+  denomination: '순복음(기독교대한하나님의성회)',
 };
 
 export interface SnsLink {
@@ -172,8 +172,8 @@ export const quickLinkData: QuickLinkItem[][] = [
     {
       title: '교구 소개',
       icon: 'users',
-      href: '/info/schedule',
-      description: '교구 소개와 교구 활동을 확인할 수 있습니다. (준비중)',
+      href: '/about/group',
+      description: '교구 소개와 교구 활동을 확인할 수 있습니다.',
       disabled: true,
     },
   ],

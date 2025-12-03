@@ -38,7 +38,7 @@ export default function GroupPage() {
   };
 
   return (
-    <>
+    <div className={g.content}>
       {/* <h2>교구 소개</h2>
       <p>우리 교회의 다양한 교구를 소개합니다.</p> */}
       <p className={g.desc}>
@@ -113,7 +113,7 @@ export default function GroupPage() {
           className={`${g.grid__item} ${g.grid__itemColor3} ${g.grid__itemSquare}`}
           variants={itemVariants}
         >
-          <Link href="/about/group/student">학생부</Link>
+          <Link href="/about/group/student">중고등부</Link>
         </motion.div>
         <motion.div className={`${g.grid__item} ${g.grid__itemDeco}`} variants={itemVariants}>
           <svg
@@ -143,7 +143,7 @@ export default function GroupPage() {
           className={`${g.grid__item} ${g.grid__itemRoundLeft} ${g.grid__itemColor2}`}
           variants={itemVariants}
         >
-          <Link href="/about/group/student">예꿈부</Link>
+          <Link href="/about/group/student">초등부</Link>
         </motion.div>
         <motion.div className={`${g.grid__item} ${g.grid__itemRoundFull}`} variants={itemVariants}>
           {/* <Image src="/images/group/4.jpg" alt="" width={800} height={800} /> */}
@@ -216,6 +216,6 @@ export default function GroupPage() {
           </svg>
         </motion.div>
       </motion.div>
-    </>
+    </div>
   );
 }

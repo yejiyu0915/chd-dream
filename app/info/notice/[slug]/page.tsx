@@ -15,16 +15,6 @@ import NoticeContent from '@/app/info/notice/[slug]/components/NoticeContent';
 import ContentSkeleton from '@/common/components/skeletons/ContentSkeleton';
 import { getCurrentSeason } from '@/common/utils/season';
 
-interface NoticeDetailPageProps {
-  params: { slug: string };
-}
-
-// 캐싱 설정 - 5분마다 재검증 (빌드 독립적)
-export const revalidate = 300;
-
-// 빌드 시에 없던 새로운 slug도 런타임에 자동 생성 (빌드 불필요)
-export const dynamicParams = true;
-
 // 메타데이터만 먼저 가져오는 함수 (blocks 제외 - 진짜 Streaming!)
 async function getPageMetadata(slug: string) {
   const notionData = await getNotionPageAndContentBySlug('NOTION_NOTICE_ID', slug);
@@ -89,7 +79,11 @@ async function getMarkdownContent(slug: string) {
   return markdown;
 }
 
-export default async function NoticeDetailPage({ params }: NoticeDetailPageProps) {
+export default async function NoticeDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug as string;
 

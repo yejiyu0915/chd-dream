@@ -1,10 +1,9 @@
-'use client';
+import PastorContent from './components/PastorContent';
+import { pastorNewsData } from './data/pastorNewsData';
 
 export default function PastorPage() {
-  return (
-    <div className="detail-inner">
-      {/* 담임 목사 소개 내용이 들어갈 영역 */}
-    </div>
-  );
-}
+  // 외부 뉴스 링크 데이터
+  const externalNews = pastorNewsData;
 
+  return <PastorContent externalNews={externalNews} />;
+}
