@@ -166,6 +166,7 @@ const BulletinContent = memo(function BulletinContent({
                     : '주보 내용'}
                 </h2>
                 <div className={`${mdx.mdxContent} ${b.latest__contentBody}`}>
+                  {/* HTML을 그대로 렌더링하되 blockquote 스타일이 적용됨 */}
                   <div dangerouslySetInnerHTML={{ __html: bulletinContent }} />
                 </div>
               </motion.div>

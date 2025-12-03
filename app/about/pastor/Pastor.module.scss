@@ -1,0 +1,184 @@
+@use '@/common/styles/mixins/function' as *;
+
+// 공통 섹션 스타일 mixin
+@mixin common-section-style {
+  display: flex;
+  flex-direction: column;
+  margin-block-end: vw(40);
+  padding-block-end: vw(40);
+  padding-inline-start: vw(40);
+  padding-inline-end: vw(40);
+  border-bottom: vw(2) dashed var(--accent-tertiary);
+
+  &:last-child {
+    border-bottom: none;
+    margin-block-end: 0;
+    padding-block-end: 0;
+  }
+}
+
+// 메인 컨테이너
+.pastor {
+  display: flex;
+  flex-direction: column;
+  padding-block: vw(120) vw(200);
+
+  @include mq(pc-sm) {
+    padding-block: vw(48) vw(120);
+  }
+
+  @include mq(mo) {
+    padding-block: vw(40) vw(80);
+  }
+}
+
+// 프로필 + 인사말 섹션 (PC에서 row 배치)
+.profileSection {
+  display: flex;
+  align-items: flex-start;
+  gap: vw(80);
+
+  @include mq(pc-sm) {
+    gap: vw(60);
+  }
+
+  @include mq(mo) {
+    flex-direction: column;
+    gap: vw(40);
+  }
+}
+
+// 프로필 영역 (사진 + 이름/직책)
+.profile {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: vw(28);
+  flex-shrink: 0;
+
+  @include mq(pc-sm) {
+    gap: vw(24);
+  }
+
+  @include mq(mo) {
+    gap: vw(20);
+    width: 100%;
+  }
+}
+
+// 사진 영역 (증명사진 비율 3:4)
+.image {
+  flex-shrink: 0;
+  width: vw(300);
+  aspect-ratio: 3 / 4;
+  border-radius: vw(20);
+  overflow: hidden;
+  background-color: var(--accent-tertiary);
+
+  @include mq(pc-sm) {
+    width: vw(240);
+    border-radius: vw(16);
+  }
+
+  @include mq(mo) {
+    width: 100%;
+    max-width: 50%;
+    min-width: vw(200);
+    border-radius: vw(12);
+  }
+
+  &Img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    display: block;
+  }
+
+  // 이미지 placeholder
+  &Placeholder {
+    width: 100%;
+    height: 100%;
+    background-color: var(--accent-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    &::after {
+      content: '';
+      width: 40%;
+      height: 40%;
+      background-color: var(--accent-border-subtle);
+      border-radius: 50%;
+      opacity: 0.5;
+    }
+  }
+}
+
+// 이름/직책 영역
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: vw(12);
+  flex: 1;
+
+  @include mq(pc-sm) {
+    gap: vw(10);
+  }
+
+  @include mq(mo) {
+    gap: vw(8);
+  }
+}
+
+// 이름
+.name {
+  @include font-vw(44, $weight: 600, $color: var(--accent-brand), $ls: -0.03);
+  line-height: 1.3;
+
+  @include mq(pc-sm) {
+    @include font-vw(36);
+  }
+
+  @include mq(mo) {
+    @include font-vw(24);
+  }
+}
+
+// 직책
+.position {
+  @include font-vw(24, $weight: 500, $color: var(--text-body));
+  line-height: 1.5;
+
+  @include mq(pc-sm) {
+    @include font-vw(20);
+  }
+
+  @include mq(mo) {
+    @include font-vw(16);
+  }
+}
+
+// 본문 컨테이너
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
+// 인사말/소개글
+.greeting {
+  flex: 1;
+  @include font-vw(28, $weight: 400, $color: var(--text-body));
+  line-height: 2;
+  white-space: pre-line;
+
+  @include mq(pc-sm) {
+    @include font-vw(22);
+    line-height: 1.9;
+  }
+
+  @include mq(mo) {
+    @include font-vw(16);
+    line-height: 1.8;
+  }
+}

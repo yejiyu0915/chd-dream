@@ -213,8 +213,8 @@
     // 선택된 옵션 스타일
     &:has(input:checked) {
       border-color: var(--accent-brand);
-      border-width: 2px;
       background-color: var(--accent-secondary);
+      box-shadow: inset 0 0 0 vw(1) var(--accent-brand);
     }
 
     @include mq(pc-sm) {

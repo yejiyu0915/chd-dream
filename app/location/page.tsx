@@ -186,7 +186,9 @@ export default function LocationPage() {
               variants={itemVariants}
             >
               <h3 className={l.info__contentTitle}>차량 운행 안내</h3>
-              <p className={l.info__contentDesc}>차량 운행은 부속실로 문의주세요.</p>
+              <p className={l.info__contentDesc}>
+                차량 운행 문의는 부속실 또는 남선교로 부탁드립니다.
+              </p>
             </motion.div>
           </div>
         </motion.div>

@@ -8,25 +8,12 @@ import { compile } from '@mdx-js/mdx';
 
 import { getNotionPageAndContentBySlug, notion, getPrevNextCLogPosts } from '@/lib/notion';
 import { NotionToMarkdown } from 'notion-to-md';
-import l from 'common/styles/mdx/MdxLayout.module.scss';
+import l from '@/common/styles/mdx/MdxLayout.module.scss';
 import CLogDetailHeader from '@/app/info/c-log/[slug]/components/CLogDetailHeader';
 import CLogDetailFooter from '@/app/info/c-log/[slug]/components/CLogDetailFooter';
 import CLogContent from '@/app/info/c-log/[slug]/components/CLogContent';
 import ContentSkeleton from '@/common/components/skeletons/ContentSkeleton';
 import { getCurrentSeason } from '@/common/utils/season';
-
-interface CLogDetailPageProps {
-  params: { slug: string };
-}
-
-// 캐싱 설정 - 5분마다 재검증 (빌드 독립적)
-export const revalidate = 300;
-
-// 빌드 시에 없던 새로운 slug도 런타임에 자동 생성 (빌드 불필요)
-export const dynamicParams = true;
-
-// generateStaticParams 제거 - 빌드에 의존하지 않음
-// 모든 페이지는 첫 요청 시 on-demand로 생성되고 캐싱됨
 
 // 메타데이터만 먼저 가져오는 함수 (blocks 제외 - 진짜 Streaming!)
 async function getPageMetadata(slug: string) {
@@ -92,7 +79,11 @@ async function getMarkdownContent(slug: string) {
   return markdown;
 }
 
-export default async function CLogDetailPage({ params }: CLogDetailPageProps) {
+export default async function CLogDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug as string;
 
