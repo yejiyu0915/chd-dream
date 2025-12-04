@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
+import type { Metadata } from 'next';
 import rehypeExtractToc from '@stefanprobst/rehype-extract-toc';
 import withTocExport from '@stefanprobst/rehype-extract-toc/mdx';
 import rehypeSlug from 'rehype-slug';
@@ -14,6 +15,8 @@ import CLogDetailFooter from '@/app/info/c-log/[slug]/components/CLogDetailFoote
 import CLogContent from '@/app/info/c-log/[slug]/components/CLogContent';
 import ContentSkeleton from '@/common/components/skeletons/ContentSkeleton';
 import { getCurrentSeason } from '@/common/utils/season';
+import { generateDynamicMetadata } from '@/common/data/metadata';
+import { extractDetailPageMetadataWithCategory } from '@/lib/notionUtils';
 
 // 메타데이터만 먼저 가져오는 함수 (blocks 제외 - 진짜 Streaming!)
 async function getPageMetadata(slug: string) {
@@ -24,38 +27,10 @@ async function getPageMetadata(slug: string) {
   }
 
   const { page } = notionData;
-  const titleProperty = page.properties.Title;
-  const categoryProperty = page.properties.Category;
-  const dateProperty = page.properties.Date;
-  const tagsProperty = page.properties.Tags;
-
-  const title =
-    (titleProperty?.type === 'title' && titleProperty.title[0]?.plain_text) || '제목 없음';
-  const category = (categoryProperty?.type === 'select' && categoryProperty.select?.name) || '기타';
-  const date =
-    dateProperty?.type === 'date' && dateProperty.date?.start
-      ? new Date(dateProperty.date.start)
-          .toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' })
-          .replace(/\. /g, '.')
-          .replace(/\.$/, '')
-      : '날짜 없음';
-  const tags =
-    (tagsProperty?.type === 'multi_select' &&
-      tagsProperty.multi_select?.map((tag: { name: string }) => tag.name)) ||
-    [];
-
-  // 현재 계절을 가져와서 기본 이미지 경로 설정
   const currentSeason = getCurrentSeason();
-  let imageUrl = `/images/title/${currentSeason}/info.jpg`;
-  if (page.cover) {
-    if (page.cover.type === 'external') {
-      imageUrl = page.cover.external.url || `/images/title/${currentSeason}/info.jpg`;
-    } else if (page.cover.type === 'file') {
-      imageUrl = `/api/notion-image?pageId=${page.id}&type=cover`;
-    }
-  }
 
-  return { title, category, date, tags, imageUrl };
+  // 공통 함수 사용 (카테고리 포함)
+  return extractDetailPageMetadataWithCategory(page, currentSeason);
 }
 
 // Markdown 콘텐츠를 생성하는 함수 (무거운 작업 - Suspense 안에서 실행)
@@ -77,6 +52,29 @@ async function getMarkdownContent(slug: string) {
   });
 
   return markdown;
+}
+
+// 동적 메타데이터 생성
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug as string;
+
+  const metadata = await getPageMetadata(slug);
+
+  if (!metadata) {
+    return {
+      title: '게시글을 찾을 수 없습니다',
+    };
+  }
+
+  const { title, category, date, tags, imageUrl } = metadata;
+  const description = `${category} | ${date} | ${tags.join(', ')}`;
+
+  return generateDynamicMetadata(title, description, imageUrl);
 }
 
 export default async function CLogDetailPage({

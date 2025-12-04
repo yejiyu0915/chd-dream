@@ -29,19 +29,19 @@ export default function ImageWithTheme({
   loading,
   sizes,
 }: ImageWithThemeProps) {
-  // 클라이언트에서 현재 테마에 맞는 이미지 URL 계산
-  const [finalSrc, setFinalSrc] = useState(src);
+  const [mounted, setMounted] = useState(false);
 
+  // 클라이언트 마운트 후에만 계절별 이미지 적용 (hydration mismatch 방지)
   useEffect(() => {
-    // src가 default 이미지 패턴인지 확인 (/images/title/{season}/info.jpg)
-    const isDefaultImage = /\/images\/title\/(spring|summer|autumn|winter)\/info\.jpg/.test(src);
-    
-    if (isDefaultImage) {
-      // 현재 테마에 맞는 계절로 이미지 URL 업데이트
-      const currentSeason = getClientSeason();
-      setFinalSrc(`/images/title/${currentSeason}/info.jpg`);
-    }
-  }, [src]);
+    setMounted(true);
+  }, []);
+
+  // src가 default 이미지 패턴인지 확인 (/images/title/{season}/info.jpg)
+  const isDefaultImage = /\/images\/title\/(spring|summer|autumn|winter)\/info\.jpg/.test(src);
+
+  // 마운트된 후에만 계절에 맞는 이미지로 변경 (서버와 클라이언트 일치)
+  const finalSrc =
+    mounted && isDefaultImage ? `/images/title/${getClientSeason()}/info.jpg` : src;
 
   return (
     <Image

@@ -103,7 +103,7 @@ export const pageMeta: Record<string, PageMeta> = {
 
   '/worship/timetable': {
     ...generatedMeta['/worship/timetable'],
-    description: '집회 시간표를 확인할 수 있습니다.',
+    description: '예배 및 집회 시간표를 확인할 수 있습니다.',
   },
   '/worship/bulletin': {
     ...generatedMeta['/worship/bulletin'],

@@ -151,9 +151,11 @@
       @include font-vw(15, $weight: 500);
       border: vw(2) solid var(--accent-tertiary);
       width: auto;
+      min-width: max-content; // 최소 너비 보장 (텍스트가 잘리지 않도록)
       text-align: left;
       background: var(--bg-page);
       color: var(--accent-brand);
+      white-space: nowrap; // 텍스트 줄바꿈 방지
 
       &::before {
         display: none;

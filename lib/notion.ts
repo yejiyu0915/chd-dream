@@ -938,7 +938,7 @@ async function getNotionPageAndContentBySlugInternal(
               blockWithChildren.children = childBlocks;
             } catch (error) {
               // children을 가져올 수 없는 경우 무시
-              console.warn(`Could not fetch children for block ${block.id}:`, error);
+              void error;
             }
           } else if (block.type === 'table') {
             // 테이블의 경우 table_rows를 별도로 가져오기
@@ -949,7 +949,8 @@ async function getNotionPageAndContentBySlugInternal(
               const tableRows = tableRowsResponse.results;
               blockWithChildren.table_rows = tableRows;
             } catch (error) {
-              console.warn(`Could not fetch table rows for block ${block.id}:`, error);
+              // 테이블 행을 가져올 수 없는 경우 무시
+              void error;
             }
           }
 

@@ -34,7 +34,9 @@ export const convertBlocksToMdxHtml = (blocks: unknown[]): string => {
   if (conversionCache.size > 50) {
     // 캐시가 너무 커지면 가장 오래된 항목 제거
     const firstKey = conversionCache.keys().next().value;
-    conversionCache.delete(firstKey);
+    if (firstKey !== undefined) {
+      conversionCache.delete(firstKey);
+    }
   }
   conversionCache.set(cacheKey, finalResult);
 

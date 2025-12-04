@@ -22,7 +22,7 @@ export const menuData: MenuItem[] = [
     subMenu: [
       { name: '교회 연혁', href: '/about/history' },
       { name: '교회 비전', href: '/about/vision' },
-      { name: '담임 목사 인사말', href: '/about/pastor' },
+      { name: '담임 목사님 인사말', href: '/about/pastor' },
       { name: '교구 소개', href: '/about/group' },
       { name: '섬기는 분들 ', href: '/about/servant' },
       // { name: '교구 소개(준비중)', href: '/about/group' },
@@ -166,7 +166,7 @@ export const quickLinkData: QuickLinkItem[][] = [
       title: '예배 안내',
       icon: 'book',
       href: '/worship/timetable',
-      description: '주일 예배, 학생부 예배, 평일 기도회 일정을 안내합니다.',
+      description: '주일 예배, 예꿈 예배, 평일 기도회 일정을 안내합니다.',
       size: 'lg',
     },
     {
@@ -174,7 +174,6 @@ export const quickLinkData: QuickLinkItem[][] = [
       icon: 'users',
       href: '/about/group',
       description: '교구 소개와 교구 활동을 확인할 수 있습니다.',
-      disabled: true,
     },
   ],
   [

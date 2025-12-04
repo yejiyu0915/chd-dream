@@ -23,13 +23,13 @@ export default function GroupNav({ data }: GroupNavProps) {
   const pathname = usePathname();
   const scrollRef = useRef<HTMLUListElement>(null);
 
-  // 활성화된 항목을 맨 왼쪽으로 스크롤
+  // 활성화된 항목을 맨 왼쪽으로 스크롤 (모바일에서만)
   useEffect(() => {
-    if (scrollRef.current) {
-      const activeElement = scrollRef.current.querySelector(`a.${g.active}`);
+    if (scrollRef.current && window.innerWidth <= 768) {
+      const activeElement = scrollRef.current.querySelector(`a.${g.active}`) as HTMLElement;
       if (
         activeElement &&
-        !isElementAlignedToStart(activeElement as HTMLElement, scrollRef.current)
+        !isElementAlignedToStart(activeElement, scrollRef.current)
       ) {
         activeElement.scrollIntoView({
           behavior: 'smooth',
@@ -38,7 +38,7 @@ export default function GroupNav({ data }: GroupNavProps) {
         });
       }
     }
-  }, [pathname, data]);
+  }, [pathname]);
 
   // 내비게이션 컨테이너 애니메이션 variants
   const containerVariants = {

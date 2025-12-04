@@ -2,6 +2,9 @@ import React from 'react';
 import { getScheduleData } from '@/lib/notion';
 import ScheduleClientWrapper from '@/app/info/schedule/components/ScheduleClientWrapper';
 import s from '@/app/info/schedule/Schedule.module.scss';
+import { generatePageMetadata } from '@/common/data/metadata';
+
+export const metadata = generatePageMetadata('/info/schedule');
 
 // 서버 컴포넌트 - 데이터를 서버에서 미리 fetch
 export default async function SchedulePage() {

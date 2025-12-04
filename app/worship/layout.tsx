@@ -1,9 +1,12 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import SectionLayout from '@/common/components/layouts/SectionLayout';
 
 interface WorshipLayoutProps {
   children: React.ReactNode;
 }
+
+// 메타데이터는 각 페이지에서 개별적으로 설정
 
 /**
  * Worship 섹션 레이아웃 (Server Component)

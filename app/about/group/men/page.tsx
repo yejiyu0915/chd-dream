@@ -23,6 +23,7 @@ export default function MenPage() {
     return <div>교구 정보를 찾을 수 없습니다.</div>;
   }
 
-  return <GroupContent data={currentGroup} prevGroup={prevGroup} nextGroup={nextGroup} />;
+  return (
+    <GroupContent data={currentGroup} prevGroup={prevGroup} nextGroup={nextGroup} />
+  );
 }
-

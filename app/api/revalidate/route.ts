@@ -19,7 +19,8 @@ export async function GET(request: NextRequest) {
 
   // 태그 기반 재검증 (선택 사항: fetch 요청에 태그를 지정했을 경우)
   if (tag) {
-    revalidateTag(tag);
+    // Next.js 16: revalidateTag는 이제 두 번째 인자로 옵션을 받습니다
+    revalidateTag(tag, {});
     return NextResponse.json({ revalidated: true, now: Date.now(), tag });
   }
 

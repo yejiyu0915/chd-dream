@@ -1,6 +1,9 @@
 import { Suspense } from 'react';
 import { getCLogData } from '@/lib/notion';
 import CLogListClient from '@/app/info/c-log/components/CLogListClient';
+import { generatePageMetadata } from '@/common/data/metadata';
+
+export const metadata = generatePageMetadata('/info/c-log');
 
 // 서버 컴포넌트로 변경 - 데이터를 서버에서 미리 fetch
 export default async function CLogListPage() {

@@ -221,14 +221,16 @@ export default function BulletinClient({ initialBulletinList }: BulletinClientPr
 
   // 에러 상태 처리
   if (isError) {
+    const errorMessage =
+      error && typeof error === 'object' && 'message' in error
+        ? String((error as { message: string }).message)
+        : '알 수 없는 오류가 발생했습니다.';
     return (
       <div className={`${b.bulletin} detail-inner`}>
         <div className={b.inner}>
           <div style={{ textAlign: 'center', padding: '40px 20px' }}>
             <p style={{ marginBottom: '10px' }}>주보 데이터를 가져오는데 실패했습니다.</p>
-            <p style={{ color: '#999', fontSize: '14px' }}>
-              {error?.message || '알 수 없는 오류가 발생했습니다.'}
-            </p>
+            <p style={{ color: '#999', fontSize: '14px' }}>{errorMessage}</p>
           </div>
         </div>
       </div>
