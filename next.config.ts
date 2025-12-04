@@ -4,8 +4,8 @@ import createMDX from '@next/mdx';
 const nextConfig: NextConfig = {
   /* config options here */
   typescript: {
-    // 경고: 타입 에러가 있어도 프로덕션 빌드를 허용
-    ignoreBuildErrors: true,
+    // 타입 에러 체크 활성화 (배포 안정성 향상)
+    ignoreBuildErrors: false,
   },
   // React 컴파일러 활성화 (Next.js 16에서 최상위로 이동)
   reactCompiler: true,
@@ -68,6 +68,44 @@ const nextConfig: NextConfig = {
         source: '/info',
         destination: '/info/news',
         permanent: true,
+      },
+    ];
+  },
+  // 보안 헤더 설정
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on',
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin',
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()',
+          },
+        ],
       },
     ];
   },

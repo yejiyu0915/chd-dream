@@ -7,7 +7,7 @@ import { KVSliderItem, BulletinItem, CLogItem, NewsItem } from '@/lib/notion';
 
 interface MainContentWrapperProps {
   kvSliderItems: KVSliderItem[];
-  bulletinData: BulletinItem;
+  bulletinData: BulletinItem | null;
   cLogData: CLogItem[];
   newsData: NewsItem[];
 }

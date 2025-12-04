@@ -1,11 +1,12 @@
 import { generatePageMetadata } from '@/common/data/metadata';
 
-export const metadata = generatePageMetadata('/worship/bulletin');
+export const metadata = generatePageMetadata('/worship/timetable');
 
-export default function BulletinLayout({
+export default function TimetableLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return <>{children}</>;
 }
+

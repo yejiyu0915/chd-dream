@@ -129,40 +129,50 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
           </ul>
           <div className={h.mobileSns}>
             <ul className={h.mobileSns__list}>
-              {snsLinks.map((snsLink, index) => (
-                <li key={index} className={h.mobileSns__item}>
-                  <Link href={snsLink.href} className={h.mobileSns__link} target="_blank">
-                    <span className="sr-only">행복으로가는교회 {snsLink.name} 바로가기</span>{' '}
-                    <Icon name={snsLink.icon} className={h.mobileSns__icon} />
-                  </Link>
-                </li>
-              ))}
+              {snsLinks
+                .filter((snsLink) => !snsLink.disabled) // 준비중인 SNS는 모바일에서 노출하지 않음
+                .map((snsLink, index) => (
+                  <li key={index} className={h.mobileSns__item}>
+                    <Link href={snsLink.href} className={h.mobileSns__link} target="_blank">
+                      <span className="sr-only">행복으로가는교회 {snsLink.name} 바로가기</span>
+                      <Icon name={snsLink.icon} className={h.mobileSns__icon} />
+                    </Link>
+                  </li>
+                ))}
             </ul>
           </div>
 
           <div className={h.mobilePrev__links}>
-            {prevLinks.map((prevInfo, index) => (
-              <div key={index} className={h.mobilePrev__group}>
-                <div className={h.mobilePrev__row}>
-                  <p className={h.mobilePrev__title}>{prevInfo.name}</p>
-                  <ul className={h.mobilePrev__list}>
-                    {prevInfo.links.map((link, linkIndex) => (
-                      <li key={linkIndex} className={h.mobilePrev__item}>
-                        <Link
-                          href={link.href}
-                          className={h.mobilePrev__link}
-                          target="_blank"
-                          title={`${prevInfo.name} ${link.name} 바로가기`}
-                        >
-                          <span className="sr-only">{link.name}</span>
-                          <Icon name={link.icon} className={h.mobilePrev__icon} />
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+            {prevLinks.map((prevInfo, index) => {
+              // 활성화된 링크만 필터링
+              const activeLinks = prevInfo.links.filter((link) => !link.disabled);
+              
+              // 활성화된 링크가 없으면 해당 그룹 자체를 렌더링하지 않음
+              if (activeLinks.length === 0) return null;
+
+              return (
+                <div key={index} className={h.mobilePrev__group}>
+                  <div className={h.mobilePrev__row}>
+                    <p className={h.mobilePrev__title}>{prevInfo.name}</p>
+                    <ul className={h.mobilePrev__list}>
+                      {activeLinks.map((link, linkIndex) => (
+                        <li key={linkIndex} className={h.mobilePrev__item}>
+                          <Link
+                            href={link.href}
+                            className={h.mobilePrev__link}
+                            target="_blank"
+                            title={`${prevInfo.name} ${link.name} 바로가기`}
+                          >
+                            <span className="sr-only">{link.name}</span>
+                            <Icon name={link.icon} className={h.mobilePrev__icon} />
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </nav>
       </div>

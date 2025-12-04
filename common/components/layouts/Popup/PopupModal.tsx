@@ -81,8 +81,8 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
             previousActiveElement.current.focus();
             return true;
           } catch (e) {
-            // 포커스 실패 시 대체 로직으로
-            console.log('Failed to restore focus, falling back to default');
+            // 포커스 실패 시 무시
+            void e;
           }
         }
 

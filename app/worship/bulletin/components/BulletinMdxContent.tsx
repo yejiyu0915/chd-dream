@@ -19,7 +19,7 @@ const htmlToMarkdown = (html: string): string => {
     // HTML 태그 제거
     const text = content.replace(/<[^>]*>/g, '').trim();
     // 여러 줄로 나누어 각 줄 앞에 > 추가
-    return text.split('\n').map(line => `> ${line.trim()}`).join('\n');
+    return text.split('\n').map((line: string) => `> ${line.trim()}`).join('\n');
   });
   
   // 나머지 HTML 태그는 그대로 유지 (MDX는 HTML을 지원함)

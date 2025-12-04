@@ -63,6 +63,8 @@
   @include mq(mo) {
     gap: vw(20);
     width: 100%;
+    padding-block-start: vw(20);
+    border-top: vw(2) dashed var(--accent-tertiary);
   }
 }
 

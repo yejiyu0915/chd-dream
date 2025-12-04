@@ -39,9 +39,9 @@ export default function GroupPage() {
 
   return (
     <div className={g.content}>
-      {/* <h2>교구 소개</h2>
-      <p>우리 교회의 다양한 교구를 소개합니다.</p> */}
-      <p className={g.desc}>
+        {/* <h2>교구 소개</h2>
+        <p>우리 교회의 다양한 교구를 소개합니다.</p> */}
+        <p className={g.desc}>
         행복으로가는교회의 교구는 서로를 품고, 함께 성장하며, 하나님 사랑 안에서 하나되는 가족과
         같은 공동체입니다. <br />
         교제와 나눔, 섬김으로 신앙의 기쁨을 누리며 사랑으로 연결되는 모든 교구를 소개합니다.

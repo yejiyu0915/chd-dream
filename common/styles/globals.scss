@@ -498,6 +498,13 @@ main {
     transform: translateY(0);
   }
 
+  // 키보드 포커스 스타일 (접근성) - 테마 선택 버튼과 동일
+  &:focus-visible {
+    outline: 3px solid var(--accent-brand);
+    outline-offset: 4px;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.8);
+  }
+
   &--visible {
     opacity: 1;
     visibility: visible;

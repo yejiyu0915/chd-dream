@@ -12,11 +12,13 @@ export const useHolidayInfo = () => {
   const getHolidayInfo = useCallback(
     (date: Date) => {
       const holidayInfo = holidays.isHoliday(date);
-      if (holidayInfo) {
+      // holidayInfo는 배열로 반환될 수 있으므로 첫 번째 항목 사용
+      if (holidayInfo && Array.isArray(holidayInfo) && holidayInfo.length > 0) {
+        const holiday = holidayInfo[0];
         return {
           isHoliday: true,
-          name: holidayInfo.name,
-          type: holidayInfo.type,
+          name: holiday.name,
+          type: holiday.type,
         };
       }
       return { isHoliday: false, name: '', type: '' };

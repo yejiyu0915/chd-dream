@@ -7,8 +7,10 @@ const notion = new Client({ auth: process.env.NOTION_TOKEN });
 
 export async function GET(
   request: Request,
-  { params: _params }: { params: { slug: string[] } } // params를 _params로 변경
+  { params }: { params: Promise<{ slug: string[] }> } // Next.js 16: params가 Promise로 변경됨
 ) {
+  // params는 사용하지 않지만 Next.js의 라우트 규칙상 필요
+  await params;
   const { searchParams } = new URL(request.url);
   const pageId = searchParams.get('pageId') || '';
   const imageType = searchParams.get('type'); // 'cover' 또는 'property'

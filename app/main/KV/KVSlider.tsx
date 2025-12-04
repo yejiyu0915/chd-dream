@@ -115,10 +115,7 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
   }
 
   if (isError) {
-    let errorMessage = '슬라이드 데이터를 가져오는 데 실패했습니다.';
-    if (error) {
-      errorMessage = error.message;
-    }
+    const errorMessage = '슬라이드 데이터를 가져오는 데 실패했습니다.';
     return (
       <div className={kv.background} style={{ height: kvHeight, minHeight: kvHeight }}>
         <p className={kv.emptyState}>에러: {errorMessage}</p>

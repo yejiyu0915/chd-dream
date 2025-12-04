@@ -9,7 +9,7 @@ import QuickLink from '@/app/main/quick-link/QuickLink';
 import { BulletinItem, CLogItem } from '@/lib/notion';
 
 interface MainContentInnerProps {
-  bulletinData: BulletinItem;
+  bulletinData: BulletinItem | null;
   cLogData: CLogItem[];
   kvHeight: string;
 }

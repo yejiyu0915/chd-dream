@@ -1,11 +1,12 @@
 import { generatePageMetadata } from '@/common/data/metadata';
 
-export const metadata = generatePageMetadata('/worship/bulletin');
+export const metadata = generatePageMetadata('/about/group/student');
 
-export default function BulletinLayout({
+export default function StudentLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return <>{children}</>;
 }
+
