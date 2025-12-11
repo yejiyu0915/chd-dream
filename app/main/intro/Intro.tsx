@@ -6,7 +6,7 @@ export default function Intro() {
     <FamilySection
       scrollDelay={-0.5}
       sectionHeight={650}
-      mobileHeight={800}
+      mobileHeight={650}
       partBreakpoints={[0.3, 0.63, 0.96]} // 자녀 유지 10%만
     />
   );

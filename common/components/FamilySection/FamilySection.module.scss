@@ -23,6 +23,10 @@
   height: calc(100vh - vw(--header-height));
   min-height: vw(500);
   overflow: hidden;
+  // 플리커 방지를 위한 GPU 가속
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 // 10x7 그리드 백그라운드
@@ -47,6 +51,9 @@
   border-radius: vw(8);
   overflow: hidden;
   opacity: 0.5;
+  // 플리커 방지: 레이어 합성 강제 + 콘텐츠 격리
+  transform: translateZ(0);
+  contain: layout paint;
 }
 
 // 그리드 이미지 컨테이너
@@ -59,8 +66,12 @@
   left: 0;
   width: 100%;
   height: 100%;
-  will-change: opacity;
-  transition: opacity 0.5s ease-out;
+  will-change: opacity, transform;
+  // 플리커 방지: GPU 가속 + 짧은 transition
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transition: opacity 0.3s ease-out; // 0.5s → 0.3s (빠른 전환)
 
   &::before {
     content: '';
@@ -79,6 +90,8 @@
     object-fit: cover;
     border-radius: vw(8);
     filter: grayscale(80%);
+    // 플리커 방지: 이미지 자체에도 GPU 가속
+    transform: translateZ(0);
   }
 }
 
@@ -117,8 +130,12 @@
   // 캔버스가 보이도록 래퍼에 크기 지정
   width: 100%;
   height: 100%;
-  will-change: opacity;
+  will-change: opacity, transform;
   transition: opacity 0.3s ease-out;
+  // 플리커 방지: GPU 가속
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 // 물감 번지는 배경 (Canvas)
@@ -210,6 +227,8 @@
     grid-template-rows: repeat(12, 1fr);
     padding: vw(20);
     gap: vw(4);
+    // 모바일 플리커 방지: GPU 가속
+    transform: translateZ(0);
   }
 
   .familyGridCell {
@@ -217,6 +236,9 @@
   }
 
   .familyGridImage {
+    // 모바일에서 더 빠른 전환으로 플리커 감소
+    transition: opacity 0.2s ease-out;
+
     img {
       border-radius: vw(4);
     }

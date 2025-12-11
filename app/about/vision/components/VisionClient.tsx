@@ -1,9 +1,19 @@
 'use client';
 
-import { useEffect, useRef, useState, ReactNode } from 'react';
+import { useEffect, useRef, useState, ReactNode, useCallback } from 'react';
 import { motion, useInView } from 'framer-motion';
 import v from '@/app/about/vision/Vision.module.scss';
 import FamilySection from '@/common/components/FamilySection';
+
+// ============================================
+// 이미지 프리로드 함수 (초기 버벅임 방지)
+// ============================================
+const preloadImages = (urls: string[]) => {
+  urls.forEach((url) => {
+    const img = new Image();
+    img.src = url;
+  });
+};
 
 // ============================================
 // 반짝이는 별 파티클 컴포넌트
@@ -137,33 +147,46 @@ const CROSS_LINES = [
 
 function CrossSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const rafRef = useRef<number>(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [imageOpacity, setImageOpacity] = useState(0);
 
+  // 배경 이미지 프리로드 (초기 버벅임 방지)
   useEffect(() => {
+    preloadImages(['/images/vision/cross.jpg']);
+  }, []);
+
+  useEffect(() => {
+    // requestAnimationFrame으로 스크롤 핸들러 최적화
     const handleScroll = () => {
-      if (!sectionRef.current) return;
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        if (!sectionRef.current) return;
 
-      const rect = sectionRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
+        const rect = sectionRef.current.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
 
-      // 이미지 fade in (0 ~ 80vh 구간에서)
-      const fadeInScrolled = -rect.top;
-      const fadeInHeight = windowHeight * 0.8;
-      const imgOpacity = Math.max(0, Math.min(fadeInScrolled / fadeInHeight, 1));
-      setImageOpacity(imgOpacity);
+        // 이미지 fade in (0 ~ 80vh 구간에서)
+        const fadeInScrolled = -rect.top;
+        const fadeInHeight = windowHeight * 0.8;
+        const imgOpacity = Math.max(0, Math.min(fadeInScrolled / fadeInHeight, 1));
+        setImageOpacity(imgOpacity);
 
-      // 텍스트 애니메이션 (80vh 이후부터)
-      const paddingOffset = windowHeight * 0.8;
-      const scrolled = -rect.top - paddingOffset;
-      const animationHeight = windowHeight * 2;
-      const progress = Math.max(0, Math.min(scrolled / animationHeight, 1));
-      setScrollProgress(progress);
+        // 텍스트 애니메이션 (80vh 이후부터)
+        const paddingOffset = windowHeight * 0.8;
+        const scrolled = -rect.top - paddingOffset;
+        const animationHeight = windowHeight * 2;
+        const progress = Math.max(0, Math.min(scrolled / animationHeight, 1));
+        setScrollProgress(progress);
+      });
     };
 
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const totalChars = CROSS_LINES.reduce((sum, line) => sum + line.length, 0);
@@ -244,67 +267,75 @@ function PinSection({
   contentClassName,
 }: PinSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
+  const rafRef = useRef<number>(0);
   const [opacity, setOpacity] = useState(isFirst ? 1 : 0);
   const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
+    // requestAnimationFrame으로 스크롤 핸들러 최적화 (초기 버벅임 방지)
     const handleScroll = () => {
-      if (!sectionRef.current) return;
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        if (!sectionRef.current) return;
 
-      const rect = sectionRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      const scrolled = -rect.top;
+        const rect = sectionRef.current.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        const scrolled = -rect.top;
 
-      const fadeOutStart = windowHeight * 3;
-      const fadeOutEnd = windowHeight * 3.5;
+        const fadeOutStart = windowHeight * 3;
+        const fadeOutEnd = windowHeight * 3.5;
 
-      // 텍스트 효과 진행률
-      const textEffectStart = 0;
-      const textEffectEnd = windowHeight * 1.5;
-      let textProgress = 0;
-      if (scrolled <= textEffectStart) {
-        textProgress = 0;
-      } else if (scrolled >= textEffectEnd) {
-        textProgress = 1;
-      } else {
-        textProgress = (scrolled - textEffectStart) / (textEffectEnd - textEffectStart);
-      }
-      setScrollProgress(Math.max(0, Math.min(1, textProgress)));
-
-      // Opacity 계산
-      let newOpacity = 0;
-
-      if (isFirst) {
-        if (scrolled <= fadeOutStart) {
-          newOpacity = 1;
-        } else if (scrolled > fadeOutStart && scrolled < fadeOutEnd) {
-          newOpacity = 1 - (scrolled - fadeOutStart) / (fadeOutEnd - fadeOutStart);
+        // 텍스트 효과 진행률
+        const textEffectStart = 0;
+        const textEffectEnd = windowHeight * 1.5;
+        let textProgress = 0;
+        if (scrolled <= textEffectStart) {
+          textProgress = 0;
+        } else if (scrolled >= textEffectEnd) {
+          textProgress = 1;
         } else {
-          newOpacity = 0;
+          textProgress = (scrolled - textEffectStart) / (textEffectEnd - textEffectStart);
         }
-      } else {
-        const fadeInStart = -windowHeight * 0.5;
-        const fadeInEndPoint = 0;
+        setScrollProgress(Math.max(0, Math.min(1, textProgress)));
 
-        if (scrolled <= fadeInStart) {
-          newOpacity = 0;
-        } else if (scrolled > fadeInStart && scrolled < fadeInEndPoint) {
-          newOpacity = (scrolled - fadeInStart) / (fadeInEndPoint - fadeInStart);
-        } else if (scrolled >= fadeInEndPoint && scrolled <= fadeOutStart) {
-          newOpacity = 1;
-        } else if (scrolled > fadeOutStart && scrolled < fadeOutEnd) {
-          newOpacity = 1 - (scrolled - fadeOutStart) / (fadeOutEnd - fadeOutStart);
+        // Opacity 계산
+        let newOpacity = 0;
+
+        if (isFirst) {
+          if (scrolled <= fadeOutStart) {
+            newOpacity = 1;
+          } else if (scrolled > fadeOutStart && scrolled < fadeOutEnd) {
+            newOpacity = 1 - (scrolled - fadeOutStart) / (fadeOutEnd - fadeOutStart);
+          } else {
+            newOpacity = 0;
+          }
         } else {
-          newOpacity = 0;
-        }
-      }
+          const fadeInStart = -windowHeight * 0.5;
+          const fadeInEndPoint = 0;
 
-      setOpacity(Math.max(0, Math.min(1, newOpacity)));
+          if (scrolled <= fadeInStart) {
+            newOpacity = 0;
+          } else if (scrolled > fadeInStart && scrolled < fadeInEndPoint) {
+            newOpacity = (scrolled - fadeInStart) / (fadeInEndPoint - fadeInStart);
+          } else if (scrolled >= fadeInEndPoint && scrolled <= fadeOutStart) {
+            newOpacity = 1;
+          } else if (scrolled > fadeOutStart && scrolled < fadeOutEnd) {
+            newOpacity = 1 - (scrolled - fadeOutStart) / (fadeOutEnd - fadeOutStart);
+          } else {
+            newOpacity = 0;
+          }
+        }
+
+        setOpacity(Math.max(0, Math.min(1, newOpacity)));
+      });
     };
 
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, [isFirst]);
 
   return (
@@ -312,12 +343,12 @@ function PinSection({
       ref={sectionRef}
       className={`${v.pinSection} ${align === 'left' ? v.alignLeft : v.alignRight} ${isLast ? v.isLast : ''}`}
     >
+      {/* visibility 대신 pointer-events로 변경 (플리커 방지) */}
       <div
         className={v.pinWrapper}
         style={{
           opacity: isLast ? 1 : opacity,
-          visibility: opacity === 0 && !isLast ? 'hidden' : 'visible',
-          transition: 'opacity 0.2s ease-out',
+          pointerEvents: opacity === 0 && !isLast ? 'none' : 'auto',
         }}
       >
         <div className={`${v.pinContent} ${contentClassName || ''}`}>
@@ -435,7 +466,8 @@ function TextReveal({
             transform: `scale(${getImageScale()})`,
           }}
         >
-          <img src={image} alt="" />
+          {/* 초기 로딩 최적화: eager + sync 디코딩 */}
+          <img src={image} alt="" loading="eager" decoding="sync" />
         </div>
       )}
     </div>
@@ -449,9 +481,15 @@ export default function VisionClient() {
   const visionRef = useRef<HTMLDivElement | null>(null);
   const pathRef = useRef<SVGPathElement | null>(null);
   const lineRef = useRef<HTMLDivElement | null>(null);
+  const rafRef = useRef<number>(0);
   const [pathLength, setPathLength] = useState<number>(0);
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [isLineReady, setIsLineReady] = useState<boolean>(false);
+
+  // 1~3섹션 이미지 프리로드 (초기 버벅임 방지)
+  useEffect(() => {
+    preloadImages(['/images/vision/01.png', '/images/vision/02.png', '/images/vision/03.png']);
+  }, []);
 
   // 모바일 여부 확인
   useEffect(() => {
@@ -478,41 +516,45 @@ export default function VisionClient() {
     }
   }, [isMobile]);
 
-  // 스크롤 이벤트로 곡선 그려지는 효과
+  // 스크롤 이벤트로 곡선 그려지는 효과 (requestAnimationFrame 최적화)
   useEffect(() => {
     if (pathLength === 0 || !pathRef.current || !visionRef.current) return;
 
     const handleScroll = () => {
-      if (!visionRef.current) return;
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        if (!visionRef.current) return;
 
-      const windowHeight = window.innerHeight;
-      const visionRect = visionRef.current.getBoundingClientRect();
-      const visionHeight = visionRef.current.offsetHeight;
+        const windowHeight = window.innerHeight;
+        const visionRect = visionRef.current.getBoundingClientRect();
+        const visionHeight = visionRef.current.offsetHeight;
 
-      const scrollStart = -visionRect.top;
-      const scrollEnd = visionHeight - windowHeight;
-      const scrollProgress = Math.max(0, Math.min(scrollStart / scrollEnd, 1));
+        const scrollStart = -visionRect.top;
+        const scrollEnd = visionHeight - windowHeight;
+        const scrollProgress = Math.max(0, Math.min(scrollStart / scrollEnd, 1));
 
-      const isMobileView = window.innerWidth <= 768;
-      const speedMultiplier = isMobileView ? 2.5 : 1.0;
+        const isMobileView = window.innerWidth <= 768;
+        const speedMultiplier = isMobileView ? 2.5 : 1.0;
 
-      if (pathRef.current) {
-        const lineProgress = Math.min(scrollProgress * speedMultiplier, 1);
-        const drawLength = pathLength - pathLength * lineProgress;
-        pathRef.current.style.strokeDashoffset = `${Math.max(0, drawLength)}`;
-      }
+        if (pathRef.current) {
+          const lineProgress = Math.min(scrollProgress * speedMultiplier, 1);
+          const drawLength = pathLength - pathLength * lineProgress;
+          pathRef.current.style.strokeDashoffset = `${Math.max(0, drawLength)}`;
+        }
 
-      if (lineRef.current) {
-        const lineProgress = Math.min(scrollProgress * speedMultiplier, 1);
-        const translateY = lineProgress * windowHeight * 2;
-        lineRef.current.style.transform = `translateY(-${translateY}px)`;
-      }
+        if (lineRef.current) {
+          const lineProgress = Math.min(scrollProgress * speedMultiplier, 1);
+          const translateY = lineProgress * windowHeight * 2;
+          lineRef.current.style.transform = `translateY(-${translateY}px)`;
+        }
+      });
     };
 
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
+      cancelAnimationFrame(rafRef.current);
       window.removeEventListener('scroll', handleScroll);
     };
   }, [pathLength]);
@@ -641,7 +683,7 @@ export default function VisionClient() {
         {/* Solid 배경 (3섹션 위로 덮이듯이 올라옴) */}
         <div className={v.solidBgSection}>
           {/* 4. 가정 회복 (독립 컴포넌트) */}
-          <FamilySection sectionHeight={750} mobileHeight={950} partBreakpoints={[0.2, 0.5, 0.8]} />
+          <FamilySection sectionHeight={750} mobileHeight={750} partBreakpoints={[0.2, 0.5, 0.8]} />
         </div>
 
         {/* 5. 십자가 섹션 */}
