@@ -683,7 +683,7 @@ export default function VisionClient() {
         {/* Solid 배경 (3섹션 위로 덮이듯이 올라옴) */}
         <div className={v.solidBgSection}>
           {/* 4. 가정 회복 (독립 컴포넌트) */}
-          <FamilySection sectionHeight={750} mobileHeight={750} partBreakpoints={[0.2, 0.5, 0.8]} />
+          <FamilySection sectionHeight={750} mobileHeight={950} partBreakpoints={[0.2, 0.5, 0.8]} />
         </div>
 
         {/* 5. 십자가 섹션 */}
