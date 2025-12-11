@@ -362,6 +362,7 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
             <motion.div className={styles.actions} variants={itemVariants}>
               <Link href={newsItem.link} className={styles.readButton} onClick={handleClose}>
                 자세히 보기
+                <Icon name="arrow-up-right" className={styles.readButtonIcon} aria-hidden="true" />
               </Link>
             </motion.div>
 
