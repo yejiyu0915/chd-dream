@@ -1005,10 +1005,10 @@
 // 하단 투명→흰색 그라데이션
 .crossBottomGradient {
   position: absolute;
-  bottom: 0;
+  bottom: -2px; // bounce 효과 시 1px 틈 방지 (눈속임)
   left: 0;
   width: 100%;
-  height: vw(150);
+  height: calc(#{vw(150)} + 2px); // 높이도 보정
   background: linear-gradient(to top, #fff 0%, transparent 100%);
   z-index: 2;
 }
