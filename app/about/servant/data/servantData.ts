@@ -5,7 +5,7 @@ const IMAGE_BASE_PATH = '/images/servant';
 
 // 이미지 파일명 매핑 (id를 키로 사용)
 const servantImages: Record<string, string> = {
-  'pastor-1': '00.png', // 김영구
+  // 'pastor-1': '00.png', // 김영구
   'pastor-2': '01.png', // 김선숙
   'pastor-3': '02.jpg', // 김준섭
   'license-pastor-1': '12.jpg', // 송순옥
@@ -49,7 +49,7 @@ export function getDepartmentLink(department?: string): string | undefined {
 export interface ServantType {
   id: string; // 고유 ID
   name: string; // 이름
-  category: '담임목사' | '총무목사' | '부목사' | '강도사' | '전도사'; // 카테고리
+  category: '총무목사' | '부목사' | '강도사' | '전도사'; // 카테고리
   department?: string; // 담당 교구 (있는 경우만)
   image?: string; // 이미지 경로 (자동으로 설정됨)
   groupLink?: string; // 교구소개 페이지 링크 (자동으로 설정됨)
@@ -58,12 +58,12 @@ export interface ServantType {
 // 카테고리별로 그룹화된 데이터
 export const servantData: ServantType[] = [
   // 담임목사
-  {
-    id: 'pastor-1',
-    name: '김영구 목사',
-    category: '담임목사',
-    image: getServantImage('pastor-1'),
-  },
+  // {
+  //   id: 'pastor-1',
+  //   name: '김영구 목사',
+  //   category: '담임목사',
+  //   image: getServantImage('pastor-1'),
+  // },
   // 총무목사
   {
     id: 'pastor-2',
@@ -164,7 +164,7 @@ export const servantData: ServantType[] = [
 
 // 카테고리별 순서 정의
 export const categoryOrder: ServantType['category'][] = [
-  '담임목사',
+  // '담임목사',
   '총무목사',
   '부목사',
   '강도사',
@@ -174,7 +174,7 @@ export const categoryOrder: ServantType['category'][] = [
 // 카테고리별로 그룹화하는 함수
 export function groupServantsByCategory(servants: ServantType[]) {
   const grouped: Record<ServantType['category'], ServantType[]> = {
-    담임목사: [],
+    // 담임목사: [],
     총무목사: [],
     부목사: [],
     강도사: [],

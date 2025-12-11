@@ -2,9 +2,9 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
-import { historyData } from './historyData';
+import { historyData } from '@/app/about/history/historyData';
 import { motion } from 'framer-motion';
-import h from './history.module.scss';
+import h from '@/app/about/history/history.module.scss';
 
 export default function HistoryPage() {
   const [activeSection, setActiveSection] = useState<string>(historyData[0]?.id || '');

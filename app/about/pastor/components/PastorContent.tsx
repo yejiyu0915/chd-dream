@@ -2,14 +2,9 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import s from '../Pastor.module.scss';
-import { ExternalNewsItem } from '../data/pastorNewsData';
+import s from '@/app/about/pastor/Pastor.module.scss';
 
-interface PastorContentProps {
-  externalNews: ExternalNewsItem[];
-}
-
-export default function PastorContent({ externalNews }: PastorContentProps) {
+export default function PastorContent() {
   // 애니메이션 variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -59,21 +54,58 @@ export default function PastorContent({ externalNews }: PastorContentProps) {
         {/* 인사말/소개글 */}
         <motion.div className={s.greeting} variants={itemVariants}>
           {/* 인사말 내용은 나중에 추가 예정 */}
-          인사말이 들어갈 영역입니다. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-          Voluptatum tenetur beatae asperiores accusantium eos illum, quasi in reiciendis,
-          laboriosam molestias deleniti eaque! Veritatis harum nulla, non neque dicta eveniet a.
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae, vitae, alias quasi
-          explicabo aperiam dignissimos reprehenderit quo rerum natus et debitis nisi odit vel
-          cumque repellendus accusamus porro optio molestias soluta laborum dicta pariatur minima
-          obcaecati? Nostrum ipsam quis repellendus vitae maiores mollitia maxime architecto
-          perspiciatis doloremque doloribus, iusto quidem cum adipisci nihil culpa magnam possimus
-          perferendis et sapiente? Eos hic eligendi repellendus? Non atque, possimus cupiditate eos
-          eaque totam nostrum praesentium, accusamus facilis esse consectetur iste maiores, sequi
-          harum itaque exercitationem facere neque sed? Perferendis ducimus saepe ea at ipsa
-          dignissimos, consequuntur molestias dolores eveniet nesciunt. Voluptatibus cum corporis,
-          consequatur ducimus recusandae, ut voluptates sapiente repellat error facilis eos
-          molestiae, deleniti iusto voluptate possimus cumque facere quo qui ipsam libero
-          voluptatem!
+          <strong>
+            할렐루야!
+            <br />
+            이곳을 찾아주신 모든 분들께
+            <br />
+            주님의 은혜와 평강이 가득하길 소망하며,
+            <br />
+            주님의 이름으로 환영하고 축복합니다.
+          </strong>
+          <br />
+          <br />
+          하나님께서 우리를 이 자리에 이끄신 것은 우연이 아니라
+          <br />
+          분명하신 뜻과 계획이 있기 때문입니다.
+          <br />
+          <br />
+          <p style={{ paddingLeft: '2.35em' }}>
+            <strong>행복으로가는교회는</strong>
+            <br />
+            <strong className={s.highlight}>말씀...</strong>을 통해{' '}
+            <span className={s.underline}>내 삶 속에 하나님께서 말씀하신 사랑을 깨닫고,</span>
+            <br />
+            <strong className={s.highlight}>기도...</strong>를 통해{' '}
+            <span className={s.underline}>응답을 경험하며,</span>
+            <br />
+            <strong className={s.highlight}>사랑...</strong>을 통해{' '}
+            <span className={s.underline}>
+              서로의 사랑으로 주 안에서 평안과 행복을 이뤄가는 공동체입니다.
+            </span>
+          </p>
+          <br />
+          우리 교회가 말씀 위에 굳게 서고, 기도로 숨 쉬며, 사랑 안에서 온전해지도록
+          <br />
+          주님께서 먼저 길을 열어 주셨습니다.
+          <br />
+          그리고 그 사명을 함께 감당하라고 우리 모두를 한마음으로 묶어 주셨습니다.
+          <br />
+          <br />
+          그 사명을 통해 성도님들의 가정과 일터, 그리고 모든 일상 속에
+          <br />
+          하나님의 사랑이 흐르기를 소망하며
+          <br />
+          주님의 사랑을 삶으로 증거하는 교회와 성도님들이 될 수 있도록 함께 기도해 주세요.
+          <br />
+          <br />
+          이 자리에까지 인도하셨고, 지금도 우리와 함께하시는 하나님께 모든 영광과 찬송을 올려드리며,
+          성도님 한 분 한 분을 주님의 이름으로 축복합니다.
+          <br />
+          <br />
+          <p style={{ textAlign: 'right' }}>
+            <strong>담임목사 김영구 드림.</strong>
+          </p>
         </motion.div>
         {/* 프로필 영역 (사진 + 이름/직책) */}
         <motion.div className={s.profile} variants={itemVariants}>

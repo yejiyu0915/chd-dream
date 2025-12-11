@@ -39,9 +39,9 @@ export default function GroupPage() {
 
   return (
     <div className={g.content}>
-        {/* <h2>교구 소개</h2>
+      {/* <h2>교구 소개</h2>
         <p>우리 교회의 다양한 교구를 소개합니다.</p> */}
-        <p className={g.desc}>
+      <p className={g.desc}>
         행복으로가는교회의 교구는 서로를 품고, 함께 성장하며, 하나님 사랑 안에서 하나되는 가족과
         같은 공동체입니다. <br />
         교제와 나눔, 섬김으로 신앙의 기쁨을 누리며 사랑으로 연결되는 모든 교구를 소개합니다.
@@ -113,7 +113,7 @@ export default function GroupPage() {
           className={`${g.grid__item} ${g.grid__itemColor3} ${g.grid__itemSquare}`}
           variants={itemVariants}
         >
-          <Link href="/about/group/student">중고등부</Link>
+          <Link href="/about/group/student">학생부</Link>
         </motion.div>
         <motion.div className={`${g.grid__item} ${g.grid__itemDeco}`} variants={itemVariants}>
           <svg
@@ -143,7 +143,7 @@ export default function GroupPage() {
           className={`${g.grid__item} ${g.grid__itemRoundLeft} ${g.grid__itemColor2}`}
           variants={itemVariants}
         >
-          <Link href="/about/group/student">초등부</Link>
+          <Link href="/about/group/student">예꿈부</Link>
         </motion.div>
         <motion.div className={`${g.grid__item} ${g.grid__itemRoundFull}`} variants={itemVariants}>
           {/* <Image src="/images/group/4.jpg" alt="" width={800} height={800} /> */}

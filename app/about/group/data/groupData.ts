@@ -66,8 +66,8 @@ export const groupData: GroupDataType[] = [
     path: '/about/group/women',
     image: '/images/group/women.jpg',
 
-    meetingPlace: '본당 1층 2여선교실',
-    meetingTime: '매주 수요일 오전 10시',
+    meetingPlace: '본당 4층, 3층 세미나실, 2층 여선교실',
+    meetingTime: '매 주일 본 예배 후, 점심 식사 후 오후 2시',
     activities: ['정기 모임 및 성경 공부', '봉사 활동', '전도 활동'],
     subGroups: [
       {
@@ -84,8 +84,7 @@ export const groupData: GroupDataType[] = [
       {
         id: 'women-2',
         title: '2 여선교',
-        description:
-          '2여선교는 하나님의 말씀으로 세워지며 함께 기도하고 나눔을 실천하는 공동체입니다.',
+        description: `행복으로 가는 교회 제 2여선교는요 ! <br /> 삶으로 예배하고 삶으로 순종하는 교구입니다. <br /> 하나님의 말씀으로 서로를 격려하고 함께 기도함으로 시험을 이기며 믿음으로 단단해지는 공동체입니다. <br /> 교회의 각종 행사에 즐겁게 헌신함으로 교제하는 믿음의 교구입니다!`,
         pastor: '김미선 전도사',
         leaders: [
           { role: '회장', name: '이름' },
@@ -104,11 +103,12 @@ export const groupData: GroupDataType[] = [
       {
         id: 'women-4',
         title: '4 여선교',
-        description: '4여선교는 하나님의 은혜를 나누며 함께 기도하고 섬기는 공동체입니다.',
+        description: `행복으로 가는 교회 제 4여선교는 사랑을 실천하고 헌신으로 섬기며, 나눔과 봉사를 통해 이웃에게 그리스도의 마음을 전하는 공동체입니다. <br /> 서로 함께 걸으며 행복을 나누고, 깊은 신앙 안에서 하나 되어 하나님 나라를 이루어 가고자 합니다. <br /> 앞으로도 사랑과 섬김의 발걸음을 멈추지 않고 교회와 지역사회를 위해 기도로 동행하겠습니다.`,
         pastor: '임선의 전도사',
         leaders: [
-          { role: '회장', name: '이름' },
-          { role: '부회장', name: '이름' },
+          { role: '회장', name: '윤순덕' },
+          { role: '부회장', name: '이연' },
+          { role: '총무', name: '강혜진' },
         ],
       },
     ],
@@ -118,7 +118,24 @@ export const groupData: GroupDataType[] = [
     title: '청년부',
     path: '/about/group/youth',
     image: '/images/group/youth.jpg',
-    description: '청년부는 젊은 세대가 하나님의 말씀으로 세워지며 함께 꿈을 키워가는 공동체입니다.',
+    description: `
+      행복으로가는교회 청년부는요~! <br />
+      <br />
+      <span style="color:var(--accent-brand); font-weight: 900;">하나!</span> 믿음이 가득한 청년부<br />
+      <p style="padding-left: 2.35em;">
+      주일 예배와 기도 모임을 통해 신앙 안에서 함께 성장하고,<br />
+      각종 행사와 다양한 활동과 사역을 통해 서로를 세워주는 청년부 <br />
+      </p>
+      <br />
+      <span style="color:var(--accent-brand); font-weight: 900;">두울!</span> 행복으로 함께하는 청년부<br />
+      <p style="padding-left: 2.35em;">
+      함께하는 웃음이 있고, 서로를 생각하는 따뜻하고 진실한 우정이 있는 청년부<br />
+      공동체로 혼자가 아닌, 서로 연결된 동역자로서 예배도 말씀도 삶도 함께 걸어가는 청년부<br />
+      </p>
+      <br />
+      우리 청년부는 함께 행복하고, 함께 웃고, 함께 성장하며 신앙을 세워갑니다.<br />
+      <br />
+    `,
     pastor: '김하은 전도사',
     leaders: [
       { role: '회장', name: '김다솔' },
@@ -141,25 +158,42 @@ export const groupData: GroupDataType[] = [
     title: '예꿈(초·중·고)',
     path: '/about/group/student',
     image: '/images/group/student.jpg',
+    description: `
+      유아부터 고등학생까지 미성년 친구들이 모여 하나님의 사랑 안에서 믿음으로 함께 성장해나가는 예수님의 꿈나무입니다!<br />
+      <br />
+      행복으로가는 교회 예꿈부는요,<br />
+      <br />
+      <span style="color:var(--accent-brand); font-weight: 900;">하나!</span> 하나님의 사랑 안에서 자라나는 다음 세대 교구로<br />
+      <p style="padding-left: 2.35em;">
+      유아부터 고등부까지 함께 모여 예배드리며 말씀을 배우고 <br />
+      기쁘게 순종함으로 함께 믿음을 키워가는 신앙 공동체입니다!
+      </p>
+      <br />
+      <span style="color:var(--accent-brand); font-weight: 900;">두울!</span> 뜨거운 찬양과 기도, 즐거운 교제를 통해<br />
+      <p style="padding-left: 2.35em;">
+      하나님 사랑을 알아가고 믿음 안에서 서로 격려하며 <br />
+      즐겁게 신앙생활할 수 있도록 돕는 선한 영향력을 가진 모임입니다!
+      </p>
+      <br />
+      우리 교구는 하나님의 사랑 안에서 하나되어 나아가<br />
+      세상에도 선한 영향력으로 하나님의 사랑을 전하는 거룩한 무리입니다!<br />
+    `,
     leaders: [
       { role: '회장', name: '이름' },
       { role: '부회장', name: '이름' },
     ],
-    meetingPlace: '2층 예꿈실',
+    meetingPlace: '본당 5층, 본당 4층, 2층 예꿈실',
     meetingTime: '매 주일 본 예배 후, 오후 2시 예꿈 예배 후',
     activities: ['정기 모임 및 예배', '성경 공부', '친교 활동', '체육 활동'],
     subGroups: [
       {
         id: 'student-middle',
         title: '학생부',
-        description:
-          '학생부는 초·중·고 학생들이 하나님의 말씀으로 세워지며 함께 성장하는 공동체입니다.',
         pastor: '조은애 전도사',
       },
       {
         id: 'student-dream',
         title: '예꿈부',
-        description: '예꿈부는 청소년들이 하나님의 꿈을 품고 함께 꿈을 키워가는 공동체입니다.',
         pastor: '김지혜 전도사',
       },
     ],
@@ -168,12 +202,12 @@ export const groupData: GroupDataType[] = [
     id: 'new-family',
     title: '새가족부',
     path: '/about/group/newfamily',
-    image: '/images/group/newfamily.jpg',
+    // image: '/images/group/newfamily.jpg',
     description:
-      '새가족부는 새롭게 교회에 오신 분들을 따뜻하게 환영하며 함께 성장하는 공동체입니다.',
+      '새가족부는 행복으로가는교회에 새롭게 오신 분들을 따뜻하게 환영하며 함께 성장하는 공동체입니다.',
     pastor: '주애순전도사, 이민아 전도사',
     meetingPlace: '3층 V.VIP실',
     meetingTime: '매 주일 본 예배 후',
-    activities: ['새가족 교육 10주 후 수료'],
+    activities: ['새가족 교육 9주 후 수료', '10주차 수료식'],
   },
 ];

@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { categoryOrder } from '../data/servantData';
-import s from '../Servant.module.scss';
+import { categoryOrder } from '@/app/about/servant/data/servantData';
+import s from '@/app/about/servant/Servant.module.scss';
 
 // 요소가 컨테이너 내의 시작 부분에 정렬되어 있는지 확인하는 헬퍼 함수
 const isElementAlignedToStart = (element: HTMLElement, container: HTMLElement) => {
@@ -63,10 +63,7 @@ export default function ServantNav() {
   useEffect(() => {
     if (scrollRef.current && window.innerWidth <= 768) {
       const activeElement = scrollRef.current.querySelector(`a.${s.active}`) as HTMLElement;
-      if (
-        activeElement &&
-        !isElementAlignedToStart(activeElement, scrollRef.current)
-      ) {
+      if (activeElement && !isElementAlignedToStart(activeElement, scrollRef.current)) {
         activeElement.scrollIntoView({
           behavior: 'smooth',
           block: 'nearest',
@@ -89,7 +86,7 @@ export default function ServantNav() {
         // 모바일: 헤더 높이 + sticky 내비게이션 높이
         const navElement = document.querySelector(`.${s.nav}`) as HTMLElement;
         const headerElement = document.querySelector('header') as HTMLElement;
-        
+
         if (navElement && headerElement) {
           const headerHeight = headerElement.offsetHeight;
           const navHeight = navElement.offsetHeight;
@@ -136,22 +133,13 @@ export default function ServantNav() {
   };
 
   return (
-    <motion.nav
-      className={s.nav}
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
+    <motion.nav className={s.nav} variants={containerVariants} initial="hidden" animate="visible">
       <div className={s.nav__wrapper}>
         <ul ref={scrollRef} className={s.nav__list}>
           {categoryOrder.map((category) => {
             const isActive = activeCategory === category;
             return (
-              <motion.li
-                key={category}
-                className={s.nav__item}
-                variants={itemVariants}
-              >
+              <motion.li key={category} className={s.nav__item} variants={itemVariants}>
                 <a
                   href={`#category-${category}`}
                   onClick={(e) => handleNavClick(category, e)}
@@ -167,4 +155,3 @@ export default function ServantNav() {
     </motion.nav>
   );
 }
-

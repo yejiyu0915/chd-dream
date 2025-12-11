@@ -11,6 +11,7 @@ import type {
 } from '@notionhq/client';
 import { unstable_cache } from 'next/cache';
 import { getCurrentSeason } from '@/common/utils/season';
+import { REVALIDATE_TIME } from '@/lib/revalidate.config';
 
 export const notion = new Client({
   auth: process.env.NOTION_TOKEN,
@@ -634,7 +635,7 @@ export async function getCLogData(): Promise<CLogItem[]> {
       return getPublishedNotionData<CLogItem>('NOTION_CLOG_ID', mapPageToCLogItem);
     },
     ['clog-data'],
-    { revalidate: 300, tags: ['clog-list'] } // 5분 캐시, 태그 기반 재검증
+    { revalidate: REVALIDATE_TIME.LIST, tags: ['clog-list'] } // 3분 캐시, 태그 기반 재검증
   )();
 }
 
@@ -645,7 +646,7 @@ export async function getCLogNewsData(): Promise<NewsItem[]> {
       return getPublishedNotionData<NewsItem>('NOTION_CLOG_ID', mapPageToMenuItem('c-log'), 1000);
     },
     ['clog-news-data'],
-    { revalidate: 300, tags: ['clog-list'] }
+    { revalidate: REVALIDATE_TIME.LIST, tags: ['clog-list'] }
   )();
 }
 
@@ -661,7 +662,7 @@ export async function getMainCLogData(): Promise<NewsItem[]> {
       return getPublishedNotionData<NewsItem>('NOTION_CLOG_ID', mapPageToMenuItem('c-log'), 2);
     },
     ['main-clog-data'],
-    { revalidate: 60, tags: ['main-clog'] }
+    { revalidate: REVALIDATE_TIME.SHORT, tags: ['main-clog'] }
   )();
 }
 
@@ -687,7 +688,7 @@ export async function getSermonData(): Promise<SermonItem | null> {
       return sermons.length > 0 ? sermons[0] : null;
     },
     ['sermon-data'],
-    { revalidate: 300, tags: ['sermon-list'] } // 5분 캐시, 태그 기반 재검증
+    { revalidate: REVALIDATE_TIME.LIST, tags: ['sermon-list'] } // 3분 캐시, 태그 기반 재검증
   )();
 }
 
@@ -713,7 +714,7 @@ export async function getBulletinData(): Promise<BulletinItem | null> {
       return bulletins.length > 0 ? bulletins[0] : null;
     },
     ['bulletin-data'],
-    { revalidate: 300, tags: ['bulletin-list'] } // 5분 캐시, 태그 기반 재검증
+    { revalidate: REVALIDATE_TIME.LIST, tags: ['bulletin-list'] } // 3분 캐시, 태그 기반 재검증
   )();
 }
 
@@ -729,7 +730,7 @@ export async function getBulletinListData(): Promise<BulletinItem[]> {
       return getPublishedNotionData<BulletinItem>('NOTION_SERMON_ID', mapPageToBulletinItem, 1000);
     },
     ['bulletin-list-data'],
-    { revalidate: 300, tags: ['bulletin-list'] } // 5분 캐시, 태그 기반 재검증
+    { revalidate: REVALIDATE_TIME.LIST, tags: ['bulletin-list'] } // 3분 캐시, 태그 기반 재검증
   )();
 }
 
@@ -740,7 +741,7 @@ export async function getNewsData(): Promise<NewsItem[]> {
       return getPublishedNotionData<NewsItem>('NOTION_NEWS_ID', mapPageToMenuItem('news'), 1000); // 명시적으로 1000개 지정
     },
     ['news-data'],
-    { revalidate: 300, tags: ['news-list'] } // 5분 캐시, 태그 기반 재검증
+    { revalidate: REVALIDATE_TIME.LIST, tags: ['news-list'] } // 3분 캐시, 태그 기반 재검증
   )();
 }
 
@@ -756,7 +757,7 @@ export async function getMainNewsData(): Promise<NewsItem[]> {
       return getPublishedNotionData<NewsItem>('NOTION_NEWS_ID', mapPageToMenuItem('news'), 2); // 메인 페이지용 2개
     },
     ['main-news-data'],
-    { revalidate: 60, tags: ['main-news'] } // 1분 캐시로 단축
+    { revalidate: REVALIDATE_TIME.SHORT, tags: ['main-news'] } // 30초 캐시
   )();
 }
 
@@ -771,7 +772,7 @@ export async function getNoticeData(): Promise<NoticeItem[]> {
       );
     },
     ['notice-data'],
-    { revalidate: 300, tags: ['notice-list'] } // 5분 캐시, 태그 기반 재검증
+    { revalidate: REVALIDATE_TIME.LIST, tags: ['notice-list'] } // 3분 캐시, 태그 기반 재검증
   )();
 }
 
@@ -787,7 +788,7 @@ export async function getMainNoticeData(): Promise<NoticeItem[]> {
       return getPublishedNotionData<NoticeItem>('NOTION_NOTICE_ID', mapPageToMenuItem('notice'), 2);
     },
     ['main-notice-data'],
-    { revalidate: 60, tags: ['main-notice'] } // 1분 캐시로 단축
+    { revalidate: REVALIDATE_TIME.SHORT, tags: ['main-notice'] } // 30초 캐시
   )();
 }
 
@@ -803,7 +804,7 @@ export async function getKVSliderData(): Promise<KVSliderItem[]> {
       return getPublishedNotionData<KVSliderItem>('NOTION_KV_ID', mapPageToKVSliderItem);
     },
     ['kv-slider-data'],
-    { revalidate: 60, tags: ['kv-slider-list'] } // 1분 캐시, 메인 콘텐츠와 동일
+    { revalidate: REVALIDATE_TIME.SHORT, tags: ['kv-slider-list'] } // 30초 캐시
   )();
 }
 
@@ -814,7 +815,7 @@ export async function getCLogMainData(): Promise<CLogItem[]> {
       return getPublishedNotionData<CLogItem>('NOTION_CLOG_ID', mapPageToCLogItem, 6);
     },
     ['clog-main-data'],
-    { revalidate: 300, tags: ['clog-list'] } // 5분 캐시, 태그 기반 재검증
+    { revalidate: REVALIDATE_TIME.LIST, tags: ['clog-list'] } // 3분 캐시, 태그 기반 재검증
   )();
 }
 
@@ -834,7 +835,7 @@ export async function getScheduleData(): Promise<ScheduleItem[]> {
       );
     },
     ['schedule-data'],
-    { revalidate: 300, tags: ['schedule-list'] } // 5분 캐시, 태그 기반 재검증
+    { revalidate: REVALIDATE_TIME.LIST, tags: ['schedule-list'] } // 3분 캐시, 태그 기반 재검증
   )();
 }
 
@@ -853,7 +854,7 @@ export async function getNotionPageAndContentBySlug(
     },
     [`${databaseIdEnvVar}-detail-${slug}`],
     {
-      revalidate: 3600, // 1시간 캐시 (성능 최적화)
+      revalidate: REVALIDATE_TIME.DETAIL, // 1시간 캐시 (성능 최적화)
       tags: [`${databaseIdEnvVar}-post-${slug}`, 'bulletin-content'],
     }
   )(databaseIdEnvVar, slug);
@@ -1191,7 +1192,7 @@ export async function getNewsPosts(
       }
     },
     [`news-list${pageSize !== undefined ? `-${pageSize}` : ''}`],
-    { revalidate: 60, tags: ['news-list'] }
+    { revalidate: REVALIDATE_TIME.MEDIUM, tags: ['news-list'] }
   )(databaseIdEnvVar, pageSize);
 }
 
@@ -1285,7 +1286,7 @@ export async function getPopupData(): Promise<PopupData | null> {
       }
     },
     ['popup-data'],
-    { revalidate: 300, tags: ['popup-data'] } // 5분 캐시
+    { revalidate: REVALIDATE_TIME.LIST, tags: ['popup-data'] } // 3분 캐시
   )();
 }
 

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import '../../common/styles/globals.scss';
+import '@/common/styles/globals.scss';
 
 export const metadata: Metadata = {
   title: '작업 현황판 - 행복으로가는교회',

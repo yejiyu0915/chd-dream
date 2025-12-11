@@ -83,7 +83,12 @@ function SubGroupSection({ subGroup }: { subGroup: SubGroupType }) {
   return (
     <div className={g.subGroup}>
       <h2 className={g.content__title}>{subGroup.title}</h2>
-      {subGroup.description && <p className={g.content__description}>{subGroup.description}</p>}
+      {subGroup.description && (
+        <div
+          className={g.content__description}
+          dangerouslySetInnerHTML={{ __html: subGroup.description }}
+        />
+      )}
 
       {/* 담당 교역자 ~ 회장단까지 boxing 처리 */}
       <div className={g.subGroup__box}>
@@ -197,7 +202,12 @@ export default function GroupContent({ data, prevGroup, nextGroup, onSelect }: G
           variants={bodyVariants}
         >
           {/* 교구소개 */}
-          {data.description && <p className={g.content__description}>{data.description}</p>}
+          {data.description && (
+            <div
+              className={g.content__description}
+              dangerouslySetInnerHTML={{ __html: data.description }}
+            />
+          )}
 
           {/* 담당 교역자 + 회장단 boxing 처리 */}
           {((!hasSubGroups && (data.pastor || (data.leaders && data.leaders.length > 0))) ||

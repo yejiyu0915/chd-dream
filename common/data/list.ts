@@ -1,4 +1,4 @@
-import { menuData } from './info';
+import { menuData } from '@/common/data/info';
 
 export interface PageMeta {
   title: string; // 페이지 제목 & Breadcrumb 이름

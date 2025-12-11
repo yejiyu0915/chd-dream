@@ -1,0 +1,253 @@
+@use '@/common/styles/mixins/function' as *;
+
+// ============================================
+// 가정 회복 섹션 (독립 컴포넌트)
+// ============================================
+
+// 4번째 섹션 - 가정 회복 (그리드 이미지 + 파트별 타이틀)
+.familySection {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 850vh; // 3파트 + 자녀 후 더 넉넉한 유지 구간
+}
+
+// 가정 회복 래퍼 (화면 중앙 고정, 헤더 제외)
+.familyWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: sticky;
+  top: vw(--header-height);
+  width: 100%;
+  height: calc(100vh - vw(--header-height));
+  min-height: vw(500);
+  overflow: hidden;
+}
+
+// 10x7 그리드 백그라운드
+.familyGrid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(7, 1fr);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: vw(60) vw(100);
+  gap: vw(16);
+}
+
+// 그리드 셀
+.familyGridCell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: vw(8);
+  overflow: hidden;
+  opacity: 0.5;
+}
+
+// 그리드 이미지 컨테이너
+.familyGridImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  will-change: opacity;
+  transition: opacity 0.5s ease-out;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--accent-brand);
+    opacity: 0.1;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: vw(8);
+    filter: grayscale(80%);
+  }
+}
+
+// 이미지 자리 표시 (개발용)
+.imagePlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: vw(8);
+  background: rgba(0, 0, 0, 0.1);
+  @include font-vw(14, $weight: 600, $color: rgba(0, 0, 0, 0.3));
+  text-transform: uppercase;
+}
+
+// 파트 타이틀 컨테이너 (화면 중앙)
+.familyTitleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: none;
+}
+
+// 파트 타이틀 래퍼
+.familyPartTitleWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  // 캔버스가 보이도록 래퍼에 크기 지정
+  width: 100%;
+  height: 100%;
+  will-change: opacity;
+  transition: opacity 0.3s ease-out;
+}
+
+// 물감 번지는 배경 (Canvas)
+.waterPaintCanvas {
+  position: absolute;
+  width: vw(1600);
+  height: vw(800);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0; // 타이틀 뒤에 보이도록
+  pointer-events: none;
+  // 가장자리 그라데이션 마스크 (부드럽게 사라지는 효과)
+  mask-image: radial-gradient(ellipse 50% 50% at center, black 40%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at center, black 40%, transparent 70%);
+  opacity: 0.8;
+}
+
+// 파트 타이틀
+.familyPartTitle {
+  position: relative;
+  z-index: 1; // 캔버스 위에 표시
+  @include font-vw(64, $weight: 550, $color: var(--text-main), $ls: -0.02);
+  text-align: center;
+  white-space: nowrap;
+  // 흰색 뿌연 테두리 효과 (다중 그림자)
+  text-shadow: 0 0 vw(10) rgba(255, 255, 255, 1);
+}
+
+// 타이틀 그룹 (한글 + 영어)
+.familyPartTitleGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: vw(32);
+  padding-block-end: vw(32);
+}
+
+// 파트 라벨 (라운딩)
+.familyPartLabel {
+  display: inline-block;
+  padding: vw(12) vw(30);
+  position: relative;
+  border-radius: vw(100);
+  border: 1px solid var(--text-body);
+  background-color: var(--text-main);
+  @include font-vw(20, $weight: 500, $color: var(--text-inverse), $ls: 0.05);
+}
+
+// 타이틀 굵은 부분 (남편, 아내, 자녀)
+.titleBold {
+  font-weight: 700;
+}
+
+// 영어 서브타이틀
+.familyPartEngTitle {
+  @include font-vw(18, 24, $weight: 400, $color: var(--text-sub));
+  text-align: center;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}
+
+// 타이틀 밑줄 애니메이션
+.titleUnderline {
+  display: block;
+  position: absolute;
+  bottom: vw(-15);
+  left: 50%;
+  transform: translateX(-50%);
+  height: 1px;
+  background: var(--text-main);
+  transition: width 0.6s ease-out;
+}
+
+// ============================================
+// 반응형 처리 (모바일)
+// ============================================
+@include mq(mo) {
+  .familySection {
+    height: 1000vh; // 모바일에서 충분한 스크롤 영역
+  }
+
+  .familyWrapper {
+    min-height: vw(500);
+  }
+
+  .familyGrid {
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+    padding: vw(20);
+    gap: vw(4);
+  }
+
+  .familyGridCell {
+    border-radius: vw(4);
+  }
+
+  .familyGridImage {
+    img {
+      border-radius: vw(4);
+    }
+  }
+
+  .imagePlaceholder {
+    border-radius: vw(4);
+    @include font-vw(10);
+  }
+
+  .familyPartTitleGroup {
+    gap: vw(20);
+  }
+
+  .familyPartLabel {
+    padding: vw(8) vw(20);
+    @include font-vw(14);
+  }
+
+  .familyPartTitle {
+    @include font-vw(36, 48);
+  }
+
+  .familyPartEngTitle {
+    width: 80%;
+    @include font-vw(14, 20, $ls: 0.02, $weight: 500);
+  }
+
+  // 물감 번짐 효과 모바일 크기 축소
+  .waterPaintCanvas {
+    width: vw(600);
+    height: vw(400);
+  }
+}

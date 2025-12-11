@@ -11,6 +11,7 @@ import s from '@/app/info/schedule/Schedule.module.scss';
 
 interface ScheduleClientWrapperProps {
   initialScheduleData: ScheduleItem[];
+  searchParams: { view?: string; date?: string; period?: string; start?: string };
 }
 
 // 필터 컴포넌트 (Context 사용)
@@ -28,7 +29,7 @@ function ScheduleFilters() {
 // 메인 일정 컨텐츠 (서버에서 받은 데이터만 사용)
 function ScheduleContent({ scheduleData }: { scheduleData: ScheduleItem[] }) {
   // Next.js가 자동으로 스크롤 복원을 처리하므로 제거
-  
+
   return (
     <>
       <ScheduleFilters />
@@ -40,9 +41,10 @@ function ScheduleContent({ scheduleData }: { scheduleData: ScheduleItem[] }) {
 // 클라이언트 래퍼 (Provider 포함)
 export default function ScheduleClientWrapper({
   initialScheduleData,
+  searchParams,
 }: ScheduleClientWrapperProps) {
   return (
-    <ScheduleProvider>
+    <ScheduleProvider searchParams={searchParams}>
       <ScheduleContent scheduleData={initialScheduleData} />
     </ScheduleProvider>
   );

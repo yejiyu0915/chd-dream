@@ -96,14 +96,14 @@ export default function LayoutContent({ children, initialPopupData }: LayoutCont
       {children}
       <Footer />
 
-      {/* 팝업 모달 */}
-      {showPopup && <PopupModal newsItem={popupNews} onClose={handleClosePopup} />}
-
       {/* 테마 선택기 (Top 버튼 위) */}
       <ThemeSelector />
 
       {/* Top 버튼 */}
       <TopButton />
+
+      {/* 팝업 모달 */}
+      {showPopup && <PopupModal newsItem={popupNews} onClose={handleClosePopup} />}
     </div>
   );
 }

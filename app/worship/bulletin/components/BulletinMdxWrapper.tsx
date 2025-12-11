@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import BulletinMdxContent from './BulletinMdxContent';
+import BulletinMdxContent from '@/app/worship/bulletin/components/BulletinMdxContent';
 
 interface BulletinMdxWrapperProps {
   content: string;
@@ -13,6 +13,4 @@ export default function BulletinMdxWrapper({ content }: BulletinMdxWrapperProps)
     </Suspense>
   );
 }
-
-
 

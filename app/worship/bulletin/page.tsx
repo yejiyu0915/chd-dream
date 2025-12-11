@@ -1,14 +1,25 @@
 import { getBulletinListData } from '@/lib/notion';
 import BulletinClient from '@/app/worship/bulletin/components/BulletinClient';
 
+// 페이지를 동적 렌더링으로 강제 설정
+export const dynamic = 'force-dynamic';
+
 // 개발 환경에서는 캐시 비활성화, 프로덕션에서는 5분마다 재검증
 // export const revalidate = process.env.NODE_ENV === 'development' ? 0 : 300;
 
-// 서버 컴포넌트로 변경 - 데이터를 서버에서 미리 fetch
-export default async function BulletinPage() {
+// 서버 컴포넌트 - searchParams를 props로 받아서 클라이언트 컴포넌트에 전달
+export default async function BulletinPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ content?: string }>;
+}) {
+  // searchParams를 await로 받기 (Next.js 16 권장 방식)
+  const params = await searchParams;
+  const contentParam = params.content || null;
+
   // 서버에서 주보 리스트 데이터를 가져옴 (빠른 초기 로딩)
   const bulletinList = await getBulletinListData();
 
-  // 클라이언트 컴포넌트에 서버 데이터를 전달하여 즉시 렌더링
-  return <BulletinClient initialBulletinList={bulletinList} />;
+  // useSearchParams 대신 서버에서 받은 searchParams를 props로 전달
+  return <BulletinClient initialBulletinList={bulletinList} contentParam={contentParam} />;
 }

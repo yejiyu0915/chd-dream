@@ -538,6 +538,52 @@ main {
   }
 }
 
+/* Share Button Styles (모바일 전용) */
+.share-button {
+  display: none; // PC에서는 숨김
+
+  @include mq(mo) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: vw(48);
+    height: vw(48);
+    position: absolute;
+    z-index: 900;
+    left: var(--inner-padding);
+    bottom: 0;
+    border-radius: 50%;
+    border: 1px solid var(--accent-brand);
+    background-color: var(--bg-page);
+    @include font-vw(24);
+    color: var(--text-inverse);
+    box-shadow: 0 vw(4) vw(4) rgba(0, 0, 0, 0.03);
+    transform: translate(0, 50%);
+    cursor: pointer;
+
+    i {
+      --icon-size: 1;
+      --icon-margin: 0;
+      --icon-color: var(--accent-brand);
+    }
+
+    // 키보드 포커스 스타일 (접근성)
+    &:focus-visible {
+      outline: 3px solid var(--accent-brand);
+      outline-offset: 4px;
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.8);
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: var(--bg-page);
+        color: var(--accent-brand);
+        opacity: 1;
+      }
+    }
+  }
+}
+
 /* Skip Navigation Link */
 .skip-link {
   position: absolute;

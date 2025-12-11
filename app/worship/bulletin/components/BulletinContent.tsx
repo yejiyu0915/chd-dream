@@ -166,7 +166,11 @@ const BulletinContent = memo(function BulletinContent({
                     : '주보 내용'}
                 </h2>
                 <div className={`${mdx.mdxContent} ${b.latest__contentBody}`}>
-                  {/* HTML을 그대로 렌더링하되 blockquote 스타일이 적용됨 */}
+                  {/* 
+                    보안: rehype-sanitize로 이미 서버에서 정제된 HTML이지만,
+                    추가 보안을 위해 특정 태그/속성만 허용하는 것을 권장합니다.
+                    현재는 Notion CMS를 신뢰하는 구조이므로 dangerouslySetInnerHTML 사용
+                  */}
                   <div dangerouslySetInnerHTML={{ __html: bulletinContent }} />
                 </div>
               </motion.div>

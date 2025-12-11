@@ -1,11 +1,6 @@
 import m from '@/app/main/main.module.scss';
 import MainContentWrapper from '@/app/main/MainContentWrapper';
-import {
-  getBulletinData,
-  getKVSliderData,
-  getCLogMainData,
-  getMainNewsData,
-} from '@/lib/notion';
+import { getBulletinData, getKVSliderData, getCLogMainData, getMainNewsData } from '@/lib/notion';
 
 // 메인 페이지 캐싱 설정 - 1분마다 재검증 (메인 콘텐츠와 일관성 유지)
 // export const revalidate = 60;

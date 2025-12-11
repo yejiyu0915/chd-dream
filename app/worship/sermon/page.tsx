@@ -1,46 +1,18 @@
-'use client';
+import SermonClient from '@/app/worship/sermon/components/SermonClient';
 
-import { useState, useEffect } from 'react';
-import { sermonData } from '@/app/worship/sermon/data/sermonData';
-import SermonNav from '@/app/worship/sermon/components/SermonNav';
-import SermonContent from '@/app/worship/sermon/components/SermonContent';
-import s from '@/app/worship/sermon/Sermon.module.scss';
+// 페이지를 동적 렌더링으로 강제 설정
+export const dynamic = 'force-dynamic';
 
-export default function SermonPage() {
-  // 첫 번째 항목을 기본 활성화
-  const [activeId, setActiveId] = useState(sermonData[0].id);
+// 서버 컴포넌트 - searchParams를 props로 받아서 클라이언트 컴포넌트에 전달
+export default async function SermonPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ content?: string }>;
+}) {
+  // searchParams를 await로 받기 (Next.js 16 권장 방식)
+  const params = await searchParams;
+  const contentParam = params.content || null;
 
-  // 현재 선택된 데이터 찾기
-  const activeData = sermonData.find((item) => item.id === activeId) || sermonData[0];
-
-  // activeId 변경 시 스크롤 최상단으로 즉시 이동 (smooth 효과 없이)
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'auto' });
-  }, [activeId]);
-
-  // 현재 인덱스 찾기
-  const currentIndex = sermonData.findIndex((item) => item.id === activeId);
-
-  // 이전/다음 설교 계산
-  const prevSermon = currentIndex > 0 ? sermonData[currentIndex - 1] : null;
-  const nextSermon = currentIndex < sermonData.length - 1 ? sermonData[currentIndex + 1] : null;
-
-  return (
-    <>
-      <div className={`${s.sermon} detail-inner`}>
-        <div className={s.inner}>
-          {/* 왼쪽 내비게이션 */}
-          <SermonNav data={sermonData} activeId={activeId} onSelect={setActiveId} />
-
-          {/* 오른쪽 본문 */}
-          <SermonContent
-            data={activeData}
-            prevSermon={prevSermon}
-            nextSermon={nextSermon}
-            onSelect={setActiveId}
-          />
-        </div>
-      </div>
-    </>
-  );
+  // useSearchParams 대신 서버에서 받은 searchParams를 props로 전달
+  return <SermonClient contentParam={contentParam} />;
 }
