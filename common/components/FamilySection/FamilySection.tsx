@@ -224,7 +224,7 @@ const FAMILY_PARTS: FamilyPart[] = [
     id: 'husband',
     boldText: '남편',
     restText: '을 세우는 교회',
-    engTitle: 'The Church That Raises Up Godly Husbands in Grace',
+    engTitle: 'The Church That Raises Up Godly Husbands',
     imageCount: 10,
   },
   {
