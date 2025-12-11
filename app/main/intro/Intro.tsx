@@ -1,21 +1,13 @@
-import i from '@/app/main/intro/Intro.module.scss';
+import FamilySection from '@/common/components/FamilySection';
 
 export default function Intro() {
+  // 메인 페이지: 빠른 시작 + 짧은 높이 + 자녀 유지 시간 줄임
   return (
-    <section className={i.intro}>
-      {/* <div className={i.inner}>
-        <h2 className="sr-only">교회 표어</h2>
-        <p className={i.title}>
-          오직 말씀
-          <br />
-          절대 기도
-          <br />
-          온전한 사랑
-        </p>
-      </div> */}
-      <div className={`${i.content} inner`}>
-        <div className={i.text}>추가 내용</div>
-      </div>
-    </section>
+    <FamilySection
+      scrollDelay={-0.5}
+      sectionHeight={650}
+      mobileHeight={800}
+      partBreakpoints={[0.3, 0.63, 0.96]} // 자녀 유지 10%만
+    />
   );
 }

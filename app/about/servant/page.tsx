@@ -4,14 +4,14 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import Icon from '@/common/components/utils/Icons';
-import s from './Servant.module.scss';
-import ServantNav from './components/ServantNav';
+import s from '@/app/about/servant/Servant.module.scss';
+import ServantNav from '@/app/about/servant/components/ServantNav';
 import {
   servantData,
   categoryOrder,
   groupServantsByCategory,
   type ServantType,
-} from './data/servantData';
+} from '@/app/about/servant/data/servantData';
 
 export default function ServantPage() {
   // 카테고리별로 그룹화

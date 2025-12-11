@@ -1,7 +1,6 @@
 // sermon 페이지 데이터 관리
 import Sermon1 from '@/app/worship/sermon/contents/Sermon1';
 import Sermon2 from '@/app/worship/sermon/contents/Sermon2';
-import Sermon3 from '@/app/worship/sermon/contents/Sermon3';
 
 export interface SermonDataType {
   id: string;
@@ -20,9 +19,9 @@ export const sermonData: SermonDataType[] = [
     title: '쓴물을 달게 하시는 하나님',
     component: Sermon2,
   },
-  {
-    id: 'sermon3',
-    title: '설교 3',
-    component: Sermon3,
-  },
+  // {
+  //   id: 'sermon3',
+  //   title: '설교 3',
+  //   component: Sermon3,
+  // },
 ];

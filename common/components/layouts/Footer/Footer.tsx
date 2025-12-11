@@ -7,6 +7,9 @@ import { contactInfo, snsLinks, menuData, prevLinks } from '@/common/data/info';
 import { motion } from 'framer-motion';
 
 export default function Footer() {
+  // 현재 년도 자동 계산
+  const currentYear = new Date().getFullYear();
+
   const snsClassMap: { [key: string]: string } = {
     band: f.band,
     youtube: f.youtube,
@@ -167,7 +170,7 @@ export default function Footer() {
           viewport={{ margin: '0px' }}
           variants={bottomVariants}
         >
-          Copyright 2026 행복으로가는교회. All rights reserved.
+          Copyright {currentYear} 행복으로가는교회. All rights reserved.
         </motion.p>
         <motion.p
           className={f.text}

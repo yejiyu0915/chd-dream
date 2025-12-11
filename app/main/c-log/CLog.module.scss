@@ -3,8 +3,9 @@
 .cLog {
   background-color: var(--bg-page);
   .inner {
-    padding-block: vw(160);
+    padding-block: vw(240) vw(160);
     position: relative;
+    background-color: var(--bg-page);
   }
   .title {
     @include font-vw(60, $weight: 700);
@@ -396,7 +397,7 @@
   }
   @include mq(ta) {
     .inner {
-      padding-block: calc(var(--inner-padding) * 4);
+      padding-block: calc(var(--inner-padding) * 8) calc(var(--inner-padding) * 6);
     }
     .title {
       @include font-vw(48);
@@ -559,7 +560,7 @@
       padding-inline: vw(16) vw(8);
       position: absolute;
       right: var(--inner-padding);
-      top: calc(var(--inner-padding) * 4);
+      top: calc(var(--inner-padding) * 8);
       border-radius: vw(10);
       border: 1px solid var(--accent-brand);
       background-color: var(--bg-page);

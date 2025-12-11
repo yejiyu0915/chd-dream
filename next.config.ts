@@ -105,6 +105,25 @@ const nextConfig: NextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',
           },
+          // CSP (Content Security Policy) - XSS 공격 방어
+          // 주의: Notion 이미지, Kakao Map 등 외부 리소스 허용 필요
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://dapi.kakao.com https://t1.daumcdn.net", // Kakao Map 스크립트
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: https: blob:", // Notion 이미지, Kakao Map 타일
+              "font-src 'self' data:",
+              "connect-src 'self' https://www.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com https://dapi.kakao.com",
+              "frame-src 'self'",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "frame-ancestors 'self'",
+              'upgrade-insecure-requests',
+            ].join('; '),
+          },
         ],
       },
     ];

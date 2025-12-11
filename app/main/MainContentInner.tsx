@@ -30,7 +30,10 @@ export default function MainContentInner({
     <div className={m.main__content} style={{ paddingTop: calculatedPaddingTop }}>
       <Bulletin initialBulletinData={bulletinData} />
       <div style={{ backgroundColor: 'var(--bg-page)' }}>
-        <Intro />
+        {/* Intro wrapper: sticky 범위를 Intro 내로 제한 */}
+        <div style={{ position: 'relative' }}>
+          <Intro />
+        </div>
         <CLog initialCLogData={cLogData} />
         <QuickLink />
         {/* <Instagram /> */}

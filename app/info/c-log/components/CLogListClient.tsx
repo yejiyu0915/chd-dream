@@ -8,15 +8,15 @@ import CLogCategoryFilter from '@/app/info/c-log/components/CLogCategoryFilter';
 import CLogSortFilter from '@/app/info/c-log/components/CLogSortFilter';
 import CLogViewModeFilter from '@/app/info/c-log/components/CLogViewModeFilter';
 import c from '@/app/info/c-log/CLogList.module.scss';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 interface CLogListClientProps {
   initialCLogData: CLogItem[];
+  searchParams: { category?: string; tag?: string; sort?: string; view?: string };
 }
 
-export default function CLogListClient({ initialCLogData }: CLogListClientProps) {
+export default function CLogListClient({ initialCLogData, searchParams }: CLogListClientProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   // 서버에서 받은 데이터를 그대로 사용 (useQuery 제거)
   const allCLogData = initialCLogData;
@@ -29,15 +29,12 @@ export default function CLogListClient({ initialCLogData }: CLogListClientProps)
 
   // 초기 마운트 시 URL 파라미터로 상태 초기화
   useEffect(() => {
-    const initialCategory = searchParams.get('category')
-      ? decodeURIComponent(searchParams.get('category') as string)
+    const initialCategory = searchParams.category
+      ? decodeURIComponent(searchParams.category)
       : null;
-    const initialTag = searchParams.get('tag')
-      ? decodeURIComponent(searchParams.get('tag') as string)
-      : null;
-    const initialSortOrder: 'asc' | 'desc' = (searchParams.get('sort') as 'asc' | 'desc') || 'desc';
-    const initialViewMode: 'grid' | 'list' =
-      (searchParams.get('view') as 'grid' | 'list') || 'grid';
+    const initialTag = searchParams.tag ? decodeURIComponent(searchParams.tag) : null;
+    const initialSortOrder: 'asc' | 'desc' = (searchParams.sort as 'asc' | 'desc') || 'desc';
+    const initialViewMode: 'grid' | 'list' = (searchParams.view as 'grid' | 'list') || 'grid';
 
     setSelectedCategory(initialCategory);
     setSelectedTag(initialTag);
@@ -48,15 +45,12 @@ export default function CLogListClient({ initialCLogData }: CLogListClientProps)
 
   // URL 파라미터 변경 시 상태 업데이트
   useEffect(() => {
-    const currentCategory = searchParams.get('category')
-      ? decodeURIComponent(searchParams.get('category') as string)
+    const currentCategory = searchParams.category
+      ? decodeURIComponent(searchParams.category)
       : null;
-    const currentTag = searchParams.get('tag')
-      ? decodeURIComponent(searchParams.get('tag') as string)
-      : null;
-    const currentSortOrder: 'asc' | 'desc' = (searchParams.get('sort') as 'asc' | 'desc') || 'desc';
-    const currentViewMode: 'grid' | 'list' =
-      (searchParams.get('view') as 'grid' | 'list') || 'grid';
+    const currentTag = searchParams.tag ? decodeURIComponent(searchParams.tag) : null;
+    const currentSortOrder: 'asc' | 'desc' = (searchParams.sort as 'asc' | 'desc') || 'desc';
+    const currentViewMode: 'grid' | 'list' = (searchParams.view as 'grid' | 'list') || 'grid';
 
     setSelectedCategory((prev) => (prev !== currentCategory ? currentCategory : prev));
     setSelectedTag((prev) => (prev !== currentTag ? currentTag : prev));

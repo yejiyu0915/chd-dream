@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Icon from './Icons';
+import Icon from '@/common/components/utils/Icons';
 
 export default function TopButton() {
   // Top 버튼 표시 여부 상태

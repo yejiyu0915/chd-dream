@@ -42,8 +42,11 @@
     gap: vw(60);
   }
 
-  @include mq(mo) {
+  @include mq(ta) {
     flex-direction: column;
+  }
+
+  @include mq(mo) {
     gap: vw(40);
   }
 }
@@ -60,11 +63,14 @@
     gap: vw(24);
   }
 
-  @include mq(mo) {
-    gap: vw(20);
+  @include mq(ta) {
     width: 100%;
     padding-block-start: vw(20);
     border-top: vw(2) dashed var(--accent-tertiary);
+  }
+
+  @include mq(mo) {
+    gap: vw(20);
   }
 }
 
@@ -170,17 +176,85 @@
 // 인사말/소개글
 .greeting {
   flex: 1;
+  padding-block: vw(60);
+  padding-inline: vw(80);
+  position: relative;
   @include font-vw(28, $weight: 400, $color: var(--text-body));
   line-height: 2;
   white-space: pre-line;
 
   @include mq(pc-sm) {
+    padding-block: vw(48);
+    padding-inline: vw(60);
     @include font-vw(22);
     line-height: 1.9;
   }
 
   @include mq(mo) {
+    padding-block: vw(40);
+    padding-inline: 0;
     @include font-vw(16);
     line-height: 1.8;
   }
+
+  // 열림 따옴표 (왼쪽 상단)
+  &::before {
+    content: '❝';
+    position: absolute;
+    z-index: 0;
+    top: vw(-20);
+    left: vw(-20);
+    @include font-vw(280, $color: var(--accent-brand));
+    line-height: 1;
+    opacity: 0.08;
+    pointer-events: none;
+
+    @include mq(pc-sm) {
+      top: vw(-16);
+      left: vw(-16);
+      @include font-vw(200);
+    }
+
+    @include mq(mo) {
+      top: vw(-12);
+      left: vw(-8);
+      @include font-vw(140);
+    }
+  }
+
+  // 닫힘 따옴표 (오른쪽 하단)
+  &::after {
+    content: '❞';
+    position: absolute;
+    z-index: 0;
+    bottom: vw(-80);
+    right: vw(-20);
+    @include font-vw(280, $color: var(--accent-brand));
+    line-height: 1;
+    opacity: 0.08;
+    pointer-events: none;
+
+    @include mq(pc-sm) {
+      bottom: vw(-60);
+      right: vw(-16);
+      @include font-vw(200);
+    }
+
+    @include mq(mo) {
+      bottom: vw(-40);
+      right: vw(-8);
+      @include font-vw(140);
+    }
+  }
+}
+
+// 강조 텍스트 (말씀, 기도, 사랑)
+.highlight {
+  font-weight: 700;
+  color: var(--accent-brand);
+}
+
+.underline {
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
 }

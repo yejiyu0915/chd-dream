@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import BulletinList from '@/app/worship/bulletin/components/BulletinList';
 import BulletinContent from '@/app/worship/bulletin/components/BulletinContent';
 import Spinner from '@/common/components/utils/Spinner';
@@ -24,10 +25,38 @@ interface BulletinItem {
 
 interface BulletinClientProps {
   initialBulletinList: BulletinItem[];
+  contentParam: string | null; // 서버에서 받은 searchParams
 }
 
-export default function BulletinClient({ initialBulletinList }: BulletinClientProps) {
-  // 서버에서 받은 데이터를 직접 사용 (useQuery 제거)
+// 날짜를 URL 파라미터 형식으로 변환 (2025.01.05 → 20250105)
+const dateToParam = (dateString: string): string => {
+  const match = dateString.match(/^(\d{4})\.(\d{2})\.(\d{2})/);
+  if (match) {
+    return `${match[1]}${match[2]}${match[3]}`;
+  }
+  return '';
+};
+
+// URL 파라미터를 날짜 형식으로 변환 (20250105 → 2025.01.05)
+const paramToDate = (param: string): string => {
+  // 기본 형식: 20251130 또는 20251130-1
+  const match = param.match(/^(\d{4})(\d{2})(\d{2})(-\d+)?$/);
+  if (match) {
+    return `${match[1]}.${match[2]}.${match[3]}`;
+  }
+  return '';
+};
+
+// 같은 날짜의 주보 인덱스 추출 (20251130-2 → 2번째)
+const extractDateIndex = (param: string): number => {
+  const match = param.match(/-(\d+)$/);
+  return match ? parseInt(match[1], 10) : 1;
+};
+
+export default function BulletinClient({ initialBulletinList, contentParam }: BulletinClientProps) {
+  const router = useRouter();
+
+  // 서버에서 받은 데이터를 직접 사용
   const bulletinList = initialBulletinList || [];
   const loading = false;
   const isError = false;
@@ -51,12 +80,94 @@ export default function BulletinClient({ initialBulletinList }: BulletinClientPr
 
   const itemsPerPage = 6; // 2x3 그리드
 
+  // 마지막으로 처리한 URL 파라미터 추적 (중복 실행 방지)
+  const lastProcessedParam = useRef<string | null>(null);
+
+  // 각 주보의 URL 파라미터를 미리 계산 (성능 최적화)
+  const bulletinParamMap = React.useMemo(() => {
+    const map = new Map<string, string>(); // bulletinId -> urlParam
+
+    // 날짜별로 그룹화
+    const dateGroups = new Map<string, BulletinItem[]>();
+    bulletinList.forEach((item) => {
+      const targetDate = item.date.substring(0, 10);
+      if (!dateGroups.has(targetDate)) {
+        dateGroups.set(targetDate, []);
+      }
+      dateGroups.get(targetDate)!.push(item);
+    });
+
+    // 각 그룹의 주보에 파라미터 할당
+    dateGroups.forEach((items, date) => {
+      const dateParam = date.replace(/\./g, ''); // "2025.01.05" -> "20250105"
+
+      if (items.length === 1) {
+        // 날짜에 주보가 1개만 있으면 날짜만
+        map.set(items[0].id, dateParam);
+      } else {
+        // 여러 개면 인덱스 추가
+        items.forEach((item, index) => {
+          map.set(item.id, `${dateParam}-${index + 1}`);
+        });
+      }
+    });
+
+    return map;
+  }, [bulletinList]);
+
+  // URL 파라미터에서 주보 찾기
+  const findBulletinByParam = useCallback(
+    (contentParam: string) => {
+      const targetDate = paramToDate(contentParam);
+      if (!targetDate) return null;
+
+      // 해당 날짜의 모든 주보 찾기
+      const sameDateBulletins = bulletinList.filter((item) => item.date.startsWith(targetDate));
+
+      if (sameDateBulletins.length === 0) return null;
+
+      // 인덱스 추출 (기본값 1)
+      const targetIndex = extractDateIndex(contentParam);
+
+      // 인덱스에 맞는 주보 반환 (1부터 시작하므로 -1)
+      return sameDateBulletins[targetIndex - 1] || sameDateBulletins[0];
+    },
+    [bulletinList]
+  );
+
   // 최신 주보 설정
   useEffect(() => {
     if (bulletinList.length > 0 && !latestBulletin) {
       setLatestBulletin(bulletinList[0]);
     }
   }, [bulletinList, latestBulletin]);
+
+  // URL 파라미터 처리 (중복 실행 방지)
+  useEffect(() => {
+    // 이미 처리한 파라미터면 스킵
+    if (contentParam === lastProcessedParam.current) {
+      return;
+    }
+
+    if (contentParam && bulletinList.length > 0) {
+      const bulletin = findBulletinByParam(contentParam);
+      if (bulletin && bulletin.id !== selectedBulletin?.id) {
+        // 마지막 처리한 파라미터 기록
+        lastProcessedParam.current = contentParam;
+
+        // 내용 로드 (URL 업데이트 없이)
+        loadBulletinContent(bulletin);
+
+        // 해당 주보가 있는 페이지로 이동
+        const bulletinIndex = bulletinList.findIndex((item) => item.id === bulletin.id);
+        if (bulletinIndex !== -1) {
+          const targetPage = Math.floor(bulletinIndex / itemsPerPage) + 1;
+          setCurrentPage(targetPage);
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contentParam]);
 
   // 사용 가능한 연도/월 목록 생성
   const availableYears = React.useMemo(() => {
@@ -126,8 +237,8 @@ export default function BulletinClient({ initialBulletinList }: BulletinClientPr
     setCurrentPage(1); // 필터 적용 시 첫 페이지로 이동
   };
 
-  // 주보 아이템 클릭 핸들러
-  const handleBulletinClick = useCallback(
+  // 주보 내용 로드 함수 (URL 업데이트 없이 내용만 로드)
+  const loadBulletinContent = useCallback(
     async (item: BulletinItem) => {
       // 이미 같은 주보가 선택되어 있고 내용이 있다면 데이터 로드 생략
       if (selectedBulletin?.id === item.id && bulletinContent) {
@@ -176,7 +287,29 @@ export default function BulletinClient({ initialBulletinList }: BulletinClientPr
         setLoadingStep('');
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedBulletin?.id, bulletinContent]
+  );
+
+  // 주보 아이템 클릭 핸들러 (URL 파라미터 업데이트 + 내용 로드)
+  const handleBulletinClick = useCallback(
+    (item: BulletinItem) => {
+      // 미리 계산된 URL 파라미터 가져오기 (즉시 실행)
+      const finalParam = bulletinParamMap.get(item.id);
+
+      if (finalParam) {
+        // 마지막 처리한 파라미터 기록 (useEffect 중복 실행 방지)
+        lastProcessedParam.current = finalParam;
+
+        // URL 파라미터 업데이트
+        router.push(`/worship/bulletin?content=${finalParam}`, { scroll: false });
+      }
+
+      // 내용 로드 (병렬 처리)
+      loadBulletinContent(item);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [bulletinParamMap, loadBulletinContent]
   );
 
   // itemsPerPage나 필터가 변경될 때 totalPages 재계산
@@ -186,12 +319,13 @@ export default function BulletinClient({ initialBulletinList }: BulletinClientPr
     }
   }, [bulletinList.length, itemsPerPage, filteredItems.length]);
 
-  // 최신 주보 자동 로드 (delay 제거 - 즉시 실행)
+  // 최신 주보 자동 로드 (URL 파라미터 없을 때만)
   useEffect(() => {
-    if (latestBulletin && !selectedBulletin) {
-      handleBulletinClick(latestBulletin);
+    if (latestBulletin && !selectedBulletin && !contentParam) {
+      loadBulletinContent(latestBulletin);
     }
-  }, [latestBulletin, selectedBulletin, handleBulletinClick]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [latestBulletin, selectedBulletin, contentParam]);
 
   // 로딩 상태 처리 (초기 로드 시에만)
   if (loading && bulletinList.length === 0) {
@@ -270,4 +404,3 @@ export default function BulletinClient({ initialBulletinList }: BulletinClientPr
     </div>
   );
 }
-

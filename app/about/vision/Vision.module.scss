@@ -1,0 +1,1029 @@
+@use '@/common/styles/mixins/function' as *;
+
+// 비전 페이지 색상 변수 (페이지 전용)
+.vision {
+  --vision-color-primary: #ffd700;
+  --vision-color-secondary: #ff6b6b;
+  --vision-color-tertiary: #4ecdc4;
+  --vision-color-purple: #9b59b6;
+}
+
+.vision {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: clip; // sticky와 호환되도록 clip 사용
+  background: #fafafa;
+}
+
+// 은은한 그라디언트 배경 (vision 영역 내에서만 표시)
+.gradientBg {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  margin-bottom: -100vh; // content와 겹치도록
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: 0 0 vw(40) vw(40);
+}
+
+// 그라디언트 블러 원형
+.blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(clamp(80px, 10vw, 150px));
+  opacity: 1; // 더 진하게
+
+  // 첫 번째 블러 - 골드/베이지 (우상단)
+  &:nth-child(1) {
+    width: clamp(400px, 60vw, 800px);
+    height: clamp(400px, 60vw, 800px);
+    top: -15%;
+    right: -10%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 200, 80, 0.9) 0%,
+      rgba(255, 220, 150, 0.5) 40%,
+      transparent 70%
+    );
+    animation: float1 10s ease-in-out infinite;
+  }
+
+  // 두 번째 블러 - 피치/코랄 (좌하단)
+  &:nth-child(2) {
+    width: clamp(350px, 50vw, 700px);
+    height: clamp(350px, 50vw, 700px);
+    bottom: 5%;
+    left: -15%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 180, 160, 0.8) 0%,
+      rgba(255, 200, 180, 0.4) 40%,
+      transparent 70%
+    );
+    animation: float2 15s ease-in-out infinite;
+  }
+
+  // 세 번째 블러 - 민트/에메랄드 (중앙 우측)
+  &:nth-child(3) {
+    width: clamp(300px, 45vw, 600px);
+    height: clamp(300px, 45vw, 600px);
+    top: 35%;
+    right: 5%;
+    background: radial-gradient(
+      circle,
+      rgba(150, 210, 200, 0.7) 0%,
+      rgba(180, 220, 210, 0.35) 40%,
+      transparent 70%
+    );
+    animation: float3 12s ease-in-out infinite;
+  }
+
+  // 네 번째 블러 - 라벤더/퍼플 (좌상단)
+  &:nth-child(4) {
+    width: clamp(280px, 40vw, 550px);
+    height: clamp(280px, 40vw, 550px);
+    top: 15%;
+    left: 0%;
+    background: radial-gradient(
+      circle,
+      rgba(200, 180, 230, 0.7) 0%,
+      rgba(220, 200, 240, 0.35) 40%,
+      transparent 70%
+    );
+    animation: float4 8s ease-in-out infinite;
+  }
+}
+
+// 부유 애니메이션 키프레임
+@keyframes float1 {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(-30%, 40%) rotate(5deg);
+  }
+  50% {
+    transform: translate(20%, 60%) rotate(-3deg);
+  }
+  75% {
+    transform: translate(40%, 20%) rotate(3deg);
+  }
+}
+
+@keyframes float2 {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(40%, -30%) rotate(-5deg);
+  }
+  50% {
+    transform: translate(60%, 30px) rotate(3deg);
+  }
+  75% {
+    transform: translate(20%, -40%) rotate(-2deg);
+  }
+}
+
+@keyframes float3 {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(-50%, 40%) rotate(4deg);
+  }
+  66% {
+    transform: translate(30px, -30%) rotate(-4deg);
+  }
+}
+
+@keyframes float4 {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(30px, 50px) rotate(-3deg);
+  }
+  66% {
+    transform: translate(-40px, 30px) rotate(5deg);
+  }
+}
+
+// 백그라운드 선 컨테이너 (vision 영역 내에서만 표시)
+.bgLines {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  margin-bottom: -100vh; // content와 겹치도록
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+// 하나의 긴 연속된 곡선
+.line {
+  position: absolute;
+  width: 100%;
+  height: 300vh; // 3개 섹션을 커버하는 높이
+  top: 0;
+  left: 0;
+  opacity: 0.7;
+  will-change: transform;
+
+  // 곡선 SVG 스타일
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// SVG path 스타일 (반응형 처리 위해 분리)
+.svgPath {
+  will-change: stroke-dashoffset;
+  // transition 제거 - 스크롤과 즉시 동기화되어 더 자연스러움
+  stroke-dasharray: 0;
+  stroke-dashoffset: 0;
+  stroke-width: 80; // 기본 두께 (얇게 조정)
+}
+
+// 컨텐츠 영역
+.content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 100vh;
+}
+
+// 섹션
+.section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  min-height: 60vh; // 간격 좁히기
+  padding: vw(60) vw(100);
+  width: 100%;
+  max-width: vw(1000);
+  margin: 0 auto;
+
+  // 왼쪽 정렬
+  &.alignLeft {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  // 오른쪽 정렬
+  &.alignRight {
+    align-items: flex-end;
+    text-align: right;
+  }
+}
+
+// Pin 섹션 컨테이너 (1~3섹션)
+.pinContainer {
+  position: relative;
+  width: 100%;
+}
+
+// Solid 배경 (3섹션 위로 덮이듯이 올라옴)
+.solidBgSection {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 1) 10%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  padding: vw(150) 0 0;
+  margin-top: -100vh; // 3섹션 위로 덮이듯이 올라옴
+  z-index: 5; // 3섹션 위에 표시
+}
+
+// 4번째 섹션 - 가정 회복 (그리드 이미지 + 파트별 타이틀)
+.familySection {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 850vh; // 3파트 + 자녀 후 더 넉넉한 유지 구간
+}
+
+// 가정 회복 래퍼 (화면 중앙 고정, 헤더 제외)
+.familyWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: sticky;
+  top: vw(--header-height);
+  width: 100%;
+  height: calc(100vh - vw(--header-height));
+  min-height: vw(500);
+  overflow: hidden;
+}
+
+// 10x7 그리드 백그라운드
+.familyGrid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(7, 1fr);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: vw(60) vw(100);
+  gap: vw(16);
+}
+
+// 그리드 셀
+.familyGridCell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: vw(8);
+  overflow: hidden;
+  opacity: 0.5;
+}
+
+// 그리드 이미지 컨테이너
+.familyGridImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  will-change: opacity;
+  transition: opacity 0.5s ease-out;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--accent-brand);
+    opacity: 0.1;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: vw(8);
+    filter: grayscale(80%);
+  }
+}
+
+// 이미지 자리 표시 (개발용)
+.imagePlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: vw(8);
+  background: rgba(0, 0, 0, 0.1);
+  @include font-vw(14, $weight: 600, $color: rgba(0, 0, 0, 0.3));
+  text-transform: uppercase;
+}
+
+// 파트 타이틀 컨테이너 (화면 중앙)
+.familyTitleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: none;
+}
+
+// 파트 타이틀 래퍼
+.familyPartTitleWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  // 캔버스가 보이도록 래퍼에 크기 지정
+  width: 100%;
+  height: 100%;
+  will-change: opacity;
+  transition: opacity 0.3s ease-out;
+}
+
+// 물감 번지는 배경 (Canvas)
+.waterPaintCanvas {
+  position: absolute;
+  width: vw(1600);
+  height: vw(800);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0; // 타이틀 뒤에 보이도록
+  pointer-events: none;
+  // 가장자리 그라데이션 마스크 (부드럽게 사라지는 효과)
+  mask-image: radial-gradient(ellipse 50% 50% at center, black 40%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at center, black 40%, transparent 70%);
+  opacity: 0.8;
+}
+
+// 파트 타이틀
+.familyPartTitle {
+  position: relative;
+  z-index: 1; // 캔버스 위에 표시
+  @include font-vw(64, $weight: 550, $color: var(--text-main), $ls: -0.02);
+  text-align: center;
+  white-space: nowrap;
+  // 흰색 뿌연 테두리 효과 (다중 그림자)
+  text-shadow: 0 0 vw(10) rgba(255, 255, 255, 1);
+}
+
+// 타이틀 그룹 (한글 + 영어)
+.familyPartTitleGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: vw(32);
+  padding-block-end: vw(32);
+}
+
+// 파트 라벨 (라운딩)
+.familyPartLabel {
+  display: inline-block;
+  padding: vw(12) vw(30);
+  position: relative;
+  border-radius: vw(100);
+  border: 1px solid var(--text-body);
+  background-color: var(--text-main);
+  @include font-vw(20, $weight: 500, $color: var(--text-inverse), $ls: 0.05);
+}
+
+// 타이틀 굵은 부분 (남편, 아내, 자녀)
+.titleBold {
+  font-weight: 700;
+}
+
+// 영어 서브타이틀
+.familyPartEngTitle {
+  @include font-vw(18, 24, $weight: 400, $color: var(--text-sub));
+  text-align: center;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}
+
+// 타이틀 밑줄 애니메이션
+.titleUnderline {
+  display: block;
+  position: absolute;
+  bottom: vw(-15);
+  left: 50%;
+  transform: translateX(-50%);
+  height: 1px;
+  background: var(--text-main);
+  transition: width 0.6s ease-out;
+}
+
+// Pin 섹션 (스크롤 영역)
+.pinSection {
+  position: relative;
+  width: 100%;
+  height: 450vh; // 긴 스크롤 영역 (하이라이트 후 유지)
+  will-change: opacity;
+
+  // 마지막 섹션 (3섹션)은 50vh 더 길게
+  &.isLast {
+    height: 500vh;
+  }
+
+  // 왼쪽 정렬
+  &.alignLeft {
+    .pinContent {
+      align-items: flex-start;
+      text-align: left;
+    }
+  }
+
+  // 오른쪽 정렬
+  &.alignRight {
+    .pinContent {
+      align-items: flex-end;
+      text-align: right;
+    }
+  }
+}
+
+// Pin Wrapper (화면에 고정되는 부분)
+.pinWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh; // 화면 높이
+  background: transparent;
+
+  &::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    bottom: 10%;
+    left: 20%;
+    width: vw(400);
+    height: vw(400);
+    pointer-events: none;
+  }
+}
+
+// Pin 컨텐츠
+.pinContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: vw(1000);
+  padding: vw(60) vw(100);
+  margin: 0 auto;
+  &::before {
+    content: '';
+    position: absolute;
+    width: vw(300);
+    height: vw(300);
+    background-color: var(--text-inverse);
+    mask-repeat: no-repeat;
+    mask-size: cover;
+    mask-position: center center;
+  }
+  &01::before {
+    bottom: 10%;
+    left: 15%;
+    mask-image: url('data:image/svg+xml,<svg color="%23000000" viewBox="0 0 75 75" fill="currentColor" xmlns="http://www.w3.org/2000/svg" width="96" height="96"><path fill-rule="evenodd" clip-rule="evenodd" d="M4.60982 4.61425C9.03933 0.254888 16.6641 -0.166313 25.5475 2.87381C29.1936 4.12159 33.031 5.94682 36.912 8.30032C31.4565 11.5551 25.9202 15.8172 20.6955 20.9591C15.471 26.1009 11.1212 31.5683 7.77979 36.9711C5.48856 33.053 3.72483 29.187 2.53541 25.5215C-0.362539 16.5907 0.180307 8.97362 4.60982 4.61425ZM7.55216 37.3415C-0.439162 23.7644 -2.16531 10.7436 4.3406 4.34071C10.8465 -2.0622 23.8381 -0.128419 37.2861 8.07864C50.8631 0.0875643 63.8836 -1.63846 70.2864 4.86737C76.6893 11.3732 74.7556 24.3646 66.5488 37.8124C74.5399 51.3894 76.2659 64.41 69.7601 70.8128C63.2542 77.2156 50.2629 75.282 36.8152 67.0752C23.238 75.0666 10.2172 76.7928 3.81434 70.2868C-2.58853 63.7809 -0.654804 50.7894 7.55216 37.3415ZM36.4447 66.8476C32.5267 69.1389 28.6607 70.9026 24.9951 72.092C16.0643 74.99 8.44725 74.4471 4.08789 70.0176C-0.271479 65.5881 -0.692681 57.9633 2.34744 49.0799C3.59521 45.4339 5.4204 41.5966 7.77384 37.7156C11.0286 43.171 15.2906 48.7071 20.4323 53.9316C25.5742 59.1563 31.0418 63.5061 36.4447 66.8476ZM36.8188 66.6274C31.3895 63.2903 25.884 58.9239 20.7059 53.6624C15.5278 48.4011 11.25 42.8268 8.00005 37.3451C11.337 31.916 15.7034 26.4107 20.9647 21.2326C26.2262 16.0545 31.8006 11.7765 37.2825 8.52653C42.7116 11.8635 48.2168 16.2298 53.3948 21.4911C58.573 26.7526 62.8509 32.327 66.1009 37.8088C62.7639 43.2381 58.3975 48.7435 53.136 53.9216C47.8747 59.0996 42.3005 63.3775 36.8188 66.6274ZM37.1893 66.8536C41.0701 69.2069 44.9073 71.032 48.5532 72.2797C57.4366 75.3198 65.0613 74.8986 69.4909 70.5392C73.9204 66.1799 74.4632 58.5628 71.5653 49.632C70.3759 45.9666 68.6122 42.1008 66.3211 38.1829C62.9797 43.5857 58.6298 49.0533 53.4053 54.1951C48.1808 59.3369 42.6447 63.5988 37.1893 66.8536ZM66.3271 37.4383C68.6805 33.5575 70.5056 29.7202 71.7533 26.0743C74.7934 17.1909 74.3722 9.56609 70.0129 5.13658C65.6535 0.707074 58.0364 0.164229 49.1056 3.06217C45.4403 4.25155 41.5745 6.01518 37.6566 8.30627C43.0593 11.6477 48.5266 15.9974 53.6684 21.2219C58.8102 26.4465 63.0723 31.9828 66.3271 37.4383ZM37.0503 19.4421L37.3447 30.1037C37.4544 34.0751 40.648 37.2688 44.6195 37.3784L55.281 37.6728L44.6195 37.9672C40.648 38.0769 37.4544 41.2705 37.3447 45.242L37.0503 55.9035L36.7559 45.242C36.6463 41.2705 33.4526 38.0769 29.4812 37.9672L18.8196 37.6728L29.4812 37.3784C33.4526 37.2688 36.6463 34.0751 36.7559 30.1037L37.0503 19.4421Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M4.60982 4.61425C9.03933 0.254888 16.6641 -0.166313 25.5475 2.87381C29.1936 4.12159 33.031 5.94682 36.912 8.30032C31.4565 11.5551 25.9202 15.8172 20.6955 20.9591C15.471 26.1009 11.1212 31.5683 7.77979 36.9711C5.48856 33.053 3.72483 29.187 2.53541 25.5215C-0.362539 16.5907 0.180307 8.97362 4.60982 4.61425ZM7.55216 37.3415C-0.439162 23.7644 -2.16531 10.7436 4.3406 4.34071C10.8465 -2.0622 23.8381 -0.128419 37.2861 8.07864C50.8631 0.0875643 63.8836 -1.63846 70.2864 4.86737C76.6893 11.3732 74.7556 24.3646 66.5488 37.8124C74.5399 51.3894 76.2659 64.41 69.7601 70.8128C63.2542 77.2156 50.2629 75.282 36.8152 67.0752C23.238 75.0666 10.2172 76.7928 3.81434 70.2868C-2.58853 63.7809 -0.654804 50.7894 7.55216 37.3415ZM36.4447 66.8476C32.5267 69.1389 28.6607 70.9026 24.9951 72.092C16.0643 74.99 8.44725 74.4471 4.08789 70.0176C-0.271479 65.5881 -0.692681 57.9633 2.34744 49.0799C3.59521 45.4339 5.4204 41.5966 7.77384 37.7156C11.0286 43.171 15.2906 48.7071 20.4323 53.9316C25.5742 59.1563 31.0418 63.5061 36.4447 66.8476ZM36.8188 66.6274C31.3895 63.2903 25.884 58.9239 20.7059 53.6624C15.5278 48.4011 11.25 42.8268 8.00005 37.3451C11.337 31.916 15.7034 26.4107 20.9647 21.2326C26.2262 16.0545 31.8006 11.7765 37.2825 8.52653C42.7116 11.8635 48.2168 16.2298 53.3948 21.4911C58.573 26.7526 62.8509 32.327 66.1009 37.8088C62.7639 43.2381 58.3975 48.7435 53.136 53.9216C47.8747 59.0996 42.3005 63.3775 36.8188 66.6274ZM37.1893 66.8536C41.0701 69.2069 44.9073 71.032 48.5532 72.2797C57.4366 75.3198 65.0613 74.8986 69.4909 70.5392C73.9204 66.1799 74.4632 58.5628 71.5653 49.632C70.3759 45.9666 68.6122 42.1008 66.3211 38.1829C62.9797 43.5857 58.6298 49.0533 53.4053 54.1951C48.1808 59.3369 42.6447 63.5988 37.1893 66.8536ZM66.3271 37.4383C68.6805 33.5575 70.5056 29.7202 71.7533 26.0743C74.7934 17.1909 74.3722 9.56609 70.0129 5.13658C65.6535 0.707074 58.0364 0.164229 49.1056 3.06217C45.4403 4.25155 41.5745 6.01518 37.6566 8.30627C43.0593 11.6477 48.5266 15.9974 53.6684 21.2219C58.8102 26.4465 63.0723 31.9828 66.3271 37.4383ZM37.0503 19.4421L37.3447 30.1037C37.4544 34.0751 40.648 37.2688 44.6195 37.3784L55.281 37.6728L44.6195 37.9672C40.648 38.0769 37.4544 41.2705 37.3447 45.242L37.0503 55.9035L36.7559 45.242C36.6463 41.2705 33.4526 38.0769 29.4812 37.9672L18.8196 37.6728L29.4812 37.3784C33.4526 37.2688 36.6463 34.0751 36.7559 30.1037L37.0503 19.4421Z" fill="currentColor"></path></svg>');
+  }
+  &02::before {
+    bottom: 10%;
+    right: 20%;
+    mask-image: url('data:image/svg+xml,<svg color="%23000000" viewBox="0 0 82 82" fill="currentColor" xmlns="http://www.w3.org/2000/svg" width="96" height="96"><path fill-rule="evenodd" clip-rule="evenodd" d="M35.3877 35.3708L4.37455 19.7856L33.7141 39.5853L19.3871 38.5181L32.9883 40.6041L0 51.526L34.7311 44.7833L23.8694 54.139L34.963 45.9957L19.3506 77.0631L39.1489 47.7256L38.0845 62.0153L40.1663 48.441L51.0909 81.4376L44.339 46.6589L53.7054 57.533L45.6039 46.4964L76.628 62.0871L47.2315 42.249L61.5816 43.3179L48.0793 41.2471L81.0026 30.3467L46.1728 37.1085L57.0993 27.697L46.0886 35.7794L61.652 4.80961L41.8125 34.2081L42.8842 19.8207L40.8093 33.3501L29.9117 0.435059L36.6642 35.2172L27.2633 24.303L35.3877 35.3708Z" fill="currentColor"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M35.3877 35.3708L4.37455 19.7856L33.7141 39.5853L19.3871 38.5181L32.9883 40.6041L0 51.526L34.7311 44.7833L23.8694 54.139L34.963 45.9957L19.3506 77.0631L39.1489 47.7256L38.0845 62.0153L40.1663 48.441L51.0909 81.4376L44.339 46.6589L53.7054 57.533L45.6039 46.4964L76.628 62.0871L47.2315 42.249L61.5816 43.3179L48.0793 41.2471L81.0026 30.3467L46.1728 37.1085L57.0993 27.697L46.0886 35.7794L61.652 4.80961L41.8125 34.2081L42.8842 19.8207L40.8093 33.3501L29.9117 0.435059L36.6642 35.2172L27.2633 24.303L35.3877 35.3708Z" fill="currentColor"></path></svg>');
+    opacity: 0.5;
+  }
+  &03::before {
+    top: 15%;
+    left: 20%;
+    mask-image: url('data:image/svg+xml,<svg color="%23000000" viewBox="0 0 86 77" fill="currentColor" xmlns="http://www.w3.org/2000/svg" width="96" height="96"><path d="M58.9624 70.2765C52.379 73.8174 44.8638 75.2417 37.4414 74.3552C30.0189 73.4686 23.0506 70.3144 17.4864 65.3226C11.9222 60.3308 8.03294 53.7444 6.349 46.4614C4.66506 39.1783 5.26835 31.5531 8.07662 24.6255L8.41591 24.763C5.63593 31.6209 5.03872 39.1692 6.70569 46.3789C8.37266 53.5885 12.2227 60.1086 17.7308 65.0501C23.239 69.9916 30.1371 73.1141 37.4848 73.9917C44.8324 74.8692 52.2719 73.4593 58.7889 69.9541L58.9624 70.2765Z" fill="currentColor"></path><path d="M58.9624 70.2765C52.379 73.8174 44.8638 75.2417 37.4414 74.3552C30.0189 73.4686 23.0506 70.3144 17.4864 65.3226C11.9222 60.3308 8.03294 53.7444 6.349 46.4614C4.66506 39.1783 5.26835 31.5531 8.07662 24.6255L8.41591 24.763C5.63593 31.6209 5.03872 39.1692 6.70569 46.3789C8.37266 53.5885 12.2227 60.1086 17.7308 65.0501C23.239 69.9916 30.1371 73.1141 37.4848 73.9917C44.8324 74.8692 52.2719 73.4593 58.7889 69.9541L58.9624 70.2765Z" fill="currentColor"></path><path d="M24.5391 6.27526C31.1224 2.73435 38.6377 1.31007 46.0601 2.19659C53.4825 3.08312 60.4509 6.23732 66.0151 11.2291C71.5793 16.2209 75.4685 22.8074 77.1525 30.0904C78.8364 37.3734 78.2331 44.9986 75.4248 51.9262L75.0856 51.7887C77.8655 44.9309 78.4627 37.3825 76.7958 30.1729C75.1288 22.9632 71.2788 16.4431 65.7706 11.5016C60.2625 6.56012 53.3643 3.43771 46.0167 2.5601C38.669 1.68251 31.2295 3.09245 24.7125 6.59768L24.5391 6.27526Z" fill="currentColor"></path><path d="M24.5391 6.27526C31.1224 2.73435 38.6377 1.31007 46.0601 2.19659C53.4825 3.08312 60.4509 6.23732 66.0151 11.2291C71.5793 16.2209 75.4685 22.8074 77.1525 30.0904C78.8364 37.3734 78.2331 44.9986 75.4248 51.9262L75.0856 51.7887C77.8655 44.9309 78.4627 37.3825 76.7958 30.1729C75.1288 22.9632 71.2788 16.4431 65.7706 11.5016C60.2625 6.56012 53.3643 3.43771 46.0167 2.5601C38.669 1.68251 31.2295 3.09245 24.7125 6.59768L24.5391 6.27526Z" fill="currentColor"></path><path d="M24.2383 0.0341797L24.3576 4.35376C24.402 5.9628 25.6959 7.25673 27.305 7.30116L31.6246 7.42043L27.305 7.5397C25.6959 7.58413 24.402 8.87806 24.3576 10.4871L24.2383 14.8067L24.119 10.4871C24.0746 8.87806 22.7807 7.58413 21.1716 7.5397L16.8521 7.42043L21.1716 7.30116C22.7807 7.25673 24.0746 5.9628 24.119 4.35376L24.2383 0.0341797Z" fill="currentColor"></path><path d="M24.2383 0.0341797L24.3576 4.35376C24.402 5.9628 25.6959 7.25673 27.305 7.30116L31.6246 7.42043L27.305 7.5397C25.6959 7.58413 24.402 8.87806 24.3576 10.4871L24.2383 14.8067L24.119 10.4871C24.0746 8.87806 22.7807 7.58413 21.1716 7.5397L16.8521 7.42043L21.1716 7.30116C22.7807 7.25673 24.0746 5.9628 24.119 4.35376L24.2383 0.0341797Z" fill="currentColor"></path><path d="M82.581 48.8055L78.6026 50.4923C77.1206 51.1206 76.3878 52.7973 76.9334 54.3117L78.398 58.3771L76.7113 54.3987C76.083 52.9167 74.4062 52.184 72.8918 52.7295L68.8264 54.1941L72.8048 52.5074C74.2868 51.8791 75.0196 50.2024 74.474 48.688L73.0094 44.6225L74.6961 48.601C75.3244 50.0829 77.0012 50.8157 78.5156 50.2701L82.581 48.8055Z" fill="currentColor"></path><path d="M82.581 48.8055L78.6026 50.4923C77.1206 51.1206 76.3878 52.7973 76.9334 54.3117L78.398 58.3771L76.7113 54.3987C76.083 52.9167 74.4062 52.184 72.8918 52.7295L68.8264 54.1941L72.8048 52.5074C74.2868 51.8791 75.0196 50.2024 74.474 48.688L73.0094 44.6225L74.6961 48.601C75.3244 50.0829 77.0012 50.8157 78.5156 50.2701L82.581 48.8055Z" fill="currentColor"></path><path d="M59.9191 76.3291L59.7247 72.0122C59.6523 70.4042 58.3361 69.1329 56.7266 69.1165L52.4056 69.0723L56.7224 68.878C58.3304 68.8056 59.6017 67.4894 59.6181 65.8798L59.6623 61.5588L59.8566 65.8756C59.929 67.4837 61.2453 68.7549 62.8548 68.7714L67.1758 68.8155L62.859 69.0099C61.2509 69.0823 59.9797 70.3985 59.9632 72.0081L59.9191 76.3291Z" fill="currentColor"></path><path d="M59.9191 76.3291L59.7247 72.0122C59.6523 70.4042 58.3361 69.1329 56.7266 69.1165L52.4056 69.0723L56.7224 68.878C58.3304 68.8056 59.6017 67.4894 59.6181 65.8798L59.6623 61.5588L59.8566 65.8756C59.929 67.4837 61.2453 68.7549 62.8548 68.7714L67.1758 68.8155L62.859 69.0099C61.2509 69.0823 59.9797 70.3985 59.9632 72.0081L59.9191 76.3291Z" fill="currentColor"></path><path d="M15.5032 23.6415L11.2239 24.2414C9.62978 24.4648 8.4881 25.8949 8.62324 27.4989L8.98605 31.8048L8.38619 27.5254C8.16273 25.9314 6.73268 24.7897 5.12871 24.9248L0.82274 25.2876L5.10213 24.6878C6.6962 24.4643 7.83788 23.0343 7.70274 21.4303L7.33993 17.1243L7.93979 21.4037C8.16325 22.9978 9.5933 24.1395 11.1973 24.0043L15.5032 23.6415Z" fill="currentColor"></path><path d="M15.5032 23.6415L11.2239 24.2414C9.62978 24.4648 8.4881 25.8949 8.62324 27.4989L8.98605 31.8048L8.38619 27.5254C8.16273 25.9314 6.73268 24.7897 5.12871 24.9248L0.82274 25.2876L5.10213 24.6878C6.6962 24.4643 7.83788 23.0343 7.70274 21.4303L7.33993 17.1243L7.93979 21.4037C8.16325 22.9978 9.5933 24.1395 11.1973 24.0043L15.5032 23.6415Z" fill="currentColor"></path></svg>');
+  }
+
+  @include mq(pc-sm) {
+    &::before {
+      width: vw(200);
+      height: vw(200);
+    }
+  }
+
+  @include mq(mo) {
+    &::before {
+      width: vw(150);
+      height: vw(150);
+    }
+    &01::before {
+      bottom: initial;
+      left: initial;
+      top: 20%;
+      right: 5%;
+    }
+    &02::before {
+      bottom: initial;
+      right: initial;
+      top: 25%;
+      left: 20%;
+    }
+    &03::before {
+      top: 15%;
+      left: 5%;
+    }
+  }
+}
+
+// 섹션 사이 이미지
+.sectionImage {
+  display: flex;
+  width: 80%;
+  margin: 0 auto;
+  position: relative;
+  z-index: -1;
+  top: vw(-400);
+
+  img {
+    width: vw(800);
+    height: auto;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  // 오른쪽 정렬 - 더 오른쪽으로
+  &.imageRight {
+    justify-content: flex-end;
+  }
+
+  // 왼쪽 정렬 - 더 왼쪽으로
+  &.imageLeft {
+    justify-content: flex-start;
+    // margin-left: vw(-200);
+  }
+}
+
+// 텍스트 하이라이트 효과 컨테이너
+.textReveal {
+  width: 100%;
+  max-width: vw(1000);
+
+  &.alignLeft {
+    text-align: left;
+  }
+
+  &.alignRight {
+    text-align: right;
+  }
+
+  &.alignCenter {
+    text-align: center;
+    margin: 0 auto;
+  }
+}
+
+// 타이틀 라벨 (라운딩)
+.titleLabel {
+  display: inline-block;
+  margin-bottom: vw(16);
+  padding: vw(12) vw(30);
+  border-radius: vw(100);
+  border: 1px solid var(--text-body);
+  background: transparent;
+  @include font-vw(20, $weight: 600, $color: var(--text-body), $ls: 0.05);
+
+  @include mq(mo) {
+    padding: vw(8) vw(20);
+    @include font-vw(14);
+  }
+}
+
+// 타이틀 래퍼
+.titleWrap {
+  margin: 0 0 vw(60) 0;
+  will-change: filter, opacity;
+  padding-bottom: vw(20);
+  border-bottom: 1px solid var(--text-body);
+}
+
+// 타이틀
+.title {
+  @include font-vw(80, 100, $weight: 900, $color: var(--text-main));
+  margin: 0;
+}
+
+// 영어 타이틀
+.englishTitle {
+  display: block;
+  @include font-vw(20, $weight: 600, $color: var(--text-body));
+  margin-top: vw(8);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+// 설명 텍스트 래퍼
+.descWrap {
+  display: flex;
+  flex-direction: column;
+  gap: vw(12);
+  will-change: transform, opacity; // slide up 성능 최적화
+}
+
+// Pin 섹션 이미지 (텍스트 아래 겹침)
+.pinImage {
+  position: absolute;
+  bottom: 0; // 텍스트 아래쪽으로 20% 겹침
+  width: 50%;
+  max-width: vw(800);
+  height: auto;
+  z-index: -1;
+  will-change: opacity, transform;
+  // scale은 인라인 style로 적용 (animation과 분리)
+
+  // @include mq(pc-sm) {
+  //   width: vw(500);
+  // }
+
+  img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    animation: floatImage 4s ease-in-out infinite; // 둥실둥실 (img에 적용)
+  }
+
+  // 텍스트 오른쪽 정렬 → 이미지 왼쪽
+  &.imageLeft {
+    left: vw(40);
+  }
+
+  // 텍스트 왼쪽 정렬 → 이미지 오른쪽
+  &.imageRight {
+    right: vw(40);
+  }
+}
+
+// 둥실둥실 애니메이션
+@keyframes floatImage {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+// 줄 단위 래퍼
+.lineWrap {
+  position: relative;
+  display: block;
+}
+
+// 줄 텍스트 - 연한
+.lineLight {
+  @include font-vw(36, 56, null, null, 600);
+  display: block;
+  color: rgba(51, 51, 51, 0.2);
+  word-break: keep-all;
+}
+
+// 줄 텍스트 - 진한 (하이라이트)
+.lineHighlight {
+  @include font-vw(36, 56, $weight: 600, $color: var(--text-body));
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  word-break: keep-all;
+  transition: clip-path 0.15s ease-out;
+
+  .alignRight & {
+    text-align: right;
+  }
+
+  .alignCenter & {
+    text-align: center;
+  }
+}
+
+// 반응형 처리
+@include mq(mo) {
+  .line {
+    width: 100%;
+    height: 300vh; // 3개 섹션
+    left: 0;
+    transform-origin: center top;
+  }
+
+  .svgPath {
+    stroke-width: 50;
+  }
+
+  .section {
+    min-height: 50vh;
+    padding: vw(40) 0;
+
+    &.alignLeft,
+    &.alignRight {
+      padding-left: vw(20);
+      padding-right: vw(20);
+    }
+  }
+
+  .pinSection {
+    height: 350vh; // 모바일 스크롤 영역 (하이라이트 후 유지)
+
+    &.isLast {
+      height: 400vh; // 3섹션만 +50vh
+    }
+  }
+
+  .pinWrapper {
+    min-height: vw(500);
+  }
+
+  .pinContent {
+    padding: vw(40) vw(20);
+  }
+
+  .solidBgSection {
+    min-height: 80vh;
+    padding: vw(60) 0 0;
+    margin-top: -80vh;
+  }
+
+  .familySection {
+    height: 1000vh; // 모바일에서 충분한 스크롤 영역
+  }
+
+  .familyWrapper {
+    min-height: vw(500);
+  }
+
+  .familyGrid {
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+    padding: vw(20);
+    gap: vw(4);
+  }
+
+  .familyGridCell {
+    border-radius: vw(4);
+  }
+
+  .familyGridImage {
+    img {
+      border-radius: vw(4);
+    }
+  }
+
+  .imagePlaceholder {
+    border-radius: vw(4);
+    @include font-vw(10);
+  }
+
+  .familyPartTitleGroup {
+    gap: vw(20);
+  }
+
+  .familyPartLabel {
+    padding: vw(8) vw(20);
+    @include font-vw(14);
+  }
+
+  .familyPartTitle {
+    @include font-vw(36, 48);
+  }
+
+  .familyPartEngTitle {
+    width: 80%;
+    @include font-vw(14, 20, $ls: 0.02, $weight: 500);
+  }
+
+  // 물감 번짐 효과 모바일 크기 축소
+  .waterPaintCanvas {
+    width: vw(600);
+    height: vw(400);
+  }
+
+  .sectionImage {
+    top: vw(-150);
+
+    img {
+      width: vw(250);
+    }
+
+    &.imageRight {
+      justify-content: flex-end;
+      margin-right: vw(-50);
+      margin-left: 0;
+    }
+
+    &.imageLeft {
+      justify-content: flex-start;
+      margin-left: vw(-50);
+      margin-right: 0;
+    }
+  }
+
+  .textReveal {
+    max-width: 100%;
+  }
+
+  .pinImage {
+    width: 100%;
+    max-width: vw(300);
+    bottom: 0;
+    &.imageLeft {
+      left: -15%;
+      bottom: initial;
+      top: 60%;
+    }
+    &.imageRight {
+      right: -15%;
+      bottom: initial;
+      top: 60%;
+    }
+  }
+
+  .titleWrap {
+    margin-bottom: vw(24);
+  }
+
+  .titleLabel {
+    margin-bottom: vw(12);
+    padding: vw(8) vw(20);
+    @include font-vw(14);
+  }
+
+  .title {
+    @include font-vw(48);
+    line-height: 1.3;
+  }
+
+  .englishTitle {
+    @include font-vw(14);
+    margin-top: vw(8);
+  }
+
+  .descWrap {
+    gap: 0;
+  }
+
+  .lineLight,
+  .lineHighlight {
+    @include font-vw(20);
+    line-height: 1.8;
+  }
+}
+
+// ============================================
+// 5섹션 - 십자가 (Split Text)
+// ============================================
+.crossSection {
+  position: relative;
+  width: 100%;
+  // 80vh fade in + 200vh 텍스트 + 150vh 여유 (텍스트 후 유지)
+  min-height: 430vh;
+  background-color: #fff; // 기본 흰색 배경
+  overflow: clip;
+}
+
+// 이미지 + 텍스트 핀 영역 (처음부터 pin)
+.crossPinArea {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+}
+
+// 십자가 배경 이미지
+.crossBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/vision/cross.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+  will-change: opacity;
+  transition: opacity 0.1s ease-out;
+
+  @include mq(mo) {
+    background-position: 70% center;
+  }
+}
+
+// 반짝이는 별 파티클 캔버스
+.starParticles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+// 상단 흰색→투명 그라데이션 (흰색 배경과 자연스럽게 연결)
+.crossTopGradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: vw(150);
+  background: linear-gradient(to bottom, #fff 0%, transparent 100%);
+  z-index: 2;
+}
+
+// 하단 투명→흰색 그라데이션
+.crossBottomGradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: vw(150);
+  background: linear-gradient(to top, #fff 0%, transparent 100%);
+  z-index: 2;
+}
+
+// 이미지 위 흰색 그라데이션 오버레이 (텍스트 가독성)
+.crossGradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.7) 30%,
+    rgba(255, 255, 255, 0.5) 60%,
+    rgba(255, 255, 255, 0.3) 100%
+  );
+  z-index: 2;
+}
+
+// 텍스트 래퍼
+.crossTextWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+}
+
+.crossLine {
+  @include font-vw(36, 48, $weight: 600, $color: var(--text-main));
+  line-height: 1.8;
+  text-align: center;
+  word-break: keep-all;
+  margin: 0;
+  // 텍스트 가독성을 위한 그림자
+  text-shadow: 0 vw(2) vw(10) rgba(255, 255, 255, 0.8);
+  @include mq(mo) {
+    @include font-vw(20, 36);
+  }
+}
+
+.crossChar {
+  display: inline-block;
+  will-change: opacity, transform, filter;
+  transition:
+    opacity 0.15s ease-out,
+    transform 0.15s ease-out,
+    filter 0.15s ease-out;
+}

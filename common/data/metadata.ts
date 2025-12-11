@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { pageMeta } from './list';
+import { pageMeta } from '@/common/data/list';
 
 // 사이트 기본 정보
 const SITE_NAME = '행복으로가는교회';

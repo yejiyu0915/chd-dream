@@ -5,7 +5,8 @@ import Breadcrumbs from '@/common/components/layouts/Breadcrumbs';
 import { getPageMeta } from '@/common/data/list';
 import { getClientSeason } from '@/common/utils/season';
 import { motion } from 'framer-motion';
-import s from './SectionLayout.module.scss';
+import ShareButton from '@/common/components/utils/ShareButton';
+import s from '@/common/components/layouts/SectionLayout/SectionLayout.module.scss';
 
 interface SectionLayoutProps {
   children: React.ReactNode;
@@ -65,7 +66,7 @@ export default function SectionLayout({
 
   // /<sectionName>/<category>/<slug> 패턴을 확인하여 상세 페이지인지 여부를 판단
   // 단, /about/group 하위 페이지는 상세 페이지로 인식하지 않음 (titleSection 표시 필요)
-  const isDetailPage = 
+  const isDetailPage =
     new RegExp(`/${sectionName}/[^/]+/[^/]+`).test(pathname) &&
     !pathname.startsWith('/about/group/');
 
@@ -139,6 +140,9 @@ export default function SectionLayout({
         )}
       </div>
       {children}
+
+      {/* 모바일 공유 버튼 (왼쪽 하단) */}
+      <ShareButton />
     </main>
   );
 }

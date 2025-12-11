@@ -1,0 +1,411 @@
+'use client';
+
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import BulletinList from '@/app/worship/bulletin/components/BulletinList';
+import BulletinContent from '@/app/worship/bulletin/components/BulletinContent';
+import Spinner from '@/common/components/utils/Spinner';
+import { formatDate } from '@/app/worship/bulletin/utils/bulletinUtils';
+import {
+  convertBlocksToMdxHtml,
+  processHtmlTags,
+} from '@/app/worship/bulletin/utils/htmlConverter';
+import b from '@/app/worship/bulletin/Bulletin.module.scss';
+
+interface BulletinItem {
+  id: string;
+  title: string;
+  date: string;
+  summary: string;
+  praise: string;
+  slug: string;
+  content?: string;
+  thumbnail?: string;
+}
+
+interface BulletinClientProps {
+  initialBulletinList: BulletinItem[];
+}
+
+// ? ì§œë¥?URL ?Œë¼ë¯¸í„° ?•ì‹?¼ë¡œ ë³€??(2025.01.05 ??20250105)
+const dateToParam = (dateString: string): string => {
+  const match = dateString.match(/^(\d{4})\.(\d{2})\.(\d{2})/);
+  if (match) {
+    return `${match[1]}${match[2]}${match[3]}`;
+  }
+  return '';
+};
+
+// URL ?Œë¼ë¯¸í„°ë¥?? ì§œ ?•ì‹?¼ë¡œ ë³€??(20250105 ??2025.01.05)
+const paramToDate = (param: string): string => {
+  // ê¸°ë³¸ ?•ì‹: 20251130 ?ëŠ” 20251130-1
+  const match = param.match(/^(\d{4})(\d{2})(\d{2})(-\d+)?$/);
+  if (match) {
+    return `${match[1]}.${match[2]}.${match[3]}`;
+  }
+  return '';
+};
+
+// ê°™ì? ? ì§œ??ì£¼ë³´ ?¸ë±??ì¶”ì¶œ (20251130-2 ??2ë²ˆì§¸)
+const extractDateIndex = (param: string): number => {
+  const match = param.match(/-(\d+)$/);
+  return match ? parseInt(match[1], 10) : 1;
+};
+
+export default function BulletinClient({ initialBulletinList, contentParam }: BulletinClientProps) {
+    const router = useRouter();
+
+  // ?œë²„?ì„œ ë°›ì? ?°ì´?°ë? ì§ì ‘ ?¬ìš© (useQuery ?œê±°)
+  const bulletinList = initialBulletinList || [];
+  const loading = false;
+  const isError = false;
+  const error = null;
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [latestBulletin, setLatestBulletin] = useState<BulletinItem | null>(null);
+  const [selectedBulletin, setSelectedBulletin] = useState<BulletinItem | null>(null);
+  const [bulletinContent, setBulletinContent] = useState<string>('');
+  const [contentLoading, setContentLoading] = useState(false);
+  const [loadingStep, setLoadingStep] = useState('');
+
+  // ?„í„° ?íƒœ (UI??
+  const [tempYear, setTempYear] = useState<string>('all');
+  const [tempMonth, setTempMonth] = useState<string>('all');
+
+  // ?¤ì œ ?ìš©???„í„° ?íƒœ
+  const [selectedYear, setSelectedYear] = useState<string>('all');
+  const [selectedMonth, setSelectedMonth] = useState<string>('all');
+
+  const itemsPerPage = 6; // 2x3 ê·¸ë¦¬??
+
+  // ë§ˆì?ë§‰ìœ¼ë¡?ì²˜ë¦¬??URL ?Œë¼ë¯¸í„° ì¶”ì  (ì¤‘ë³µ ?¤í–‰ ë°©ì?)
+  const lastProcessedParam = useRef<string | null>(null);
+
+  // ê°?ì£¼ë³´??URL ?Œë¼ë¯¸í„°ë¥?ë¯¸ë¦¬ ê³„ì‚° (?±ëŠ¥ ìµœì ??
+  const bulletinParamMap = React.useMemo(() => {
+    const map = new Map<string, string>(); // bulletinId -> urlParam
+    
+    // ? ì§œë³„ë¡œ ê·¸ë£¹??
+    const dateGroups = new Map<string, BulletinItem[]>();
+    bulletinList.forEach((item) => {
+      const targetDate = item.date.substring(0, 10);
+      if (!dateGroups.has(targetDate)) {
+        dateGroups.set(targetDate, []);
+      }
+      dateGroups.get(targetDate)!.push(item);
+    });
+
+    // ê°?ê·¸ë£¹??ì£¼ë³´???Œë¼ë¯¸í„° ? ë‹¹
+    dateGroups.forEach((items, date) => {
+      const dateParam = date.replace(/\./g, ''); // "2025.01.05" -> "20250105"
+      
+      if (items.length === 1) {
+        // ? ì§œ??ì£¼ë³´ê°€ 1ê°œë§Œ ?ˆìœ¼ë©?? ì§œë§?
+        map.set(items[0].id, dateParam);
+      } else {
+        // ?¬ëŸ¬ ê°œë©´ ?¸ë±??ì¶”ê?
+        items.forEach((item, index) => {
+          map.set(item.id, `${dateParam}-${index + 1}`);
+        });
+      }
+    });
+
+    return map;
+  }, [bulletinList]);
+
+  // URL ?Œë¼ë¯¸í„°?ì„œ ì£¼ë³´ ì°¾ê¸°
+  const findBulletinByParam = useCallback(
+    (contentParam: string) => {
+      const targetDate = paramToDate(contentParam);
+      if (!targetDate) return null;
+
+      // ?´ë‹¹ ? ì§œ??ëª¨ë“  ì£¼ë³´ ì°¾ê¸°
+      const sameDateBulletins = bulletinList.filter((item) => item.date.startsWith(targetDate));
+
+      if (sameDateBulletins.length === 0) return null;
+
+      // ?¸ë±??ì¶”ì¶œ (ê¸°ë³¸ê°?1)
+      const targetIndex = extractDateIndex(contentParam);
+
+      // ?¸ë±?¤ì— ë§ëŠ” ì£¼ë³´ ë°˜í™˜ (1ë¶€???œì‘?˜ë?ë¡?-1)
+      return sameDateBulletins[targetIndex - 1] || sameDateBulletins[0];
+    },
+    [bulletinList]
+  );
+
+  // ìµœì‹  ì£¼ë³´ ?¤ì •
+  useEffect(() => {
+    if (bulletinList.length > 0 && !latestBulletin) {
+      setLatestBulletin(bulletinList[0]);
+    }
+  }, [bulletinList, latestBulletin]);
+
+  // URL ?Œë¼ë¯¸í„°?ì„œ content ê°’ì„ ê°€?¸ì˜¤ê¸?
+  const contentParam = searchParams.get('content');
+
+  // URL ?Œë¼ë¯¸í„° ì²˜ë¦¬ (ì¤‘ë³µ ?¤í–‰ ë°©ì?)
+  useEffect(() => {
+    // ?´ë? ì²˜ë¦¬???Œë¼ë¯¸í„°ë©??¤í‚µ
+    if (contentParam === lastProcessedParam.current) {
+      return;
+    }
+
+    if (contentParam && bulletinList.length > 0) {
+      const bulletin = findBulletinByParam(contentParam);
+      if (bulletin && bulletin.id !== selectedBulletin?.id) {
+        // ë§ˆì?ë§?ì²˜ë¦¬???Œë¼ë¯¸í„° ê¸°ë¡
+        lastProcessedParam.current = contentParam;
+
+        // ?´ìš© ë¡œë“œ (URL ?…ë°?´íŠ¸ ?†ì´)
+        loadBulletinContent(bulletin);
+        
+        // ?´ë‹¹ ì£¼ë³´ê°€ ?ˆëŠ” ?˜ì´ì§€ë¡??´ë™
+        const bulletinIndex = bulletinList.findIndex((item) => item.id === bulletin.id);
+        if (bulletinIndex !== -1) {
+          const targetPage = Math.floor(bulletinIndex / itemsPerPage) + 1;
+          setCurrentPage(targetPage);
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contentParam]);
+
+  // ?¬ìš© ê°€?¥í•œ ?°ë„/??ëª©ë¡ ?ì„±
+  const availableYears = React.useMemo(() => {
+    const years = new Set<string>();
+    bulletinList.forEach((item) => {
+      const dateMatch = item.date.match(/^(\d{4})\.\d{2}\.\d{2}/);
+      if (dateMatch) {
+        years.add(dateMatch[1]);
+      }
+    });
+    return Array.from(years).sort((a, b) => b.localeCompare(a)); // ìµœì‹ ???•ë ¬
+  }, [bulletinList]);
+
+  const availableMonths = React.useMemo(() => {
+    const months = new Set<string>();
+    bulletinList.forEach((item) => {
+      const dateMatch = item.date.match(/^\d{4}\.(\d{2})\.\d{2}/);
+      if (dateMatch) {
+        months.add(dateMatch[1]);
+      }
+    });
+    return Array.from(months).sort((a, b) => a.localeCompare(b)); // ?”ìˆœ ?•ë ¬
+  }, [bulletinList]);
+
+  // ?„í„°ë§ëœ ?„ì´?œë“¤
+  const filteredItems = bulletinList.filter((item) => {
+    if (selectedYear === 'all' && selectedMonth === 'all') {
+      return true;
+    }
+
+    // ? ì§œ ?Œì‹± (?? "2025.01.05 (2025??1??1ì£¼ì°¨)" ?•ì‹)
+    const dateMatch = item.date.match(/^(\d{4})\.(\d{2})\.\d{2}/);
+    if (!dateMatch) return true;
+
+    const [, year, month] = dateMatch;
+    const itemYear = year;
+    const itemMonth = month;
+
+    // ?°ë„ ?„í„°
+    if (selectedYear !== 'all' && itemYear !== selectedYear) {
+      return false;
+    }
+
+    // ???„í„°
+    if (selectedMonth !== 'all' && itemMonth !== selectedMonth) {
+      return false;
+    }
+
+    return true;
+  });
+
+  // ?„ì¬ ?˜ì´ì§€???„ì´?œë“¤
+  const currentItems = filteredItems.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // ?˜ì´ì§€?¤ì´???¸ë“¤??
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  // ?„í„° ?ìš© ?¸ë“¤??
+  const handleFilterApply = () => {
+    setSelectedYear(tempYear);
+    setSelectedMonth(tempMonth);
+    setCurrentPage(1); // ?„í„° ?ìš© ??ì²??˜ì´ì§€ë¡??´ë™
+  };
+
+  // ì£¼ë³´ ?´ìš© ë¡œë“œ ?¨ìˆ˜ (URL ?…ë°?´íŠ¸ ?†ì´ ?´ìš©ë§?ë¡œë“œ)
+  const loadBulletinContent = useCallback(
+    async (item: BulletinItem) => {
+      // ?´ë? ê°™ì? ì£¼ë³´ê°€ ? íƒ?˜ì–´ ?ˆê³  ?´ìš©???ˆë‹¤ë©??°ì´??ë¡œë“œ ?ëµ
+      if (selectedBulletin?.id === item.id && bulletinContent) {
+        return;
+      }
+
+      setSelectedBulletin(item);
+      setContentLoading(true);
+      setLoadingStep('ì£¼ë³´ ?°ì´?°ë? ê°€?¸ì˜¤??ì¤?..');
+
+      try {
+        setLoadingStep('?´ìš©??ë¶ˆëŸ¬?¤ëŠ” ì¤?..');
+
+        // AbortControllerë¡??”ì²­ ì·¨ì†Œ ê°€?¥í•˜ê²??¤ì •
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10ì´??€?„ì•„??
+
+        const response = await fetch(`/api/bulletin/${item.slug}`, {
+          signal: controller.signal,
+          headers: {
+            'Cache-Control': 'max-age=3600', // 1?œê°„ ìºì‹œ
+          },
+        });
+
+        clearTimeout(timeoutId);
+        const data = await response.json();
+
+        if (data && data.blocks) {
+          setLoadingStep('?´ìš©??ë³€?˜í•˜??ì¤?..');
+
+          // ??ë¸”ë¡ ?°ì´?°ì˜ ê²½ìš° ì²?¬ ?¨ìœ„ë¡?ì²˜ë¦¬
+          const mdxHtml = convertBlocksToMdxHtml(data.blocks);
+          const processedHtml = processHtmlTags(mdxHtml);
+
+          setLoadingStep('?„ë£Œ!');
+          setBulletinContent(processedHtml);
+        }
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          setBulletinContent('?”ì²­ ?œê°„??ì´ˆê³¼?˜ì—ˆ?µë‹ˆ??');
+        } else {
+          setBulletinContent('?´ìš©??ë¶ˆëŸ¬?????†ìŠµ?ˆë‹¤.');
+        }
+      } finally {
+        setContentLoading(false);
+        setLoadingStep('');
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedBulletin?.id, bulletinContent]
+  );
+
+  // ì£¼ë³´ ?„ì´???´ë¦­ ?¸ë“¤??(URL ?Œë¼ë¯¸í„° ?…ë°?´íŠ¸ + ?´ìš© ë¡œë“œ)
+  const handleBulletinClick = useCallback(
+    (item: BulletinItem) => {
+      // ë¯¸ë¦¬ ê³„ì‚°??URL ?Œë¼ë¯¸í„° ê°€?¸ì˜¤ê¸?(ì¦‰ì‹œ ?¤í–‰)
+      const finalParam = bulletinParamMap.get(item.id);
+
+      if (finalParam) {
+        // ë§ˆì?ë§?ì²˜ë¦¬???Œë¼ë¯¸í„° ê¸°ë¡ (useEffect ì¤‘ë³µ ?¤í–‰ ë°©ì?)
+        lastProcessedParam.current = finalParam;
+
+        // URL ?Œë¼ë¯¸í„° ?…ë°?´íŠ¸
+        router.push(`/worship/bulletin?content=${finalParam}`, { scroll: false });
+      }
+
+      // ?´ìš© ë¡œë“œ (ë³‘ë ¬ ì²˜ë¦¬)
+      loadBulletinContent(item);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [bulletinParamMap, loadBulletinContent]
+  );
+
+  // itemsPerPage???„í„°ê°€ ë³€ê²½ë  ??totalPages ?¬ê³„??
+  useEffect(() => {
+    if (bulletinList.length > 0) {
+      setTotalPages(Math.ceil(filteredItems.length / itemsPerPage));
+    }
+  }, [bulletinList.length, itemsPerPage, filteredItems.length]);
+
+  // ìµœì‹  ì£¼ë³´ ?ë™ ë¡œë“œ (URL ?Œë¼ë¯¸í„° ?†ì„ ?Œë§Œ)
+  useEffect(() => {
+    if (latestBulletin && !selectedBulletin && !contentParam) {
+      loadBulletinContent(latestBulletin);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [latestBulletin, selectedBulletin, contentParam]);
+
+  // ë¡œë”© ?íƒœ ì²˜ë¦¬ (ì´ˆê¸° ë¡œë“œ ?œì—ë§?
+  if (loading && bulletinList.length === 0) {
+    return (
+      <div className={`${b.bulletin} detail-inner`}>
+        <div className={b.inner}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '60vh',
+              gap: '20px',
+              width: '100%',
+            }}
+          >
+            <Spinner size="lg" />
+            <p style={{ color: 'var(--color-text-secondary)', fontSize: '16px' }}>
+              ì£¼ë³´ë¥?ë¶ˆëŸ¬?¤ëŠ” ì¤?..
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ?ëŸ¬ ?íƒœ ì²˜ë¦¬
+  if (isError) {
+    const errorMessage =
+      error && typeof error === 'object' && 'message' in error
+        ? String((error as { message: string }).message)
+        : '?????†ëŠ” ?¤ë¥˜ê°€ ë°œìƒ?ˆìŠµ?ˆë‹¤.';
+    return (
+      <div className={`${b.bulletin} detail-inner`}>
+        <div className={b.inner}>
+          <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+            <p style={{ marginBottom: '10px' }}>ì£¼ë³´ ?°ì´?°ë? ê°€?¸ì˜¤?”ë° ?¤íŒ¨?ˆìŠµ?ˆë‹¤.</p>
+            <p style={{ color: '#999', fontSize: '14px' }}>{errorMessage}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`${b.bulletin} detail-inner`}>
+      <div className={b.inner}>
+        <BulletinContent
+          selectedBulletin={selectedBulletin}
+          latestBulletin={latestBulletin}
+          bulletinContent={bulletinContent}
+          contentLoading={contentLoading}
+          loadingStep={loadingStep}
+          formatDate={formatDate}
+        />
+
+        <BulletinList
+          loading={loading}
+          currentItems={currentItems}
+          selectedBulletin={selectedBulletin}
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onBulletinClick={handleBulletinClick}
+          onPageChange={handlePageChange}
+          formatDate={formatDate}
+          selectedYear={tempYear}
+          selectedMonth={tempMonth}
+          onYearChange={setTempYear}
+          onMonthChange={setTempMonth}
+          onFilterApply={handleFilterApply}
+          availableYears={availableYears}
+          availableMonths={availableMonths}
+        />
+      </div>
+    </div>
+  );
+}
+
+
+

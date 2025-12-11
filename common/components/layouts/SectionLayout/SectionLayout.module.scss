@@ -1,10 +1,13 @@
 @use '@/common/styles/mixins/function' as *;
 
 .sectionLayout {
+  position: relative; // 공유 버튼의 absolute position 기준점
+
   .titleSection {
     // 배경 이미지는 CSS variable로 동적 처리
     background: var(--bg-image, var(--bg-page)) no-repeat center center / cover;
     position: relative;
+    z-index: 50;
 
     // Breadcrumbs 기본 스타일 (블랙 텍스트 섹션용: worship, info, location)
     [class*='breadcrumb'] {

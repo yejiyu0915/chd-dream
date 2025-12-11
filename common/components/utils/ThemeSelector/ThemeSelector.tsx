@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import Icon from '../Icons';
-import t from './ThemeSelector.module.scss';
+import Icon from '@/common/components/utils/Icons';
+import t from '@/common/components/utils/ThemeSelector/ThemeSelector.module.scss';
 import type { Season } from '@/common/utils/season';
 
 // 테마 옵션 정의
@@ -21,7 +21,7 @@ export default function ThemeSelector() {
   const [selectedTheme, setSelectedTheme] = useState<Season | 'auto'>('auto');
   // 스크린 리더 알림용 상태
   const [announcement, setAnnouncement] = useState('');
-  
+
   // 포커스 관리를 위한 ref
   const triggerButtonRef = useRef<HTMLButtonElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -111,7 +111,7 @@ export default function ThemeSelector() {
   const handleThemeSelect = (theme: Season | 'auto') => {
     setSelectedTheme(theme);
     // 스크린 리더에 선택 변경 알림
-    const selectedLabel = THEME_OPTIONS.find(opt => opt.value === theme)?.label;
+    const selectedLabel = THEME_OPTIONS.find((opt) => opt.value === theme)?.label;
     setAnnouncement(`${selectedLabel} 테마가 선택되었습니다.`);
     // 알림 메시지는 잠시 후 자동 초기화
     setTimeout(() => setAnnouncement(''), 1000);
@@ -137,20 +137,15 @@ export default function ThemeSelector() {
   return (
     <>
       {/* 스크린 리더 알림용 live region */}
-      <div
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-        className="sr-only"
-      >
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {announcement}
       </div>
 
       {/* Floating 테마 변경 버튼 */}
-      <button 
+      <button
         ref={triggerButtonRef}
-        className={t.theme__button} 
-        onClick={openModal} 
+        className={t.theme__button}
+        onClick={openModal}
         aria-label="테마 변경 (현재 테마 열기)"
         aria-haspopup="dialog"
       >
@@ -159,12 +154,8 @@ export default function ThemeSelector() {
 
       {/* 테마 선택 모달 */}
       {isOpen && (
-        <div 
-          className={t.theme__overlay} 
-          onClick={handleOverlayClick}
-          role="presentation"
-        >
-          <div 
+        <div className={t.theme__overlay} onClick={handleOverlayClick} role="presentation">
+          <div
             ref={modalRef}
             className={t.theme__modal}
             role="dialog"
@@ -190,7 +181,8 @@ export default function ThemeSelector() {
             {/* 테마 옵션 리스트 */}
             <fieldset className={t.theme__options} aria-label="테마 옵션">
               <legend className="sr-only">
-                원하는 테마를 선택하세요. 현재 선택: {THEME_OPTIONS.find(opt => opt.value === selectedTheme)?.label}
+                원하는 테마를 선택하세요. 현재 선택:{' '}
+                {THEME_OPTIONS.find((opt) => opt.value === selectedTheme)?.label}
               </legend>
               {THEME_OPTIONS.map((option) => (
                 <label key={option.value} className={t.theme__option}>
@@ -217,10 +209,10 @@ export default function ThemeSelector() {
             </p>
 
             {/* 저장 버튼 */}
-            <button 
-              className={t.theme__save} 
+            <button
+              className={t.theme__save}
               onClick={handleSave}
-              aria-label={`${THEME_OPTIONS.find(opt => opt.value === selectedTheme)?.label} 테마로 저장하고 페이지 새로고침`}
+              aria-label={`${THEME_OPTIONS.find((opt) => opt.value === selectedTheme)?.label} 테마로 저장하고 페이지 새로고침`}
             >
               저장하기
             </button>
@@ -230,4 +222,3 @@ export default function ThemeSelector() {
     </>
   );
 }
-
