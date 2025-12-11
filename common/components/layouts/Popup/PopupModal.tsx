@@ -6,6 +6,7 @@ import { BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 import Icon from '@/common/components/utils/Icons';
 import styles from '@/common/components/layouts/Popup/PopupModal.module.scss';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 interface PopupModalProps {
   newsItem: PopupData | null;
@@ -357,8 +358,15 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
               )}
             </motion.div>
 
+            {/* 자세히 보기 버튼 */}
+            <motion.div className={styles.actions} variants={itemVariants}>
+              <Link href={newsItem.link} className={styles.readButton} onClick={handleClose}>
+                자세히 보기
+              </Link>
+            </motion.div>
+
             {/* 다시 보지 않기 체크박스 */}
-            <motion.div className={styles.checkboxContainer} variants={itemVariants}>
+            <div className={styles.checkboxContainer}>
               <label className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
@@ -373,7 +381,7 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
                 />
                 <span className={styles.checkboxText}>다시 보지 않기</span>
               </label>
-            </motion.div>
+            </div>
           </motion.div>
         </div>
       </div>

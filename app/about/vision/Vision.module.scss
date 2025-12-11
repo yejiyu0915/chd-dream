@@ -28,6 +28,9 @@
   overflow: hidden;
   pointer-events: none;
   border-radius: 0 0 vw(40) vw(40);
+  // 초기 렌더링 최적화: GPU 가속
+  transform: translateZ(0);
+  contain: layout paint;
 }
 
 // 그라디언트 블러 원형
@@ -36,6 +39,10 @@
   border-radius: 50%;
   filter: blur(clamp(80px, 10vw, 150px));
   opacity: 1; // 더 진하게
+  // GPU 가속으로 애니메이션 최적화
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 
   // 첫 번째 블러 - 골드/베이지 (우상단)
   &:nth-child(1) {
@@ -168,6 +175,8 @@
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
+  // 초기 렌더링 최적화: GPU 가속
+  transform: translateZ(0);
 }
 
 // 하나의 긴 연속된 곡선
@@ -249,6 +258,11 @@
   padding: vw(150) 0 0;
   margin-top: -100vh; // 3섹션 위로 덮이듯이 올라옴
   z-index: 5; // 3섹션 위에 표시
+  // 플리커 방지: GPU 가속 + 레이어 격리
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  isolation: isolate;
 }
 
 // 4번째 섹션 - 가정 회복 (그리드 이미지 + 파트별 타이틀)
@@ -446,6 +460,9 @@
   width: 100%;
   height: 450vh; // 긴 스크롤 영역 (하이라이트 후 유지)
   will-change: opacity;
+  // 초기 렌더링 최적화: GPU 가속
+  transform: translateZ(0);
+  contain: layout style;
 
   // 마지막 섹션 (3섹션)은 50vh 더 길게
   &.isLast {
@@ -479,6 +496,11 @@
   width: 100%;
   height: 100vh; // 화면 높이
   background: transparent;
+  // 초기 렌더링 최적화: GPU 가속 + 플리커 방지
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: opacity;
 
   &::before {
     content: '';
@@ -662,6 +684,9 @@
   height: auto;
   z-index: -1;
   will-change: opacity, transform;
+  // 초기 렌더링 최적화: GPU 가속
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   // scale은 인라인 style로 적용 (animation과 분리)
 
   // @include mq(pc-sm) {
@@ -673,6 +698,8 @@
     height: auto;
     object-fit: cover;
     animation: floatImage 4s ease-in-out infinite; // 둥실둥실 (img에 적용)
+    // 이미지 GPU 가속
+    transform: translateZ(0);
   }
 
   // 텍스트 오른쪽 정렬 → 이미지 왼쪽
@@ -912,6 +939,9 @@
   min-height: 430vh;
   background-color: #fff; // 기본 흰색 배경
   overflow: clip;
+  // 초기 렌더링 최적화: GPU 가속
+  transform: translateZ(0);
+  contain: layout style;
 }
 
 // 이미지 + 텍스트 핀 영역 (처음부터 pin)
@@ -920,6 +950,10 @@
   top: 0;
   width: 100%;
   height: 100vh;
+  // 초기 렌더링 최적화: GPU 가속
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 // 십자가 배경 이미지
@@ -935,7 +969,11 @@
   background-repeat: no-repeat;
   z-index: 1;
   will-change: opacity;
-  transition: opacity 0.1s ease-out;
+  transition: opacity 0.15s ease-out; // 약간 더 부드럽게
+  // 초기 렌더링 최적화: GPU 가속
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 
   @include mq(mo) {
     background-position: 70% center;
@@ -1004,6 +1042,8 @@
   width: 100%;
   height: 100%;
   z-index: 3;
+  // 초기 렌더링 최적화: GPU 가속
+  transform: translateZ(0);
 }
 
 .crossLine {
@@ -1023,7 +1063,10 @@
   display: inline-block;
   will-change: opacity, transform, filter;
   transition:
-    opacity 0.15s ease-out,
-    transform 0.15s ease-out,
-    filter 0.15s ease-out;
+    opacity 0.12s ease-out,
+    transform 0.12s ease-out,
+    filter 0.12s ease-out;
+  // GPU 가속으로 부드러운 애니메이션
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }

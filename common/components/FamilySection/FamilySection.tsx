@@ -379,11 +379,13 @@ export default function FamilySection({
     >
       <div className={s.familyWrapper}>
         {/* 그리드 백그라운드 */}
+        {/* visibility 제거: opacity 0일 때도 레이어 유지하여 플리커 방지 */}
         <div
           className={s.familyGrid}
           style={{
             opacity: gridOpacity,
-            visibility: gridOpacity > 0 ? 'visible' : 'hidden',
+            // pointer-events로 상호작용만 차단 (레이어는 유지)
+            pointerEvents: gridOpacity > 0 ? 'auto' : 'none',
           }}
         >
           {Array.from({ length: TOTAL_CELLS }).map((_, cellIndex) => {
@@ -401,7 +403,13 @@ export default function FamilySection({
 
                 cellContent = (
                   <div className={s.familyGridImage} style={{ opacity }} data-part={part.id}>
-                    <img src={imageSrc} alt={`${part.boldText}${part.restText} ${imageNum}`} />
+                    {/* 플리커 방지: eager 로딩 + sync 디코딩으로 이미지 로드 최적화 */}
+                    <img
+                      src={imageSrc}
+                      alt={`${part.boldText}${part.restText} ${imageNum}`}
+                      loading="eager"
+                      decoding="sync"
+                    />
                   </div>
                 );
               }
@@ -441,7 +449,8 @@ export default function FamilySection({
                 className={s.familyPartTitleWrap}
                 style={{
                   opacity: titleOpacity,
-                  visibility: titleOpacity > 0 ? 'visible' : 'hidden',
+                  // visibility 대신 pointer-events로 처리 (플리커 방지)
+                  pointerEvents: titleOpacity > 0 ? 'auto' : 'none',
                 }}
               >
                 <WaterPaintCanvas isActive={shouldStartCanvas} />

@@ -245,6 +245,7 @@
   cursor: pointer;
   user-select: none;
   justify-content: center;
+  color: #000;
 }
 
 .checkboxIcon {
@@ -267,16 +268,26 @@
   margin-bottom: vw(16);
 }
 
-// 자세히 보기 버튼
+// 자세히 보기 버튼 (라인 스타일)
 .readButton {
-  background: #000;
-  color: white;
-  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: vw(56);
+  border: 1px solid #ddd;
   border-radius: vw(16);
-  @include font-vw(16, $weight: 600);
+  background: none;
+  @include font-vw(16, $weight: 500);
+  color: #000;
+  text-decoration: none;
   cursor: pointer;
   flex: 1;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #999;
+    background-color: #f9f9f9;
+  }
 }
 
 // 닫기 텍스트 버튼
