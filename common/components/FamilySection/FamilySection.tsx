@@ -8,10 +8,10 @@ import s from '@/common/components/FamilySection/FamilySection.module.scss';
 // ============================================
 interface WaterPaintCanvasProps {
   isActive: boolean;
-  color?: string;
+  colors?: string[]; // 파트별 색상 배열
 }
 
-function WaterPaintCanvas({ isActive, color = '40' }: WaterPaintCanvasProps) {
+function WaterPaintCanvas({ isActive, colors }: WaterPaintCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafIdRef = useRef<number | null>(null);
   const isGeneratedRef = useRef(false);
@@ -134,7 +134,8 @@ function WaterPaintCanvas({ isActive, color = '40' }: WaterPaintCanvasProps) {
     const NUM_SPOTS = 3;
     const ANGLE_STEP = TAU / NUM_SPOTS;
 
-    const COLORS = [
+    // 파트별 색상이 제공되면 사용, 없으면 기본 색상 사용
+    const COLORS = colors || [
       `rgba(255, 240, 160, ${ALPHA})`,
       `rgba(255, 255, 255, ${WHITE_ALPHA})`,
       `rgba(255, 180, 180, ${ALPHA})`,
@@ -203,7 +204,7 @@ function WaterPaintCanvas({ isActive, color = '40' }: WaterPaintCanvasProps) {
         cancelAnimationFrame(rafIdRef.current);
       }
     };
-  }, [isActive, color, deformPoly, getPoly, randomBetween, randomGaussian]);
+  }, [isActive, colors, deformPoly, getPoly, randomBetween, randomGaussian]);
 
   return <canvas ref={canvasRef} className={s.waterPaintCanvas} />;
 }
@@ -247,6 +248,43 @@ const IMAGE_PREFIX: Record<string, string> = {
   husband: 'h',
   wife: 'w',
   children: 'c',
+};
+
+// 파트별 물감 번지는 색상 세트
+const PART_COLORS: Record<string, string[]> = {
+  husband: [
+    // 남편: 밝은 청록/파랑 계열 (자녀 색상으로 변경)
+    `rgba(160, 232, 227, 0.05)`, // 밝은 청록
+    `rgba(255, 255, 255, 0.1)`,
+    `rgba(180, 220, 255, 0.05)`, // 하늘색
+    `rgba(255, 255, 255, 0.1)`,
+    `rgba(140, 200, 240, 0.05)`, // 밝은 파랑
+    `rgba(255, 255, 255, 0.1)`,
+    `rgba(200, 240, 255, 0.05)`, // 연한 하늘색
+    `rgba(255, 255, 255, 0.1)`,
+  ],
+  wife: [
+    // 아내: 부드러운 핑크/보라 계열
+    `rgba(255, 180, 200, 0.05)`, // 부드러운 핑크
+    `rgba(255, 255, 255, 0.1)`,
+    `rgba(240, 180, 220, 0.05)`, // 라벤더 핑크
+    `rgba(255, 255, 255, 0.1)`,
+    `rgba(220, 160, 200, 0.05)`, // 로즈 핑크
+    `rgba(255, 255, 255, 0.1)`,
+    `rgba(255, 200, 220, 0.05)`, // 밝은 핑크
+    `rgba(255, 255, 255, 0.1)`,
+  ],
+  children: [
+    // 자녀: 따뜻한 주황/노랑 계열 (남편 색상으로 변경)
+    `rgba(255, 200, 120, 0.05)`, // 따뜻한 오렌지
+    `rgba(255, 255, 255, 0.1)`,
+    `rgba(255, 220, 150, 0.05)`, // 부드러운 노랑
+    `rgba(255, 255, 255, 0.1)`,
+    `rgba(255, 180, 100, 0.05)`, // 진한 오렌지
+    `rgba(255, 255, 255, 0.1)`,
+    `rgba(255, 240, 180, 0.05)`, // 밝은 노랑
+    `rgba(255, 255, 255, 0.1)`,
+  ],
 };
 
 // 그리드 설정
@@ -453,7 +491,7 @@ export default function FamilySection({
                   pointerEvents: titleOpacity > 0 ? 'auto' : 'none',
                 }}
               >
-                <WaterPaintCanvas isActive={shouldStartCanvas} />
+                <WaterPaintCanvas isActive={shouldStartCanvas} colors={PART_COLORS[part.id]} />
                 <div className={s.familyPartTitleGroup}>
                   <span className={s.familyPartLabel}>가정회복 {index + 1}</span>
                   <h2 className={s.familyPartTitle}>

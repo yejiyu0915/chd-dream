@@ -19,16 +19,31 @@ export const renderTable = (table: Record<string, unknown>): string => {
 
   let tableHtml = '<table>';
 
-  // 테이블 헤더 처리
+  // 테이블 헤더 처리 (컬럼 헤더)
   if (hasColumnHeader && (tableRows as unknown[]).length > 0) {
     const headerRow = (tableRows as unknown[])[0] as Record<string, unknown>;
     if (headerRow.table_row && typeof headerRow.table_row === 'object') {
       const rowObj = headerRow.table_row as Record<string, unknown>;
       if (Array.isArray(rowObj.cells)) {
         tableHtml += '<thead><tr>';
+        // 컬럼 헤더의 모든 셀은 th로 처리
         rowObj.cells.forEach((cell: unknown) => {
           const cellObj = cell as Record<string, unknown>;
-          const cellText = extractText(cellObj.rich_text);
+
+          // 셀이 배열인 경우 직접 처리
+          let cellText = '';
+          if (Array.isArray(cellObj)) {
+            cellText = cellObj
+              .map((textItem: unknown) => {
+                const textObj = textItem as Record<string, unknown>;
+                return textObj.plain_text || '';
+              })
+              .join('');
+          } else {
+            // 기존 방식 (rich_text 속성 사용)
+            cellText = extractText(cellObj.rich_text);
+          }
+
           tableHtml += `<th>${cellText}</th>`;
         });
         tableHtml += '</tr></thead>';
@@ -45,6 +60,8 @@ export const renderTable = (table: Record<string, unknown>): string => {
       const rowObj = row.table_row as Record<string, unknown>;
       if (Array.isArray(rowObj.cells)) {
         tableHtml += '<tr>';
+        // 행 헤더가 있는 경우 첫 번째 셀은 th로 처리, 나머지는 td
+        // 행 헤더가 없는 경우 모든 셀은 td로 처리
         rowObj.cells.forEach((cell: unknown, cellIndex: number) => {
           const cellObj = cell as Record<string, unknown>;
 
@@ -62,6 +79,7 @@ export const renderTable = (table: Record<string, unknown>): string => {
             cellText = extractText(cellObj.rich_text);
           }
 
+          // 행 헤더가 있는 경우 첫 번째 셀은 th로 처리
           const cellTag = hasRowHeader && cellIndex === 0 ? 'th' : 'td';
           tableHtml += `<${cellTag}>${cellText}</${cellTag}>`;
         });
@@ -71,5 +89,6 @@ export const renderTable = (table: Record<string, unknown>): string => {
   }
   tableHtml += '</tbody></table>';
 
-  return tableHtml;
+  // 테이블을 div로 감싸서 가로 스크롤 가능하도록 처리
+  return `<div class="table-wrapper">${tableHtml}</div>`;
 };

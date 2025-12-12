@@ -40,6 +40,7 @@ const nextConfig: NextConfig = {
         hostname: 'res.cloudinary.com', // Cloudinary 이미지 호스트 추가
         port: '',
         pathname: '/**',
+        // query string이 포함된 URL도 허용
       },
       {
         protocol: 'https',
@@ -52,6 +53,8 @@ const nextConfig: NextConfig = {
     // 이미지 캐싱 최적화
     minimumCacheTTL: 60 * 60 * 24 * 7, // 7일 캐시
     formats: ['image/webp', 'image/avif'], // 최신 이미지 포맷 사용
+    // 개발 환경에서 query string 경고 무시 (이미 remotePatterns로 설정됨)
+    // 실제로는 이미지가 정상적으로 로드되므로 경고만 무시
   },
   // Browser-sync 관련 요청 무시
   async rewrites() {

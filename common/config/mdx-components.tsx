@@ -16,15 +16,22 @@ export const mdxComponents: MDXComponents = {
   blockquote: ({ children }) => <blockquote>{children}</blockquote>,
   code: ({ children }) => <code>{children}</code>,
   pre: ({ children }) => <pre>{children}</pre>,
-  img: ({ src, alt }) => (
-    <Image
-      src={src || ''}
-      alt={alt || ''}
-      width={1000}
-      height={1000}
-      sizes="(max-width: 768px) 100vw, 80vw"
-    />
-  ),
+  img: ({ src, alt }) => {
+    // Cloudinary URL의 query string은 이미지 변환 파라미터이므로 유지
+    // Next.js Image가 query string을 포함한 URL을 처리하지 못하므로 unoptimized 사용
+    return (
+      <div data-mdx-image-wrapper="true">
+        <Image
+          src={src || ''}
+          alt={alt || ''}
+          width={1000}
+          height={1000}
+          sizes="(max-width: 768px) 100vw, 80vw"
+          unoptimized={true}
+        />
+      </div>
+    );
+  },
   table: ({ children }) => (
     <div className="table-wrapper">
       <table>{children}</table>
