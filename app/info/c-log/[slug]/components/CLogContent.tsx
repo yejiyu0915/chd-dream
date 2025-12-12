@@ -6,6 +6,9 @@ import rehypeSlug from 'rehype-slug';
 import mdx from 'common/styles/mdx/MdxContent.module.scss';
 import { mdxComponents } from '@/common/config/mdx-components';
 import ContentWrapper from '@/common/components/utils/ContentWrapper';
+import MdxImageSwiperWrapper from '@/common/components/mdx/MdxImageSwiper';
+import rehypeUnwrapImageFromP from '@/common/plugins/rehype-unwrap-image-from-p';
+import remarkImageToBlock from '@/common/plugins/remark-image-to-block';
 
 interface CLogContentProps {
   markdown: string;
@@ -15,19 +18,25 @@ interface CLogContentProps {
 export default function CLogContent({ markdown }: CLogContentProps) {
   return (
     <ContentWrapper>
-      <section className={`${mdx.mdxContent} detail-inner`}>
-        <MDXRemote
-          source={markdown}
-          options={{
-            mdxOptions: {
-              remarkPlugins: [remarkGfm],
-              rehypePlugins: [rehypeSlug, rehypeSanitize, rehypePrettyCode],
-            },
-          }}
-          components={mdxComponents}
-        />
-      </section>
+      <MdxImageSwiperWrapper>
+        <section className={`${mdx.mdxContent} detail-inner`}>
+          <MDXRemote
+            source={markdown}
+            options={{
+              mdxOptions: {
+                remarkPlugins: [remarkGfm, remarkImageToBlock],
+                rehypePlugins: [
+                  rehypeSlug,
+                  rehypeUnwrapImageFromP,
+                  rehypeSanitize,
+                  rehypePrettyCode,
+                ],
+              },
+            }}
+            components={mdxComponents}
+          />
+        </section>
+      </MdxImageSwiperWrapper>
     </ContentWrapper>
   );
 }
-

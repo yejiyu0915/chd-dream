@@ -42,7 +42,7 @@ export const groupData: GroupDataType[] = [
     id: 'men',
     title: '남선교',
     path: '/about/group/men',
-    image: '/images/group/men.jpg',
+    // image: '/images/group/men.jpg',
     description:
       '남선교는 하나님의 사랑을 나누며 함께 성장하는 공동체입니다. 서로를 품고 섬기며 신앙의 기쁨을 누립니다.',
     pastor: '송순옥 강도사',
@@ -64,7 +64,7 @@ export const groupData: GroupDataType[] = [
     id: 'women',
     title: '여선교',
     path: '/about/group/women',
-    image: '/images/group/women.jpg',
+    // image: '/images/group/women.jpg',
 
     meetingPlace: '본당 4층, 3층 세미나실, 2층 여선교실',
     meetingTime: '매 주일 본 예배 후, 점심 식사 후 오후 2시',
@@ -117,7 +117,7 @@ export const groupData: GroupDataType[] = [
     id: 'youth',
     title: '청년부',
     path: '/about/group/youth',
-    image: '/images/group/youth.jpg',
+    // image: '/images/group/youth.jpg',
     description: `
       행복으로가는교회 청년부는요~! <br />
       <br />
@@ -157,7 +157,7 @@ export const groupData: GroupDataType[] = [
     id: 'student',
     title: '예꿈(초·중·고)',
     path: '/about/group/student',
-    image: '/images/group/student.jpg',
+    // image: '/images/group/student.jpg',
     description: `
       유아부터 고등학생까지 미성년 친구들이 모여 하나님의 사랑 안에서 믿음으로 함께 성장해나가는 예수님의 꿈나무입니다!<br />
       <br />
@@ -205,7 +205,7 @@ export const groupData: GroupDataType[] = [
     // image: '/images/group/newfamily.jpg',
     description:
       '새가족부는 행복으로가는교회에 새롭게 오신 분들을 따뜻하게 환영하며 함께 성장하는 공동체입니다.',
-    pastor: '주애순전도사, 이민아 전도사',
+    pastor: '주애순 전도사, 이민아 전도사',
     meetingPlace: '3층 V.VIP실',
     meetingTime: '매 주일 본 예배 후',
     activities: ['새가족 교육 9주 후 수료', '10주차 수료식'],

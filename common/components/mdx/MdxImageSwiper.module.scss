@@ -1,0 +1,151 @@
+@use '@/common/styles/mixins/function' as *;
+
+// MDX 이미지 Swiper 래퍼
+.wrapper {
+  width: 100%;
+}
+
+// Swiper 컨테이너
+.swiperContainer {
+  width: 100%;
+  margin: vw(20) auto;
+}
+
+// Swiper 메인 컨테이너
+.swiper {
+  width: 100%;
+  position: relative;
+}
+
+// Swiper 래퍼
+.swiperWrapper {
+  display: flex;
+}
+
+// Swiper 슬라이드
+.swiperSlide {
+  width: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+// 이미지 래퍼
+.imageWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
+}
+
+// Pagination 스타일 - swiperContainer 내부에서 선택
+.swiperContainer {
+  [class*='swiper-pagination'] {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: vw(4);
+    position: relative;
+    margin-block-start: vw(8);
+  }
+
+  [class^='swiper-pagination-bullet'] {
+    width: vw(12);
+    height: vw(12);
+    position: relative;
+    border-radius: vw(6);
+    background-color: #ddd;
+    opacity: 1;
+    transition: all 0.2s ease;
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+  [class*='swiper-pagination-bullet-active'] {
+    width: vw(32);
+    background-color: var(--accent-brand);
+  }
+
+  [class*='swiper-button-prev'],
+  [class*='swiper-button-next'] {
+    position: absolute;
+    top: 57.5%;
+    transform: translateY(-50%);
+    width: vw(48);
+    height: vw(100);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    background-position: center center;
+    cursor: pointer;
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      opacity 0.3s ease;
+    z-index: 10;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    &[class*='swiper-button-disabled'] {
+      opacity: 0;
+      cursor: auto;
+      pointer-events: none;
+    }
+
+    &::after {
+      display: none;
+    }
+  }
+
+  [class*='swiper-button-prev'] {
+    left: 0;
+    border-radius: 0 vw(12) vw(12) 0;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M14 16L10 12L14 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  }
+  [class*='swiper-button-next'] {
+    right: 0;
+    border-radius: vw(12) 0 0 vw(12);
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M10 8L14 12L10 16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+    background-position-x: right;
+  }
+}
+
+@include mq(mo) {
+  .swiperContainer {
+    margin: vw(16) auto;
+
+    [class*='swiper-pagination'] {
+      gap: vw(2);
+      margin-block-start: vw(6);
+    }
+
+    [class^='swiper-pagination-bullet'] {
+      width: vw(8);
+      height: vw(8);
+      border-radius: vw(4);
+    }
+    [class*='swiper-pagination-bullet-active'] {
+      width: vw(24);
+    }
+
+    [class*='swiper-button-prev'],
+    [class*='swiper-button-next'] {
+      width: vw(32);
+      height: vw(64);
+    }
+  }
+}
