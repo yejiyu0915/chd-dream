@@ -14,9 +14,5 @@ interface WorshipLayoutProps {
  * SectionLayout은 Client Component이지만, layout은 Server Component로 유지
  */
 export default function WorshipLayout({ children }: WorshipLayoutProps) {
-  return (
-    <SectionLayout sectionName="worship">
-      {children}
-    </SectionLayout>
-  );
+  return <SectionLayout sectionName="worship">{children}</SectionLayout>;
 }

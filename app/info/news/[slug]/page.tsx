@@ -77,11 +77,7 @@ export async function generateMetadata({
   return generateDynamicMetadata(title, description, imageUrl);
 }
 
-export default async function NewsDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function NewsDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug as string;
 

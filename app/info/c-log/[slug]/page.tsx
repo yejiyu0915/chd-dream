@@ -7,7 +7,12 @@ import rehypeSlug from 'rehype-slug';
 
 import { compile } from '@mdx-js/mdx';
 
-import { getNotionPageAndContentBySlug, notion, getPrevNextCLogPosts } from '@/lib/notion';
+import {
+  getNotionPageAndContentBySlug,
+  notion,
+  getPrevNextCLogPosts,
+  getCLogData,
+} from '@/lib/notion';
 import { NotionToMarkdown } from 'notion-to-md';
 import l from '@/common/styles/mdx/MdxLayout.module.scss';
 import CLogDetailHeader from '@/app/info/c-log/[slug]/components/CLogDetailHeader';
@@ -54,6 +59,23 @@ async function getMarkdownContent(slug: string) {
   return markdown;
 }
 
+// 빌드 타임에 정적 경로 생성 (운영 환경에서 페이지가 보이도록)
+export async function generateStaticParams() {
+  try {
+    const cLogData = await getCLogData();
+    // slug가 있는 항목만 반환
+    return cLogData
+      .filter((item) => item.slug && item.slug.trim() !== '')
+      .map((item) => ({
+        slug: item.slug,
+      }));
+  } catch (error) {
+    // 에러 발생 시 빈 배열 반환 (런타임에 동적으로 생성)
+    console.error('generateStaticParams error:', error);
+    return [];
+  }
+}
+
 // 동적 메타데이터 생성
 export async function generateMetadata({
   params,
@@ -77,11 +99,7 @@ export async function generateMetadata({
   return generateDynamicMetadata(title, description, imageUrl);
 }
 
-export default async function CLogDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function CLogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug as string;
 

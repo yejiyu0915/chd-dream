@@ -27,10 +27,7 @@ export default function GroupNav({ data }: GroupNavProps) {
   useEffect(() => {
     if (scrollRef.current && window.innerWidth <= 768) {
       const activeElement = scrollRef.current.querySelector(`a.${g.active}`) as HTMLElement;
-      if (
-        activeElement &&
-        !isElementAlignedToStart(activeElement, scrollRef.current)
-      ) {
+      if (activeElement && !isElementAlignedToStart(activeElement, scrollRef.current)) {
         activeElement.scrollIntoView({
           behavior: 'smooth',
           block: 'nearest',
@@ -66,26 +63,14 @@ export default function GroupNav({ data }: GroupNavProps) {
   };
 
   return (
-    <motion.nav
-      className={g.nav}
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
+    <motion.nav className={g.nav} variants={containerVariants} initial="hidden" animate="visible">
       <div className={g.nav__wrapper}>
         <ul ref={scrollRef} className={g.nav__list}>
           {data.map((item) => {
             const isActive = pathname === item.path;
             return (
-              <motion.li
-                key={item.id}
-                className={g.nav__item}
-                variants={itemVariants}
-              >
-                <Link
-                  href={item.path}
-                  className={`${g.nav__button} ${isActive ? g.active : ''}`}
-                >
+              <motion.li key={item.id} className={g.nav__item} variants={itemVariants}>
+                <Link href={item.path} className={`${g.nav__button} ${isActive ? g.active : ''}`}>
                   {item.title}
                 </Link>
               </motion.li>

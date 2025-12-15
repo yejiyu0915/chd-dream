@@ -79,7 +79,14 @@ export default function NewsDetailHeader({ title, date, imageUrl, tags }: NewsDe
       <div className={l.header}>
         {/* 이미지는 항상 표시 (기본 이미지 포함) */}
         <motion.div className={l.image} initial="hidden" animate="visible" variants={imageVariants}>
-          <ImageWithTheme src={imageUrl} alt={title} priority width={1440} height={400} sizes="100vw" />
+          <ImageWithTheme
+            src={imageUrl}
+            alt={title}
+            priority
+            width={1440}
+            height={400}
+            sizes="100vw"
+          />
         </motion.div>
         <div className={`detail-inner ${l.content}`}>
           <motion.h1

@@ -127,7 +127,7 @@ export default function BulletinContentSkeleton() {
             width: '96%',
           }}
         />
-        
+
         {/* 단락 5 */}
         <div
           style={{
@@ -149,4 +149,3 @@ export default function BulletinContentSkeleton() {
     </div>
   );
 }
-

@@ -24,16 +24,8 @@ export default function MainContentWrapper({
 
   return (
     <>
-      <KV
-        kvSliderItems={kvSliderItems}
-        newsData={newsData}
-        setKvHeightState={setKvHeight}
-      />
-      <MainContentInner
-        bulletinData={bulletinData}
-        cLogData={cLogData}
-        kvHeight={kvHeight}
-      />
+      <KV kvSliderItems={kvSliderItems} newsData={newsData} setKvHeightState={setKvHeight} />
+      <MainContentInner bulletinData={bulletinData} cLogData={cLogData} kvHeight={kvHeight} />
     </>
   );
 }

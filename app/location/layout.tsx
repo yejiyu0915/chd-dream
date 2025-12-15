@@ -21,9 +21,5 @@ export const metadata: Metadata = {
  * SectionLayout은 Client Component이지만, layout은 Server Component로 유지
  */
 export default function LocationLayout({ children }: LocationLayoutProps) {
-  return (
-    <SectionLayout sectionName="location">
-      {children}
-    </SectionLayout>
-  );
+  return <SectionLayout sectionName="location">{children}</SectionLayout>;
 }

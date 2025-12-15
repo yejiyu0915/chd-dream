@@ -16,12 +16,7 @@ export default function NewsListClient({ initialNewsData }: NewsListClientProps)
   return (
     <section className={n.newsListMain}>
       <div className={n.newsListInner}>
-        <NewsListDisplay
-          newsData={newsData}
-          isLoading={false}
-          isError={false}
-          error={null}
-        />
+        <NewsListDisplay newsData={newsData} isLoading={false} isError={false} error={null} />
       </div>
     </section>
   );

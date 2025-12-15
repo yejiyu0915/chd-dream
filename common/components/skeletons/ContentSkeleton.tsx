@@ -24,7 +24,9 @@ export default function ContentSkeleton() {
         {/* 단락들 */}
         {[...Array(3)].map((_, i) => (
           <div key={i} style={{ marginBottom: '24px' }}>
-            <div style={{ ...skeletonStyle, height: '20px', marginBottom: '12px', width: '100%' }} />
+            <div
+              style={{ ...skeletonStyle, height: '20px', marginBottom: '12px', width: '100%' }}
+            />
             <div style={{ ...skeletonStyle, height: '20px', marginBottom: '12px', width: '95%' }} />
             <div style={{ ...skeletonStyle, height: '20px', width: '90%' }} />
           </div>
@@ -44,7 +46,9 @@ export default function ContentSkeleton() {
         {/* 추가 단락들 */}
         {[...Array(2)].map((_, i) => (
           <div key={`extra-${i}`} style={{ marginBottom: '24px' }}>
-            <div style={{ ...skeletonStyle, height: '20px', marginBottom: '12px', width: '100%' }} />
+            <div
+              style={{ ...skeletonStyle, height: '20px', marginBottom: '12px', width: '100%' }}
+            />
             <div style={{ ...skeletonStyle, height: '20px', marginBottom: '12px', width: '98%' }} />
             <div style={{ ...skeletonStyle, height: '20px', width: '85%' }} />
           </div>
@@ -53,4 +57,3 @@ export default function ContentSkeleton() {
     </section>
   );
 }
-

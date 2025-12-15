@@ -40,8 +40,7 @@ export default function ImageWithTheme({
   const isDefaultImage = /\/images\/title\/(spring|summer|autumn|winter)\/info\.jpg/.test(src);
 
   // 마운트된 후에만 계절에 맞는 이미지로 변경 (서버와 클라이언트 일치)
-  const finalSrc =
-    mounted && isDefaultImage ? `/images/title/${getClientSeason()}/info.jpg` : src;
+  const finalSrc = mounted && isDefaultImage ? `/images/title/${getClientSeason()}/info.jpg` : src;
 
   return (
     <Image
@@ -56,4 +55,3 @@ export default function ImageWithTheme({
     />
   );
 }
-

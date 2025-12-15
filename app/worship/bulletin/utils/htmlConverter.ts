@@ -142,11 +142,7 @@ const processBlockChunk = (blocks: unknown[]): string => {
       if (tableHtml) {
         result.push(tableHtml);
       }
-    } else if (
-      blockObj.type === 'quote' &&
-      blockObj.quote &&
-      typeof blockObj.quote === 'object'
-    ) {
+    } else if (blockObj.type === 'quote' && blockObj.quote && typeof blockObj.quote === 'object') {
       flushCurrentListLocal();
       const quote = blockObj.quote as Record<string, unknown>;
       const text = extractText(quote.rich_text);

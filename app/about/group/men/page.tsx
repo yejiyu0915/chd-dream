@@ -7,7 +7,7 @@ import GroupContent from '@/app/about/group/components/GroupContent';
 export default function MenPage() {
   // 현재 교구 데이터 찾기
   const currentGroup = useMemo(() => groupData.find((group) => group.id === 'men'), []);
-  
+
   // 이전/다음 교구 찾기
   const currentIndex = useMemo(() => groupData.findIndex((group) => group.id === 'men'), []);
   const prevGroup = useMemo(
@@ -15,7 +15,8 @@ export default function MenPage() {
     [currentIndex]
   );
   const nextGroup = useMemo(
-    () => (currentIndex > 0 && currentIndex < groupData.length - 1 ? groupData[currentIndex + 1] : null),
+    () =>
+      currentIndex > 0 && currentIndex < groupData.length - 1 ? groupData[currentIndex + 1] : null,
     [currentIndex]
   );
 
@@ -23,7 +24,5 @@ export default function MenPage() {
     return <div>교구 정보를 찾을 수 없습니다.</div>;
   }
 
-  return (
-    <GroupContent data={currentGroup} prevGroup={prevGroup} nextGroup={nextGroup} />
-  );
+  return <GroupContent data={currentGroup} prevGroup={prevGroup} nextGroup={nextGroup} />;
 }

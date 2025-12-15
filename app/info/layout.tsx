@@ -14,9 +14,5 @@ interface InfoLayoutProps {
  * SectionLayout은 Client Component이지만, layout은 Server Component로 유지
  */
 export default function InfoLayout({ children }: InfoLayoutProps) {
-  return (
-    <SectionLayout sectionName="info">
-      {children}
-    </SectionLayout>
-  );
+  return <SectionLayout sectionName="info">{children}</SectionLayout>;
 }
