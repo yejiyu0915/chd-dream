@@ -1,0 +1,273 @@
+@use '@/common/styles/mixins/function' as *;
+
+// 메인 컨테이너
+.blessing {
+  display: flex;
+  flex-direction: column;
+  padding-block: vw(120) vw(200);
+
+  @include mq(pc-sm) {
+    padding-block: vw(48) vw(120);
+  }
+
+  @include mq(mo) {
+    padding-block: vw(40) vw(80);
+  }
+}
+
+// 내부 컨테이너
+.inner {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+// 본문 컨텐츠 영역
+.content {
+  width: 100%;
+  // max-width: vw(1200);
+  // padding: vw(84) vw(60) vw(120);
+  // border: 1px solid var(--accent-border-subtle);
+  // background-image: url('/images/common/sermon.jpg');
+  // background-size: 50% auto;
+  // background-position: right top;
+  // background-repeat: no-repeat;
+  position: relative;
+
+  // &::before {
+  //   content: '';
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  //   width: 100%;
+  //   height: vw(10);
+  //   background-color: var(--accent-brand);
+  // }
+
+  // &::after {
+  //   content: '';
+  //   position: absolute;
+  //   bottom: 0;
+  //   left: 0;
+  //   width: 100%;
+  //   height: vw(10);
+  //   background-color: var(--accent-brand);
+  // }
+
+  &__header {
+    margin-block: 0.4em 1.75em;
+    padding-bottom: 0.5em;
+    border-bottom: vw(4) dashed var(--accent-border);
+    font-family: var(--font-family-useol);
+    @include font-vw(64, $color: var(--accent-brand));
+    line-height: 1.3;
+  }
+
+  &__speaker {
+    margin-block-start: 1em;
+    font-family: var(--font-family);
+    @include font-vw(20, $color: var(--accent-brand));
+    line-height: 1.3;
+    text-align: right;
+  }
+
+  &__image {
+    width: 100%;
+    height: vw(400);
+    margin-block-end: vw(60);
+    border-radius: vw(20);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    @include mq(pc-sm) {
+      height: vw(300);
+      margin-block-end: vw(48);
+      border-radius: vw(16);
+    }
+
+    @include mq(mo) {
+      height: vw(200);
+      margin-block-end: vw(40);
+      border-radius: vw(12);
+    }
+
+    @include mq(mo-sm) {
+      height: vw(160);
+    }
+  }
+
+  &__imageImg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center center;
+    @include mq(mo-sm) {
+      object-position: right top;
+    }
+  }
+
+  &__imageText {
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    transform: translate(0, -50%);
+    text-align: left;
+    z-index: 1;
+    @include mq(pc-sm) {
+      left: 5%;
+    }
+    @include mq(mo) {
+      left: vw(40);
+      top: vw(40);
+      transform: translate(0, 0);
+    }
+    @include mq(mo-sm) {
+      left: vw(28);
+      top: vw(28);
+    }
+  }
+
+  &__imageTitle {
+    font-family: var(--font-family-useol);
+    @include font-vw(56, $color: var(--text-main));
+    line-height: 1.3;
+    margin-block-end: 0.1em;
+
+    @include mq(pc-sm) {
+      @include font-vw(40);
+    }
+
+    @include mq(mo) {
+      @include font-vw(28);
+    }
+    @include mq(mo-sm) {
+      @include font-vw(20);
+    }
+  }
+
+  &__imageSubtitle {
+    @include font-vw(24, $weight: 400, $color: var(--text-caption));
+    line-height: 1.4;
+
+    @include mq(pc-sm) {
+      @include font-vw(18);
+    }
+
+    @include mq(mo) {
+      @include font-vw(14);
+    }
+    @include mq(mo-sm) {
+      @include font-vw(12);
+    }
+  }
+
+  &__body {
+    font-size: vw(20);
+    line-height: 1.7;
+    color: var(--text-body);
+
+    hr {
+      margin-block: 5em;
+      border: none;
+      border-top: vw(4) dashed var(--accent-border);
+    }
+
+    h2 {
+      margin-block: 2.5em 1.2em;
+      font-size: 2em;
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    p {
+      margin-block: 1.5em;
+      text-indent: 0.5em;
+
+      em {
+        font-style: normal;
+        font-size: 1.2em;
+        color: var(--accent-brand);
+        text-decoration: underline;
+        text-underline-offset: 0.3em;
+
+        strong {
+          font-weight: 600;
+
+          &:has(br) {
+            line-height: 1.85;
+          }
+        }
+      }
+    }
+
+    blockquote {
+      margin-block: 3em;
+      padding: 0.1em 1.5em;
+      border-left: vw(4) solid var(--accent-tertiary);
+      background-color: var(--accent-secondary);
+      color: var(--accent-brand);
+
+      + blockquote {
+        margin-block-start: -1.5em;
+      }
+
+      p {
+        text-indent: 0;
+      }
+
+      em {
+        font-style: normal;
+        font-family: var(--font-family-useol);
+        font-size: 1em;
+        text-decoration: none;
+      }
+    }
+  }
+
+  @include mq(pc-sm) {
+    // padding: vw(48) vw(32) vw(60);
+
+    &__header {
+      font-size: vw(56);
+    }
+
+    &__speaker {
+      @include font-vw(18);
+    }
+
+    &__body {
+      font-size: vw(18);
+    }
+  }
+
+  @include mq(mo) {
+    // padding: vw(36) 0 vw(48);
+    // border: none;
+
+    // &::before,
+    // &::after {
+    //   height: vw(5);
+    // }
+
+    &__header {
+      border-bottom-width: vw(2);
+      font-size: vw(40);
+      text-align: center;
+    }
+
+    &__speaker {
+      margin-block-start: 1.5em;
+      @include font-vw(14);
+      text-align: center;
+    }
+
+    &__body {
+      font-size: vw(16);
+    }
+  }
+}

@@ -100,6 +100,10 @@ export const pageMeta: Record<string, PageMeta> = {
     ...generatedMeta['/about/servant'],
     description: '우리 교회의 섬기는 분들을 소개합니다.',
   },
+  '/about/blessing': {
+    ...generatedMeta['/about/blessing'],
+    description: '하나님께서 우리에게 약속하신 복입니다.',
+  },
 
   '/worship/timetable': {
     ...generatedMeta['/worship/timetable'],

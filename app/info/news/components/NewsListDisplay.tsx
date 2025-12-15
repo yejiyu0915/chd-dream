@@ -8,6 +8,7 @@ import Spinner from '@/common/components/utils/Spinner';
 import n from '@/app/info/news/NewsList.module.scss'; // NewsList.module.scss 사용
 import { NewsItem } from '@/lib/notion'; // NewsItem 인터페이스 임포트
 import Button from '@/common/components/utils/Button'; // Button 컴포넌트 임포트
+import { isNewPost } from '@/common/utils/dateUtils'; // NEW 배지 판별 함수
 
 // 임시 뉴스 아이템 타입 (page.tsx에서 정의된 NewsItem과 일치)
 interface NewsListDisplayProps {
@@ -180,7 +181,9 @@ export default function NewsListDisplay({
                     </span>{' '}
                     {/* 순번 표시 (원본 newsData 배열에서의 인덱스 사용) */}
                     <div className={n.list__content}>
-                      <h3 className={n.list__title}>{item.title}</h3>
+                      {/* NEW 배지 (30일 이내 게시물) */}
+                      {isNewPost(item.rawDate) && <span className={n.list__newBadge}>NEW</span>}
+                      <h2 className={n.list__title}>{item.title}</h2>
                       <span className={n.list__date}>{item.date}</span>
                     </div>
                   </Link>

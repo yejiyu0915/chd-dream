@@ -106,6 +106,9 @@
   [class*='swiper-button-prev'],
   [class*='swiper-button-next'] {
     color: var(--text-inverse);
+    width: vw(80);
+    height: vw(120);
+    margin-top: vw(-60); // 세로 중앙 정렬
   }
 
   [class*='swiper-button-prev'] {
@@ -192,5 +195,3 @@
     }
   }
 }
-
-

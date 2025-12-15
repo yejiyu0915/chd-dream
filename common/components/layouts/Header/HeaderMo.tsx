@@ -142,7 +142,7 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
             </ul>
           </div>
 
-          <div className={h.mobilePrev__links}>
+          {/* <div className={h.mobilePrev__links}>
             {prevLinks.map((prevInfo, index) => {
               // 활성화된 링크만 필터링
               const activeLinks = prevInfo.links.filter((link) => !link.disabled);
@@ -173,7 +173,7 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
                 </div>
               );
             })}
-          </div>
+          </div> */}
         </nav>
       </div>
     </div>

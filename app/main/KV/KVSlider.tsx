@@ -191,6 +191,7 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
               src={slide.image}
               alt={slide.imageAlt}
               fill
+              unoptimized
               style={{ objectFit: 'cover' }}
               priority
               data-swiper-parallax="-23%"
@@ -241,6 +242,36 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
       </Swiper>
       <div className={kv.progressBarContainer}>
         <div className={kv.progressBar} style={{ width: `${progressWidth}%` }}></div>
+      </div>
+      {/* 꽃잎 애니메이션 (봄용) */}
+      {/* <div className={kv.petals}>
+        <div className={kv.petal}></div>
+        <div className={kv.petal}></div>
+        <div className={kv.petal}></div>
+        <div className={kv.petal}></div>
+        <div className={kv.petal}></div>
+        <div className={kv.petal}></div>
+        <div className={kv.petal}></div>
+        <div className={kv.petal}></div>
+      </div> */}
+      {/* 눈송이 애니메이션 (겨울용) */}
+      <div className={kv.snowflakes}>
+        <div className={kv.snowflake}></div>
+        <div className={kv.snowflake}></div>
+        <div className={kv.snowflake}></div>
+        <div className={kv.snowflake}></div>
+        <div className={kv.snowflake}></div>
+        <div className={kv.snowflake}></div>
+        <div className={kv.snowflake}></div>
+        <div className={kv.snowflake}></div>
+        <div className={kv.snowflake}></div>
+        <div className={kv.snowflake}></div>
+      </div>
+      {/* 하단 눈 쌓인 느낌 (겨울용) */}
+      <div className={kv.snowGround}>
+        <div className={kv.snowBump}></div>
+        <div className={kv.snowBump}></div>
+        <div className={kv.snowBump}></div>
       </div>
     </div>
   );

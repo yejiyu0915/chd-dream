@@ -78,7 +78,7 @@
   [class*='swiper-button-prev'],
   [class*='swiper-button-next'] {
     position: absolute;
-    top: 57.5%;
+    top: 52.5%;
     transform: translateY(-50%);
     width: vw(48);
     height: vw(100);
@@ -144,6 +144,7 @@
 
     [class*='swiper-button-prev'],
     [class*='swiper-button-next'] {
+      top: 57.5%;
       width: vw(32);
       height: vw(64);
     }

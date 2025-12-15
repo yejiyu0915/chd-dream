@@ -20,7 +20,8 @@ export const menuData: MenuItem[] = [
   {
     name: '교회 소개',
     subMenu: [
-      { name: '교회 연혁', href: '/about/history' },
+      { name: '교회를 통한 축복', href: '/about/blessing' },
+      // { name: '교회 연혁', href: '/about/history' },
       { name: '교회 비전', href: '/about/vision' },
       { name: '담임 목사님 인사말', href: '/about/pastor' },
       { name: '교구 소개', href: '/about/group' },
@@ -41,7 +42,7 @@ export const menuData: MenuItem[] = [
     subMenu: [
       { name: '예배 시간표', href: '/worship/timetable' },
       { name: '온라인 주보', href: '/worship/bulletin' },
-      { name: '생명의 말씀', href: '/worship/sermon' },
+      // { name: '생명의 말씀', href: '/worship/sermon' },
     ],
     content: {
       image: '/main/worship.jpg',

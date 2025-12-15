@@ -149,9 +149,19 @@ export default function MdxImageGalleryModal({
             // 닫기 버튼인지 확인
             const isCloseButton = target.closest(`.${styles.closeButton}`);
 
-            // 이미지가 아니고 닫기 버튼도 아닌 경우 모달 닫기
+            // 네비게이션 버튼인지 확인
+            const isNavigationButton =
+              target.closest('[class*="swiper-button-prev"]') ||
+              target.closest('[class*="swiper-button-next"]');
+
+            // Pagination인지 확인
+            const isPagination =
+              target.closest('[class*="swiper-pagination"]') ||
+              target.closest('[class*="swiper-pagination-bullet"]');
+
+            // 이미지, 닫기 버튼, 네비게이션, pagination이 아닌 경우에만 모달 닫기
             // (이미지 주변 빈 공간이나 dimmed 배경 클릭 시)
-            if (!isImage && !isCloseButton) {
+            if (!isImage && !isCloseButton && !isNavigationButton && !isPagination) {
               onClose();
             }
           }}

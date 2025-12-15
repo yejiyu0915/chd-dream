@@ -43,7 +43,7 @@
   }
 
   @include mq(ta) {
-    flex-direction: column;
+    flex-direction: column-reverse;
   }
 
   @include mq(mo) {
@@ -65,8 +65,6 @@
 
   @include mq(ta) {
     width: 100%;
-    padding-block-start: vw(20);
-    border-top: vw(2) dashed var(--accent-tertiary);
   }
 
   @include mq(mo) {
@@ -89,9 +87,8 @@
   }
 
   @include mq(mo) {
-    width: 100%;
-    max-width: 50%;
-    min-width: vw(200);
+    width: 50%;
+    max-width: vw(200);
     border-radius: vw(12);
   }
 

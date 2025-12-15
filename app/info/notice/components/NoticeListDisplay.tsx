@@ -8,6 +8,7 @@ import Spinner from '@/common/components/utils/Spinner';
 import n from '@/app/info/notice/NoticeList.module.scss';
 import { NoticeItem } from '@/lib/notion';
 import Button from '@/common/components/utils/Button';
+import { isNewPost } from '@/common/utils/dateUtils'; // NEW 배지 판별 함수
 
 interface NoticeListDisplayProps {
   noticeData: NoticeItem[] | undefined;
@@ -154,7 +155,9 @@ export default function NoticeListDisplay({
                       {noticeData.length - noticeData.indexOf(item)}
                     </span>
                     <div className={n.list__content}>
-                      <h3 className={n.list__title}>{item.title}</h3>
+                      {/* NEW 배지 (30일 이내 게시물) */}
+                      {isNewPost(item.rawDate) && <span className={n.list__newBadge}>NEW</span>}
+                      <h2 className={n.list__title}>{item.title}</h2>
                       <span className={n.list__date}>{item.date}</span>
                     </div>
                   </Link>

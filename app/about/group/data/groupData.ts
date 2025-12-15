@@ -49,16 +49,10 @@ export const groupData: GroupDataType[] = [
     leaders: [
       { role: '회장', name: '이름' },
       { role: '부회장', name: '이름' },
-      { role: '서기', name: '이름' },
+      { role: '총무', name: '이름' },
     ],
     meetingPlace: '4층 남선교실',
     meetingTime: '매 주일 본 예배 후, 식사 후 오후 2시',
-    activities: [
-      '정기 모임 및 성경 공부',
-      '봉사 활동 및 나눔 실천',
-      '친교 활동 및 체육 대회',
-      '전도 활동 및 선교 사역',
-    ],
   },
   {
     id: 'women',
@@ -68,7 +62,6 @@ export const groupData: GroupDataType[] = [
 
     meetingPlace: '본당 4층, 3층 세미나실, 2층 여선교실',
     meetingTime: '매 주일 본 예배 후, 점심 식사 후 오후 2시',
-    activities: ['정기 모임 및 성경 공부', '봉사 활동', '전도 활동'],
     subGroups: [
       {
         id: 'women-1',
@@ -79,17 +72,18 @@ export const groupData: GroupDataType[] = [
         leaders: [
           { role: '회장', name: '이름' },
           { role: '부회장', name: '이름' },
+          { role: '총무', name: '이름' },
         ],
       },
       {
         id: 'women-2',
         title: '2 여선교',
-        description: `행복으로 가는 교회 제 2여선교는요 ! <br /> 삶으로 예배하고 삶으로 순종하는 교구입니다. <br /> 하나님의 말씀으로 서로를 격려하고 함께 기도함으로 시험을 이기며 믿음으로 단단해지는 공동체입니다. <br /> 교회의 각종 행사에 즐겁게 헌신함으로 교제하는 믿음의 교구입니다!`,
+        description: `행복으로가는교회 제 2여선교는요 ! <br /> 삶으로 예배하고 삶으로 순종하는 교구입니다. <br /> 하나님의 말씀으로 서로를 격려하고 함께 기도함으로 시험을 이기며 믿음으로 단단해지는 공동체입니다. <br /> 교회의 각종 행사에 즐겁게 헌신함으로 교제하는 믿음의 교구입니다!`,
         pastor: '김미선 전도사',
         leaders: [
           { role: '회장', name: '이름' },
           { role: '부회장', name: '이름' },
-          { role: '서기', name: '이름' },
+          { role: '총무', name: '이름' },
         ],
       },
       {
@@ -98,12 +92,16 @@ export const groupData: GroupDataType[] = [
         description:
           '3여선교는 하나님의 사랑 안에서 함께 성장하며 선교의 열정을 품고 있는 공동체입니다.',
         pastor: '장은연 전도사',
-        leaders: [{ role: '회장', name: '이름' }],
+        leaders: [
+          { role: '회장', name: '이름' },
+          { role: '부회장', name: '이름' },
+          { role: '총무', name: '이름' },
+        ],
       },
       {
         id: 'women-4',
         title: '4 여선교',
-        description: `행복으로 가는 교회 제 4여선교는 사랑을 실천하고 헌신으로 섬기며, 나눔과 봉사를 통해 이웃에게 그리스도의 마음을 전하는 공동체입니다. <br /> 서로 함께 걸으며 행복을 나누고, 깊은 신앙 안에서 하나 되어 하나님 나라를 이루어 가고자 합니다. <br /> 앞으로도 사랑과 섬김의 발걸음을 멈추지 않고 교회와 지역사회를 위해 기도로 동행하겠습니다.`,
+        description: `행복으로가는교회 제 4여선교는 사랑을 실천하고 헌신으로 섬기며, 나눔과 봉사를 통해 이웃에게 그리스도의 마음을 전하는 공동체입니다. <br /> 서로 함께 걸으며 행복을 나누고, 깊은 신앙 안에서 하나 되어 하나님 나라를 이루어 가고자 합니다. <br /> 앞으로도 사랑과 섬김의 발걸음을 멈추지 않고 교회와 지역사회를 위해 기도로 동행하겠습니다.`,
         pastor: '임선의 전도사',
         leaders: [
           { role: '회장', name: '윤순덕' },
@@ -145,13 +143,6 @@ export const groupData: GroupDataType[] = [
     ],
     meetingPlace: '5층 청년부실',
     meetingTime: '매 주일 본 예배 후, 점심 식사 후 오후 2시',
-    activities: [
-      '정기 모임 및 예배',
-      '성경 공부 및 QT',
-      '친교 활동 및 MT',
-      '봉사 활동',
-      '전도 활동',
-    ],
   },
   {
     id: 'student',
@@ -161,7 +152,7 @@ export const groupData: GroupDataType[] = [
     description: `
       유아부터 고등학생까지 미성년 친구들이 모여 하나님의 사랑 안에서 믿음으로 함께 성장해나가는 예수님의 꿈나무입니다!<br />
       <br />
-      행복으로가는 교회 예꿈부는요,<br />
+      행복으로가는교회 예꿈부는요,<br />
       <br />
       <span style="color:var(--accent-brand); font-weight: 900;">하나!</span> 하나님의 사랑 안에서 자라나는 다음 세대 교구로<br />
       <p style="padding-left: 2.35em;">
@@ -184,7 +175,6 @@ export const groupData: GroupDataType[] = [
     ],
     meetingPlace: '본당 5층, 본당 4층, 2층 예꿈실',
     meetingTime: '매 주일 본 예배 후, 오후 2시 예꿈 예배 후',
-    activities: ['정기 모임 및 예배', '성경 공부', '친교 활동', '체육 활동'],
     subGroups: [
       {
         id: 'student-middle',

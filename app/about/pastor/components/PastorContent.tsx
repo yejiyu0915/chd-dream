@@ -112,7 +112,7 @@ export default function PastorContent() {
           {/* 사진 영역 */}
           <motion.div className={s.image} variants={imageVariants}>
             <Image
-              src="/images/servant/00.png"
+              src="/images/common/pastor.jpg"
               alt="김영구 목사"
               width={300}
               height={400}

@@ -282,12 +282,12 @@ function PinSection({
         const windowHeight = window.innerHeight;
         const scrolled = -rect.top;
 
-        const fadeOutStart = windowHeight * 3;
-        const fadeOutEnd = windowHeight * 3.5;
+        const fadeOutStart = windowHeight * 2;
+        const fadeOutEnd = windowHeight * 2.5;
 
         // 텍스트 효과 진행률
         const textEffectStart = 0;
-        const textEffectEnd = windowHeight * 1.5;
+        const textEffectEnd = windowHeight * 1;
         let textProgress = 0;
         if (scrolled <= textEffectStart) {
           textProgress = 0;
@@ -386,22 +386,95 @@ function TextReveal({
   noTitleBlur = false,
 }: TextRevealProps) {
   const titleProgress = Math.min(scrollProgress / 0.25, 1);
-  const descProgress = Math.max((scrollProgress - 0.25) / 0.75, 0);
+  const [animationProgress, setAnimationProgress] = useState(0);
+  const isAnimationStartedRef = useRef(false);
+  const animationRef = useRef<number>(0);
+  const wasHiddenRef = useRef(false); // 섹션이 숨겨졌었는지 추적
 
+  // 섹션 opacity가 낮아지면 숨겨진 것으로 표시
+  useEffect(() => {
+    if (sectionOpacity < 0.3) {
+      wasHiddenRef.current = true;
+      // 숨겨지면 애니메이션 리셋
+      if (isAnimationStartedRef.current) {
+        isAnimationStartedRef.current = false;
+        if (animationRef.current) {
+          cancelAnimationFrame(animationRef.current);
+        }
+      }
+      setAnimationProgress(0);
+    }
+  }, [sectionOpacity]);
+
+  // 스크롤 트리거: 특정 위치 도달 시 자동 애니메이션 시작
+  useEffect(() => {
+    // noTitleBlur인 경우(첫 섹션)는 더 빠르게 트리거
+    const triggerPoint = noTitleBlur ? 0.05 : 0.15;
+
+    // 섹션이 다시 보이고 트리거 포인트 이하면 리셋 (재시작 준비)
+    if (scrollProgress <= triggerPoint && sectionOpacity > 0.5) {
+      if (wasHiddenRef.current || !isAnimationStartedRef.current) {
+        wasHiddenRef.current = false;
+        isAnimationStartedRef.current = false;
+        setAnimationProgress(0);
+      }
+    }
+
+    // 이미 시작된 경우 무시
+    if (isAnimationStartedRef.current) return;
+
+    // 섹션이 보이고 트리거 포인트 도달 시 애니메이션 시작
+    if (scrollProgress >= triggerPoint && sectionOpacity > 0.5) {
+      isAnimationStartedRef.current = true;
+      const startTime = performance.now();
+
+      // 자동 애니메이션 진행
+      const animate = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+        const duration = 400; // 0.4초 동안 애니메이션 진행
+
+        if (elapsed < duration) {
+          const progress = elapsed / duration;
+          setAnimationProgress(Math.min(progress, 1));
+          animationRef.current = requestAnimationFrame(animate);
+        } else {
+          setAnimationProgress(1); // 완료 상태 유지
+        }
+      };
+
+      animationRef.current = requestAnimationFrame(animate);
+    }
+  }, [scrollProgress, noTitleBlur, sectionOpacity]);
+
+  // 컴포넌트 언마운트 시 정리
+  useEffect(() => {
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, []);
+
+  // 첫 문장부터 끝 문장까지 빠르게 순차적으로 하이라이트 (쫘르르륵 효과)
   const getLineProgress = (lineIndex: number) => {
     const totalLines = lines.length;
+
+    // 각 줄이 순차적으로 나타나도록
     const lineStart = lineIndex / totalLines;
     const lineEnd = (lineIndex + 1) / totalLines;
 
-    if (descProgress <= lineStart) return 0;
-    if (descProgress >= lineEnd) return 1;
+    if (animationProgress <= lineStart) return 0;
+    if (animationProgress >= lineEnd) return 1;
 
-    return (descProgress - lineStart) / (lineEnd - lineStart);
+    // 각 줄 내에서도 빠르게 진행
+    const lineProgress = (animationProgress - lineStart) / (lineEnd - lineStart);
+    return lineProgress;
   };
 
   const titleBlur = noTitleBlur ? 0 : 5 * (1 - titleProgress);
   const titleOpacity = noTitleBlur ? 1 : 0.3 + 0.7 * titleProgress;
   const descSlideUp = noTitleBlur ? 0 : 80 * (1 - titleProgress);
+  // desc는 타이틀 애니메이션과 함께 보이도록 (하이라이트만 자동 애니메이션)
   const descOpacity = noTitleBlur ? 1 : 0.3 + 0.7 * titleProgress;
 
   const getImageOpacity = () => {
