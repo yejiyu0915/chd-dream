@@ -27,12 +27,45 @@ $list: '.list';
       border-radius: vw(--list-radius) vw(--list-radius) 0 0;
       overflow: hidden;
     }
+    // 이미지 래퍼 (NEW 배지 오버레이용)
+    &__imageWrapper {
+      position: relative;
+      overflow: hidden;
+      border-radius: vw(--list-radius);
+    }
     &__image {
       width: 100%;
       height: 100%;
       object-fit: cover;
       border-radius: vw(--list-radius);
       aspect-ratio: 4/3;
+    }
+    // NEW 배지 (이미지 좌상단 오버레이)
+    &__newBadge {
+      position: absolute;
+      top: vw(12);
+      left: vw(12);
+      z-index: 1;
+      padding: vw(6) vw(14);
+      border-radius: vw(6);
+      background-color: var(--accent-brand);
+      @include font-vw(18, $weight: 700, $color: var(--text-inverse));
+      letter-spacing: 0.05em;
+      box-shadow: 0 vw(2) vw(4) rgba(0, 0, 0, 0.1);
+      @include mq(pc-sm) {
+        top: vw(10);
+        left: vw(10);
+        padding: vw(4) vw(10);
+        border-radius: vw(4);
+        @include font-vw(12);
+      }
+      @include mq(mo) {
+        top: vw(6);
+        left: vw(6);
+        padding: vw(3) vw(8);
+        border-radius: vw(3);
+        @include font-vw(10);
+      }
     }
     &__title {
       margin-block-end: 1em;

@@ -67,20 +67,36 @@ export default function Footer() {
           variants={containerVariants}
         >
           <motion.div className={f.group} variants={itemVariants}>
-            <ul className={f.sitemap}>
-              <li>
-                <Link href="/">Home</Link>
-              </li>
+            <div className={f.sitemap}>
+              {/* Home */}
+              <div className={f.sitemap__group}>
+                <Link href="/" className={f.sitemap__title}>
+                  Home
+                </Link>
+              </div>
+              {/* 메뉴 데이터 기반 그룹 */}
               {menuData.map((menuItem, index) => (
-                <li key={index}>
-                  <Link href={menuItem.href || '#'}>{menuItem.name}</Link>
-                </li>
+                <div key={index} className={f.sitemap__group}>
+                  <p className={f.sitemap__title}>{menuItem.name}</p>
+                  {menuItem.subMenu && (
+                    <ul className={f.sitemap__list}>
+                      {menuItem.subMenu.map((subItem, subIndex) => (
+                        <li key={subIndex}>
+                          <Link href={subItem.href}>{subItem.name}</Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               ))}
-              <li>
-                <Link href="/location">오시는 길</Link>
-              </li>
-            </ul>
-            <div className={f.prevLinks}>
+              {/* 오시는 길 */}
+              <div className={f.sitemap__group}>
+                <Link href="/location" className={f.sitemap__title}>
+                  오시는 길
+                </Link>
+              </div>
+            </div>
+            {/* <div className={f.prevLinks}>
               {prevLinks.map((prevInfo, index) => (
                 <div key={index} className={f.prevGroup}>
                   <div className={f.prevRow}>
@@ -103,30 +119,24 @@ export default function Footer() {
                   </div>
                 </div>
               ))}
-            </div>
+            </div> */}
             <ul className={f.sns}>
-              {snsLinks.map((snsLink, index) => (
-                <li
-                  key={index}
-                  className={`${getSnsClassName(snsLink.name)} ${snsLink.disabled ? f.disabled : ''}`}
-                >
-                  <Link
-                    href={snsLink.disabled ? '' : snsLink.href}
-                    target={snsLink.disabled ? undefined : '_blank'}
-                    rel={snsLink.disabled ? undefined : 'noopener noreferrer'}
-                    aria-label={
-                      snsLink.disabled ? `${snsLink.name} (준비중)` : `${snsLink.name} 바로가기`
-                    }
-                  >
-                    {snsLink.name}{' '}
-                    {snsLink.disabled ? (
-                      <span className={f.disabled__mark}>준비중</span>
-                    ) : (
+              {snsLinks
+                .filter((snsLink) => !snsLink.disabled) // 준비중인 항목은 렌더링하지 않음
+                .map((snsLink, index) => (
+                  <li key={index} className={getSnsClassName(snsLink.name)}>
+                    <Link
+                      href={snsLink.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${snsLink.name} 바로가기`}
+                    >
+                      <Icon name={snsLink.icon} className={f.snsIcon} aria-hidden="true" />
+                      {snsLink.name}{' '}
                       <Icon name="external-link" className={f.icon} aria-hidden="true" />
-                    )}
-                  </Link>
-                </li>
-              ))}
+                    </Link>
+                  </li>
+                ))}
             </ul>
           </motion.div>
 

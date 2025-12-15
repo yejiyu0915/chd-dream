@@ -87,12 +87,29 @@
       border-radius: vw(20) vw(20) 0 0;
       overflow: hidden;
     }
+    &__imageWrapper {
+      position: relative;
+      overflow: hidden;
+      border-radius: vw(20);
+    }
     &__image {
       width: 100%;
       height: 100%;
       object-fit: cover;
       border-radius: vw(20);
       aspect-ratio: 4 / 3;
+    }
+    &__newBadge {
+      position: absolute;
+      top: vw(12);
+      left: vw(12);
+      z-index: 1;
+      padding: vw(6) vw(14);
+      border-radius: vw(6);
+      background-color: var(--accent-brand);
+      @include font-vw(18, $weight: 700, $color: var(--text-inverse));
+      letter-spacing: 0.05em;
+      box-shadow: 0 vw(2) vw(4) rgba(0, 0, 0, 0.1);
     }
     &__content {
       display: flex;
@@ -297,8 +314,19 @@
       &__link {
         border-radius: cqi(20) cqi(20) 0 0;
       }
+      &__imageWrapper {
+        border-radius: cqi(20);
+      }
       &__image {
         border-radius: cqi(20);
+      }
+      &__newBadge {
+        top: cqi(12);
+        left: cqi(12);
+        padding: cqi(6) cqi(14);
+        border-radius: cqi(6);
+        @include font-cqi(18, $min: 12);
+        box-shadow: 0 cqi(2) cqi(4) rgba(0, 0, 0, 0.1);
       }
       &__content {
         gap: cqi(10);
@@ -459,8 +487,18 @@
       &__link {
         border-radius: vw(12) vw(12) 0 0;
       }
+      &__imageWrapper {
+        border-radius: vw(12);
+      }
       &__image {
         border-radius: vw(12);
+      }
+      &__newBadge {
+        top: vw(10);
+        left: vw(10);
+        padding: vw(4) vw(10);
+        border-radius: vw(4);
+        @include font-vw(12);
       }
       &__content {
         gap: vw(8);
@@ -583,9 +621,19 @@
       &__link {
         border-radius: vw(10) vw(10) 0 0;
       }
+      &__imageWrapper {
+        border-radius: vw(10);
+      }
       &__image {
         border-radius: vw(10);
         aspect-ratio: 4 / 3;
+      }
+      &__newBadge {
+        top: vw(6);
+        left: vw(6);
+        padding: vw(3) vw(8);
+        border-radius: vw(3);
+        @include font-vw(10);
       }
       &__content {
         gap: vw(8);
@@ -669,7 +717,6 @@
         @include font-vw(16);
       }
       &__info {
-        flex-direction: column;
         align-items: flex-start;
         @include font-vw(12);
       }

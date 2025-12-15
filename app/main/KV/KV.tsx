@@ -51,8 +51,11 @@ export default function KV({ kvSliderItems, newsData, setKvHeightState }: KVProp
     };
   }, [setKvHeightState]);
 
+  // 슬라이드 1개일 때 singleSlide 클래스 추가 (네비게이션/인디케이터 없을 때 레이아웃 조정용)
+  const isSingleSlide = kvSliderItems.length === 1;
+
   return (
-    <div className={kv.kv} style={{ height: kvHeight }}>
+    <div className={`${kv.kv} ${isSingleSlide ? kv.singleSlide : ''}`} style={{ height: kvHeight }}>
       <KVSlider initialKvSliderItems={kvSliderItems} kvHeight={kvHeight} />{' '}
       {/* 서버에서 받은 데이터를 initialData로 전달 */}
       <KVNews initialNewsData={newsData} />

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Icon from '@/common/components/utils/Icons';
 import c from '@/app/main/c-log/CLog.module.scss';
 import { CLogItem } from '@/lib/notion';
+import { isNewPost } from '@/common/utils/dateUtils';
 import CLogSkeleton from '@/app/main/c-log/CLogSkeleton';
 import ImageWithTheme from '@/common/components/utils/ImageWithTheme';
 import { motion, useScroll, useTransform } from 'framer-motion';
@@ -65,7 +66,8 @@ function CLogCard({ item, index }: { item: CLogItem; index: number }) {
         }}
       >
         <Link href={item.link} className={c.list__link}>
-          <div className={c.list__imageContainer}>
+          <div className={c.list__imageWrapper}>
+            {isNewPost(item.rawDate) && <span className={c.list__newBadge}>NEW</span>}
             <ImageWithTheme
               src={item.imageUrl}
               alt={item.imageAlt}
@@ -104,7 +106,8 @@ function CLogCard({ item, index }: { item: CLogItem; index: number }) {
       style={{ y, opacity }} // 스크롤에 따라 y값과 opacity 변경
     >
       <Link href={item.link} className={c.list__link}>
-        <div className={c.list__imageContainer}>
+        <div className={c.list__imageWrapper}>
+          {isNewPost(item.rawDate) && <span className={c.list__newBadge}>NEW</span>}
           <ImageWithTheme
             src={item.imageUrl}
             alt={item.imageAlt}

@@ -458,7 +458,7 @@
 .pinSection {
   position: relative;
   width: 100%;
-  height: 450vh; // 긴 스크롤 영역 (하이라이트 후 유지)
+  height: 300vh; // 스크롤 영역 (desc 효과가 빨라져서 줄임)
   will-change: opacity;
   // 초기 렌더링 최적화: GPU 가속
   transform: translateZ(0);
@@ -466,7 +466,7 @@
 
   // 마지막 섹션 (3섹션)은 50vh 더 길게
   &.isLast {
-    height: 500vh;
+    height: 350vh;
   }
 
   // 왼쪽 정렬
@@ -758,6 +758,30 @@
   }
 }
 
+@include mq(pc-sm) {
+  .titleWrap {
+    margin-bottom: vw(24);
+  }
+  .titleLabel {
+    margin-bottom: vw(12);
+    padding: vw(8) vw(20);
+    @include font-vw(14);
+  }
+  .title {
+    @include font-vw(48);
+  }
+  .englishTitle {
+    @include font-vw(14);
+    margin-top: vw(8);
+  }
+  .lineLight {
+    @include font-vw(24, 36);
+  }
+  .lineHighlight {
+    @include font-vw(24, 36);
+  }
+}
+
 // 반응형 처리
 @include mq(mo) {
   .line {
@@ -783,10 +807,10 @@
   }
 
   .pinSection {
-    height: 350vh; // 모바일 스크롤 영역 (하이라이트 후 유지)
+    height: 250vh; // 모바일 스크롤 영역 (desc 효과가 빨라져서 줄임)
 
     &.isLast {
-      height: 400vh; // 3섹션만 +50vh
+      height: 300vh; // 3섹션만 +50vh
     }
   }
 
@@ -1047,15 +1071,18 @@
 }
 
 .crossLine {
-  @include font-vw(36, 48, $weight: 600, $color: var(--text-main));
+  @include font-vw(36, $weight: 600, $color: var(--text-main));
   line-height: 1.8;
   text-align: center;
   word-break: keep-all;
   margin: 0;
   // 텍스트 가독성을 위한 그림자
   text-shadow: 0 vw(2) vw(10) rgba(255, 255, 255, 0.8);
+  @include mq(pc-sm) {
+    @include font-vw(28);
+  }
   @include mq(mo) {
-    @include font-vw(20, 36);
+    @include font-vw(20);
   }
 }
 

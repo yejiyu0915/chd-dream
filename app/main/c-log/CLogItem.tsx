@@ -2,12 +2,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { CLogItem as CLogItemType } from '@/lib/notion';
 import c from '@/app/main/c-log/CLog.module.scss';
+import { isNewPost } from '@/common/utils/dateUtils';
 
 export default function CLogItem({
   id,
   title,
   category,
   date,
+  rawDate,
   imageUrl,
   imageAlt,
   slug,
@@ -20,7 +22,16 @@ export default function CLogItem({
     <li className={c.list__item}>
       <Link href={href} className={c.list__link}>
         {imageUrl && (
-          <Image src={imageUrl} alt={imageAlt} width={400} height={300} className={c.list__image} />
+          <div className={c.list__imageWrapper}>
+            {isNewPost(rawDate) && <span className={c.list__newBadge}>NEW</span>}
+            <Image
+              src={imageUrl}
+              alt={imageAlt}
+              width={400}
+              height={300}
+              className={c.list__image}
+            />
+          </div>
         )}
         <div className={c.list__content}>
           <p className={c.list__title}>{title}</p>

@@ -162,6 +162,7 @@ export interface CLogItem {
   title: string;
   category: string;
   date: string;
+  rawDate: string; // 원본 날짜 (NEW 배지 판별용)
   imageUrl: string;
   imageAlt: string;
   tags: string[];
@@ -351,6 +352,7 @@ const mapPageToCLogItem: ItemMapper<CLogItem> = (page) => {
     category:
       (categoryProperty && 'select' in categoryProperty && categoryProperty.select?.name) || '기타',
     date: getFormattedDate(dateProperty),
+    rawDate: getRawDate(dateProperty), // NEW 배지 판별용 원본 날짜
     imageUrl: imageUrlToUse,
     imageAlt: getPlainText(titleProperty) || 'C-log 이미지',
     tags: (tagsProperty &&

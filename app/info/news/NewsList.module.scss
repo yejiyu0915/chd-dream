@@ -58,6 +58,18 @@ $list: '.list';
       gap: vw(20); // 타이틀과 날짜 사이 간격
     }
 
+    // NEW 배지 (제목 앞 인라인)
+    &__newBadge {
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+      padding: vw(4) vw(12);
+      border-radius: vw(4);
+      background-color: var(--accent-brand);
+      @include font-vw(16, $weight: 700, $color: var(--text-inverse));
+      letter-spacing: 0.05em;
+      vertical-align: middle;
+    }
     &__title {
       @include font-vw(32, 45, $weight: 700);
       color: var(--text-main);
@@ -83,6 +95,11 @@ $list: '.list';
         @include font-vw(20);
         width: vw(40);
       }
+      &__newBadge {
+        padding: vw(3) vw(8);
+        border-radius: vw(3);
+        @include font-vw(12);
+      }
       &__title {
         @include font-vw(24);
       }
@@ -104,8 +121,17 @@ $list: '.list';
         @include font-vw(16);
         width: vw(30);
       }
+      &__content {
+        gap: vw(12);
+      }
+      &__newBadge {
+        padding: vw(2) vw(6);
+        border-radius: vw(2);
+        @include font-vw(10);
+      }
       &__title {
         @include font-vw(16);
+        word-break: break-all;
       }
       &__date {
         @include font-vw(14);

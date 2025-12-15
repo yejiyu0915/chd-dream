@@ -78,13 +78,10 @@ main {
     border-bottom: 1px solid var(--accent-brand);
     box-shadow: 0 vw(20) vw(12) vw(-15) rgba(0, 0, 0, 0.06);
     @include mq(pc) {
-      margin-block-end: vw(711);
-    }
-    @include mq(pc-sm) {
-      margin-block-end: vw(800);
+      margin-block-end: vw(620);
     }
     @include mq(ta) {
-      margin-block-end: vw(780);
+      margin-block-end: vw(700);
     }
     @include mq(mo) {
       margin-block-end: vw(640);

@@ -1,8 +1,8 @@
 @use '@/common/styles/mixins/function' as *;
 
 .kv {
-  --gradient-dark-start: rgba(0, 0, 0, 0.7); // KV 그라데이션 시작
-  --gradient-dark-end: rgba(0, 0, 0, 0.4); // KV 그라데이션 끝
+  --gradient-dark-start: rgba(0, 0, 0, 0.55); // KV 그라데이션 시작
+  --gradient-dark-end: rgba(0, 0, 0, 0.25); // KV 그라데이션 끝
   width: 100%;
   position: fixed;
   top: 0;
@@ -23,10 +23,21 @@
     width: 100%;
     height: 100%;
     background: linear-gradient(
-      0deg,
-      var(--gradient-dark-start) 30%,
-      var(--gradient-dark-end) 100%
+      180deg,
+      var(--gradient-dark-start) 0%,
+      var(--gradient-dark-end) 30%,
+      var(--gradient-dark-end) 40%,
+      var(--gradient-dark-start) 60%
     );
+    @include mq(pc-sm) {
+      background: linear-gradient(
+        180deg,
+        var(--gradient-dark-start) 0%,
+        var(--gradient-dark-end) 20%,
+        var(--gradient-dark-end) 40%,
+        var(--gradient-dark-start) 60%
+      );
+    }
     z-index: 1;
   }
   .slider {
@@ -383,6 +394,504 @@
       i {
         --icon-size: 1;
         @include font-vw(20);
+      }
+    }
+  }
+
+  // 꽃잎 애니메이션
+  .petals {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .petal {
+    position: absolute;
+    width: vw(20);
+    height: vw(20);
+    background: radial-gradient(
+      ellipse at 30% 30%,
+      rgba(255, 220, 230, 0.9) 0%,
+      rgba(255, 182, 193, 0.7) 50%,
+      rgba(255, 150, 170, 0.5) 100%
+    );
+    border-radius: 150% 0 150% 0;
+    opacity: 0;
+    animation: petalFall linear infinite;
+
+    // 각 꽃잎마다 다른 스타일 + 색상 (3가지 스펙트럼)
+    // 색상 1: 연한 핑크 (기본)
+    &:nth-child(1) {
+      left: 10%;
+      width: vw(18);
+      height: vw(18);
+      animation-duration: 12s;
+      animation-delay: 0s;
+    }
+    // 색상 2: 크림/아이보리 계열
+    &:nth-child(2) {
+      left: 25%;
+      width: vw(14);
+      height: vw(14);
+      animation-duration: 15s;
+      animation-delay: 2s;
+      background: radial-gradient(
+        ellipse at 30% 30%,
+        rgba(255, 245, 238, 0.9) 0%,
+        rgba(255, 228, 215, 0.7) 50%,
+        rgba(255, 218, 200, 0.5) 100%
+      );
+    }
+    // 색상 3: 살짝 진한 로즈
+    &:nth-child(3) {
+      left: 40%;
+      width: vw(22);
+      height: vw(22);
+      animation-duration: 11s;
+      animation-delay: 4s;
+      background: radial-gradient(
+        ellipse at 30% 30%,
+        rgba(255, 200, 210, 0.9) 0%,
+        rgba(255, 160, 180, 0.7) 50%,
+        rgba(245, 130, 155, 0.5) 100%
+      );
+    }
+    // 색상 1: 연한 핑크
+    &:nth-child(4) {
+      left: 55%;
+      width: vw(16);
+      height: vw(16);
+      animation-duration: 14s;
+      animation-delay: 1s;
+    }
+    // 색상 2: 크림/아이보리 계열
+    &:nth-child(5) {
+      left: 70%;
+      width: vw(20);
+      height: vw(20);
+      animation-duration: 13s;
+      animation-delay: 3s;
+      background: radial-gradient(
+        ellipse at 30% 30%,
+        rgba(255, 245, 238, 0.9) 0%,
+        rgba(255, 228, 215, 0.7) 50%,
+        rgba(255, 218, 200, 0.5) 100%
+      );
+    }
+    // 색상 3: 살짝 진한 로즈
+    &:nth-child(6) {
+      left: 85%;
+      width: vw(15);
+      height: vw(15);
+      animation-duration: 16s;
+      animation-delay: 5s;
+      background: radial-gradient(
+        ellipse at 30% 30%,
+        rgba(255, 200, 210, 0.9) 0%,
+        rgba(255, 160, 180, 0.7) 50%,
+        rgba(245, 130, 155, 0.5) 100%
+      );
+    }
+    // 색상 1: 연한 핑크
+    &:nth-child(7) {
+      left: 5%;
+      width: vw(12);
+      height: vw(12);
+      animation-duration: 17s;
+      animation-delay: 7s;
+    }
+    // 색상 2: 크림/아이보리 계열
+    &:nth-child(8) {
+      left: 95%;
+      width: vw(18);
+      height: vw(18);
+      animation-duration: 14s;
+      animation-delay: 6s;
+      background: radial-gradient(
+        ellipse at 30% 30%,
+        rgba(255, 245, 238, 0.9) 0%,
+        rgba(255, 228, 215, 0.7) 50%,
+        rgba(255, 218, 200, 0.5) 100%
+      );
+    }
+
+    @include mq(mo) {
+      // 모바일에서 크기 조정
+      &:nth-child(1) {
+        width: vw(14);
+        height: vw(14);
+      }
+      &:nth-child(2) {
+        width: vw(10);
+        height: vw(10);
+      }
+      &:nth-child(3) {
+        width: vw(16);
+        height: vw(16);
+      }
+      &:nth-child(4) {
+        width: vw(12);
+        height: vw(12);
+      }
+      &:nth-child(5) {
+        width: vw(14);
+        height: vw(14);
+      }
+      &:nth-child(6) {
+        width: vw(11);
+        height: vw(11);
+      }
+      &:nth-child(7) {
+        width: vw(9);
+        height: vw(9);
+      }
+      &:nth-child(8) {
+        width: vw(13);
+        height: vw(13);
+      }
+    }
+  }
+
+  @keyframes petalFall {
+    0% {
+      opacity: 0;
+      top: -10%;
+      transform: translateX(0) rotate(0deg);
+    }
+    10% {
+      opacity: 0.7;
+    }
+    25% {
+      transform: translateX(30px) rotate(90deg);
+    }
+    50% {
+      transform: translateX(-20px) rotate(180deg);
+    }
+    75% {
+      transform: translateX(25px) rotate(270deg);
+    }
+    90% {
+      opacity: 0.7;
+    }
+    100% {
+      opacity: 0;
+      top: 110%;
+      transform: translateX(-15px) rotate(360deg);
+    }
+  }
+
+  // 눈송이 애니메이션 (겨울용)
+  .snowflakes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .snowflake {
+    position: absolute;
+    opacity: 0;
+    filter: grayscale(1) brightness(3); // 이모지 흰색으로 변환
+    animation: snowflakeFall linear infinite;
+
+    &::before {
+      content: '❄';
+    }
+
+    // 각 눈송이마다 다른 스타일 + 원근감 (앞/뒤) + 다양한 크기 + 다채로운 blur
+    // 앞쪽 대형 (선명)
+    &:nth-child(1) {
+      left: 10%;
+      @include font-vw(42);
+      animation-duration: 10s;
+      animation-delay: 0s;
+      z-index: 3;
+    }
+    // 뒤쪽 소형 (많이 흐림)
+    &:nth-child(2) {
+      left: 25%;
+      @include font-vw(8);
+      animation-duration: 24s;
+      animation-delay: 2s;
+      filter: grayscale(1) brightness(3) blur(2.5px);
+      z-index: 1;
+    }
+    // 앞쪽 중대형 (아주 살짝 blur)
+    &:nth-child(3) {
+      left: 40%;
+      @include font-vw(36);
+      animation-duration: 11s;
+      animation-delay: 4s;
+      filter: grayscale(1) brightness(3) blur(0.2px);
+      z-index: 3;
+    }
+    // 중간 소형 (중간 blur)
+    &:nth-child(4) {
+      left: 55%;
+      @include font-vw(14);
+      animation-duration: 18s;
+      animation-delay: 1s;
+      filter: grayscale(1) brightness(3) blur(1px);
+      z-index: 2;
+    }
+    // 앞쪽 중형 (선명)
+    &:nth-child(5) {
+      left: 70%;
+      @include font-vw(28);
+      animation-duration: 12s;
+      animation-delay: 3s;
+      z-index: 3;
+    }
+    // 뒤쪽 극소형 (가장 흐림)
+    &:nth-child(6) {
+      left: 85%;
+      @include font-vw(6);
+      animation-duration: 28s;
+      animation-delay: 5s;
+      filter: grayscale(1) brightness(3) blur(3px);
+      z-index: 1;
+    }
+    // 뒤쪽 소형 (많이 흐림)
+    &:nth-child(7) {
+      left: 5%;
+      @include font-vw(10);
+      animation-duration: 26s;
+      animation-delay: 7s;
+      filter: grayscale(1) brightness(3) blur(2px);
+      z-index: 1;
+    }
+    // 중간 중형 (살짝 blur)
+    &:nth-child(8) {
+      left: 95%;
+      @include font-vw(22);
+      animation-duration: 14s;
+      animation-delay: 6s;
+      filter: grayscale(1) brightness(3) blur(0.7px);
+      z-index: 2;
+    }
+    // 앞쪽 소중형 (아주 살짝)
+    &:nth-child(9) {
+      left: 18%;
+      @include font-vw(18);
+      animation-duration: 15s;
+      animation-delay: 8s;
+      filter: grayscale(1) brightness(3) blur(0.3px);
+      z-index: 3;
+    }
+    // 뒤쪽 극소형 (많이 흐림)
+    &:nth-child(10) {
+      left: 62%;
+      @include font-vw(7);
+      animation-duration: 27s;
+      animation-delay: 9s;
+      filter: grayscale(1) brightness(3) blur(2.2px);
+      z-index: 1;
+    }
+
+    @include mq(mo) {
+      // 모바일에서 크기 조정 (다양하게)
+      &:nth-child(1) {
+        @include font-vw(28); // 대형
+      }
+      &:nth-child(2) {
+        @include font-vw(6); // 극소형
+      }
+      &:nth-child(3) {
+        @include font-vw(24); // 중대형
+      }
+      &:nth-child(4) {
+        @include font-vw(10); // 소형
+      }
+      &:nth-child(5) {
+        @include font-vw(20); // 중형
+      }
+      &:nth-child(6) {
+        @include font-vw(5); // 극소형
+      }
+      &:nth-child(7) {
+        @include font-vw(8); // 소형
+      }
+      &:nth-child(8) {
+        @include font-vw(16); // 중형
+      }
+      &:nth-child(9) {
+        @include font-vw(14); // 소중형
+      }
+      &:nth-child(10) {
+        @include font-vw(5); // 극소형
+      }
+    }
+  }
+
+  // 하단 눈 쌓인 느낌 (뭉게뭉게)
+  .snowGround {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: vw(120);
+    z-index: 2;
+    pointer-events: none;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 50% 50% 0 0;
+    }
+
+    // 왼쪽 뭉게
+    &::before {
+      left: -5%;
+      width: 35%;
+      height: vw(90);
+    }
+
+    // 오른쪽 뭉게
+    &::after {
+      right: -5%;
+      width: 40%;
+      height: vw(100);
+    }
+
+    @include mq(mo) {
+      // 왼쪽 뭉게
+      &::before {
+        left: -10%;
+        width: 50%;
+        height: vw(70);
+      }
+      // 오른쪽 뭉게
+      &::after {
+        right: -10%;
+        width: 55%;
+        height: vw(80);
+      }
+    }
+  }
+
+  .snowBump {
+    position: absolute;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50% 50% 0 0;
+
+    &:nth-child(1) {
+      left: 25%;
+      width: 30%;
+      height: vw(75);
+    }
+    &:nth-child(2) {
+      left: 45%;
+      width: 25%;
+      height: vw(95);
+    }
+    &:nth-child(3) {
+      left: 60%;
+      width: 20%;
+      height: vw(70);
+    }
+
+    @include mq(mo) {
+      &:nth-child(1) {
+        left: 20%;
+        width: 40%;
+        height: vw(55);
+      }
+      &:nth-child(2) {
+        left: 35%;
+        width: 35%;
+        height: vw(70);
+      }
+      &:nth-child(3) {
+        left: 55%;
+        width: 30%;
+        height: vw(50);
+      }
+    }
+  }
+
+  @keyframes snowflakeFall {
+    0% {
+      opacity: 0;
+      top: -10%;
+      transform: translateX(0) rotate(0deg);
+    }
+    10% {
+      opacity: 0.9;
+    }
+    25% {
+      transform: translateX(20px) rotate(90deg);
+    }
+    50% {
+      transform: translateX(-15px) rotate(180deg);
+    }
+    75% {
+      transform: translateX(18px) rotate(270deg);
+    }
+    90% {
+      opacity: 0.9;
+    }
+    100% {
+      opacity: 0;
+      top: 110%;
+      transform: translateX(-10px) rotate(360deg);
+    }
+  }
+
+  // 슬라이드 1개일 때 레이아웃 조정 (네비게이션/인디케이터 없음)
+  &.singleSlide {
+    .content {
+      &__text {
+        bottom: vw(200); // 기존 vw(260)에서 더 낮게
+      }
+    }
+    .news {
+      bottom: vw(80); // 기존 vw(135)에서 더 낮게
+    }
+    .progressBarContainer {
+      bottom: vw(260); // 기존 vw(320)에서 더 낮게
+    }
+    .progressBar {
+      display: none; // 싱글 슬라이드일 때 진행 애니메이션 숨김
+    }
+
+    @include mq(pc-sm) {
+      .content {
+        &__text {
+          bottom: vw(220); // 기존 vw(290)에서 더 낮게
+        }
+      }
+      .news {
+        bottom: vw(80); // 기존 vw(80)에서 더 낮게
+      }
+      .progressBarContainer {
+        bottom: vw(260); // 기존 vw(336)에서 더 낮게
+      }
+    }
+
+    @include mq(mo) {
+      .content {
+        &__text {
+          bottom: vw(220);
+        }
+      }
+      .news {
+        bottom: vw(80);
+      }
+      .progressBarContainer {
+        bottom: vw(260);
       }
     }
   }

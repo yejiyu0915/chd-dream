@@ -10,6 +10,7 @@ import Spinner from '@/common/components/utils/Spinner'; // Spinner 컴포넌트
 import c from '@/app/info/c-log/CLogList.module.scss'; // infoLayout.module.scss 사용
 import Button from '@/common/components/utils/Button'; // Button 컴포넌트 임포트
 import ImageWithTheme from '@/common/components/utils/ImageWithTheme'; // 테마 반응형 이미지 컴포넌트
+import { isNewPost } from '@/common/utils/dateUtils'; // NEW 배지 판별 함수
 
 interface CLogListProps {
   cLogData: CLogItem[] | undefined;
@@ -213,18 +214,22 @@ export default function CLogList({
                     onTouchStart={() => handleTouchStart(item.link || '#')}
                   >
                     {item.imageUrl && (
-                      <ImageWithTheme
-                        src={item.imageUrl}
-                        alt={item.imageAlt || 'C-log 이미지'}
-                        width={500}
-                        height={300}
-                        className={c.list__image}
-                        priority={index < 2} // 처음 2개 이미지는 우선 로드
-                        loading={index < 2 ? undefined : 'lazy'}
-                      />
+                      <div className={c.list__imageWrapper}>
+                        {/* NEW 배지 (30일 이내 게시물) */}
+                        {isNewPost(item.rawDate) && <span className={c.list__newBadge}>NEW</span>}
+                        <ImageWithTheme
+                          src={item.imageUrl}
+                          alt={item.imageAlt || 'C-log 이미지'}
+                          width={500}
+                          height={300}
+                          className={c.list__image}
+                          priority={index < 2} // 처음 2개 이미지는 우선 로드
+                          loading={index < 2 ? undefined : 'lazy'}
+                        />
+                      </div>
                     )}
                     <div className={c.list__content}>
-                      <h3 className={c.list__title}>{item.title}</h3>
+                      <h2 className={c.list__title}>{item.title}</h2>
                       {item.description && <p>{item.description}</p>}
                       <div className={c.list__info}>
                         {item.category && <span className={c.list__category}>{item.category}</span>}
