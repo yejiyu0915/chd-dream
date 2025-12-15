@@ -600,134 +600,160 @@
   .snowflake {
     position: absolute;
     opacity: 0;
-    filter: grayscale(1) brightness(3); // 이모지 흰색으로 변환
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    filter: blur(1px);
     animation: snowflakeFall linear infinite;
 
-    &::before {
-      content: '❄';
-    }
-
-    // 각 눈송이마다 다른 스타일 + 원근감 (앞/뒤) + 다양한 크기 + 다채로운 blur
-    // 앞쪽 대형 (선명)
+    // 각 눈송이마다 다른 스타일 + 원근감 (앞/뒤) + 다양한 크기 + 뿌연 blur
+    // 앞쪽 대형
     &:nth-child(1) {
       left: 10%;
-      @include font-vw(42);
+      width: vw(24);
+      height: vw(24);
       animation-duration: 10s;
       animation-delay: 0s;
+      filter: blur(2px);
       z-index: 3;
     }
     // 뒤쪽 소형 (많이 흐림)
     &:nth-child(2) {
       left: 25%;
-      @include font-vw(8);
+      width: vw(10);
+      height: vw(10);
       animation-duration: 24s;
       animation-delay: 2s;
-      filter: grayscale(1) brightness(3) blur(2.5px);
+      filter: blur(4px);
       z-index: 1;
     }
-    // 앞쪽 중대형 (아주 살짝 blur)
+    // 앞쪽 중대형
     &:nth-child(3) {
       left: 40%;
-      @include font-vw(36);
+      width: vw(20);
+      height: vw(20);
       animation-duration: 11s;
       animation-delay: 4s;
-      filter: grayscale(1) brightness(3) blur(0.2px);
+      filter: blur(1.5px);
       z-index: 3;
     }
     // 중간 소형 (중간 blur)
     &:nth-child(4) {
       left: 55%;
-      @include font-vw(14);
+      width: vw(12);
+      height: vw(12);
       animation-duration: 18s;
       animation-delay: 1s;
-      filter: grayscale(1) brightness(3) blur(1px);
+      filter: blur(3px);
       z-index: 2;
     }
-    // 앞쪽 중형 (선명)
+    // 앞쪽 중형
     &:nth-child(5) {
       left: 70%;
-      @include font-vw(28);
+      width: vw(18);
+      height: vw(18);
       animation-duration: 12s;
       animation-delay: 3s;
+      filter: blur(2px);
       z-index: 3;
     }
     // 뒤쪽 극소형 (가장 흐림)
     &:nth-child(6) {
       left: 85%;
-      @include font-vw(6);
+      width: vw(8);
+      height: vw(8);
       animation-duration: 28s;
       animation-delay: 5s;
-      filter: grayscale(1) brightness(3) blur(3px);
+      filter: blur(5px);
       z-index: 1;
     }
     // 뒤쪽 소형 (많이 흐림)
     &:nth-child(7) {
       left: 5%;
-      @include font-vw(10);
+      width: vw(10);
+      height: vw(10);
       animation-duration: 26s;
       animation-delay: 7s;
-      filter: grayscale(1) brightness(3) blur(2px);
+      filter: blur(3.5px);
       z-index: 1;
     }
-    // 중간 중형 (살짝 blur)
+    // 중간 중형
     &:nth-child(8) {
       left: 95%;
-      @include font-vw(22);
+      width: vw(16);
+      height: vw(16);
       animation-duration: 14s;
       animation-delay: 6s;
-      filter: grayscale(1) brightness(3) blur(0.7px);
+      filter: blur(2.5px);
       z-index: 2;
     }
-    // 앞쪽 소중형 (아주 살짝)
+    // 앞쪽 소중형
     &:nth-child(9) {
       left: 18%;
-      @include font-vw(18);
+      width: vw(14);
+      height: vw(14);
       animation-duration: 15s;
       animation-delay: 8s;
-      filter: grayscale(1) brightness(3) blur(0.3px);
+      filter: blur(1.5px);
       z-index: 3;
     }
     // 뒤쪽 극소형 (많이 흐림)
     &:nth-child(10) {
       left: 62%;
-      @include font-vw(7);
+      width: vw(9);
+      height: vw(9);
       animation-duration: 27s;
       animation-delay: 9s;
-      filter: grayscale(1) brightness(3) blur(2.2px);
+      filter: blur(4px);
       z-index: 1;
     }
 
     @include mq(mo) {
-      // 모바일에서 크기 조정 (다양하게)
+      // 모바일에서 크기 조정
       &:nth-child(1) {
-        @include font-vw(28); // 대형
+        width: vw(16);
+        height: vw(16);
       }
       &:nth-child(2) {
-        @include font-vw(6); // 극소형
+        width: vw(5);
+        height: vw(5);
       }
       &:nth-child(3) {
-        @include font-vw(24); // 중대형
+        width: vw(12);
+        height: vw(12);
       }
       &:nth-child(4) {
-        @include font-vw(10); // 소형
+        width: vw(6);
+        height: vw(6);
       }
       &:nth-child(5) {
-        @include font-vw(20); // 중형
+        width: vw(10);
+        height: vw(10);
       }
       &:nth-child(6) {
-        @include font-vw(5); // 극소형
+        width: vw(3);
+        height: vw(3);
       }
       &:nth-child(7) {
-        @include font-vw(8); // 소형
+        width: vw(4);
+        height: vw(4);
       }
       &:nth-child(8) {
-        @include font-vw(16); // 중형
+        width: vw(8);
+        height: vw(8);
       }
       &:nth-child(9) {
-        @include font-vw(14); // 소중형
+        width: vw(7);
+        height: vw(7);
       }
       &:nth-child(10) {
-        @include font-vw(5); // 극소형
+        width: vw(4);
+        height: vw(4);
       }
     }
   }
