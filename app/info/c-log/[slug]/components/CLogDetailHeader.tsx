@@ -104,20 +104,24 @@ export default function CLogDetailHeader({
             animate="visible"
             variants={imageVariants}
           >
-            <ImageWithTheme
-              src={imageUrl}
-              alt={title}
-              width={1440}
-              height={400}
-              priority
-            />
+            <ImageWithTheme src={imageUrl} alt={title} width={1440} height={400} priority />
           </motion.div>
         )}
         <div className={`detail-inner ${l.content}`}>
-          <motion.p className={l.category} initial="hidden" animate="visible" variants={categoryVariants}>
+          <motion.p
+            className={l.category}
+            initial="hidden"
+            animate="visible"
+            variants={categoryVariants}
+          >
             {category}
           </motion.p>
-          <motion.h1 className={l.title} initial="hidden" animate="visible" variants={titleVariants}>
+          <motion.h1
+            className={l.title}
+            initial="hidden"
+            animate="visible"
+            variants={titleVariants}
+          >
             {title}
           </motion.h1>
           <motion.p className={l.date} initial="hidden" animate="visible" variants={dateVariants}>

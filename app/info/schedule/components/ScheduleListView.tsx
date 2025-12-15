@@ -326,36 +326,36 @@ export default function ScheduleListView({
               </div>
               {expandedDates.has('ongoing') && (
                 <div className={s.scheduleListEvents}>
-                    {ongoingEvents.map((event, eventIndex) => {
-                      const timeInfo = formatTimeInfo(event);
-                      return (
-                        <motion.div
-                          key={event.id}
-                          className={`${s.scheduleListEvent} ${event.important ? s.important : ''} ${s.ongoingEvent}`}
-                          custom={eventIndex}
-                          initial="hidden"
-                          animate="visible"
-                          variants={eventVariants}
-                        >
-                          <div className={s.scheduleListEventContent}>
-                            <div className={s.scheduleListEventTitle}>{event.title}</div>
-                            {timeInfo && <div className={s.scheduleListEventTime}>{timeInfo}</div>}
-                            {event.location && (
-                              <div className={s.scheduleListEventLocation}>📍 {event.location}</div>
-                            )}
-                            {event.tags && event.tags.length > 0 && (
-                              <div className={s.scheduleListEventTags}>
-                                {event.tags.map((tag, index) => (
-                                  <span key={index} className={s.scheduleListEventTag}>
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </motion.div>
-                      );
-                    })}
+                  {ongoingEvents.map((event, eventIndex) => {
+                    const timeInfo = formatTimeInfo(event);
+                    return (
+                      <motion.div
+                        key={event.id}
+                        className={`${s.scheduleListEvent} ${event.important ? s.important : ''} ${s.ongoingEvent}`}
+                        custom={eventIndex}
+                        initial="hidden"
+                        animate="visible"
+                        variants={eventVariants}
+                      >
+                        <div className={s.scheduleListEventContent}>
+                          <div className={s.scheduleListEventTitle}>{event.title}</div>
+                          {timeInfo && <div className={s.scheduleListEventTime}>{timeInfo}</div>}
+                          {event.location && (
+                            <div className={s.scheduleListEventLocation}>📍 {event.location}</div>
+                          )}
+                          {event.tags && event.tags.length > 0 && (
+                            <div className={s.scheduleListEventTags}>
+                              {event.tags.map((tag, index) => (
+                                <span key={index} className={s.scheduleListEventTag}>
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               )}
             </motion.div>
@@ -403,40 +403,36 @@ export default function ScheduleListView({
                 </div>
                 {isExpanded && (
                   <div className={s.scheduleListEvents}>
-                      {events.map((event, eventIndex) => {
-                        const timeInfo = formatTimeInfo(event);
-                        return (
-                          <motion.div
-                            key={event.id}
-                            className={`${s.scheduleListEvent} ${event.important ? s.important : ''}`}
-                            custom={eventIndex}
-                            initial="hidden"
-                            animate="visible"
-                            variants={eventVariants}
-                          >
-                            <div className={s.scheduleListEventContent}>
-                              <div className={s.scheduleListEventTitle}>{event.title}</div>
-                              {timeInfo && (
-                                <div className={s.scheduleListEventTime}>{timeInfo}</div>
-                              )}
-                              {event.location && (
-                                <div className={s.scheduleListEventLocation}>
-                                  📍 {event.location}
-                                </div>
-                              )}
-                              {event.tags && event.tags.length > 0 && (
-                                <div className={s.scheduleListEventTags}>
-                                  {event.tags.map((tag, index) => (
-                                    <span key={index} className={s.scheduleListEventTag}>
-                                      {tag}
-                                    </span>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          </motion.div>
-                        );
-                      })}
+                    {events.map((event, eventIndex) => {
+                      const timeInfo = formatTimeInfo(event);
+                      return (
+                        <motion.div
+                          key={event.id}
+                          className={`${s.scheduleListEvent} ${event.important ? s.important : ''}`}
+                          custom={eventIndex}
+                          initial="hidden"
+                          animate="visible"
+                          variants={eventVariants}
+                        >
+                          <div className={s.scheduleListEventContent}>
+                            <div className={s.scheduleListEventTitle}>{event.title}</div>
+                            {timeInfo && <div className={s.scheduleListEventTime}>{timeInfo}</div>}
+                            {event.location && (
+                              <div className={s.scheduleListEventLocation}>📍 {event.location}</div>
+                            )}
+                            {event.tags && event.tags.length > 0 && (
+                              <div className={s.scheduleListEventTags}>
+                                {event.tags.map((tag, index) => (
+                                  <span key={index} className={s.scheduleListEventTag}>
+                                    {tag}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 )}
               </motion.div>

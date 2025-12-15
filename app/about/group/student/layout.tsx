@@ -9,13 +9,3 @@ export default function StudentLayout({
 }>) {
   return <>{children}</>;
 }
-
-
-
-
-
-
-
-
-
-

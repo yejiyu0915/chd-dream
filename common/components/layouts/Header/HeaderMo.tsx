@@ -146,7 +146,7 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
             {prevLinks.map((prevInfo, index) => {
               // 활성화된 링크만 필터링
               const activeLinks = prevInfo.links.filter((link) => !link.disabled);
-              
+
               // 활성화된 링크가 없으면 해당 그룹 자체를 렌더링하지 않음
               if (activeLinks.length === 0) return null;
 

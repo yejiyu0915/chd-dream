@@ -16,12 +16,7 @@ export default function NoticeListClient({ initialNoticeData }: NoticeListClient
   return (
     <section className={n.noticeListMain}>
       <div className={n.noticeListInner}>
-        <NoticeListDisplay
-          noticeData={noticeData}
-          isLoading={false}
-          isError={false}
-          error={null}
-        />
+        <NoticeListDisplay noticeData={noticeData} isLoading={false} isError={false} error={null} />
       </div>
     </section>
   );

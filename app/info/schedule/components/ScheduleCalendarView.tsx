@@ -3,7 +3,10 @@
 import React from 'react';
 import { ScheduleItem } from '@/lib/notion';
 import { useScheduleContext } from '@/app/info/schedule/context/ScheduleContext';
-import { useScheduleCalendar, getSelectedDateEvents } from '@/app/info/schedule/hooks/useScheduleCalendar';
+import {
+  useScheduleCalendar,
+  getSelectedDateEvents,
+} from '@/app/info/schedule/hooks/useScheduleCalendar';
 import CalendarHeader from '@/app/info/schedule/components/CalendarHeader';
 import CalendarGrid from '@/app/info/schedule/components/CalendarGrid';
 import EventPanel from '@/app/info/schedule/components/EventPanel';
@@ -93,4 +96,3 @@ export default function ScheduleCalendarView({ scheduleData }: ScheduleCalendarV
     </div>
   );
 }
-
