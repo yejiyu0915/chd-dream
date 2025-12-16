@@ -588,16 +588,18 @@ export default function VisionClient() {
 
     // 초기 설정
     checkMobile();
-    setHeight(); // 컴포넌트 마운트 시 높이 설정
 
     // 모바일에서는 초기 높이만 설정하고 resize 이벤트 무시
-    if (!isMobileDevice()) {
-      // 데스크톱에서는 resize 이벤트 리스너 추가
-      window.addEventListener('resize', checkMobile);
-      window.addEventListener('resize', setHeight);
-    } else {
+    if (isMobileDevice()) {
+      // 모바일: 컴포넌트 마운트 시에만 높이 설정 (툴바가 숨겨진 상태의 높이로 고정)
+      setHeight();
       // 모바일에서는 checkMobile만 resize 이벤트 리스너 추가 (높이는 고정)
       window.addEventListener('resize', checkMobile);
+    } else {
+      // 데스크톱: 기존 동작 유지
+      setHeight();
+      window.addEventListener('resize', checkMobile);
+      window.addEventListener('resize', setHeight);
     }
 
     return () => {
