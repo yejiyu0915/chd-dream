@@ -559,6 +559,7 @@ export default function VisionClient() {
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [isLineReady, setIsLineReady] = useState<boolean>(false);
   const [fixedHeight, setFixedHeight] = useState<string>('100vh'); // 초기값은 100vh
+  const [fixedHeightNegative, setFixedHeightNegative] = useState<string>('-100vh'); // 음수 값
 
   // 1~3섹션 이미지 프리로드 (초기 버벅임 방지)
   useEffect(() => {
@@ -584,6 +585,7 @@ export default function VisionClient() {
     const setHeight = () => {
       const newHeight = `${window.innerHeight}px`;
       setFixedHeight(newHeight);
+      setFixedHeightNegative(`-${window.innerHeight}px`); // 음수 값도 함께 설정
     };
 
     // 초기 설정
@@ -667,12 +669,18 @@ export default function VisionClient() {
   }, [pathLength]);
 
   return (
-    <div ref={visionRef} className={v.vision}>
+    <div
+      ref={visionRef}
+      className={v.vision}
+      style={
+        {
+          '--fixed-vh': fixedHeight,
+          '--fixed-vh-negative': fixedHeightNegative,
+        } as React.CSSProperties
+      }
+    >
       {/* 은은한 그라디언트 배경 */}
-      <div
-        className={v.gradientBg}
-        style={{ height: fixedHeight, marginBottom: `-${fixedHeight}` }}
-      >
+      <div className={v.gradientBg}>
         <div className={v.blur} />
         <div className={v.blur} />
         <div className={v.blur} />
@@ -680,14 +688,7 @@ export default function VisionClient() {
       </div>
 
       {/* 백그라운드 선 */}
-      <div
-        className={v.bgLines}
-        style={{
-          opacity: isLineReady ? 1 : 0,
-          height: fixedHeight,
-          marginBottom: `-${fixedHeight}`,
-        }}
-      >
+      <div className={v.bgLines} style={{ opacity: isLineReady ? 1 : 0 }}>
         <div ref={lineRef} className={v.line}>
           <svg
             viewBox={isMobile ? '0 0 500 2000' : '0 0 1920 3000'}
