@@ -148,12 +148,41 @@ const CROSS_LINES = [
 function CrossSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const rafRef = useRef<number>(0);
+  // 고정된 높이 값을 ref로 저장 (툴바 변화에 영향받지 않음)
+  const fixedHeightRef = useRef<number>(typeof window !== 'undefined' ? window.innerHeight : 0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [imageOpacity, setImageOpacity] = useState(0);
 
   // 배경 이미지 프리로드 (초기 버벅임 방지)
   useEffect(() => {
     preloadImages(['/images/vision/cross.jpg']);
+  }, []);
+
+  // 고정 높이 설정 (모바일 툴바 변화 대응)
+  useEffect(() => {
+    const isMobileDevice = () => {
+      return (
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        ) || window.innerWidth <= 768
+      );
+    };
+
+    const setHeight = () => {
+      fixedHeightRef.current = window.innerHeight;
+    };
+
+    // 모바일에서는 초기 높이만 설정하고 resize 이벤트 무시
+    if (isMobileDevice()) {
+      setHeight(); // 컴포넌트 마운트 시에만 높이 설정
+    } else {
+      // 데스크톱에서는 기존 동작 유지
+      setHeight();
+      window.addEventListener('resize', setHeight);
+      return () => {
+        window.removeEventListener('resize', setHeight);
+      };
+    }
   }, []);
 
   useEffect(() => {
@@ -164,18 +193,20 @@ function CrossSection() {
         if (!sectionRef.current) return;
 
         const rect = sectionRef.current.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
+        // 고정된 높이 값 사용 (ref에서 가져옴, 툴바 변화에 영향받지 않음)
+        const fixedWindowHeight =
+          fixedHeightRef.current > 0 ? fixedHeightRef.current : window.innerHeight;
 
         // 이미지 fade in (0 ~ 80vh 구간에서)
         const fadeInScrolled = -rect.top;
-        const fadeInHeight = windowHeight * 0.8;
+        const fadeInHeight = fixedWindowHeight * 0.8;
         const imgOpacity = Math.max(0, Math.min(fadeInScrolled / fadeInHeight, 1));
         setImageOpacity(imgOpacity);
 
         // 텍스트 애니메이션 (80vh 이후부터)
-        const paddingOffset = windowHeight * 0.8;
+        const paddingOffset = fixedWindowHeight * 0.8;
         const scrolled = -rect.top - paddingOffset;
-        const animationHeight = windowHeight * 2;
+        const animationHeight = fixedWindowHeight * 2;
         const progress = Math.max(0, Math.min(scrolled / animationHeight, 1));
         setScrollProgress(progress);
       });
