@@ -558,22 +558,54 @@ export default function VisionClient() {
   const [pathLength, setPathLength] = useState<number>(0);
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [isLineReady, setIsLineReady] = useState<boolean>(false);
+  const [fixedHeight, setFixedHeight] = useState<string>('100vh'); // 초기값은 100vh
 
   // 1~3섹션 이미지 프리로드 (초기 버벅임 방지)
   useEffect(() => {
     preloadImages(['/images/vision/01.png', '/images/vision/02.png', '/images/vision/03.png']);
   }, []);
 
-  // 모바일 여부 확인
+  // 모바일 여부 확인 및 고정 높이 설정 (KV와 동일한 방식)
   useEffect(() => {
+    // 모바일 디바이스 감지 함수
+    const isMobileDevice = () => {
+      return (
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        ) || window.innerWidth <= 768
+      );
+    };
+
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
 
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+    // 고정 높이 설정 함수 (모바일 브라우저 툴바 변화 대응)
+    const setHeight = () => {
+      const newHeight = `${window.innerHeight}px`;
+      setFixedHeight(newHeight);
+    };
 
-    return () => window.removeEventListener('resize', checkMobile);
+    // 초기 설정
+    checkMobile();
+    setHeight(); // 컴포넌트 마운트 시 높이 설정
+
+    // 모바일에서는 초기 높이만 설정하고 resize 이벤트 무시
+    if (!isMobileDevice()) {
+      // 데스크톱에서는 resize 이벤트 리스너 추가
+      window.addEventListener('resize', checkMobile);
+      window.addEventListener('resize', setHeight);
+    } else {
+      // 모바일에서는 checkMobile만 resize 이벤트 리스너 추가 (높이는 고정)
+      window.addEventListener('resize', checkMobile);
+    }
+
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      if (!isMobileDevice()) {
+        window.removeEventListener('resize', setHeight);
+      }
+    };
   }, []);
 
   // SVG path 길이 계산
@@ -635,7 +667,10 @@ export default function VisionClient() {
   return (
     <div ref={visionRef} className={v.vision}>
       {/* 은은한 그라디언트 배경 */}
-      <div className={v.gradientBg}>
+      <div
+        className={v.gradientBg}
+        style={{ height: fixedHeight, marginBottom: `-${fixedHeight}` }}
+      >
         <div className={v.blur} />
         <div className={v.blur} />
         <div className={v.blur} />
@@ -643,7 +678,14 @@ export default function VisionClient() {
       </div>
 
       {/* 백그라운드 선 */}
-      <div className={v.bgLines} style={{ opacity: isLineReady ? 1 : 0 }}>
+      <div
+        className={v.bgLines}
+        style={{
+          opacity: isLineReady ? 1 : 0,
+          height: fixedHeight,
+          marginBottom: `-${fixedHeight}`,
+        }}
+      >
         <div ref={lineRef} className={v.line}>
           <svg
             viewBox={isMobile ? '0 0 500 2000' : '0 0 1920 3000'}
