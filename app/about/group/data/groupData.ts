@@ -152,7 +152,7 @@ export const groupData: GroupDataType[] = [
     description: `
       유아부터 고등학생까지 미성년 친구들이 모여 하나님의 사랑 안에서 믿음으로 함께 성장해나가는 예수님의 꿈나무입니다!<br />
       <br />
-      행복으로가는교회 예꿈부는요,<br />
+      행복으로가는교회 예꿈은요,<br />
       <br />
       <span style="color:var(--accent-brand); font-weight: 900;">하나!</span> 하나님의 사랑 안에서 자라나는 다음 세대 교구로<br />
       <p style="padding-left: 2.35em;">

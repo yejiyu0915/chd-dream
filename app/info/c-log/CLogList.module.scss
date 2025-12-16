@@ -47,23 +47,23 @@ $list: '.list';
       left: vw(12);
       z-index: 1;
       padding: vw(6) vw(14);
-      border-radius: vw(6);
+      border-radius: vw(16);
       background-color: var(--accent-brand);
       @include font-vw(18, $weight: 700, $color: var(--text-inverse));
       letter-spacing: 0.05em;
-      box-shadow: 0 vw(2) vw(4) rgba(0, 0, 0, 0.1);
+      // box-shadow: 0 vw(2) vw(4) rgba(0, 0, 0, 0.1);
       @include mq(pc-sm) {
         top: vw(10);
         left: vw(10);
         padding: vw(4) vw(10);
-        border-radius: vw(4);
+        border-radius: vw(14);
         @include font-vw(12);
       }
       @include mq(mo) {
         top: vw(6);
         left: vw(6);
         padding: vw(3) vw(8);
-        border-radius: vw(3);
+        border-radius: vw(13);
         @include font-vw(10);
       }
     }

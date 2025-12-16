@@ -1,10 +1,14 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import SectionLayout from '@/common/components/layouts/SectionLayout';
+import { SITE_URL } from '@/common/data/metadata';
 
 interface LocationLayoutProps {
   children: React.ReactNode;
 }
+
+const DEFAULT_OG_IMAGE = '/images/og/og_251216.jpg';
+const ogImageUrl = `${SITE_URL}${DEFAULT_OG_IMAGE}`;
 
 export const metadata: Metadata = {
   title: '오시는길',
@@ -12,6 +16,20 @@ export const metadata: Metadata = {
   openGraph: {
     title: '오시는길 | 행복으로가는교회',
     description: '행복으로가는교회 위치 안내. 인천 남동구 문화로 227',
+    images: [
+      {
+        url: ogImageUrl,
+        width: 1200,
+        height: 630,
+        alt: '행복으로가는교회',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '오시는길 | 행복으로가는교회',
+    description: '행복으로가는교회 위치 안내. 인천 남동구 문화로 227',
+    images: [ogImageUrl],
   },
 };
 

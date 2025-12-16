@@ -13,6 +13,8 @@ export default function robots(): MetadataRoute.Robots {
           '/api/', // API 라우트 크롤링 차단
           '/dashboard/', // 대시보드 크롤링 차단
           '/_next/', // Next.js 내부 파일 크롤링 차단
+          '/about/history/', // 숨김 페이지
+          '/worship/sermon/', // 숨김 페이지
         ],
       },
     ],

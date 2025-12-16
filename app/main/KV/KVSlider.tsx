@@ -9,6 +9,7 @@ import { Autoplay, Parallax, Pagination, Navigation, EffectFade } from 'swiper/m
 import { KVSliderItem } from '@/lib/notion';
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Swiper as SwiperCore } from 'swiper/types';
+import { getClientSeason } from '@/common/utils/season';
 
 interface KVSliderProps {
   kvHeight: string;
@@ -35,10 +36,36 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
   const swiperRef = useRef<SwiperCore | null>(null);
   const [progressWidth, setProgressWidth] = useState(0); // 프로그레스 바 너비 상태
   const [isPlaying, setIsPlaying] = useState(true); // 재생/일시정지 상태
+  const [isWinter, setIsWinter] = useState(false); // 겨울 테마 여부
+  const [isSpring, setIsSpring] = useState(false); // 봄 테마 여부
+  const [isSummer, setIsSummer] = useState(false); // 여름 테마 여부
+  const [isAutumn, setIsAutumn] = useState(false); // 가을 테마 여부
   const autoplayDelay = 8000; // Autoplay delay (8초)
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const isInitializedRef = useRef(false); // Swiper 초기화 여부를 추적하는 ref
   const currentSlideRef = useRef<number>(0); // 현재 슬라이드 인덱스를 추적하는 ref
+
+  // 계절 테마 감지 (data-season 속성 변경 시에도 반응)
+  useEffect(() => {
+    const checkSeasonTheme = () => {
+      const season = getClientSeason();
+      setIsWinter(season === 'winter');
+      setIsSpring(season === 'spring');
+      setIsSummer(season === 'summer');
+      setIsAutumn(season === 'autumn');
+    };
+
+    checkSeasonTheme();
+
+    // data-season 속성 변경 감지
+    const observer = new MutationObserver(checkSeasonTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-season'],
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   // useCallback 훅들도 Hooks 규칙을 따르도록 최상단에 선언
   // reset: true면 0%부터 시작, false면 현재 위치에서 계속
@@ -244,35 +271,67 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
         <div className={kv.progressBar} style={{ width: `${progressWidth}%` }}></div>
       </div>
       {/* 꽃잎 애니메이션 (봄용) */}
-      {/* <div className={kv.petals}>
-        <div className={kv.petal}></div>
-        <div className={kv.petal}></div>
-        <div className={kv.petal}></div>
-        <div className={kv.petal}></div>
-        <div className={kv.petal}></div>
-        <div className={kv.petal}></div>
-        <div className={kv.petal}></div>
-        <div className={kv.petal}></div>
-      </div> */}
+      {isSpring && (
+        <div className={kv.petals}>
+          <div className={kv.petal}></div>
+          <div className={kv.petal}></div>
+          <div className={kv.petal}></div>
+          <div className={kv.petal}></div>
+          <div className={kv.petal}></div>
+          <div className={kv.petal}></div>
+          <div className={kv.petal}></div>
+          <div className={kv.petal}></div>
+        </div>
+      )}
+      {/* 민들레 홀씨 애니메이션 (여름용) */}
+      {isSummer && (
+        <div className={kv.dandelions}>
+          <div className={kv.dandelion}></div>
+          <div className={kv.dandelion}></div>
+          <div className={kv.dandelion}></div>
+          <div className={kv.dandelion}></div>
+          <div className={kv.dandelion}></div>
+          <div className={kv.dandelion}></div>
+          <div className={kv.dandelion}></div>
+          <div className={kv.dandelion}></div>
+        </div>
+      )}
+      {/* 낙엽 애니메이션 (가을용) */}
+      {isAutumn && (
+        <div className={kv.leaves}>
+          <div className={kv.leaf}></div>
+          <div className={kv.leaf}></div>
+          <div className={kv.leaf}></div>
+          <div className={kv.leaf}></div>
+          <div className={kv.leaf}></div>
+          <div className={kv.leaf}></div>
+          <div className={kv.leaf}></div>
+          <div className={kv.leaf}></div>
+        </div>
+      )}
       {/* 눈송이 애니메이션 (겨울용) */}
-      <div className={kv.snowflakes}>
-        <div className={kv.snowflake}></div>
-        <div className={kv.snowflake}></div>
-        <div className={kv.snowflake}></div>
-        <div className={kv.snowflake}></div>
-        <div className={kv.snowflake}></div>
-        <div className={kv.snowflake}></div>
-        <div className={kv.snowflake}></div>
-        <div className={kv.snowflake}></div>
-        <div className={kv.snowflake}></div>
-        <div className={kv.snowflake}></div>
-      </div>
+      {isWinter && (
+        <div className={kv.snowflakes}>
+          <div className={kv.snowflake}></div>
+          <div className={kv.snowflake}></div>
+          <div className={kv.snowflake}></div>
+          <div className={kv.snowflake}></div>
+          <div className={kv.snowflake}></div>
+          <div className={kv.snowflake}></div>
+          <div className={kv.snowflake}></div>
+          <div className={kv.snowflake}></div>
+          <div className={kv.snowflake}></div>
+          <div className={kv.snowflake}></div>
+        </div>
+      )}
       {/* 하단 눈 쌓인 느낌 (겨울용) */}
-      <div className={kv.snowGround}>
-        <div className={kv.snowBump}></div>
-        <div className={kv.snowBump}></div>
-        <div className={kv.snowBump}></div>
-      </div>
+      {isWinter && (
+        <div className={kv.snowGround}>
+          <div className={kv.snowBump}></div>
+          <div className={kv.snowBump}></div>
+          <div className={kv.snowBump}></div>
+        </div>
+      )}
     </div>
   );
 }
