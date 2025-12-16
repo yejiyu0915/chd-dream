@@ -32,6 +32,8 @@ function StarParticles({ isActive }: { isActive: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const starsRef = useRef<Star[]>([]);
   const rafRef = useRef<number>(0);
+  // 고정된 높이 값을 ref로 저장 (툴바 변화에 영향받지 않음)
+  const fixedHeightRef = useRef<number>(typeof window !== 'undefined' ? window.innerHeight : 0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -40,13 +42,39 @@ function StarParticles({ isActive }: { isActive: boolean }) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // 캔버스 크기 설정
+    // 고정 높이 설정 (모바일 툴바 변화 대응)
+    const isMobileDevice = () => {
+      return (
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        ) || window.innerWidth <= 768
+      );
+    };
+
+    const setHeight = () => {
+      fixedHeightRef.current = window.innerHeight;
+    };
+
+    // 모바일에서는 초기 높이만 설정
+    if (isMobileDevice()) {
+      setHeight();
+    } else {
+      setHeight();
+      window.addEventListener('resize', setHeight);
+    }
+
+    // 캔버스 크기 설정 (고정 높이 사용)
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      // 고정된 높이 사용 (툴바 변화에 영향받지 않음)
+      canvas.height = fixedHeightRef.current > 0 ? fixedHeightRef.current : window.innerHeight;
     };
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+
+    // 모바일에서는 resize 이벤트 무시 (캔버스 크기 고정)
+    if (!isMobileDevice()) {
+      window.addEventListener('resize', resizeCanvas);
+    }
 
     // 별 초기화 (모바일에서 크기/개수 축소)
     const isMobile = window.innerWidth < 768;
@@ -124,7 +152,10 @@ function StarParticles({ isActive }: { isActive: boolean }) {
 
     return () => {
       cancelAnimationFrame(rafRef.current);
-      window.removeEventListener('resize', resizeCanvas);
+      if (!isMobileDevice()) {
+        window.removeEventListener('resize', resizeCanvas);
+        window.removeEventListener('resize', setHeight);
+      }
     };
   }, [isActive]);
 
