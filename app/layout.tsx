@@ -11,10 +11,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
 
 export const metadata: Metadata = {
   // 기본 메타데이터
-  title: {
-    default: '행복으로가는교회',
-    template: '%s | 행복으로가는교회',
-  },
+  title: '행복으로가는교회', // 하위 layout에서 전체 제목을 직접 반환하므로 template 제거
   description: '꿈이 이루어지는 행복한 교회, 행복으로가는교회입니다. 인천 남동구 문화로 227',
   keywords: [
     '행복으로가는교회',

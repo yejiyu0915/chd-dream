@@ -33,13 +33,13 @@ export function generatePageMetadata(pathname: string): Metadata {
   // 타이틀 오버라이드 적용 (예: NEWS)
   const title = TITLE_OVERRIDES[pathname] || pageData.title;
   const description = pageData.description || `${pageData.title} 페이지입니다.`;
-  const fullTitle = `${title} | ${SITE_NAME}`;
+  const fullTitle = `${title} | ${SITE_NAME}`; // 전체 제목 (중첩 layout에서도 일관되게 작동)
 
   // 통일된 OG 이미지 URL 생성
   const ogImageUrl = `${SITE_URL}${DEFAULT_OG_IMAGE}`;
 
   return {
-    title: fullTitle, // root layout의 template이 작동하지 않아서 직접 적용
+    title: fullTitle, // 중첩 layout에서도 template이 제대로 작동하지 않으므로 전체 제목 직접 반환
     description: description,
     openGraph: {
       title: fullTitle,
@@ -77,7 +77,7 @@ export function generateDynamicMetadata(
   description: string,
   imageUrl?: string
 ): Metadata {
-  const fullTitle = `${title} | ${SITE_NAME}`;
+  const fullTitle = `${title} | ${SITE_NAME}`; // 전체 제목 (중첩 layout에서도 일관되게 작동)
 
   // 이미지 URL 처리: 있으면 사용, 없으면 기본 OG 이미지 사용
   const finalImageUrl = imageUrl || DEFAULT_OG_IMAGE;
@@ -86,7 +86,7 @@ export function generateDynamicMetadata(
     : `${SITE_URL}${finalImageUrl}`;
 
   const metadata: Metadata = {
-    title: fullTitle, // root layout의 template이 작동하지 않아서 직접 적용
+    title: fullTitle, // 중첩 layout에서도 template이 제대로 작동하지 않으므로 전체 제목 직접 반환
     description: description,
     openGraph: {
       title: fullTitle,

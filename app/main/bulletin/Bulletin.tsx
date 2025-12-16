@@ -156,14 +156,14 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
                   </span>
                 </Link>
               </motion.li>
-              <motion.li className={s.link__item} variants={linkVariants}>
+              {/* <motion.li className={s.link__item} variants={linkVariants}>
                 <Link href="/worship/sermon">
                   <span className={s.link__text}>
                     생명의 말씀
                     <Icon name="arrow-up-right" className={s.link__icon} />
                   </span>
                 </Link>
-              </motion.li>
+              </motion.li> */}
             </ul>
           </motion.div>
           {/* <div className={s.pastor}>
