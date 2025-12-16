@@ -555,6 +555,9 @@ export default function VisionClient() {
   const pathRef = useRef<SVGPathElement | null>(null);
   const lineRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef<number>(0);
+  // 고정된 높이 값을 ref로 저장 (툴바 변화에 영향받지 않음)
+  // 초기값은 클라이언트 사이드에서만 설정 가능하므로 useEffect에서 설정
+  const fixedHeightRef = useRef<number>(typeof window !== 'undefined' ? window.innerHeight : 0);
   const [pathLength, setPathLength] = useState<number>(0);
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [isLineReady, setIsLineReady] = useState<boolean>(false);
@@ -583,9 +586,11 @@ export default function VisionClient() {
 
     // 고정 높이 설정 함수 (모바일 브라우저 툴바 변화 대응)
     const setHeight = () => {
-      const newHeight = `${window.innerHeight}px`;
+      const heightValue = window.innerHeight;
+      const newHeight = `${heightValue}px`;
       setFixedHeight(newHeight);
-      setFixedHeightNegative(`-${window.innerHeight}px`); // 음수 값도 함께 설정
+      setFixedHeightNegative(`-${heightValue}px`); // 음수 값도 함께 설정
+      fixedHeightRef.current = heightValue; // ref에도 저장 (스크롤 핸들러에서 사용)
     };
 
     // 초기 설정
@@ -634,12 +639,15 @@ export default function VisionClient() {
       rafRef.current = requestAnimationFrame(() => {
         if (!visionRef.current) return;
 
-        const windowHeight = window.innerHeight;
+        // 고정된 높이 값 사용 (ref에서 가져옴, 툴바 변화에 영향받지 않음)
+        // ref가 0이면 아직 초기화되지 않은 것이므로 window.innerHeight 사용
+        const fixedWindowHeight =
+          fixedHeightRef.current > 0 ? fixedHeightRef.current : window.innerHeight;
         const visionRect = visionRef.current.getBoundingClientRect();
         const visionHeight = visionRef.current.offsetHeight;
 
         const scrollStart = -visionRect.top;
-        const scrollEnd = visionHeight - windowHeight;
+        const scrollEnd = visionHeight - fixedWindowHeight;
         const scrollProgress = Math.max(0, Math.min(scrollStart / scrollEnd, 1));
 
         const isMobileView = window.innerWidth <= 768;
@@ -653,7 +661,8 @@ export default function VisionClient() {
 
         if (lineRef.current) {
           const lineProgress = Math.min(scrollProgress * speedMultiplier, 1);
-          const translateY = lineProgress * windowHeight * 2;
+          // 고정된 높이를 사용 (모바일 툴바 변화 대응)
+          const translateY = lineProgress * fixedWindowHeight * 2;
           lineRef.current.style.transform = `translateY(-${translateY}px)`;
         }
       });
@@ -689,7 +698,16 @@ export default function VisionClient() {
 
       {/* 백그라운드 선 */}
       <div className={v.bgLines} style={{ opacity: isLineReady ? 1 : 0 }}>
-        <div ref={lineRef} className={v.line}>
+        <div
+          ref={lineRef}
+          className={v.line}
+          style={{
+            height:
+              fixedHeight && fixedHeight.includes('px')
+                ? `${parseInt(fixedHeight) * 3}px`
+                : '300vh',
+          }}
+        >
           <svg
             viewBox={isMobile ? '0 0 500 2000' : '0 0 1920 3000'}
             fill="none"
