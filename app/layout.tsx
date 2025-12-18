@@ -66,7 +66,7 @@ export const metadata: Metadata = {
 
   // 사이트 검증
   verification: {
-    google: '', // Google Search Console 인증 코드 추가 필요
+    google: 'dCZzdoWAz0fLUBzmhz1rCjrVfnNb32UGJv757CLFMI8', // Google Search Console 인증 코드
   },
 
   // 기타
