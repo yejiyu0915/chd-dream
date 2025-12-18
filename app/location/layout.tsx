@@ -1,19 +1,13 @@
 import React from 'react';
-import type { Metadata } from 'next';
 import SectionLayout from '@/common/components/layouts/SectionLayout';
+import { generatePageMetadata } from '@/common/data/metadata';
 
 interface LocationLayoutProps {
   children: React.ReactNode;
 }
 
-export const metadata: Metadata = {
-  title: '오시는길',
-  description: '행복으로가는교회 위치 안내. 인천 남동구 문화로 227. 지하철, 버스 이용 안내',
-  openGraph: {
-    title: '오시는길 | 행복으로가는교회',
-    description: '행복으로가는교회 위치 안내. 인천 남동구 문화로 227',
-  },
-};
+// generatePageMetadata를 사용하여 일관된 메타데이터 생성
+export const metadata = generatePageMetadata('/location');
 
 /**
  * Location 섹션 레이아웃 (Server Component)

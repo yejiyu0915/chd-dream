@@ -11,10 +11,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
 
 export const metadata: Metadata = {
   // 기본 메타데이터
-  title: {
-    default: '행복으로가는교회',
-    template: '%s | 행복으로가는교회',
-  },
+  title: '행복으로가는교회', // 하위 layout에서 전체 제목을 직접 반환하므로 template 제거
   description: '꿈이 이루어지는 행복한 교회, 행복으로가는교회입니다. 인천 남동구 문화로 227',
   keywords: [
     '행복으로가는교회',
@@ -38,10 +35,10 @@ export const metadata: Metadata = {
     siteName: '행복으로가는교회',
     images: [
       {
-        url: `${siteUrl}/images/common/logo.svg`,
+        url: `${siteUrl}/images/og/og_251216.jpg`,
         width: 1200,
         height: 630,
-        alt: '행복으로가는교회 로고',
+        alt: '행복으로가는교회',
       },
     ],
   },
@@ -51,7 +48,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: '행복으로가는교회',
     description: '꿈이 이루어지는 행복한 교회, 행복으로가는교회입니다.',
-    images: [`${siteUrl}/images/common/logo.svg`],
+    images: [`${siteUrl}/images/og/og_251216.jpg`],
   },
 
   // 추가 메타 태그
@@ -69,13 +66,17 @@ export const metadata: Metadata = {
 
   // 사이트 검증
   verification: {
-    google: '', // Google Search Console 인증 코드 추가 필요
-    // naver: '', // 네이버 서치어드바이저 인증 코드 추가 필요
+    google: 'dCZzdoWAz0fLUBzmhz1rCjrVfnNb32UGJv757CLFMI8', // Google Search Console 인증 코드
   },
 
   // 기타
   alternates: {
     canonical: siteUrl,
+  },
+
+  // 네이버 서치어드바이저 인증 (other 속성 사용)
+  other: {
+    'naver-site-verification': 'd0a15c47282c909f8a1a196ad440f38a503a431f',
   },
 };
 

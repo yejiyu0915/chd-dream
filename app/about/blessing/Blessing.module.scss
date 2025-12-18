@@ -145,6 +145,7 @@
       @include font-vw(28);
     }
     @include mq(mo-sm) {
+      margin-block-end: 0.2em;
       @include font-vw(20);
     }
   }

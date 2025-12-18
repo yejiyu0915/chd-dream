@@ -5,6 +5,9 @@ import { pageMeta } from '@/common/data/list';
 const SITE_NAME = '행복으로가는교회';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
 
+// 통일된 OG 이미지 (정적 페이지용)
+const DEFAULT_OG_IMAGE = '/images/og/og_251216.jpg';
+
 // NEWS 타이틀 오버라이드 (영문으로 표시)
 const TITLE_OVERRIDES: Record<string, string> = {
   '/info/news': 'NEWS',
@@ -30,10 +33,13 @@ export function generatePageMetadata(pathname: string): Metadata {
   // 타이틀 오버라이드 적용 (예: NEWS)
   const title = TITLE_OVERRIDES[pathname] || pageData.title;
   const description = pageData.description || `${pageData.title} 페이지입니다.`;
-  const fullTitle = `${title} | ${SITE_NAME}`;
+  const fullTitle = `${title} | ${SITE_NAME}`; // 전체 제목 (중첩 layout에서도 일관되게 작동)
+
+  // 통일된 OG 이미지 URL 생성
+  const ogImageUrl = `${SITE_URL}${DEFAULT_OG_IMAGE}`;
 
   return {
-    title: fullTitle, // root layout의 template이 작동하지 않아서 직접 적용
+    title: fullTitle, // 중첩 layout에서도 template이 제대로 작동하지 않으므로 전체 제목 직접 반환
     description: description,
     openGraph: {
       title: fullTitle,
@@ -41,11 +47,20 @@ export function generatePageMetadata(pathname: string): Metadata {
       url: `${SITE_URL}${pathname}`,
       siteName: SITE_NAME,
       type: 'website',
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: fullTitle,
       description: description,
+      images: [ogImageUrl],
     },
   };
 }
@@ -62,10 +77,16 @@ export function generateDynamicMetadata(
   description: string,
   imageUrl?: string
 ): Metadata {
-  const fullTitle = `${title} | ${SITE_NAME}`;
+  const fullTitle = `${title} | ${SITE_NAME}`; // 전체 제목 (중첩 layout에서도 일관되게 작동)
+
+  // 이미지 URL 처리: 있으면 사용, 없으면 기본 OG 이미지 사용
+  const finalImageUrl = imageUrl || DEFAULT_OG_IMAGE;
+  const fullImageUrl = finalImageUrl.startsWith('http')
+    ? finalImageUrl
+    : `${SITE_URL}${finalImageUrl}`;
 
   const metadata: Metadata = {
-    title: fullTitle, // root layout의 template이 작동하지 않아서 직접 적용
+    title: fullTitle, // 중첩 layout에서도 template이 제대로 작동하지 않으므로 전체 제목 직접 반환
     description: description,
     openGraph: {
       title: fullTitle,
@@ -73,31 +94,22 @@ export function generateDynamicMetadata(
       url: SITE_URL,
       siteName: SITE_NAME,
       type: 'article',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: fullTitle,
-      description: description,
-    },
-  };
-
-  // 이미지가 있으면 추가
-  if (imageUrl) {
-    const fullImageUrl = imageUrl.startsWith('http') ? imageUrl : `${SITE_URL}${imageUrl}`;
-    if (metadata.openGraph) {
-      metadata.openGraph.images = [
+      images: [
         {
           url: fullImageUrl,
           width: 1200,
           height: 630,
           alt: title,
         },
-      ];
-    }
-    if (metadata.twitter) {
-      metadata.twitter.images = [fullImageUrl];
-    }
-  }
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: fullTitle,
+      description: description,
+      images: [fullImageUrl],
+    },
+  };
 
   return metadata;
 }

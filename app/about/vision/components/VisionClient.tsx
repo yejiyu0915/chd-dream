@@ -32,6 +32,8 @@ function StarParticles({ isActive }: { isActive: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const starsRef = useRef<Star[]>([]);
   const rafRef = useRef<number>(0);
+  // 고정된 높이 값을 ref로 저장 (툴바 변화에 영향받지 않음)
+  const fixedHeightRef = useRef<number>(typeof window !== 'undefined' ? window.innerHeight : 0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -40,13 +42,39 @@ function StarParticles({ isActive }: { isActive: boolean }) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // 캔버스 크기 설정
+    // 고정 높이 설정 (모바일 툴바 변화 대응)
+    const isMobileDevice = () => {
+      return (
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        ) || window.innerWidth <= 768
+      );
+    };
+
+    const setHeight = () => {
+      fixedHeightRef.current = window.innerHeight;
+    };
+
+    // 모바일에서는 초기 높이만 설정
+    if (isMobileDevice()) {
+      setHeight();
+    } else {
+      setHeight();
+      window.addEventListener('resize', setHeight);
+    }
+
+    // 캔버스 크기 설정 (고정 높이 사용)
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      // 고정된 높이 사용 (툴바 변화에 영향받지 않음)
+      canvas.height = fixedHeightRef.current > 0 ? fixedHeightRef.current : window.innerHeight;
     };
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+
+    // 모바일에서는 resize 이벤트 무시 (캔버스 크기 고정)
+    if (!isMobileDevice()) {
+      window.addEventListener('resize', resizeCanvas);
+    }
 
     // 별 초기화 (모바일에서 크기/개수 축소)
     const isMobile = window.innerWidth < 768;
@@ -124,7 +152,10 @@ function StarParticles({ isActive }: { isActive: boolean }) {
 
     return () => {
       cancelAnimationFrame(rafRef.current);
-      window.removeEventListener('resize', resizeCanvas);
+      if (!isMobileDevice()) {
+        window.removeEventListener('resize', resizeCanvas);
+        window.removeEventListener('resize', setHeight);
+      }
     };
   }, [isActive]);
 
@@ -148,12 +179,41 @@ const CROSS_LINES = [
 function CrossSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const rafRef = useRef<number>(0);
+  // 고정된 높이 값을 ref로 저장 (툴바 변화에 영향받지 않음)
+  const fixedHeightRef = useRef<number>(typeof window !== 'undefined' ? window.innerHeight : 0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [imageOpacity, setImageOpacity] = useState(0);
 
   // 배경 이미지 프리로드 (초기 버벅임 방지)
   useEffect(() => {
     preloadImages(['/images/vision/cross.jpg']);
+  }, []);
+
+  // 고정 높이 설정 (모바일 툴바 변화 대응)
+  useEffect(() => {
+    const isMobileDevice = () => {
+      return (
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        ) || window.innerWidth <= 768
+      );
+    };
+
+    const setHeight = () => {
+      fixedHeightRef.current = window.innerHeight;
+    };
+
+    // 모바일에서는 초기 높이만 설정하고 resize 이벤트 무시
+    if (isMobileDevice()) {
+      setHeight(); // 컴포넌트 마운트 시에만 높이 설정
+    } else {
+      // 데스크톱에서는 기존 동작 유지
+      setHeight();
+      window.addEventListener('resize', setHeight);
+      return () => {
+        window.removeEventListener('resize', setHeight);
+      };
+    }
   }, []);
 
   useEffect(() => {
@@ -164,18 +224,20 @@ function CrossSection() {
         if (!sectionRef.current) return;
 
         const rect = sectionRef.current.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
+        // 고정된 높이 값 사용 (ref에서 가져옴, 툴바 변화에 영향받지 않음)
+        const fixedWindowHeight =
+          fixedHeightRef.current > 0 ? fixedHeightRef.current : window.innerHeight;
 
         // 이미지 fade in (0 ~ 80vh 구간에서)
         const fadeInScrolled = -rect.top;
-        const fadeInHeight = windowHeight * 0.8;
+        const fadeInHeight = fixedWindowHeight * 0.8;
         const imgOpacity = Math.max(0, Math.min(fadeInScrolled / fadeInHeight, 1));
         setImageOpacity(imgOpacity);
 
         // 텍스트 애니메이션 (80vh 이후부터)
-        const paddingOffset = windowHeight * 0.8;
+        const paddingOffset = fixedWindowHeight * 0.8;
         const scrolled = -rect.top - paddingOffset;
-        const animationHeight = windowHeight * 2;
+        const animationHeight = fixedWindowHeight * 2;
         const progress = Math.max(0, Math.min(scrolled / animationHeight, 1));
         setScrollProgress(progress);
       });
@@ -555,25 +617,66 @@ export default function VisionClient() {
   const pathRef = useRef<SVGPathElement | null>(null);
   const lineRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef<number>(0);
+  // 고정된 높이 값을 ref로 저장 (툴바 변화에 영향받지 않음)
+  // 초기값은 클라이언트 사이드에서만 설정 가능하므로 useEffect에서 설정
+  const fixedHeightRef = useRef<number>(typeof window !== 'undefined' ? window.innerHeight : 0);
   const [pathLength, setPathLength] = useState<number>(0);
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [isLineReady, setIsLineReady] = useState<boolean>(false);
+  const [fixedHeight, setFixedHeight] = useState<string>('100vh'); // 초기값은 100vh
+  const [fixedHeightNegative, setFixedHeightNegative] = useState<string>('-100vh'); // 음수 값
 
   // 1~3섹션 이미지 프리로드 (초기 버벅임 방지)
   useEffect(() => {
     preloadImages(['/images/vision/01.png', '/images/vision/02.png', '/images/vision/03.png']);
   }, []);
 
-  // 모바일 여부 확인
+  // 모바일 여부 확인 및 고정 높이 설정 (KV와 동일한 방식)
   useEffect(() => {
+    // 모바일 디바이스 감지 함수
+    const isMobileDevice = () => {
+      return (
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        ) || window.innerWidth <= 768
+      );
+    };
+
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
 
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+    // 고정 높이 설정 함수 (모바일 브라우저 툴바 변화 대응)
+    const setHeight = () => {
+      const heightValue = window.innerHeight;
+      const newHeight = `${heightValue}px`;
+      setFixedHeight(newHeight);
+      setFixedHeightNegative(`-${heightValue}px`); // 음수 값도 함께 설정
+      fixedHeightRef.current = heightValue; // ref에도 저장 (스크롤 핸들러에서 사용)
+    };
 
-    return () => window.removeEventListener('resize', checkMobile);
+    // 초기 설정
+    checkMobile();
+
+    // 모바일에서는 초기 높이만 설정하고 resize 이벤트 무시
+    if (isMobileDevice()) {
+      // 모바일: 컴포넌트 마운트 시에만 높이 설정 (툴바가 숨겨진 상태의 높이로 고정)
+      setHeight();
+      // 모바일에서는 checkMobile만 resize 이벤트 리스너 추가 (높이는 고정)
+      window.addEventListener('resize', checkMobile);
+    } else {
+      // 데스크톱: 기존 동작 유지
+      setHeight();
+      window.addEventListener('resize', checkMobile);
+      window.addEventListener('resize', setHeight);
+    }
+
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      if (!isMobileDevice()) {
+        window.removeEventListener('resize', setHeight);
+      }
+    };
   }, []);
 
   // SVG path 길이 계산
@@ -598,12 +701,15 @@ export default function VisionClient() {
       rafRef.current = requestAnimationFrame(() => {
         if (!visionRef.current) return;
 
-        const windowHeight = window.innerHeight;
+        // 고정된 높이 값 사용 (ref에서 가져옴, 툴바 변화에 영향받지 않음)
+        // ref가 0이면 아직 초기화되지 않은 것이므로 window.innerHeight 사용
+        const fixedWindowHeight =
+          fixedHeightRef.current > 0 ? fixedHeightRef.current : window.innerHeight;
         const visionRect = visionRef.current.getBoundingClientRect();
         const visionHeight = visionRef.current.offsetHeight;
 
         const scrollStart = -visionRect.top;
-        const scrollEnd = visionHeight - windowHeight;
+        const scrollEnd = visionHeight - fixedWindowHeight;
         const scrollProgress = Math.max(0, Math.min(scrollStart / scrollEnd, 1));
 
         const isMobileView = window.innerWidth <= 768;
@@ -617,7 +723,8 @@ export default function VisionClient() {
 
         if (lineRef.current) {
           const lineProgress = Math.min(scrollProgress * speedMultiplier, 1);
-          const translateY = lineProgress * windowHeight * 2;
+          // 고정된 높이를 사용 (모바일 툴바 변화 대응)
+          const translateY = lineProgress * fixedWindowHeight * 2;
           lineRef.current.style.transform = `translateY(-${translateY}px)`;
         }
       });
@@ -633,7 +740,16 @@ export default function VisionClient() {
   }, [pathLength]);
 
   return (
-    <div ref={visionRef} className={v.vision}>
+    <div
+      ref={visionRef}
+      className={v.vision}
+      style={
+        {
+          '--fixed-vh': fixedHeight,
+          '--fixed-vh-negative': fixedHeightNegative,
+        } as React.CSSProperties
+      }
+    >
       {/* 은은한 그라디언트 배경 */}
       <div className={v.gradientBg}>
         <div className={v.blur} />
@@ -644,7 +760,16 @@ export default function VisionClient() {
 
       {/* 백그라운드 선 */}
       <div className={v.bgLines} style={{ opacity: isLineReady ? 1 : 0 }}>
-        <div ref={lineRef} className={v.line}>
+        <div
+          ref={lineRef}
+          className={v.line}
+          style={{
+            height:
+              fixedHeight && fixedHeight.includes('px')
+                ? `${parseInt(fixedHeight) * 3}px`
+                : '300vh',
+          }}
+        >
           <svg
             viewBox={isMobile ? '0 0 500 2000' : '0 0 1920 3000'}
             fill="none"

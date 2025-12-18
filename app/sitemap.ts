@@ -21,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/about/history`,
+      url: `${baseUrl}/about/blessing`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
@@ -80,12 +80,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/worship/sermon`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.9,
     },
     {
       url: `${baseUrl}/worship/bulletin`,

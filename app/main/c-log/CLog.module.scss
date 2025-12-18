@@ -105,11 +105,11 @@
       left: vw(12);
       z-index: 1;
       padding: vw(6) vw(14);
-      border-radius: vw(6);
+      border-radius: vw(16);
       background-color: var(--accent-brand);
       @include font-vw(18, $weight: 700, $color: var(--text-inverse));
       letter-spacing: 0.05em;
-      box-shadow: 0 vw(2) vw(4) rgba(0, 0, 0, 0.1);
+      // box-shadow: 0 vw(2) vw(4) rgba(0, 0, 0, 0.1);
     }
     &__content {
       display: flex;
@@ -324,7 +324,7 @@
         top: cqi(12);
         left: cqi(12);
         padding: cqi(6) cqi(14);
-        border-radius: cqi(6);
+        border-radius: cqi(16);
         @include font-cqi(18, $min: 12);
         box-shadow: 0 cqi(2) cqi(4) rgba(0, 0, 0, 0.1);
       }
@@ -497,7 +497,7 @@
         top: vw(10);
         left: vw(10);
         padding: vw(4) vw(10);
-        border-radius: vw(4);
+        border-radius: vw(14);
         @include font-vw(12);
       }
       &__content {
@@ -632,7 +632,7 @@
         top: vw(6);
         left: vw(6);
         padding: vw(3) vw(8);
-        border-radius: vw(3);
+        border-radius: vw(13);
         @include font-vw(10);
       }
       &__content {
