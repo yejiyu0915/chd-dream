@@ -67,12 +67,16 @@ export const metadata: Metadata = {
   // 사이트 검증
   verification: {
     google: '', // Google Search Console 인증 코드 추가 필요
-    // naver: '', // 네이버 서치어드바이저 인증 코드 추가 필요
   },
 
   // 기타
   alternates: {
     canonical: siteUrl,
+  },
+
+  // 네이버 서치어드바이저 인증 (other 속성 사용)
+  other: {
+    'naver-site-verification': 'd0a15c47282c909f8a1a196ad440f38a503a431f',
   },
 };
 
