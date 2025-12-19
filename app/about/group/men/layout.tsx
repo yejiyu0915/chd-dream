@@ -9,3 +9,4 @@ export default function MenLayout({
 }>) {
   return <>{children}</>;
 }
+

@@ -232,7 +232,7 @@ const FAMILY_PARTS: FamilyPart[] = [
     id: 'wife',
     boldText: '아내',
     restText: '를 힘있게 하는 교회',
-    engTitle: 'The Church That Encourages and Honors Wives in Faith',
+    engTitle: 'The Church That Encourages and Honors Faithful Wives',
     imageCount: 10,
   },
   {

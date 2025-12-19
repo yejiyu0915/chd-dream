@@ -300,3 +300,4 @@ export default function MdxImageGalleryModal({
   // React 컴포넌트로는 아무것도 렌더링하지 않음 (useEffect에서 직접 DOM 조작)
   return null;
 }
+

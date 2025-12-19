@@ -6,3 +6,4 @@ export default function SermonLayout({ children }: { children: React.ReactNode }
   return <>{children}</>;
 }
 
+
