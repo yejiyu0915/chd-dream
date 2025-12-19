@@ -17,18 +17,25 @@ interface CLogProps {
 function CLogCard({ item, index }: { item: CLogItem; index: number }) {
   const cardRef = useRef<HTMLLIElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false); // hydration mismatch 방지
   const [y, setY] = useState(0);
   const [opacity, setOpacity] = useState(0);
 
+  // 클라이언트 마운트 확인 (hydration mismatch 방지)
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // 모바일 체크
   useEffect(() => {
+    if (!mounted) return;
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [mounted]);
 
   // 3배수에 따라 다른 이동 거리 설정 (더 다양한 패턴)
   const pattern = index % 3;
@@ -84,8 +91,8 @@ function CLogCard({ item, index }: { item: CLogItem; index: number }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile, yRange]);
 
-  // 모바일은 단순 페이드업
-  if (isMobile) {
+  // 모바일은 단순 페이드업 (hydration mismatch 방지를 위해 mounted 확인)
+  if (mounted && isMobile) {
     return (
       <motion.li
         ref={cardRef}
