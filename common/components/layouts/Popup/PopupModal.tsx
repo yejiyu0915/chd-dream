@@ -45,15 +45,42 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
     }
   }, [newsItem]);
 
-  // 모달이 보이면 포커스 이동
+  // 모달이 보이면 포커스 이동 및 배경 콘텐츠 접근성 처리
   useEffect(() => {
     if (isVisible && closeButtonRef.current) {
+      // 배경 콘텐츠에 aria-hidden 적용 (모달 제외)
+      const mainContent = document.querySelector('#main-content');
+      const header = document.querySelector('header');
+      const footer = document.querySelector('footer');
+
+      if (mainContent) {
+        mainContent.setAttribute('aria-hidden', 'true');
+      }
+      if (header) {
+        header.setAttribute('aria-hidden', 'true');
+      }
+      if (footer) {
+        footer.setAttribute('aria-hidden', 'true');
+      }
+
       // 애니메이션 완료 후 포커스 이동
       const focusTimer = setTimeout(() => {
         closeButtonRef.current?.focus();
       }, 150);
 
-      return () => clearTimeout(focusTimer);
+      return () => {
+        clearTimeout(focusTimer);
+        // 모달이 닫힐 때 aria-hidden 제거
+        if (mainContent) {
+          mainContent.removeAttribute('aria-hidden');
+        }
+        if (header) {
+          header.removeAttribute('aria-hidden');
+        }
+        if (footer) {
+          footer.removeAttribute('aria-hidden');
+        }
+      };
     }
   }, [isVisible]);
 
@@ -287,11 +314,7 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
         </div>
       )}
 
-      <div
-        className={`${styles.overlay} ${isVisible ? styles.visible : ''}`}
-        onClick={handleClose}
-        aria-hidden="true"
-      >
+      <div className={`${styles.overlay} ${isVisible ? styles.visible : ''}`} onClick={handleClose}>
         <div
           ref={modalRef}
           className={`${styles.modal} ${isVisible ? styles.visible : ''}`}

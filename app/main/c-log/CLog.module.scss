@@ -1,6 +1,7 @@
 @use '@/common/styles/mixins/function' as *;
 
 .cLog {
+  position: relative; // framer-motion useScroll의 스크롤 오프셋 계산을 위한 위치 기준점
   background-color: var(--bg-page);
   .inner {
     padding-block: vw(240) vw(160);
@@ -35,6 +36,7 @@
   .content {
     margin-block-start: vw(-200);
     padding-inline-start: vw(160);
+    position: relative; // framer-motion useScroll의 스크롤 오프셋 계산을 위한 위치 기준점
   }
   .loading {
     display: flex;
@@ -60,7 +62,9 @@
     gap: 0 vw(60);
     margin-block-start: vw(40);
     padding-inline: vw(200) vw(100);
+    position: relative; // framer-motion useScroll의 스크롤 오프셋 계산을 위한 위치 기준점
     &__item {
+      position: relative; // framer-motion useScroll의 스크롤 오프셋 계산을 위한 위치 기준점
       border-radius: vw(20) vw(20) 0 0;
       &:nth-child(1) {
         padding-block-start: vw(90);

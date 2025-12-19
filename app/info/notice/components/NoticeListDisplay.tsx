@@ -147,7 +147,7 @@ export default function NoticeListDisplay({
                   <Link
                     href={item.link || '#'}
                     className={n.list__link}
-                    prefetch={true}
+                    prefetch={false} // 자동 prefetch 비활성화 (수동 prefetch만 사용하여 경고 방지)
                     onMouseEnter={() => handleMouseEnter(item.link || '#')}
                     onTouchStart={() => handleTouchStart(item.link || '#')}
                   >

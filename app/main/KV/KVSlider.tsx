@@ -195,7 +195,7 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
           enabled: true,
           hideOnClick: false,
         }}
-        loop={true}
+        loop={kvSliderItems.length > 1} // 슬라이드가 1개일 때는 loop 비활성화
         parallax={true}
         className={kv.slider}
         onSlideChange={(swiper) => {

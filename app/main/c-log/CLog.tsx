@@ -6,7 +6,7 @@ import { CLogItem } from '@/lib/notion';
 import { isNewPost } from '@/common/utils/dateUtils';
 import CLogSkeleton from '@/app/main/c-log/CLogSkeleton';
 import ImageWithTheme from '@/common/components/utils/ImageWithTheme';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
 
 interface CLogProps {
@@ -17,6 +17,8 @@ interface CLogProps {
 function CLogCard({ item, index }: { item: CLogItem; index: number }) {
   const cardRef = useRef<HTMLLIElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [y, setY] = useState(0);
+  const [opacity, setOpacity] = useState(0);
 
   // 모바일 체크
   useEffect(() => {
@@ -27,12 +29,6 @@ function CLogCard({ item, index }: { item: CLogItem; index: number }) {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-
-  // 스크롤 진행도 추적
-  const { scrollYProgress } = useScroll({
-    target: cardRef,
-    offset: ['start end', 'end start'], // 카드가 화면에 들어올 때부터 나갈 때까지
-  });
 
   // 3배수에 따라 다른 이동 거리 설정 (더 다양한 패턴)
   const pattern = index % 3;
@@ -46,9 +42,47 @@ function CLogCard({ item, index }: { item: CLogItem; index: number }) {
     yRange = [120, -120]; // 중간 속도
   }
 
-  // 스크롤에 따른 Y축 변환 + opacity 변환 (데스크탑만)
-  const y = useTransform(scrollYProgress, [0, 1], yRange);
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0.8]);
+  // 직접 스크롤 이벤트로 패럴렉스 효과 구현 (useScroll 경고 방지)
+  useEffect(() => {
+    if (isMobile || !cardRef.current) return;
+
+    const handleScroll = () => {
+      if (!cardRef.current) return;
+
+      const rect = cardRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const elementTop = rect.top;
+      const elementHeight = rect.height;
+
+      // 요소가 화면에 들어올 때부터 나갈 때까지의 진행도 계산
+      // start end: 요소 상단이 화면 하단에 닿을 때 (진행도 0)
+      // end start: 요소 하단이 화면 상단에 닿을 때 (진행도 1)
+      const startPoint = windowHeight; // 요소 상단이 화면 하단에 닿는 지점
+      const endPoint = -elementHeight; // 요소 하단이 화면 상단에 닿는 지점
+      const totalDistance = startPoint - endPoint;
+      const currentPosition = elementTop - endPoint;
+      const progress = Math.max(0, Math.min(1, currentPosition / totalDistance));
+
+      // Y축 변환 계산
+      const newY = yRange[0] + (yRange[1] - yRange[0]) * progress;
+      setY(newY);
+
+      // Opacity 변환 계산 (0 -> 0.2: 0->1, 0.2->0.8: 1, 0.8->1: 1->0.8)
+      let newOpacity = 0;
+      if (progress <= 0.2) {
+        newOpacity = progress / 0.2; // 0 -> 1
+      } else if (progress <= 0.8) {
+        newOpacity = 1; // 1 유지
+      } else {
+        newOpacity = 1 - ((progress - 0.8) / 0.2) * 0.2; // 1 -> 0.8
+      }
+      setOpacity(newOpacity);
+    };
+
+    handleScroll(); // 초기 계산
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isMobile, yRange]);
 
   // 모바일은 단순 페이드업
   if (isMobile) {
