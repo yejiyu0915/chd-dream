@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_KAKAO_MAP_KEY: process.env.NEXT_PUBLIC_KAKAO_MAP_KEY,
   },
+  // Next.js 자동 prefetch 제어 (preload 경고 감소)
+  experimental: {
+    optimizePackageImports: ['framer-motion', 'swiper'],
+  },
   // 캐싱 최적화 설정 (Next.js 15에서는 isrMemoryCacheSize 옵션이 제거됨)
   images: {
     // Notion 외부 이미지 도메인 추가 (Notion 내부 URL은 필요 없음)
