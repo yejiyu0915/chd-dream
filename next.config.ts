@@ -114,11 +114,11 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://dapi.kakao.com https://t1.daumcdn.net", // Kakao Map 스크립트
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://dapi.kakao.com https://t1.daumcdn.net https://vercel.live", // Kakao Map 스크립트, Vercel Live Feedback
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https: blob:", // Notion 이미지, Kakao Map 타일
               "font-src 'self' data:",
-              "connect-src 'self' https://www.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com https://dapi.kakao.com",
+              "connect-src 'self' https://www.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com https://dapi.kakao.com https://vercel.live", // Vercel Live Feedback
               "frame-src 'self'",
               "object-src 'none'",
               "base-uri 'self'",
