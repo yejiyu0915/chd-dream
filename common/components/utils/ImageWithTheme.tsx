@@ -44,6 +44,7 @@ export default function ImageWithTheme({
 
   return (
     <Image
+      key={finalSrc} // 이미지 URL 변경 시 강제 리렌더링 (캐싱 이슈 해결)
       src={finalSrc}
       alt={alt}
       width={width}

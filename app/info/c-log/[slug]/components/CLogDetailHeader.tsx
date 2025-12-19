@@ -19,14 +19,14 @@ export default function CLogDetailHeader({
   imageUrl,
   tags,
 }: CLogDetailHeaderProps) {
-  // 애니메이션 variants
+  // 애니메이션 variants (이미지 즉시 표시를 위해 duration 단축)
   const imageVariants = {
-    hidden: { opacity: 0, scale: 1.05 },
+    hidden: { opacity: 0, scale: 1.02 },
     visible: {
       opacity: 1,
       scale: 1,
       transition: {
-        duration: 0.8,
+        duration: 0.3, // 0.8초에서 0.3초로 단축 (이미지 빠른 표시)
         ease: [0.22, 1, 0.36, 1] as const,
       },
     },
@@ -99,12 +99,21 @@ export default function CLogDetailHeader({
       <div className={l.header}>
         {imageUrl && (
           <motion.div
+            key={imageUrl} // 이미지 URL 변경 시 강제 리렌더링 (캐싱 이슈 해결)
             className={l.image}
             initial="hidden"
             animate="visible"
             variants={imageVariants}
           >
-            <ImageWithTheme src={imageUrl} alt={title} width={1440} height={400} priority />
+            <ImageWithTheme
+              key={imageUrl} // 이미지 URL 변경 시 강제 리렌더링
+              src={imageUrl}
+              alt={title}
+              width={1440}
+              height={400}
+              priority
+              loading="eager" // 즉시 로드 (priority와 함께 사용)
+            />
           </motion.div>
         )}
         <div className={`detail-inner ${l.content}`}>
