@@ -47,6 +47,20 @@
   }
 }
 
+// 단일 이미지일 때 PC에서 원본 크기 유지 (1024px 이상)
+@media screen and (min-width: 1025px) {
+  .singleImage {
+    .imageWrapper {
+      width: auto;
+
+      img {
+        width: auto;
+        max-width: 100%;
+      }
+    }
+  }
+}
+
 // Pagination 스타일 - swiperContainer 내부에서 선택
 .swiperContainer {
   [class*='swiper-pagination'] {

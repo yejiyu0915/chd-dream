@@ -272,6 +272,12 @@ export default function MdxImageSwiperWrapper({ children }: MdxImageSwiperWrappe
         document.dispatchEvent(event);
       };
 
+      // 이미지가 1개일 때는 단일 이미지 클래스 추가
+      const isSingleImage = groupImages.length === 1;
+      const swiperClassName = isSingleImage
+        ? `${styles.swiper} ${styles.singleImage}`
+        : styles.swiper;
+
       return (
         <Swiper
           modules={[Pagination, Navigation]}
@@ -281,7 +287,7 @@ export default function MdxImageSwiperWrapper({ children }: MdxImageSwiperWrappe
           navigation={true}
           centeredSlides={false}
           loop={false}
-          className={styles.swiper}
+          className={swiperClassName}
           breakpoints={{
             0: {
               slidesPerView: 1.2,
