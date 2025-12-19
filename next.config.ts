@@ -76,6 +76,16 @@ const nextConfig: NextConfig = {
         destination: '/info/news',
         permanent: true,
       },
+      {
+        source: '/about',
+        destination: '/about/blessing',
+        permanent: true,
+      },
+      {
+        source: '/worship',
+        destination: '/worship/timetable',
+        permanent: true,
+      },
     ];
   },
   // 보안 헤더 설정
