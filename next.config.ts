@@ -119,7 +119,7 @@ const nextConfig: NextConfig = {
               "img-src 'self' data: https: blob:", // Notion 이미지, Kakao Map 타일
               "font-src 'self' data:",
               "connect-src 'self' https://www.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com https://dapi.kakao.com https://vercel.live", // Vercel Live Feedback
-              "frame-src 'self'",
+              "frame-src 'self' https://vercel.live", // Vercel Live Feedback
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
