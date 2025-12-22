@@ -18,6 +18,8 @@ interface CLogListProps {
   isError: boolean;
   error: Error | null;
   viewMode: 'grid' | 'list'; // viewMode prop 추가
+  hasInitialData?: boolean; // 초기 데이터 존재 여부
+  hasAllData?: boolean; // 전체 데이터 존재 여부 (필터링 전)
 }
 
 const PC_ITEMS_PER_LOAD = 6; // PC 버전에서 한 번에 불러올 아이템 개수
@@ -29,6 +31,8 @@ export default function CLogList({
   isError,
   error,
   viewMode: _viewMode, // viewMode prop을 _viewMode로 변경하여 사용되지 않음을 명시
+  hasInitialData = false, // 초기 데이터 존재 여부 (기본값 false)
+  hasAllData = false, // 전체 데이터 존재 여부 (기본값 false)
 }: CLogListProps) {
   const router = useRouter();
   const [itemsPerPage, setItemsPerPage] = useState(PC_ITEMS_PER_LOAD);
@@ -154,7 +158,8 @@ export default function CLogList({
   //   hasMoreItems,
   // });
 
-  if (isLoading) {
+  // 로딩 중이지만 초기 데이터가 있으면 표시, 없을 때만 로딩 스피너 표시
+  if (isLoading && !hasInitialData) {
     return (
       <div className={c.cLogList}>
         <div className={c.loadingState}>
@@ -262,7 +267,15 @@ export default function CLogList({
             )}
           </>
         ) : (
-          <p className={c.emptyMessage}>게시물이 없습니다.</p>
+          // 로딩 중이 아니고, 전체 데이터가 로드되었지만 필터링 결과가 없을 때만 빈 메시지 표시
+          !isLoading &&
+          hasAllData && (
+            <p className={c.emptyMessage}>
+              {cLogData && cLogData.length === 0
+                ? '선택한 조건에 맞는 게시물이 없습니다.'
+                : '게시물이 없습니다.'}
+            </p>
+          )
         )}
       </div>
     </div>

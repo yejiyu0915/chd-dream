@@ -21,6 +21,13 @@ export default function CLogListClient({ initialCLogData, searchParams }: CLogLi
   // 서버에서 받은 데이터를 그대로 사용 (useQuery 제거)
   const allCLogData = initialCLogData;
 
+  // 초기 데이터 존재 여부 확인
+  const hasInitialData = !!initialCLogData && initialCLogData.length > 0;
+
+  // 데이터가 아직 로드되지 않았는지 확인 (undefined인 경우만 로딩으로 간주)
+  // 빈 배열([])은 데이터가 로드되었지만 결과가 없는 것으로 간주
+  const isInitialLoading = initialCLogData === undefined;
+
   // State 초기값은 고정값으로 설정 (Hydration 에러 방지)
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -148,7 +155,24 @@ export default function CLogListClient({ initialCLogData, searchParams }: CLogLi
   }, [dataForTags, tagCounts]);
 
   const updateURLParams = (params: Record<string, string | null>) => {
-    const newSearchParams = new URLSearchParams(searchParams.toString());
+    // 현재 searchParams를 URLSearchParams로 변환
+    const newSearchParams = new URLSearchParams();
+
+    // 기존 파라미터 추가 (객체에서 직접 가져오기)
+    if (searchParams.category) {
+      newSearchParams.set('category', searchParams.category);
+    }
+    if (searchParams.tag) {
+      newSearchParams.set('tag', searchParams.tag);
+    }
+    if (searchParams.sort) {
+      newSearchParams.set('sort', searchParams.sort);
+    }
+    if (searchParams.view) {
+      newSearchParams.set('view', searchParams.view);
+    }
+
+    // 새로운 파라미터로 업데이트
     Object.entries(params).forEach(([key, value]) => {
       if (value) {
         newSearchParams.set(key, encodeURIComponent(value));
@@ -156,6 +180,7 @@ export default function CLogListClient({ initialCLogData, searchParams }: CLogLi
         newSearchParams.delete(key);
       }
     });
+
     router.push(`?${newSearchParams.toString()}`);
   };
 
@@ -195,10 +220,12 @@ export default function CLogListClient({ initialCLogData, searchParams }: CLogLi
         </div>
         <CLogListDisplay
           cLogData={filteredCLogData}
-          isLoading={false}
+          isLoading={isInitialLoading}
           isError={false}
           error={null}
           viewMode={viewMode}
+          hasInitialData={hasInitialData}
+          hasAllData={hasInitialData} // 전체 데이터 존재 여부
         />
       </div>
     </section>

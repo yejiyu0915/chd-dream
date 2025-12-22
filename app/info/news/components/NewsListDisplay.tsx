@@ -16,6 +16,8 @@ interface NewsListDisplayProps {
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
+  hasInitialData?: boolean; // 초기 데이터 존재 여부
+  hasAllData?: boolean; // 전체 데이터 존재 여부
 }
 
 // const MOBILE_BREAKPOINT = 768; // 모바일 기준 (px) - 제거
@@ -25,6 +27,8 @@ export default function NewsListDisplay({
   isLoading,
   isError,
   error,
+  hasInitialData = false, // 초기 데이터 존재 여부 (기본값 false)
+  hasAllData = false, // 전체 데이터 존재 여부 (기본값 false)
 }: NewsListDisplayProps) {
   const router = useRouter();
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -109,7 +113,8 @@ export default function NewsListDisplay({
     setDisplayLimit((prevLimit) => prevLimit + loadMoreCount);
   };
 
-  if (isLoading) {
+  // 로딩 중이지만 초기 데이터가 있으면 표시, 없을 때만 로딩 스피너 표시
+  if (isLoading && !hasInitialData) {
     return (
       <div className={n.newsList}>
         <div className={n.loadingState}>
@@ -199,7 +204,8 @@ export default function NewsListDisplay({
             )}
           </>
         ) : (
-          <p className={n.emptyMessage}>게시물이 없습니다.</p>
+          // 로딩 중이 아니고, 전체 데이터가 로드되었지만 결과가 없을 때만 빈 메시지 표시
+          !isLoading && hasAllData && <p className={n.emptyMessage}>게시물이 없습니다.</p>
         )}
       </div>
     </div>

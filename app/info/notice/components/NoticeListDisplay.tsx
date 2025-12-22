@@ -15,6 +15,8 @@ interface NoticeListDisplayProps {
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
+  hasInitialData?: boolean; // 초기 데이터 존재 여부
+  hasAllData?: boolean; // 전체 데이터 존재 여부
 }
 
 export default function NoticeListDisplay({
@@ -22,6 +24,8 @@ export default function NoticeListDisplay({
   isLoading,
   isError,
   error,
+  hasInitialData = false, // 초기 데이터 존재 여부 (기본값 false)
+  hasAllData = false, // 전체 데이터 존재 여부 (기본값 false)
 }: NoticeListDisplayProps) {
   const router = useRouter();
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -88,7 +92,8 @@ export default function NoticeListDisplay({
     setDisplayLimit((prevLimit) => prevLimit + loadMoreCount);
   };
 
-  if (isLoading) {
+  // 로딩 중이지만 초기 데이터가 있으면 표시, 없을 때만 로딩 스피너 표시
+  if (isLoading && !hasInitialData) {
     return (
       <div className={n.noticeList}>
         <div className={n.loadingState}>
@@ -173,7 +178,8 @@ export default function NoticeListDisplay({
             )}
           </>
         ) : (
-          <p className={n.emptyMessage}>게시물이 없습니다.</p>
+          // 로딩 중이 아니고, 전체 데이터가 로드되었지만 결과가 없을 때만 빈 메시지 표시
+          !isLoading && hasAllData && <p className={n.emptyMessage}>게시물이 없습니다.</p>
         )}
       </div>
     </div>
