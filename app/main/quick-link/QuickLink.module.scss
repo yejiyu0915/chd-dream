@@ -28,9 +28,10 @@
   }
 }
 .title {
-  font-family: var(--font-family-useol);
+  // margin-block-end: 1.5em;
+  // font-family: var(--font-family-useol);
   @include font-vw(48, 64, $color: var(--accent-brand));
-  text-align: center;
+  text-align: left;
   text-transform: uppercase;
   &__wrap {
     margin-block-end: vw(80);
@@ -246,8 +247,10 @@
   }
   .list {
     display: block;
+    height: auto; // iOS에서 vw 단위로 인한 높이 문제 해결
     &__row {
       flex-direction: row;
+      height: auto; // iOS에서 높이 문제 해결
     }
     &__item {
       margin-block-end: vw(12);

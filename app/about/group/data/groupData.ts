@@ -43,14 +43,10 @@ export const groupData: GroupDataType[] = [
     title: '남선교',
     path: '/about/group/men',
     // image: '/images/group/men.jpg',
-    description:
-      '남선교는 하나님의 사랑을 나누며 함께 성장하는 공동체입니다. 서로를 품고 섬기며 신앙의 기쁨을 누립니다.',
+    description: `행복으로가는교회 남선교는
+믿음으로 서로를 품고 세워 교회의 기둥으로 우뚝 서는 공동체입니다.
+기도와 순종으로 앞장서며, 섬김과 헌신의 현장에서 교회를 지탱하고 사명을 힘있게 감당하는 믿음의 용사들입니다.`,
     pastor: '송순옥 강도사',
-    leaders: [
-      { role: '회장', name: '이름' },
-      { role: '부회장', name: '이름' },
-      { role: '총무', name: '이름' },
-    ],
     meetingPlace: '4층 남선교실',
     meetingTime: '매 주일 본 예배 후, 식사 후 오후 2시',
   },
@@ -62,52 +58,31 @@ export const groupData: GroupDataType[] = [
 
     meetingPlace: '본당 4층, 3층 세미나실, 2층 여선교실',
     meetingTime: '매 주일 본 예배 후, 점심 식사 후 오후 2시',
+    description: `
+      행복으로가는교회 여선교는 삶으로 예배하고 순종하며, 사랑과 섬김으로 교회와 이웃을 세워가는 믿음의 공동체입니다.
+하나님의 말씀 안에서 서로를 격려하고 함께 기도하며, 나눔과 봉사를 통해 그리스도의 마음을 전하는 데 힘쓰고 있습니다.
+교회의 각 사역에 기쁨으로 헌신하며, 하나 되어 하나님 나라를 이루어 가기를 소망합니다.
+    `,
     subGroups: [
       {
         id: 'women-1',
         title: '1 여선교',
-        description:
-          '1여선교는 하나님의 사랑을 나누며 함께 성장하는 공동체입니다. 서로를 품고 섬기며 신앙의 기쁨을 누립니다.',
         pastor: '유정란 전도사',
-        leaders: [
-          { role: '회장', name: '이름' },
-          { role: '부회장', name: '이름' },
-          { role: '총무', name: '이름' },
-        ],
       },
       {
         id: 'women-2',
         title: '2 여선교',
-        description: `행복으로가는교회 제 2여선교는요 ! <br /> 삶으로 예배하고 삶으로 순종하는 교구입니다. <br /> 하나님의 말씀으로 서로를 격려하고 함께 기도함으로 시험을 이기며 믿음으로 단단해지는 공동체입니다. <br /> 교회의 각종 행사에 즐겁게 헌신함으로 교제하는 믿음의 교구입니다!`,
         pastor: '김미선 전도사',
-        leaders: [
-          { role: '회장', name: '이름' },
-          { role: '부회장', name: '이름' },
-          { role: '총무', name: '이름' },
-        ],
       },
       {
         id: 'women-3',
         title: '3 여선교',
-        description:
-          '3여선교는 하나님의 사랑 안에서 함께 성장하며 선교의 열정을 품고 있는 공동체입니다.',
         pastor: '장은연 전도사',
-        leaders: [
-          { role: '회장', name: '이름' },
-          { role: '부회장', name: '이름' },
-          { role: '총무', name: '이름' },
-        ],
       },
       {
         id: 'women-4',
         title: '4 여선교',
-        description: `행복으로가는교회 제 4여선교는 사랑을 실천하고 헌신으로 섬기며, 나눔과 봉사를 통해 이웃에게 그리스도의 마음을 전하는 공동체입니다. <br /> 서로 함께 걸으며 행복을 나누고, 깊은 신앙 안에서 하나 되어 하나님 나라를 이루어 가고자 합니다. <br /> 앞으로도 사랑과 섬김의 발걸음을 멈추지 않고 교회와 지역사회를 위해 기도로 동행하겠습니다.`,
         pastor: '임선의 전도사',
-        leaders: [
-          { role: '회장', name: '윤순덕' },
-          { role: '부회장', name: '이연' },
-          { role: '총무', name: '강혜진' },
-        ],
       },
     ],
   },
@@ -131,16 +106,9 @@ export const groupData: GroupDataType[] = [
       공동체로 혼자가 아닌, 서로 연결된 동역자로서 예배도 말씀도 삶도 함께 걸어가는 청년부<br />
       </p>
       <br />
-      우리 청년부는 함께 행복하고, 함께 웃고, 함께 성장하며 신앙을 세워갑니다.<br />
-      <br />
+      우리 청년부는 함께 행복하고, 함께 웃고, 함께 성장하며 신앙을 세워갑니다.
     `,
     pastor: '김하은 전도사',
-    leaders: [
-      { role: '회장', name: '김다솔' },
-      { role: '부회장', name: '전승민' },
-      { role: '총무', name: '전혜지' },
-      { role: '부장', name: '김혜미' },
-    ],
     meetingPlace: '5층 청년부실',
     meetingTime: '매 주일 본 예배 후, 점심 식사 후 오후 2시',
   },
@@ -167,12 +135,8 @@ export const groupData: GroupDataType[] = [
       </p>
       <br />
       우리 교구는 하나님의 사랑 안에서 하나되어 나아가<br />
-      세상에도 선한 영향력으로 하나님의 사랑을 전하는 거룩한 무리입니다!<br />
+      세상에도 선한 영향력으로 하나님의 사랑을 전하는 거룩한 무리입니다!
     `,
-    leaders: [
-      { role: '회장', name: '이름' },
-      { role: '부회장', name: '이름' },
-    ],
     meetingPlace: '본당 5층, 본당 4층, 2층 예꿈실',
     meetingTime: '매 주일 본 예배 후, 오후 2시 예꿈 예배 후',
     subGroups: [
@@ -193,8 +157,11 @@ export const groupData: GroupDataType[] = [
     title: '새가족부',
     path: '/about/group/newfamily',
     // image: '/images/group/newfamily.jpg',
-    description:
-      '새가족부는 행복으로가는교회에 새롭게 오신 분들을 따뜻하게 환영하며 함께 성장하는 공동체입니다.',
+    description: `
+      행복으로가는교회 새가족부는
+사랑의 하나님을 만나고, 하나님 안에서 치유와 회복을 경험하도록 돕는 공동체입니다.
+처음 교회에 발걸음한 순간부터 환영과 섬김으로 함께하며, 믿음의 자리로 온전히 세워질 수 있도록 동행합니다.
+      `,
     pastor: '주애순 전도사, 이민아 전도사',
     meetingPlace: '3층 V.VIP실',
     meetingTime: '매 주일 본 예배 후',

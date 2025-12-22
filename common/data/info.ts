@@ -78,12 +78,12 @@ export interface ContactInfo {
 }
 
 export const contactInfo: ContactInfo = {
-  phone1: '032-472-9004',
+  phone1: '032-424-9004',
   phone2: '032-463-9004',
   address: '21552 인천 남동구 문화로 227 (간석동, 행복으로가는교회)',
   fax: '032-465-9004',
   name: '행복으로가는교회',
-  denomination: '순복음(기독교대한하나님의성회)',
+  denomination: '순복음',
 };
 
 export interface SnsLink {

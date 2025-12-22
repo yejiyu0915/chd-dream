@@ -43,7 +43,7 @@ function MeetingSection({
 
   return (
     <div className={g.content__meeting}>
-      <span className={g.content__label}>교구모임안내</span>
+      <span className={g.content__label}>교구 모임 안내</span>
       {meetingPlace && (
         <div className={g.content__meetingItem}>
           <span className={g.content__meetingLabel}>모임 장소</span>
@@ -78,32 +78,12 @@ function ActivitiesSection({ activities }: { activities: string[] }) {
   );
 }
 
-// 하위 교구 섹션 컴포넌트
-function SubGroupSection({ subGroup }: { subGroup: SubGroupType }) {
+// 하위 교구 섹션 컴포넌트 (단일 항목)
+function SubGroupItem({ subGroup }: { subGroup: SubGroupType }) {
   return (
-    <div className={g.subGroup}>
-      <h2 className={g.content__title}>{subGroup.title}</h2>
-      {subGroup.description && (
-        <div
-          className={g.content__description}
-          dangerouslySetInnerHTML={{ __html: subGroup.description }}
-        />
-      )}
-
-      {/* 담당 교역자 ~ 회장단까지 boxing 처리 */}
-      <div className={g.subGroup__box}>
-        {subGroup.pastor && (
-          <div className={g.content__pastor}>
-            <span className={g.content__label}>담당 교역자</span>
-            <span className={g.content__value}>{subGroup.pastor}</span>
-          </div>
-        )}
-        {subGroup.leaders && subGroup.leaders.length > 0 && (
-          <LeadersSection leaders={subGroup.leaders} />
-        )}
-      </div>
-      <MeetingSection meetingPlace={subGroup.meetingPlace} meetingTime={subGroup.meetingTime} />
-      {subGroup.activities && <ActivitiesSection activities={subGroup.activities} />}
+    <div className={g.subGroup__item}>
+      <div className={g.content__label}>{subGroup.title}</div>
+      {subGroup.pastor && <div className={g.content__value}>{subGroup.pastor}</div>}
     </div>
   );
 }
@@ -181,7 +161,7 @@ export default function GroupContent({ data, prevGroup, nextGroup, onSelect }: G
         )}
 
         {/* 헤더 - 제목 (하위 교구가 있는 경우에만 표시) */}
-        {!hasSubGroups && (
+        {/* {!hasSubGroups && (
           <motion.h2
             className={g.content__header}
             key={data.id}
@@ -191,7 +171,7 @@ export default function GroupContent({ data, prevGroup, nextGroup, onSelect }: G
           >
             {data.title}
           </motion.h2>
-        )}
+        )} */}
 
         {/* 본문 내용 */}
         <motion.div
@@ -225,6 +205,18 @@ export default function GroupContent({ data, prevGroup, nextGroup, onSelect }: G
             </div>
           )}
 
+          {/* 하위 교구들 (여선교 1,2,3,4 / 예꿈 학생부/예꿈부 등) */}
+          {hasSubGroups && (
+            <div className={g.content__subGroups}>
+              {/* 모든 서브그룹을 하나의 박스로 묶기 */}
+              <div className={g.subGroup__box}>
+                {data.subGroups!.map((subGroup) => (
+                  <SubGroupItem key={subGroup.id} subGroup={subGroup} />
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* 교구모임안내 (서브그룹이 없거나, 서브그룹이 있어도 상위 교구에 모임안내가 있는 경우) */}
           {(data.meetingPlace || data.meetingTime) && (
             <MeetingSection meetingPlace={data.meetingPlace} meetingTime={data.meetingTime} />
@@ -233,15 +225,6 @@ export default function GroupContent({ data, prevGroup, nextGroup, onSelect }: G
           {/* 교구활동안내 (서브그룹이 없거나, 서브그룹이 있어도 상위 교구에 활동안내가 있는 경우) */}
           {data.activities && data.activities.length > 0 && (
             <ActivitiesSection activities={data.activities} />
-          )}
-
-          {/* 하위 교구들 (여선교 1,2,3,4 / 예꿈 학생부/예꿈부 등) */}
-          {hasSubGroups && (
-            <div className={g.content__subGroups}>
-              {data.subGroups!.map((subGroup) => (
-                <SubGroupSection key={subGroup.id} subGroup={subGroup} />
-              ))}
-            </div>
           )}
         </motion.div>
       </div>

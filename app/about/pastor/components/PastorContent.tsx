@@ -59,47 +59,55 @@ export default function PastorContent() {
             <br />
             이곳을 찾아주신 모든 분들께
             <br />
-            주님의 은혜와 평강이 가득하길 소망하며,
+            주님의 은혜와 평강이 가득하기를 소망하며,
             <br />
             주님의 이름으로 환영하고 축복합니다.
           </strong>
           <br />
           <br />
-          하나님께서 우리를 이 자리에 이끄신 것은 우연이 아니라
+          하나님께서 우리를 이 자리에 이끄신 것은 우연이 아니라, 분명한 뜻과 계획 가운데 이루어진
+          일입니다.
           <br />
-          분명하신 뜻과 계획이 있기 때문입니다.
           <br />
-          <br />
-          <p style={{ paddingLeft: '2.35em' }}>
+          <p>
             <strong>행복으로가는교회는</strong>
             <br />
-            <strong className={s.highlight}>말씀...</strong>을 통해{' '}
-            <span className={s.underline}>내 삶 속에 하나님께서 말씀하신 사랑을 깨닫고,</span>
-            <br />
-            <strong className={s.highlight}>기도...</strong>를 통해{' '}
-            <span className={s.underline}>응답을 경험하며,</span>
-            <br />
-            <strong className={s.highlight}>사랑...</strong>을 통해{' '}
-            <span className={s.underline}>
-              서로의 사랑으로 주 안에서 평안과 행복을 이뤄가는 공동체입니다.
+            <span style={{ display: 'flex', gap: '0.25em' }}>
+              <strong className={s.highlight}>말씀...</strong>
+              <span>
+                을 통해 {''}
+                <span className={s.underline}>삶 속에서 하나님께서 전하시는 사랑을 깨닫고,</span>
+              </span>
+            </span>
+            <span style={{ display: 'flex', gap: '0.25em' }}>
+              <strong className={s.highlight}>기도...</strong>
+              <span>
+                를 통해 <span className={s.underline}>하나님의 응답을 경험하며,</span>
+              </span>
+            </span>
+            <span style={{ display: 'flex', gap: '0.25em' }}>
+              <strong className={s.highlight}>사랑...</strong>
+              <span>
+                을 통해 {''}
+                <span className={s.underline}>
+                  서로를 품고 주 안에서 평안과 행복을 이루어 가는 공동체입니다.
+                </span>
+              </span>
             </span>
           </p>
           <br />
-          우리 교회가 말씀 위에 굳게 서고, 기도로 숨 쉬며, 사랑 안에서 온전해지도록
+          우리 교회가 말씀 위에 굳게 서고, 기도로 숨 쉬며, 사랑 안에서 온전해지도록 주님께서 먼저
+          길을 열어 주셨습니다.
           <br />
-          주님께서 먼저 길을 열어 주셨습니다.
-          <br />
-          그리고 그 사명을 함께 감당하라고 우리 모두를 한마음으로 묶어 주셨습니다.
-          <br />
-          <br />
-          그 사명을 통해 성도님들의 가정과 일터, 그리고 모든 일상 속에
-          <br />
-          하나님의 사랑이 흐르기를 소망하며
-          <br />
-          주님의 사랑을 삶으로 증거하는 교회와 성도님들이 될 수 있도록 함께 기도해 주세요.
+          그리고 그 사명을 함께 감당하도록 우리 모두를 한마음으로 묶어 주셨습니다.
           <br />
           <br />
-          이 자리에까지 인도하셨고, 지금도 우리와 함께하시는 하나님께 모든 영광과 찬송을 올려드리며,
+          이 부르심을 통해 성도님들의 가정과 일터, 그리고 모든 일상 속에 하나님의 사랑이 흘러가기를
+          소망하며, 주님의 사랑을 삶으로 증거하는 교회와 성도님들이 될 수 있도록 함께 기도해 주시기
+          바랍니다.
+          <br />
+          <br />
+          이 자리에까지 인도하시고, 지금도 우리와 함께하시는 하나님께 모든 영광과 찬송을 올려드리며,
           성도님 한 분 한 분을 주님의 이름으로 축복합니다.
           <br />
           <br />

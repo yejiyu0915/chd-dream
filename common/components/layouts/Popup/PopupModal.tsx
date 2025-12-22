@@ -187,6 +187,56 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
     }
   };
 
+  // rich_text를 React 요소로 렌더링하는 함수 (annotations 처리)
+  const renderRichText = (richText: any[]) => {
+    if (!richText || richText.length === 0) return null;
+
+    return richText.map((textItem, index) => {
+      const annotations = textItem.annotations || {};
+      const textContent = textItem.plain_text || '';
+
+      if (!textContent) return null;
+
+      let element: React.ReactNode = textContent;
+
+      // 코드 스타일 처리 (가장 먼저)
+      if (annotations.code) {
+        element = <code className={styles.inlineCode}>{element}</code>;
+      }
+
+      // 굵은 글씨 처리
+      if (annotations.bold) {
+        element = <strong>{element}</strong>;
+      }
+
+      // 기울임 처리
+      if (annotations.italic) {
+        element = <em>{element}</em>;
+      }
+
+      // 밑줄 처리
+      if (annotations.underline) {
+        element = <u>{element}</u>;
+      }
+
+      // 취소선 처리
+      if (annotations.strikethrough) {
+        element = <s>{element}</s>;
+      }
+
+      // 링크 처리
+      if (textItem.href) {
+        element = (
+          <a href={textItem.href} target="_blank" rel="noopener noreferrer">
+            {element}
+          </a>
+        );
+      }
+
+      return <React.Fragment key={index}>{element}</React.Fragment>;
+    });
+  };
+
   // 블록 렌더링 함수 (Notion BlockObjectResponse를 받아서 렌더링)
   const renderBlock = (block: BlockObjectResponse) => {
     const blockType = block.type;
@@ -195,38 +245,40 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
     switch (blockType) {
       case 'paragraph': {
         const paragraph = block.paragraph;
-        const text = paragraph.rich_text.map((t) => t.plain_text).join('');
-        return text ? <p className={styles.paragraph}>{text}</p> : null;
+        const richTextContent = renderRichText(paragraph.rich_text);
+        return richTextContent ? <p className={styles.paragraph}>{richTextContent}</p> : null;
       }
       case 'heading_1': {
         const heading = block.heading_1;
-        const text = heading.rich_text.map((t) => t.plain_text).join('');
-        return text ? <h1 className={styles.heading1}>{text}</h1> : null;
+        const richTextContent = renderRichText(heading.rich_text);
+        return richTextContent ? <h1 className={styles.heading1}>{richTextContent}</h1> : null;
       }
       case 'heading_2': {
         const heading = block.heading_2;
-        const text = heading.rich_text.map((t) => t.plain_text).join('');
-        return text ? <h2 className={styles.heading2}>{text}</h2> : null;
+        const richTextContent = renderRichText(heading.rich_text);
+        return richTextContent ? <h2 className={styles.heading2}>{richTextContent}</h2> : null;
       }
       case 'heading_3': {
         const heading = block.heading_3;
-        const text = heading.rich_text.map((t) => t.plain_text).join('');
-        return text ? <h3 className={styles.heading3}>{text}</h3> : null;
+        const richTextContent = renderRichText(heading.rich_text);
+        return richTextContent ? <h3 className={styles.heading3}>{richTextContent}</h3> : null;
       }
       case 'bulleted_list_item': {
         const listItem = block.bulleted_list_item;
-        const text = listItem.rich_text.map((t) => t.plain_text).join('');
-        return text ? <li className={styles.listItem}>• {text}</li> : null;
+        const richTextContent = renderRichText(listItem.rich_text);
+        return richTextContent ? <li className={styles.listItem}>• {richTextContent}</li> : null;
       }
       case 'numbered_list_item': {
         const listItem = block.numbered_list_item;
-        const text = listItem.rich_text.map((t) => t.plain_text).join('');
-        return text ? <li className={styles.listItem}>{text}</li> : null;
+        const richTextContent = renderRichText(listItem.rich_text);
+        return richTextContent ? <li className={styles.listItem}>{richTextContent}</li> : null;
       }
       case 'quote': {
         const quote = block.quote;
-        const text = quote.rich_text.map((t) => t.plain_text).join('');
-        return text ? <blockquote className={styles.quote}>{text}</blockquote> : null;
+        const richTextContent = renderRichText(quote.rich_text);
+        return richTextContent ? (
+          <blockquote className={styles.quote}>{richTextContent}</blockquote>
+        ) : null;
       }
       case 'code': {
         const code = block.code;

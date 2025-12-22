@@ -56,7 +56,7 @@ export const pageMeta: Record<string, PageMeta> = {
   // menuData에 없는 페이지는 수동 추가
   '/location': {
     title: '오시는 길',
-    description: '교회로 찾아오시는 길을 안내합니다.',
+    description: '하나님께로 향한 당신의 발걸음을 기뻐하십니다.',
   },
 
   // description만 더 상세하게 오버라이드

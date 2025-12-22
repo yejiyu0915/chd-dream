@@ -67,9 +67,9 @@ export default function QuickLink() {
         >
           <h2 className="sr-only">Quick Link</h2>
           <p className={q.title}>
-            행복으로가는교회에 <br className="only-mo" />
-            오신 여러분을 <br />
-            진심으로 환영합니다
+            행복으로가는교회에 오신
+            <br />
+            <strong>여러분을 환영합니다</strong>
           </p>
         </motion.div>
         <div className={q.content}>

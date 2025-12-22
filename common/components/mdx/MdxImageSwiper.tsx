@@ -264,12 +264,24 @@ export default function MdxImageSwiperWrapper({ children }: MdxImageSwiperWrappe
       groupImages: ImageGroup['images'];
       groupIdx: number;
     }) => {
+      let swiperInstance: any = null;
+
       const handleImageClick = (imageIdx: number) => {
         // containerRef를 통해 최신 handleOpenModal 함수에 접근
         const event = new CustomEvent('mdx-image-click', {
           detail: { groupIndex: groupIdx, imageIndex: imageIdx, images: groupImages },
         });
         document.dispatchEvent(event);
+      };
+
+      // 이미지 로드 후 Swiper 높이 업데이트
+      const handleImageLoad = () => {
+        if (swiperInstance) {
+          // 약간의 지연을 두고 높이 업데이트 (이미지 렌더링 완료 대기)
+          setTimeout(() => {
+            swiperInstance.updateAutoHeight();
+          }, 100);
+        }
       };
 
       // 이미지가 1개일 때는 단일 이미지 클래스 추가
@@ -287,7 +299,15 @@ export default function MdxImageSwiperWrapper({ children }: MdxImageSwiperWrappe
           navigation={true}
           centeredSlides={false}
           loop={false}
+          autoHeight={true}
           className={swiperClassName}
+          onSwiper={(swiper) => {
+            swiperInstance = swiper;
+            // 초기 로드 시 높이 업데이트
+            setTimeout(() => {
+              swiper.updateAutoHeight();
+            }, 100);
+          }}
           breakpoints={{
             0: {
               slidesPerView: 1.2,
@@ -301,6 +321,10 @@ export default function MdxImageSwiperWrapper({ children }: MdxImageSwiperWrappe
               slidesPerView: 2.2,
               spaceBetween: 24,
             },
+          }}
+          onSlideChange={(swiper) => {
+            // 슬라이드 변경 시 높이 업데이트
+            swiper.updateAutoHeight();
           }}
         >
           {groupImages.map((img, imgIndex) => (
@@ -317,6 +341,7 @@ export default function MdxImageSwiperWrapper({ children }: MdxImageSwiperWrappe
                   height={parseInt(img.height)}
                   sizes="(max-width: 768px) 100vw, 80vw"
                   loading={imgIndex === 0 ? 'eager' : 'lazy'}
+                  onLoad={handleImageLoad}
                 />
               </div>
             </SwiperSlide>
