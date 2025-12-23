@@ -602,7 +602,7 @@ function TextReveal({
           }}
         >
           {/* 초기 로딩 최적화: eager + sync 디코딩 */}
-          <img src={image} alt="" loading="eager" decoding="sync" />
+          <img src={image} alt={title || '비전 이미지'} loading="eager" decoding="sync" />
         </div>
       )}
     </div>

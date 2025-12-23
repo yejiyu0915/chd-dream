@@ -632,9 +632,18 @@
   background: var(--accent-tertiary);
   transition: background-color 0.2s ease;
   position: relative;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
 
   &:hover {
     opacity: 0.8;
+  }
+
+  &[aria-expanded='false'] {
+    background-color: var(--accent-border-subtle);
+    border-bottom: 1px solid var(--text-inverse);
   }
 
   @include mq(ta) {

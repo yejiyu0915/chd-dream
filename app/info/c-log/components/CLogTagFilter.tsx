@@ -89,6 +89,7 @@ export default function CLogTagFilter({
             onClick={handleToggleExpand}
             className={c.tagFilter__toggleButton}
             aria-expanded={isExpanded}
+            aria-label={isExpanded ? '태그 목록 접기' : '태그 목록 펼치기'}
           >
             <Icon name={isExpanded ? 'arrow-up' : 'arrow-down'} size="md" />
           </button>

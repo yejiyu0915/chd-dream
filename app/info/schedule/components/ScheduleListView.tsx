@@ -313,17 +313,19 @@ export default function ScheduleListView({
               viewport={{ margin: '50px' }}
               variants={sectionVariants}
             >
-              <div
+              <button
+                type="button"
                 className={s.scheduleListDayHeader}
                 onClick={() => toggleDate('ongoing')}
-                style={{ cursor: 'pointer' }}
+                aria-expanded={expandedDates.has('ongoing')}
+                aria-label={`진행 중인 일정 ${expandedDates.has('ongoing') ? '접기' : '펼치기'}`}
               >
                 <div className={s.scheduleListDayDate}>진행 중인 일정</div>
                 <div className={s.scheduleListDayCount}>{ongoingEvents.length}개</div>
                 <div className={s.accordionIcon}>
                   <Icon name={expandedDates.has('ongoing') ? 'arrow-down' : 'arrow-up'} />
                 </div>
-              </div>
+              </button>
               {expandedDates.has('ongoing') && (
                 <div className={s.scheduleListEvents}>
                   {ongoingEvents.map((event, eventIndex) => {
@@ -376,10 +378,16 @@ export default function ScheduleListView({
                 viewport={{ margin: '50px' }}
                 variants={sectionVariants}
               >
-                <div
+                <button
+                  type="button"
                   className={s.scheduleListDayHeader}
                   onClick={() => toggleDate(dateKey)}
-                  style={{ cursor: 'pointer' }}
+                  aria-expanded={isExpanded}
+                  aria-label={`${date.toLocaleDateString('ko-KR', {
+                    month: 'long',
+                    day: 'numeric',
+                    weekday: 'long',
+                  })} 일정 ${isExpanded ? '접기' : '펼치기'}`}
                 >
                   <div className={s.scheduleListDayDate}>
                     {date.toLocaleDateString('ko-KR', {
@@ -400,7 +408,7 @@ export default function ScheduleListView({
                   <div className={s.accordionIcon}>
                     <Icon name={isExpanded ? 'arrow-down' : 'arrow-up'} />
                   </div>
-                </div>
+                </button>
                 {isExpanded && (
                   <div className={s.scheduleListEvents}>
                     {events.map((event, eventIndex) => {

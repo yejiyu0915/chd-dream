@@ -150,13 +150,6 @@ export default function CLogList({
     }),
   };
 
-  // 디버깅을 위한 console.log 추가 (임시)
-  // console.log('CLogList Debug:', {
-  //   cLogDataLength: cLogData?.length,
-  //   visibleItemCount,
-  //   itemsPerPage,
-  //   hasMoreItems,
-  // });
 
   // 로딩 중이지만 초기 데이터가 있으면 표시, 없을 때만 로딩 스피너 표시
   if (isLoading && !hasInitialData) {
