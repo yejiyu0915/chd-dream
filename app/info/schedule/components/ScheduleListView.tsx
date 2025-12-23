@@ -323,19 +323,17 @@ export default function ScheduleListView({
             type="button"
             className={s.scheduleListToggleAll}
             onClick={expandAll}
-            aria-label="모든 일정 펼치기"
           >
             <span className={s.toggleIcon}>+</span>
-            OPEN
+            모두 펼치기
           </button>
           <button
             type="button"
             className={s.scheduleListToggleAll}
             onClick={collapseAll}
-            aria-label="모든 일정 닫기"
           >
             <span className={s.toggleIcon}>-</span>
-            CLOSE
+            모두 닫기
           </button>
         </div>
       </div>
@@ -361,13 +359,13 @@ export default function ScheduleListView({
                 className={s.scheduleListDayHeader}
                 onClick={() => toggleDate('ongoing')}
                 aria-expanded={expandedDates.has('ongoing')}
-                aria-label={`진행 중인 일정 ${expandedDates.has('ongoing') ? '접기' : '펼치기'}`}
               >
                 <div className={s.scheduleListDayDate}>진행 중인 일정</div>
                 <div className={s.scheduleListDayCount}>{ongoingEvents.length}개</div>
                 <div className={s.accordionIcon}>
-                  <Icon name={expandedDates.has('ongoing') ? 'arrow-down' : 'arrow-up'} />
+                  <Icon name={expandedDates.has('ongoing') ? 'arrow-down' : 'arrow-up'} aria-hidden="true" />
                 </div>
+                <span className="sr-only">{expandedDates.has('ongoing') ? '접기' : '펼치기'}</span>
               </button>
               {expandedDates.has('ongoing') && (
                 <div className={s.scheduleListEvents}>
@@ -426,11 +424,6 @@ export default function ScheduleListView({
                   className={s.scheduleListDayHeader}
                   onClick={() => toggleDate(dateKey)}
                   aria-expanded={isExpanded}
-                  aria-label={`${date.toLocaleDateString('ko-KR', {
-                    month: 'long',
-                    day: 'numeric',
-                    weekday: 'long',
-                  })} 일정 ${isExpanded ? '접기' : '펼치기'}`}
                 >
                   <div className={s.scheduleListDayDate}>
                     {date.toLocaleDateString('ko-KR', {
@@ -449,8 +442,9 @@ export default function ScheduleListView({
                   </div>
                   <div className={s.scheduleListDayCount}>{events.length}개 일정</div>
                   <div className={s.accordionIcon}>
-                    <Icon name={isExpanded ? 'arrow-down' : 'arrow-up'} />
+                    <Icon name={isExpanded ? 'arrow-down' : 'arrow-up'} aria-hidden="true" />
                   </div>
+                  <span className="sr-only">{isExpanded ? '접기' : '펼치기'}</span>
                 </button>
                 {isExpanded && (
                   <div className={s.scheduleListEvents}>
