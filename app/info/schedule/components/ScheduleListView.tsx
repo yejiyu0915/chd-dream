@@ -169,6 +169,29 @@ export default function ScheduleListView({
     };
   }, [scheduleData, dateRange]);
 
+  // 모두 펼치기 함수
+  const expandAll = () => {
+    const allDateKeys = new Set<string>(ongoingEvents.length > 0 ? ['ongoing'] : []);
+    groupedScheduleData.forEach(({ date }) => {
+      allDateKeys.add(date.toISOString().split('T')[0]);
+    });
+    setExpandedDates(allDateKeys);
+  };
+
+  // 모두 닫기 함수
+  const collapseAll = () => {
+    setExpandedDates(new Set<string>());
+  };
+
+  // 모든 항목이 펼쳐져 있는지 확인
+  const allExpanded = useMemo(() => {
+    const allDateKeys = new Set<string>(ongoingEvents.length > 0 ? ['ongoing'] : []);
+    groupedScheduleData.forEach(({ date }) => {
+      allDateKeys.add(date.toISOString().split('T')[0]);
+    });
+    return allDateKeys.size > 0 && Array.from(allDateKeys).every((key) => expandedDates.has(key));
+  }, [expandedDates, groupedScheduleData, ongoingEvents.length]);
+
   // 기간 내 일정들의 날짜 키들을 기본적으로 펼침 상태로 설정
   useEffect(() => {
     if (groupedScheduleData.length === 0) return;
@@ -286,8 +309,8 @@ export default function ScheduleListView({
 
       <div className={s.scheduleListInfo}>
         <p className={s.scheduleListSubtitle}>
-          총 <strong>{ongoingEvents.length + groupedScheduleData.length}일</strong>의 일정이
-          있습니다
+          총 <strong>{ongoingEvents.length + groupedScheduleData.length}일</strong>의 일정
+          <span className="only-pc">이 있습니다</span>
           {ongoingEvents.length > 0 && (
             <>
               {' '}
@@ -295,6 +318,26 @@ export default function ScheduleListView({
             </>
           )}
         </p>
+        <div className={s.scheduleListToggleButtons}>
+          <button
+            type="button"
+            className={s.scheduleListToggleAll}
+            onClick={expandAll}
+            aria-label="모든 일정 펼치기"
+          >
+            <span className={s.toggleIcon}>+</span>
+            OPEN
+          </button>
+          <button
+            type="button"
+            className={s.scheduleListToggleAll}
+            onClick={collapseAll}
+            aria-label="모든 일정 닫기"
+          >
+            <span className={s.toggleIcon}>-</span>
+            CLOSE
+          </button>
+        </div>
       </div>
 
       {ongoingEvents.length === 0 && groupedScheduleData.length === 0 ? (
