@@ -233,6 +233,11 @@
     }
   }
 
+  &__verse {
+    display: flex;
+    gap: 0.5em;
+  }
+
   @include mq(pc-sm) {
     // padding: vw(48) vw(32) vw(60);
 
@@ -275,4 +280,3 @@
     }
   }
 }
-

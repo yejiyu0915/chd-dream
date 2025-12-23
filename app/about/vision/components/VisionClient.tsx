@@ -820,10 +820,10 @@ export default function VisionClient() {
                 title="오직 말씀"
                 englishTitle="Grounded in the Bible"
                 lines={[
-                  '하나님의 말씀을 깊이 배우고',
-                  '바르게 해석하며',
-                  '그 가르침을 삶의 현장에서 실천하여',
-                  '열매 맺는 교회입니다.',
+                  '하나님의 말씀을 깊이 배우고,',
+                  '바르게 해석하며,',
+                  '그 가르침을 삶의 현장에서',
+                  '실천함으로 열매 맺는 교회',
                 ]}
                 align="left"
                 scrollProgress={progress}
@@ -845,8 +845,7 @@ export default function VisionClient() {
                   '개인기도와 중보기도,',
                   '그리고 저녁 기도회를 통해',
                   '하나님의 능력을 체험하며',
-                  '성령의 인도하심에 순종하는',
-                  '교회입니다.',
+                  '성령의 인도하심에 순종하는 교회',
                 ]}
                 align="right"
                 scrollProgress={progress}
@@ -864,10 +863,10 @@ export default function VisionClient() {
                 title="온전한 사랑"
                 englishTitle="Perfect in Love"
                 lines={[
-                  '성도 간의 연합, 지역사회를 향한 섬김,',
+                  '성도 간의 연합과 지역사회를 향한 섬김,',
                   '다음 세대를 향한 사랑의 실천을 통해',
-                  '따뜻하고 건강한 공동체를 만들어가는',
-                  '교회입니다.',
+                  '따뜻하고 건강한 공동체를',
+                  '이루어 가는 교회',
                 ]}
                 align="center"
                 scrollProgress={progress}

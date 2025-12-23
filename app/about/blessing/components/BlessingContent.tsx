@@ -50,16 +50,25 @@ export default function BlessingContent() {
               <blockquote>
                 <p>
                   <em>[시 121:1-2]</em>
-                  <br />
-                  (성전으로 올라가는 노래) 내가 산을 향하여 눈을 들리라 나의 도움이 어디서 올꼬 나의
-                  도움 이 천지를 지으신 여호와에게서로다
+                  <span className={s.content__verse}>
+                    <span>1</span>
+                    <span>
+                      (성전으로 올라가는 노래) 내가 산을 향하여 눈을 들리라 나의 도움이 어디서 올꼬
+                    </span>
+                  </span>
+                  <span className={s.content__verse}>
+                    <span>2</span>
+                    <span>나의 도움이 천지를 지으신 여호와에게서로다</span>
+                  </span>
                 </p>
               </blockquote>
               <blockquote>
                 <p>
                   <em>[시 124:8]</em>
-                  <br />
-                  우리의 도움은 천지를 지으신 여호와의 이름에 있도다
+                  <span className={s.content__verse}>
+                    <span>8</span>
+                    <span>우리의 도움은 천지를 지으신 여호와의 이름에 있도다</span>
+                  </span>
                 </p>
               </blockquote>
               <p>
@@ -79,8 +88,13 @@ export default function BlessingContent() {
               <blockquote>
                 <p>
                   <em>[마 16:18]</em>
-                  <br />또 내가 네게 이르노니 너는 베드로라 내가 이 반석 위에 내 교회를 세우리니
-                  음부의 권세가 이기지 못하리라
+                  <span className={s.content__verse}>
+                    <span>18</span>
+                    <span>
+                      또 내가 네게 이르노니 너는 베드로라 내가 이 반석 위에 내 교회를 세우리니
+                      음부의 권세가 이기지 못하리라
+                    </span>
+                  </span>
                 </p>
               </blockquote>
               <p>
@@ -90,12 +104,21 @@ export default function BlessingContent() {
               <blockquote>
                 <p>
                   <em>[출 8:25-26]</em>
-                  <br />
-                  바로가 모세와 아론을 불러 이르되 너희는 가서 이 땅에서 너희 하나님께 희생을 드리라
-                  <br />
-                  모세가 가로되 그리함은 불가하니이다 우리가 우리 하나님 여호와께 희생을 드리는 것은
-                  애굽 사람의 미워하는 바이온즉 우리가 만일 애굽 사람의 목전에서 희생을 드리면
-                  그들이 그것을 미워하여 우리를 돌로 치지 아니하리이까
+                  <span className={s.content__verse}>
+                    <span>25</span>
+                    <span>
+                      바로가 모세와 아론을 불러 이르되 너희는 가서 이 땅에서 너희 하나님께 희생을
+                      드리라
+                    </span>
+                  </span>
+                  <span className={s.content__verse}>
+                    <span>26</span>
+                    <span>
+                      모세가 가로되 그리함은 불가하니이다 우리가 우리 하나님 여호와께 희생을 드리는
+                      것은 애굽 사람의 미워하는 바이온즉 우리가 만일 애굽 사람의 목전에서 희생을
+                      드리면 그들이 그것을 미워하여 우리를 돌로 치지 아니하리이까
+                    </span>
+                  </span>
                 </p>
               </blockquote>
               <p>
@@ -115,10 +138,14 @@ export default function BlessingContent() {
               <blockquote>
                 <p>
                   <em>[사 56:7]</em>
-                  <br />
-                  내가 그를 나의 성산으로 인도하여 기도하는 내 집에서 그들을 기쁘게 할 것이며 그들의
-                  번제와 희생은 나의 단에서 기꺼이 받게 되리니 이는 내 집은 만민의 기도하는 집이라
-                  일컬음이 될 것임이라
+                  <span className={s.content__verse}>
+                    <span>7</span>
+                    <span>
+                      내가 그를 나의 성산으로 인도하여 기도하는 내 집에서 그들을 기쁘게 할 것이며
+                      그들의 번제와 희생은 나의 단에서 기꺼이 받게 되리니 이는 내 집은 만민의
+                      기도하는 집이라 일컬음이 될 것임이라
+                    </span>
+                  </span>
                 </p>
               </blockquote>
               <p>
@@ -129,11 +156,17 @@ export default function BlessingContent() {
               <blockquote>
                 <p>
                   <em>[대하 7:15-16]</em>
-                  <br />
-                  이곳에서 하는 기도에 내가 눈을 들고 귀를 기울이리니
-                  <br />
-                  이는 내가 이미 이 전을 택하고 거룩하게 하여 내 이름으로 여기 영영히 있게
-                  하였음이라 내 눈과 내 마음이 항상 여기 있으리라
+                  <span className={s.content__verse}>
+                    <span>15</span>
+                    <span>이곳에서 하는 기도에 내가 눈을 들고 귀를 기울이리니</span>
+                  </span>
+                  <span className={s.content__verse}>
+                    <span>16</span>
+                    <span>
+                      이는 내가 이미 이 전을 택하고 거룩하게하여 내 이름으로 여기 영영히 있게
+                      하였음이라 내 눈과 내 마음이 항상 여기 있으리라
+                    </span>
+                  </span>
                 </p>
               </blockquote>
               <p>
@@ -154,11 +187,17 @@ export default function BlessingContent() {
               <blockquote>
                 <p>
                   <em>[요 4:13-14]</em>
-                  <br />
-                  예수께서 대답하여 가라사대 이 물을 먹는 자마다 다시 목마르려니와
-                  <br />
-                  내가 주는 물을 먹는 자는 영원히 목마르지 아니하리니 나의 주는 물은 그 속에서
-                  영생하도록 솟아나는 샘물이 되리라
+                  <span className={s.content__verse}>
+                    <span>13</span>
+                    <span>예수께서 대답하여 가라사대 이 물을 먹는 자마다 다시 목마르려니와</span>
+                  </span>
+                  <span className={s.content__verse}>
+                    <span>14</span>
+                    <span>
+                      내가 주는 물을 먹는 자는 영원히 목마르지 아니하리니 나의 주는 물은 그 속에서
+                      영생하도록 솟아나는 샘물이 되리라
+                    </span>
+                  </span>
                 </p>
               </blockquote>
               <p>
@@ -174,9 +213,13 @@ export default function BlessingContent() {
               <blockquote>
                 <p>
                   <em>[겔 47:1]</em>
-                  <br />
-                  그가 나를 데리고 전 문에 이르시니 전의 전면이 동을 향하였는데 그 문지방 밑에서
-                  물이 나와서 동으로 흐르다가 전 우편 제단 남편으로 흘러 내리더라
+                  <span className={s.content__verse}>
+                    <span>1</span>
+                    <span>
+                      그가 나를 데리고 전 문에 이르시니 전의 전면이 동을 향하였는데 그 문지방 밑에서
+                      물이 나와서 동으로 흐르다가 전 우편 제단 남편으로 흘러 내리더라
+                    </span>
+                  </span>
                 </p>
               </blockquote>
               <p>
@@ -187,9 +230,14 @@ export default function BlessingContent() {
               <blockquote>
                 <p>
                   <em>[겔 47:12]</em>
-                  <br />강 좌우 가에는 각종 먹을 실과나무가 자라서 그 잎이 시들지 아니하며 실과가
-                  끊치지 아니하고 달마다 새 실과를 맺으리니 그물이 성소로 말미암아 나옴이라 그
-                  실과는 먹을 만하고 그 잎사귀는 약재료가 되리라
+                  <span className={s.content__verse}>
+                    <span>12</span>
+                    <span>
+                      강 좌우 가에는 각종 먹을 실과나무가 자라서 그 잎이 시들지 아니하며 실과가
+                      끊치지 아니하고 달마다 새 실과를 맺으리니 그 물이 성소로 말미암아 나옴이라 그
+                      실과는 먹을 만하고 그 잎사귀는 약 재료가 되리라
+                    </span>
+                  </span>
                 </p>
               </blockquote>
               <p>
@@ -214,4 +262,3 @@ export default function BlessingContent() {
     </div>
   );
 }
-
