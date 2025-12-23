@@ -262,3 +262,4 @@ export default function BlessingContent() {
     </div>
   );
 }
+
