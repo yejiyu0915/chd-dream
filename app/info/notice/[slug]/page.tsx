@@ -7,7 +7,7 @@ import rehypeSlug from 'rehype-slug';
 
 import { compile } from '@mdx-js/mdx';
 
-import { getNotionPageAndContentBySlug, notion, getPrevNextNoticePosts } from '@/lib/notion';
+import { getNotionPageAndContentBySlug, notion, getPrevNextNoticePosts, getNoticeData } from '@/lib/notion';
 import { NotionToMarkdown } from 'notion-to-md';
 import l from '@/common/styles/mdx/MdxLayout.module.scss';
 import NoticeDetailHeader from '@/app/info/notice/[slug]/components/NoticeDetailHeader';
@@ -63,6 +63,23 @@ async function getMarkdownContent(slug: string) {
     // 에러 발생 시 빈 문자열 반환하여 콘텐츠는 표시되지 않지만 페이지는 표시됨
     console.error('공지사항 콘텐츠를 가져오는 중 오류 발생:', error);
     return '';
+  }
+}
+
+// 빌드 타임에 정적 경로 생성 (운영 환경에서 페이지가 보이도록)
+export async function generateStaticParams() {
+  try {
+    const noticeData = await getNoticeData();
+    // slug가 있는 항목만 반환
+    return noticeData
+      .filter((item) => item.slug && item.slug.trim() !== '')
+      .map((item) => ({
+        slug: item.slug,
+      }));
+  } catch (error) {
+    // 에러 발생 시 빈 배열 반환 (런타임에 동적으로 생성)
+    console.error('generateStaticParams error:', error);
+    return [];
   }
 }
 

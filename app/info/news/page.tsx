@@ -1,4 +1,4 @@
-import { getNewsData } from '@/lib/notion';
+import { getNewsData, NewsItem } from '@/lib/notion';
 import NewsListClient from '@/app/info/news/components/NewsListClient';
 import { generatePageMetadata } from '@/common/data/metadata';
 
@@ -7,7 +7,7 @@ export const metadata = generatePageMetadata('/info/news');
 // 서버 컴포넌트로 변경 - 데이터를 서버에서 미리 fetch
 export default async function NewsListPage() {
   // 서버에서 News 데이터를 가져옴 (빠른 초기 로딩)
-  let newsData;
+  let newsData: NewsItem[] = [];
   try {
     newsData = await getNewsData();
   } catch (error) {
