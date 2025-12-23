@@ -172,5 +172,8 @@
     height: auto;
     display: block;
     margin: 1em auto;
+    @include mq(mo) {
+      width: 100%;
+    }
   }
 }

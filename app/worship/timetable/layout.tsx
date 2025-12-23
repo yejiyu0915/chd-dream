@@ -6,3 +6,4 @@ export default function TimetableLayout({ children }: { children: React.ReactNod
   return <>{children}</>;
 }
 
+
