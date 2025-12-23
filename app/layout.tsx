@@ -74,6 +74,16 @@ export const metadata: Metadata = {
     canonical: siteUrl,
   },
 
+  // 파비콘 설정 (Google 검색 결과에 표시)
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.ico', type: 'image/x-icon' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
+
   // 네이버 서치어드바이저 인증 (other 속성 사용)
   other: {
     'naver-site-verification': 'd0a15c47282c909f8a1a196ad440f38a503a431f',
