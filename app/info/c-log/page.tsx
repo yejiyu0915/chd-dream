@@ -1,4 +1,4 @@
-import { getCLogData } from '@/lib/notion';
+import { getCLogData, CLogItem } from '@/lib/notion';
 import CLogListClient from '@/app/info/c-log/components/CLogListClient';
 import { generatePageMetadata } from '@/common/data/metadata';
 
@@ -17,7 +17,14 @@ export default async function CLogListPage({
   const params = await searchParams;
 
   // 서버에서 C-Log 데이터를 병렬로 가져옴 (빠른 초기 로딩)
-  const cLogData = await getCLogData();
+  let cLogData: CLogItem[] = [];
+  try {
+    cLogData = await getCLogData();
+  } catch (error) {
+    // 에러 발생 시 빈 배열로 초기화하여 페이지는 표시되도록 함
+    console.error('C-log 데이터를 가져오는 중 오류 발생:', error);
+    cLogData = [];
+  }
 
   // searchParams를 props로 전달
   return <CLogListClient initialCLogData={cLogData} searchParams={params} />;
