@@ -282,8 +282,11 @@ export default function HeaderPC({ isScrolled }: HeaderPCProps) {
                     closeMobileMenu();
                   }
                 }}
+                aria-label="오시는 길"
               >
-                <Icon name="map" className={h.icon} /> <span className="only-pc">오시는 길</span>
+                <Icon name="map" className={h.icon} aria-hidden="true" />
+                <span className="only-pc">오시는 길</span>
+                <span className="only-mo sr-only">오시는 길</span>
               </Link>
             </li>
             <li className={h.mobileMenuToggle}>
