@@ -69,7 +69,7 @@ a,
 main {
   min-height: 100vh;
   &:not(:has([class*='main__content'])) {
-    margin-block-end: vw(688);
+    margin-block-end: vw(660);
     padding-block-end: vw(60);
     position: relative;
     z-index: 1;
@@ -81,15 +81,15 @@ main {
       margin-block-end: vw(620);
     }
     @include mq(ta) {
-      margin-block-end: vw(700);
+      margin-block-end: vw(660);
     }
     @include mq(mo) {
-      margin-block-end: vw(640);
+      margin-block-end: vw(570);
       padding-block-end: vw(40);
       border-radius: 0 0 vw(20) vw(20);
     }
     @include mq(mo-sm) {
-      margin-block-end: vw(620);
+      margin-block-end: vw(540);
     }
   }
 }

@@ -376,9 +376,6 @@ main:not(:has([class*='main__content'])) ~ .footer {
   }
   @include mq(ta) {
     .top {
-      > div {
-        height: vw(280);
-      }
       .group {
         flex-direction: column;
       }
@@ -391,7 +388,7 @@ main:not(:has([class*='main__content'])) ~ .footer {
     .top {
       grid-template-columns: repeat(1, 1fr);
       > div {
-        height: vw(240);
+        height: vw(200);
       }
     }
     .box {

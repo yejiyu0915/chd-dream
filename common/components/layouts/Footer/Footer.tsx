@@ -149,9 +149,9 @@ export default function Footer() {
                 <Link href={`tel:${contactInfo.phone1}`}>
                   <Icon name="phone" className={f.icon} /> {contactInfo.phone1}
                 </Link>
-                <Link href={`tel:${contactInfo.phone2}`}>
+                {/* <Link href={`tel:${contactInfo.phone2}`}>
                   <Icon name="phone" className={f.icon} /> {contactInfo.phone2}
-                </Link>
+                </Link> */}
               </div>
             </div>
           </motion.div>
@@ -164,8 +164,8 @@ export default function Footer() {
               <dd>
                 {contactInfo.denomination} {contactInfo.name}
               </dd>
-              <dt>FAX</dt>
-              <dd>{contactInfo.fax}</dd>
+              {/* <dt>FAX</dt>
+              <dd>{contactInfo.fax}</dd> */}
               <dt>ADDRESS</dt>
               <dd>{contactInfo.address}</dd>
             </dl>

@@ -70,18 +70,18 @@ export const menuData: MenuItem[] = [
 
 export interface ContactInfo {
   phone1: string;
-  phone2: string;
+  // phone2: string;
   address: string;
-  fax: string;
+  // fax: string;
   denomination: string;
   name: string;
 }
 
 export const contactInfo: ContactInfo = {
   phone1: '032-424-9004',
-  phone2: '032-463-9004',
+  // phone2: '032-463-9004',
   address: '21552 인천 남동구 문화로 227 (간석동, 행복으로가는교회)',
-  fax: '032-465-9004',
+  // fax: '032-465-9004',
   name: '행복으로가는교회',
   denomination: '순복음',
 };
