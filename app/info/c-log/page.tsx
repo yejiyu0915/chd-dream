@@ -20,9 +20,27 @@ export default async function CLogListPage({
   let cLogData: CLogItem[] = [];
   try {
     cLogData = await getCLogData();
+
+    // 데이터가 비어있는 경우 로깅 (프로덕션 모니터링용)
+    if (!cLogData || cLogData.length === 0) {
+      console.warn('[C-log] 리스트 페이지: 데이터가 비어있습니다.', {
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV,
+      });
+    } else {
+      console.log(`[C-log] 리스트 페이지: ${cLogData.length}개의 항목을 가져왔습니다.`);
+    }
   } catch (error) {
     // 에러 발생 시 빈 배열로 초기화하여 페이지는 표시되도록 함
-    console.error('C-log 데이터를 가져오는 중 오류 발생:', error);
+    // 프로덕션 모니터링을 위한 구조화된 에러 로깅
+    const errorDetails = {
+      message: error instanceof Error ? error.message : String(error),
+      name: error instanceof Error ? error.name : 'UnknownError',
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV,
+    };
+    console.error('[C-log] 리스트 페이지 데이터를 가져오는 중 오류 발생:', errorDetails);
     cLogData = [];
   }
 

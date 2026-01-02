@@ -48,53 +48,101 @@ export async function getNotionData<T extends GenericItem>(
     return [];
   }
 
-  try {
-    // 2025-09-03 버전업에 따라 data_source_id를 먼저 가져와야 함
-    const databaseInfo = await notion.databases.retrieve({ database_id: notionDatabaseId });
+  // 재시도 로직 (최대 3회, 지수 백오프)
+  const maxRetries = 3;
+  let lastError: unknown = null;
 
-    let dataSourceId: string | undefined;
-    if (
-      'data_sources' in databaseInfo &&
-      Array.isArray(databaseInfo.data_sources) &&
-      databaseInfo.data_sources.length > 0
-    ) {
-      dataSourceId = databaseInfo.data_sources[0].id; // 첫 번째 data_source_id 사용
-    } else {
-      // data_sources가 없거나 비어있는 경우, 이전처럼 database_id를 사용 (하위 호환성을 위해)
-      dataSourceId = notionDatabaseId; // 이 부분은 실제 API 호출에서 database_id로 대체될 수 있습니다.
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      // 2025-09-03 버전업에 따라 data_source_id를 먼저 가져와야 함
+      const databaseInfo = await notion.databases.retrieve({ database_id: notionDatabaseId });
+
+      let dataSourceId: string | undefined;
+      if (
+        'data_sources' in databaseInfo &&
+        Array.isArray(databaseInfo.data_sources) &&
+        databaseInfo.data_sources.length > 0
+      ) {
+        dataSourceId = databaseInfo.data_sources[0].id; // 첫 번째 data_source_id 사용
+      } else {
+        // data_sources가 없거나 비어있는 경우, 이전처럼 database_id를 사용 (하위 호환성을 위해)
+        dataSourceId = notionDatabaseId; // 이 부분은 실제 API 호출에서 database_id로 대체될 수 있습니다.
+      }
+
+      // Notion 데이터베이스 쿼리
+      // Notion SDK v5에서는 dataSources.query를 사용 (업그레이드 가이드 참조)
+      const pageSize = options?.pageSize || 1000;
+
+      const response: any = await notion.dataSources.query({
+        data_source_id: dataSourceId as string, // data_source_id 사용
+        filter: options?.filter,
+        sorts: options?.sorts,
+        page_size: pageSize,
+      });
+
+      // 쿼리 결과를 매퍼 함수를 사용하여 원하는 타입으로 변환
+      const items: T[] = response.results
+        .map((page: PageObjectResponse) => {
+          if (
+            !('properties' in page) ||
+            page.object !== 'page'
+            // !(page as PageObjectResponse).properties
+          ) {
+            return null; // properties가 없거나 페이지 객체가 아니거나 properties가 없는 경우 스킵
+          }
+          return mapper(page as PageObjectResponse); // PageObjectResponse로 타입 단언
+        })
+        .filter(Boolean) as T[]; // null 값 필터링 및 타입 단언
+
+      // 성공 시 재시도 로그 (프로덕션 모니터링용)
+      if (attempt > 0) {
+        console.log(`[Notion] ${databaseIdEnvVar} 데이터 가져오기 성공 (재시도 ${attempt}회 후)`);
+      }
+
+      return items;
+    } catch (error: unknown) {
+      lastError = error;
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorName = error instanceof Error ? error.name : 'UnknownError';
+
+      // 재시도 가능한 에러인지 확인 (네트워크 오류, 타임아웃 등)
+      const isRetryableError =
+        errorName === 'APIResponseError' ||
+        errorMessage.includes('timeout') ||
+        errorMessage.includes('network') ||
+        errorMessage.includes('ECONNRESET') ||
+        errorMessage.includes('ETIMEDOUT') ||
+        (error instanceof Error && error.message.includes('rate limit'));
+
+      // 마지막 시도이거나 재시도 불가능한 에러인 경우
+      if (attempt === maxRetries - 1 || !isRetryableError) {
+        // 프로덕션 모니터링을 위한 구조화된 에러 로깅
+        console.error(`[Notion] ${databaseIdEnvVar} 데이터 가져오기 실패:`, {
+          databaseIdEnvVar,
+          attempt: attempt + 1,
+          maxRetries,
+          errorName,
+          errorMessage,
+          isRetryableError,
+          stack: error instanceof Error ? error.stack : undefined,
+          timestamp: new Date().toISOString(),
+        });
+        return [];
+      }
+
+      // 재시도 전 대기 (지수 백오프: 1초, 2초, 4초)
+      const delay = Math.pow(2, attempt) * 1000;
+      console.warn(
+        `[Notion] ${databaseIdEnvVar} 데이터 가져오기 실패, ${delay}ms 후 재시도 (${attempt + 1}/${maxRetries}):`,
+        errorMessage
+      );
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
-
-    // Notion 데이터베이스 쿼리
-    // Notion SDK v5에서는 dataSources.query를 사용 (업그레이드 가이드 참조)
-    const pageSize = options?.pageSize || 1000;
-
-    const response: any = await notion.dataSources.query({
-      data_source_id: dataSourceId as string, // data_source_id 사용
-      filter: options?.filter,
-      sorts: options?.sorts,
-      page_size: pageSize,
-    });
-
-    // 쿼리 결과를 매퍼 함수를 사용하여 원하는 타입으로 변환
-    const items: T[] = response.results
-      .map((page: PageObjectResponse) => {
-        if (
-          !('properties' in page) ||
-          page.object !== 'page'
-          // !(page as PageObjectResponse).properties
-        ) {
-          return null; // properties가 없거나 페이지 객체가 아니거나 properties가 없는 경우 스킵
-        }
-        return mapper(page as PageObjectResponse); // PageObjectResponse로 타입 단언
-      })
-      .filter(Boolean) as T[]; // null 값 필터링 및 타입 단언
-
-    return items;
-  } catch (_error: unknown) {
-    void _error; // _error가 사용되지 않는다는 린트 경고를 피하기 위해 추가
-    // console.error(`Notion 데이터 가져오기 중 오류 발생 (${databaseIdEnvVar}):`, _error);
-    return [];
   }
+
+  // 모든 재시도 실패 시
+  console.error(`[Notion] ${databaseIdEnvVar} 데이터 가져오기 최종 실패 (${maxRetries}회 시도)`);
+  return [];
 }
 
 // 발행된 Notion 데이터를 가져오는 헬퍼 함수
