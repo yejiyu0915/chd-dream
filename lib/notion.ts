@@ -887,15 +887,36 @@ async function getNotionPageAndContentBySlugInternal(
       dataSourceId = notionDatabaseId; // data_sources가 없거나 비어있는 경우, 이전처럼 database_id를 사용
     }
 
-    // 1. 슬러그로 페이지 찾기
+    // 1. 슬러그로 페이지 찾기 (Published 또는 Preview 상태만 허용)
+    // 리스트에는 Published만 보이지만, 상세 페이지는 Preview도 접근 가능하도록 함
     const response: any = await notion.dataSources.query({
       // Notion SDK v5에서는 dataSources.query를 사용
       data_source_id: dataSourceId as string, // data_source_id 사용
       filter: {
-        property: 'Slug', // Notion 데이터베이스의 slug 속성 이름
-        rich_text: {
-          equals: slug,
-        },
+        and: [
+          {
+            property: 'Slug', // Notion 데이터베이스의 slug 속성 이름
+            rich_text: {
+              equals: slug,
+            },
+          },
+          {
+            or: [
+              {
+                property: 'Status',
+                select: {
+                  equals: 'Published',
+                },
+              },
+              {
+                property: 'Status',
+                select: {
+                  equals: 'Preview',
+                },
+              },
+            ],
+          },
+        ],
       },
       page_size: 1, // 슬러그는 고유해야 하므로 하나만 가져옵니다.
     });
