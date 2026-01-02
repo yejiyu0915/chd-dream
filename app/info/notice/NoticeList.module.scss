@@ -131,7 +131,7 @@ $list: '.list';
       }
       &__title {
         @include font-vw(16);
-        word-break: break-all;
+        word-break: keep-all;
       }
       &__date {
         @include font-vw(14);
