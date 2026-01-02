@@ -105,7 +105,7 @@
         @include smooth-transition;
         position: relative;
 
-        @media (hover: hover) {
+        @media (hover: hover) and (pointer: fine) {
           &:hover {
             color: var(--accent-brand);
           }
@@ -138,7 +138,7 @@
       }
 
       // 호버 시 하단 바 표시
-      @media (hover: hover) {
+      @media (hover: hover) and (pointer: fine) {
         &:hover {
           .menu__link::after {
             width: 100%;
@@ -211,7 +211,7 @@
       @include smooth-transition;
       position: relative;
 
-      @media (hover: hover) {
+      @media (hover: hover) and (pointer: fine) {
         &:hover {
           color: var(--accent-brand);
           text-decoration: underline;
@@ -312,7 +312,7 @@
     }
   }
 
-  @media (hover: hover) {
+  @media (hover: hover) and (pointer: fine) {
     &.hover {
       --header-color: var(--text-main);
       --header-color-logo: var(--text-main);
@@ -523,7 +523,7 @@
           padding: vw(8) vw(20);
           @include font-vw(15);
 
-          @media (hover: hover) {
+          @media (hover: hover) and (pointer: fine) {
             &:hover {
               &::before {
                 @include font-vw(20);
@@ -760,7 +760,7 @@ $moSns: '.mobileSns';
       text-decoration: none;
       @include smooth-transition;
 
-      @media (hover: hover) {
+      @media (hover: hover) and (pointer: fine) {
         &:hover {
           color: var(--accent-brand);
           font-weight: 600;
@@ -856,7 +856,7 @@ $moSns: '.mobileSns';
       text-decoration: none;
       @include smooth-transition;
 
-      @media (hover: hover) {
+      @media (hover: hover) and (pointer: fine) {
         &:hover {
           color: var(--accent-brand);
         }

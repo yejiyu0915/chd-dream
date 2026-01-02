@@ -108,7 +108,7 @@
       color: var(--accent-brand);
     }
 
-    @media (hover: hover) {
+    @media (hover: hover) and (pointer: fine) {
       &:hover {
         background: var(--accent-brand);
         font-weight: 700;
@@ -206,7 +206,7 @@
         display: none;
       }
 
-      @media (hover: hover) {
+      @media (hover: hover) and (pointer: fine) {
         &:hover {
           background: transparent;
           color: var(--text-main);
@@ -880,7 +880,7 @@
       background-color: var(--accent-tertiary);
     }
 
-    @media (hover: hover) {
+    @media (hover: hover) and (pointer: fine) {
       a:hover {
         opacity: 1;
       }
@@ -922,7 +922,7 @@
       a {
         @include font-vw(18);
       }
-      @media (hover: hover) {
+      @media (hover: hover) and (pointer: fine) {
         &Color1:hover {
           border-width: vw(2);
         }

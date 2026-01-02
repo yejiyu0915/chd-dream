@@ -66,7 +66,7 @@
       color: var(--accent-brand);
     }
 
-    @media (hover: hover) {
+    @media (hover: hover) and (pointer: fine) {
       &:hover {
         background: var(--accent-brand);
         font-weight: 700;
@@ -161,7 +161,7 @@
         display: none;
       }
 
-      @media (hover: hover) {
+      @media (hover: hover) and (pointer: fine) {
         &:hover {
           background: transparent;
           color: var(--text-main);
@@ -385,7 +385,7 @@
       gap: vw(4);
     }
 
-    @media (hover: hover) {
+    @media (hover: hover) and (pointer: fine) {
       &:hover {
         opacity: 0.7;
       }

@@ -9,10 +9,10 @@ const servantImages: Record<string, string> = {
   'pastor-2': '01.png', // 김선숙
   'pastor-3': '02.jpg', // 김준섭
   'license-pastor-1': '12.jpg', // 송순옥
-  'evangelist-1': '11.jpg', // 유정란
-  'evangelist-2': '04.png', // 김미선
-  'evangelist-3': '10.jpg', // 장은연
-  'evangelist-4': '05.png', // 임선의
+  'evangelist-1': '04.png', // 김미선
+  'evangelist-2': '11.jpg', // 유정란
+  'evangelist-3': '05.png', // 임선의
+  'evangelist-4': '10.jpg', // 장은연
   'evangelist-5': '07.jpg', // 김하은
   'evangelist-6': '08.jpg', // 조은애
   'evangelist-7': '09.png', // 김지혜
@@ -90,7 +90,7 @@ export const servantData: ServantType[] = [
   // 전도사
   {
     id: 'evangelist-1',
-    name: '유정란 전도사',
+    name: '김미선 전도사',
     category: '전도사',
     department: '1여선교',
     image: getServantImage('evangelist-1'),
@@ -98,7 +98,7 @@ export const servantData: ServantType[] = [
   },
   {
     id: 'evangelist-2',
-    name: '김미선 전도사',
+    name: '유정란 전도사',
     category: '전도사',
     department: '2여선교',
     image: getServantImage('evangelist-2'),
@@ -106,7 +106,7 @@ export const servantData: ServantType[] = [
   },
   {
     id: 'evangelist-3',
-    name: '장은연 전도사',
+    name: '임선의 전도사',
     category: '전도사',
     department: '3여선교',
     image: getServantImage('evangelist-3'),
@@ -114,7 +114,7 @@ export const servantData: ServantType[] = [
   },
   {
     id: 'evangelist-4',
-    name: '임선의 전도사',
+    name: '장은연 전도사',
     category: '전도사',
     department: '4여선교',
     image: getServantImage('evangelist-4'),

@@ -67,22 +67,22 @@ export const groupData: GroupDataType[] = [
       {
         id: 'women-1',
         title: '1 여선교',
-        pastor: '유정란 전도사',
+        pastor: '김미선 전도사',
       },
       {
         id: 'women-2',
         title: '2 여선교',
-        pastor: '김미선 전도사',
+        pastor: '유정란 전도사',
       },
       {
         id: 'women-3',
         title: '3 여선교',
-        pastor: '장은연 전도사',
+        pastor: '임선의 전도사',
       },
       {
         id: 'women-4',
         title: '4 여선교',
-        pastor: '임선의 전도사',
+        pastor: '장은연 전도사',
       },
     ],
   },

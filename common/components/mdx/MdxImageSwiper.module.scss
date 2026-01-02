@@ -8,7 +8,7 @@
 // Swiper 컨테이너
 .swiperContainer {
   width: 100%;
-  margin: vw(20) auto;
+  margin: 2.5em auto;
 }
 
 // Swiper 메인 컨테이너
@@ -42,6 +42,7 @@
     width: 100%;
     max-width: 100%;
     height: auto;
+    margin: 0;
     display: block;
     object-fit: contain;
   }
@@ -69,7 +70,7 @@
     align-items: center;
     gap: vw(4);
     position: relative;
-    margin-block-start: vw(8);
+    margin-block-start: calc(1em + vw(8));
   }
 
   [class^='swiper-pagination-bullet'] {
@@ -140,11 +141,9 @@
 
 @include mq(mo) {
   .swiperContainer {
-    margin: vw(16) auto;
-
     [class*='swiper-pagination'] {
       gap: vw(2);
-      margin-block-start: vw(6);
+      margin-block-start: calc(1em + vw(6));
     }
 
     [class^='swiper-pagination-bullet'] {
@@ -158,7 +157,7 @@
 
     [class*='swiper-button-prev'],
     [class*='swiper-button-next'] {
-      top: 57.5%;
+      top: 52.5%;
       width: vw(32);
       height: vw(64);
     }

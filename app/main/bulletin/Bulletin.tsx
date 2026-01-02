@@ -115,7 +115,7 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
             viewport={{ margin: '-100px' }}
           >
             <motion.h2 className={s.eyebrow} variants={itemVariants}>
-              <Icon name="book-open" className={s.eyebrow__icon} /> 주일 오전 예배
+              <Icon name="book-open" className={s.eyebrow__icon} /> 오전 예배
               <br />
               {bulletinData.date}
             </motion.h2>
@@ -126,7 +126,7 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
               {bulletinData.summary}
             </motion.p>
             <motion.p className={s.desc} variants={itemVariants}>
-              해피니스 찬양대&nbsp;&nbsp;:&nbsp;&nbsp;
+              성가대 찬양&nbsp;&nbsp;:&nbsp;&nbsp;
               <span className={s.praise}>{bulletinData.praise || '찬양 정보 없음'}</span>
             </motion.p>
           </motion.div>

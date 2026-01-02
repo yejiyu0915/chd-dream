@@ -51,22 +51,97 @@ async function getMarkdownContent(slug: string) {
     const notionData = await getNotionPageAndContentBySlug('NOTION_CLOG_ID', slug);
 
     if (!notionData) {
+      console.error(`[C-log] slug "${slug}"에 대한 Notion 데이터를 찾을 수 없습니다.`);
       return '';
+    }
+
+    // 이미지 블록이 있는지 확인 (디버깅용)
+    const imageBlocks = notionData.blocks.filter(
+      (block: any) => block.type === 'image'
+    );
+    if (imageBlocks.length > 0) {
+      console.log(`[C-log] 이미지 블록 ${imageBlocks.length}개 발견 (slug: ${slug})`);
+      // 이미지 블록 정보 로깅 (디버깅용)
+      imageBlocks.forEach((block: any, index: number) => {
+        const imageUrl =
+          block.image?.type === 'external'
+            ? block.image.external?.url
+            : block.image?.type === 'file'
+              ? block.image.file?.url
+              : 'unknown';
+        console.log(`[C-log] 이미지 ${index + 1}: ${imageUrl}`);
+      });
     }
 
     const n2m = new NotionToMarkdown({
       notionClient: notion,
     });
 
-    const { parent: markdown } = n2m.toMarkdownString(await n2m.blocksToMarkdown(notionData.blocks));
-    await compile(markdown, {
-      rehypePlugins: [rehypeSlug, rehypeExtractToc, withTocExport],
-    });
+    // blocksToMarkdown 단계별로 에러 처리
+    let markdownBlocks;
+    try {
+      markdownBlocks = await n2m.blocksToMarkdown(notionData.blocks);
+    } catch (blocksError: any) {
+      console.error('[C-log] blocksToMarkdown 변환 중 오류 발생:', {
+        slug,
+        error: blocksError?.message || blocksError,
+        stack: blocksError?.stack,
+        imageBlocksCount: imageBlocks.length,
+      });
+      // 이미지 블록이 있는 경우, 이미지 블록만 제외하고 다시 시도
+      if (imageBlocks.length > 0) {
+        console.log('[C-log] 이미지 블록을 제외하고 다시 시도합니다...');
+        const blocksWithoutImages = notionData.blocks.filter(
+          (block: any) => block.type !== 'image'
+        );
+        try {
+          markdownBlocks = await n2m.blocksToMarkdown(blocksWithoutImages);
+          console.log('[C-log] 이미지 블록 제외 후 변환 성공');
+        } catch (retryError: any) {
+          console.error('[C-log] 이미지 블록 제외 후에도 변환 실패:', retryError?.message || retryError);
+          return '';
+        }
+      } else {
+        return '';
+      }
+    }
+
+    // toMarkdownString 변환
+    let markdown: string;
+    try {
+      const result = n2m.toMarkdownString(markdownBlocks);
+      markdown = result.parent;
+    } catch (markdownError: any) {
+      console.error('[C-log] toMarkdownString 변환 중 오류 발생:', {
+        slug,
+        error: markdownError?.message || markdownError,
+        stack: markdownError?.stack,
+      });
+      return '';
+    }
+
+    // MDX 컴파일 (에러가 나도 마크다운은 반환)
+    try {
+      await compile(markdown, {
+        rehypePlugins: [rehypeSlug, rehypeExtractToc, withTocExport],
+      });
+    } catch (compileError: any) {
+      console.warn('[C-log] MDX 컴파일 중 경고 (마크다운은 반환):', {
+        slug,
+        error: compileError?.message || compileError,
+      });
+      // 컴파일 에러가 있어도 마크다운은 반환 (렌더링은 시도)
+    }
 
     return markdown;
-  } catch (error) {
-    // 에러 발생 시 빈 문자열 반환하여 콘텐츠는 표시되지 않지만 페이지는 표시됨
-    console.error('C-log 콘텐츠를 가져오는 중 오류 발생:', error);
+  } catch (error: any) {
+    // 예상치 못한 에러 발생 시 상세 로그
+    console.error('[C-log] 콘텐츠를 가져오는 중 예상치 못한 오류 발생:', {
+      slug,
+      error: error?.message || error,
+      stack: error?.stack,
+      name: error?.name,
+    });
     return '';
   }
 }

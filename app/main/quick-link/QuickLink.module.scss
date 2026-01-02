@@ -112,7 +112,7 @@
       transform 0.3s 0.1s ease-in-out,
       opacity 0.3s ease-in-out;
   }
-  @media (hover: hover) {
+  @media (hover: hover) and (pointer: fine) {
     &__row:hover {
       flex-grow: 1.25;
     }
@@ -193,7 +193,7 @@
     gap: vw(12);
     &__row {
       flex-direction: column;
-      @media (hover: hover) {
+      @media (hover: hover) and (pointer: fine) {
         &:hover {
           flex-grow: 1;
         }
@@ -203,7 +203,7 @@
       border-radius: vw(12);
       &Lg {
         flex: 1;
-        @media (hover: hover) {
+        @media (hover: hover) and (pointer: fine) {
           &:hover {
             flex: 1;
           }
@@ -258,7 +258,7 @@
       a {
         padding: vw(20) vw(20) vw(16);
       }
-      @media (hover: hover) {
+      @media (hover: hover) and (pointer: fine) {
         &:hover {
           .list__desc {
             transition: none;

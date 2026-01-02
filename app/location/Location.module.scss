@@ -65,7 +65,7 @@
       padding: vw(16) vw(24) vw(16) vw(16);
       border-radius: vw(20);
       border: vw(2) solid var(--accent-border-subtle);
-      @media (hover: hover) {
+      @media (hover: hover) and (pointer: fine) {
         &:hover {
           background-color: var(--bg-section);
         }

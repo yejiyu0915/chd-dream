@@ -37,7 +37,7 @@
       box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.8);
     }
 
-    @media (hover: hover) {
+    @media (hover: hover) and (pointer: fine) {
       &:hover {
         background-color: var(--bg-page);
         color: var(--accent-brand);
@@ -169,7 +169,7 @@
       color: var(--text-main);
     }
 
-    @media (hover: hover) {
+    @media (hover: hover) and (pointer: fine) {
       &:hover {
         background-color: var(--bg-section);
         color: var(--text-main);
@@ -352,7 +352,7 @@
       box-shadow: 0 0 0 6px var(--accent-secondary);
     }
 
-    @media (hover: hover) {
+    @media (hover: hover) and (pointer: fine) {
       &:hover {
         background-color: var(--accent-brand);
         transform: translateY(vw(-2));
