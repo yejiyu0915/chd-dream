@@ -12,7 +12,11 @@ export const mdxComponents: MDXComponents = {
   ul: ({ children }) => <ul>{children}</ul>,
   ol: ({ children }) => <ol>{children}</ol>,
   li: ({ children }) => <li>{children}</li>,
-  a: ({ children, href }) => <a href={href}>{children}</a>,
+  a: ({ children, href }) => (
+    <a href={href}>
+      🔗 {children}
+    </a>
+  ),
   blockquote: ({ children }) => <blockquote>{children}</blockquote>,
   code: ({ children }) => <code>{children}</code>,
   pre: ({ children }) => <pre>{children}</pre>,
