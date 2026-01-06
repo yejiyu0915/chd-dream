@@ -682,7 +682,58 @@ const mapPageToKVSliderItem: ItemMapper<KVSliderItem> = (page) => {
 export async function getCLogData(): Promise<CLogItem[]> {
   return unstable_cache(
     async () => {
-      return getPublishedNotionData<CLogItem>('NOTION_CLOG_ID', mapPageToCLogItem);
+      const startTime = Date.now();
+      try {
+        const data = await getPublishedNotionData<CLogItem>('NOTION_CLOG_ID', mapPageToCLogItem);
+        const duration = Date.now() - startTime;
+        
+        // 데이터 검증 및 상세 로깅
+        if (!data) {
+          console.error('[C-log] getCLogData: data가 null/undefined입니다.', {
+            timestamp: new Date().toISOString(),
+            duration: `${duration}ms`,
+          });
+          return [];
+        }
+        
+        if (data.length === 0) {
+          console.warn('[C-log] getCLogData: 데이터가 비어있습니다.', {
+            timestamp: new Date().toISOString(),
+            duration: `${duration}ms`,
+            possibleCauses: [
+              'Notion에 Published 상태의 항목이 없음',
+              '모든 항목이 Preview 상태',
+              'Notion 데이터베이스 필터 조건 불일치',
+              'Notion에서 수정 중일 때 일시적 문제',
+            ],
+          });
+        } else {
+          console.log(`[C-log] getCLogData: ${data.length}개의 항목을 가져왔습니다. (${duration}ms)`);
+        }
+        
+        return data;
+      } catch (error) {
+        const duration = Date.now() - startTime;
+        // 에러 발생 시 상세 로깅
+        const errorDetails = {
+          message: error instanceof Error ? error.message : String(error),
+          name: error instanceof Error ? error.name : 'UnknownError',
+          stack: error instanceof Error ? error.stack : undefined,
+          timestamp: new Date().toISOString(),
+          duration: `${duration}ms`,
+          possibleCauses: [
+            'Notion API rate limit 초과',
+            '네트워크 타임아웃',
+            'Notion 데이터베이스 접근 권한 문제',
+            'Notion에서 수정 중일 때 일시적 오류',
+            'Notion API 서버 문제',
+          ],
+        };
+        console.error('[C-log] getCLogData 내부 에러:', errorDetails);
+        
+        // 에러 발생 시 빈 배열 반환 (캐시는 이전 값 유지)
+        return [];
+      }
     },
     ['clog-data'],
     { revalidate: REVALIDATE_TIME.LIST, tags: ['clog-list'] } // 3분 캐시, 태그 기반 재검증

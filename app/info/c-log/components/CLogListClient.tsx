@@ -13,9 +13,10 @@ import { useRouter } from 'next/navigation';
 interface CLogListClientProps {
   initialCLogData: CLogItem[];
   searchParams: { category?: string; tag?: string; sort?: string; view?: string };
+  error?: Error | null; // 에러 정보 전달
 }
 
-export default function CLogListClient({ initialCLogData, searchParams }: CLogListClientProps) {
+export default function CLogListClient({ initialCLogData, searchParams, error }: CLogListClientProps) {
   const router = useRouter();
 
   // 서버에서 받은 데이터를 그대로 사용 (useQuery 제거)
@@ -221,8 +222,8 @@ export default function CLogListClient({ initialCLogData, searchParams }: CLogLi
         <CLogListDisplay
           cLogData={filteredCLogData}
           isLoading={isInitialLoading}
-          isError={false}
-          error={null}
+          isError={!!error}
+          error={error || null}
           viewMode={viewMode}
           hasInitialData={hasInitialData}
           hasAllData={hasInitialData} // 전체 데이터 존재 여부
