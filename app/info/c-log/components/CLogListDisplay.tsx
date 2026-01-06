@@ -23,7 +23,7 @@ interface CLogListProps {
 }
 
 const PC_ITEMS_PER_LOAD = 6; // PC 버전에서 한 번에 불러올 아이템 개수
-const MO_ITEMS_PER_LOAD = 4; // 모바일 버전에서 한 번에 불러올 아이템 개수
+const MO_ITEMS_PER_LOAD = 6; // 모바일 버전에서 한 번에 불러올 아이템 개수
 
 export default function CLogList({
   cLogData,
