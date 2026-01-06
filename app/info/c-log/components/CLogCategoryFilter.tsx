@@ -78,23 +78,24 @@ export default function CLogCategoryFilter({
   //   checkScrollPosition();
   // }, [isLastItemVisible, checkScrollPosition]);
 
-  // 활성화된 카테고리를 맨 왼쪽으로 스크롤 (마지막 항목이 보이지 않을 때만, 그리고 정렬되어 있지 않을 때)
+  // 활성화된 카테고리를 맨 왼쪽으로 스크롤
   useEffect(() => {
-    if (scrollRef.current && selectedCategory) {
-      // isLastItemVisible 조건 제거
-      const activeCategoryElement = scrollRef.current.querySelector(`button.${c.active}`);
-      if (
-        activeCategoryElement &&
-        !isElementAlignedToStart(activeCategoryElement as HTMLElement, scrollRef.current)
-      ) {
-        activeCategoryElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest',
-          inline: 'start',
-        });
+    // DOM 업데이트 후 실행되도록 requestAnimationFrame 사용
+    requestAnimationFrame(() => {
+      if (scrollRef.current) {
+        // selectedCategory가 null이면 "전체보기" 버튼을 찾고, 있으면 해당 카테고리 버튼을 찾음
+        const activeCategoryElement = scrollRef.current.querySelector(`button.${c.active}`);
+        if (activeCategoryElement) {
+          // 정렬 여부와 관계없이 항상 스크롤 (ALL 선택 시에도 확실히 이동)
+          activeCategoryElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'start',
+          });
+        }
       }
-    }
-  }, [selectedCategory, categories]); // isLastItemVisible 의존성 제거
+    });
+  }, [selectedCategory, categories]);
 
   const handleScroll = () => {
     // direction 인자 제거
