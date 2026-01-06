@@ -18,6 +18,7 @@ import l from '@/common/styles/mdx/MdxLayout.module.scss';
 import CLogDetailHeader from '@/app/info/c-log/[slug]/components/CLogDetailHeader';
 import CLogDetailFooter from '@/app/info/c-log/[slug]/components/CLogDetailFooter';
 import CLogContent from '@/app/info/c-log/[slug]/components/CLogContent';
+import CLogBandLinks from '@/app/info/c-log/[slug]/components/CLogBandLinks';
 import ContentSkeleton from '@/common/components/skeletons/ContentSkeleton';
 import { getCurrentSeason } from '@/common/utils/season';
 import { generateDynamicMetadata } from '@/common/data/metadata';
@@ -216,7 +217,7 @@ export default async function CLogDetailPage({ params }: { params: Promise<{ slu
     notFound();
   }
 
-  const { title, category, date, tags, imageUrl } = metadata;
+  const { title, category, date, tags, imageUrl, band1, band2 } = metadata;
 
   return (
     <div className={l.container}>
@@ -234,7 +235,12 @@ export default async function CLogDetailPage({ params }: { params: Promise<{ slu
         <ContentSection slug={slug} />
       </Suspense>
 
-      {/* 3단계: Footer Streaming */}
+      {/* 3단계: Band 링크 영역 (MDX 콘텐츠 하단) */}
+      {(band1 || band2) && (
+        <CLogBandLinks band1={band1 || null} band2={band2 || null} />
+      )}
+
+      {/* 4단계: Footer Streaming */}
       <Suspense fallback={<div style={{ minHeight: '200px', backgroundColor: 'transparent' }} />}>
         <FooterSection slug={slug} />
       </Suspense>

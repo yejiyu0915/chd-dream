@@ -170,11 +170,15 @@ div:has(> .detailBreadcrumbs) {
 }
 
 .footer {
+  padding-block-start: vw(80);
   padding-block-end: vw(200);
+  border-top: vw(1) solid var(--accent-border);
   @include mq(pc-sm) {
+    padding-block-start: vw(48);
     padding-block-end: vw(160);
   }
   @include mq(mo) {
+    padding-block-start: vw(24);
     padding-block-end: vw(80);
   }
 }

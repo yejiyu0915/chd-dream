@@ -100,15 +100,25 @@ export function extractDetailPageMetadataWithCategory(
 ) {
   const baseMetadata = extractDetailPageMetadata(page, currentSeason);
   const categoryProperty = page.properties.Category;
+  const band1Property = page.properties.Band1;
+  const band2Property = page.properties.Band2;
 
   const category =
     categoryProperty?.type === 'select' && categoryProperty.select?.name
       ? categoryProperty.select.name
       : '기타';
 
+  // Band1, Band2 URL 추출
+  const band1 =
+    band1Property?.type === 'url' && band1Property.url ? band1Property.url : null;
+  const band2 =
+    band2Property?.type === 'url' && band2Property.url ? band2Property.url : null;
+
   return {
     ...baseMetadata,
     category,
+    band1,
+    band2,
   };
 }
 
