@@ -52,7 +52,14 @@ export default function MobileSchedulePreview() {
     const fetchScheduleData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/schedule');
+        // 캐시 없이 항상 최신 데이터 가져오기
+        const response = await fetch('/api/schedule', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            Pragma: 'no-cache',
+          },
+        });
         if (!response.ok) {
           throw new Error('일정 데이터를 가져오는데 실패했습니다.');
         }
@@ -69,6 +76,17 @@ export default function MobileSchedulePreview() {
     };
 
     fetchScheduleData();
+
+    // 페이지 포커스 시 데이터 다시 가져오기 (다른 탭에서 돌아왔을 때)
+    const handleFocus = () => {
+      fetchScheduleData();
+    };
+
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   // 일정 필터링 및 정렬 (최대 2개)
