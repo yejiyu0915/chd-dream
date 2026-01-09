@@ -881,10 +881,11 @@ $moSns: '.mobileSns';
 
   @include mq(ta) {
     display: block;
-    flex-shrink: 0; // flex container에서 크기 고정
-    position: relative; // overlay 내부에서 하단에 위치
+    position: sticky; // sticky로 변경하여 항상 보이도록
+    bottom: 0;
     width: 100%;
     z-index: 1002; // overlay보다 높은 z-index
+    background: var(--bg-page);
   }
 }
 
@@ -898,7 +899,7 @@ $moSns: '.mobileSns';
     // border-top: vw(2) solid var(--accent-border);
     box-shadow: 0 vw(-5) vw(10) rgba(0, 0, 0, 0.04);
     padding: vw(12) var(--inner-padding);
-    max-height: min(vw(200), 30vh); // viewport 높이의 30% 또는 200vw 중 작은 값
+    max-height: min(vw(180), 25vh); // viewport 높이의 25% 또는 180vw 중 작은 값
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
