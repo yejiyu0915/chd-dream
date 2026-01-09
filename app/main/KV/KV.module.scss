@@ -1128,34 +1128,36 @@
   &.singleSlide {
     .content {
       &__text {
-        bottom: vw(200); // 기존 vw(260)에서 더 낮게
+        bottom: vw(240); // 기존 vw(260)에서 더 낮게
       }
     }
     .news {
-      bottom: vw(80); // 기존 vw(135)에서 더 낮게
+      bottom: vw(100); // 기존 vw(135)에서 더 낮게
     }
     .progressBarContainer {
-      bottom: vw(260); // 기존 vw(320)에서 더 낮게
+      bottom: vw(300); // 기존 vw(320)에서 더 낮게
     }
     .progressBar {
-      display: none; // 싱글 슬라이드일 때 진행 애니메이션 숨김
+      // display: none; // 싱글 슬라이드일 때 진행 애니메이션 숨김
+      height: vw(2);
+      width: vw(60) !important;
     }
 
     @include mq(pc-sm) {
       .content {
         &__text {
-          bottom: vw(220); // 기존 vw(290)에서 더 낮게
+          bottom: vw(280); // 기존 vw(290)에서 더 낮게
         }
       }
       .news {
-        bottom: vw(80); // 기존 vw(80)에서 더 낮게
+        bottom: vw(120); // 기존 vw(80)에서 더 낮게
       }
       .progressBarContainer {
-        bottom: vw(260); // 기존 vw(336)에서 더 낮게
+        bottom: vw(320); // 기존 vw(336)에서 더 낮게
       }
     }
 
-    @include mq(mo) {
+    @include mq(ta) {
       .content {
         &__text {
           bottom: vw(260);

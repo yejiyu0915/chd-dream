@@ -239,7 +239,7 @@ $list: '.list';
 
       &--grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: vw(24) vw(16);
+        gap: vw(32) vw(20);
 
         #{$list}__content {
           gap: vw(6);

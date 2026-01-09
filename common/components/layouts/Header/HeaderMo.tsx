@@ -8,6 +8,7 @@ import h from '@/common/components/layouts/Header/Header.module.scss';
 import { useMobileMenu } from '@/common/components/layouts/Header/MobileMenuContext';
 import { menuData, snsLinks, prevLinks } from '@/common/data/info';
 import MobileSchedulePreview from '@/common/components/layouts/Header/MobileSchedulePreview';
+import MobileCLogPreview from '@/common/components/layouts/Header/MobileCLogPreview';
 
 interface HeaderMoProps {
   isScrolled: boolean;
@@ -143,6 +144,9 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
                   ))}
               </ul>
             </div>
+
+            {/* C-log 미리보기 영역 */}
+            <MobileCLogPreview />
 
             {/* <div className={h.mobilePrev__links}>
               {prevLinks.map((prevInfo, index) => {

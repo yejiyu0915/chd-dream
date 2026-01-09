@@ -138,6 +138,11 @@ export default function MobileSchedulePreview() {
     return null; // 에러 발생 시 표시하지 않음
   }
 
+  // 일정이 없으면 영역 자체를 렌더링하지 않음
+  if (topSchedules.length === 0) {
+    return null;
+  }
+
   return (
     <div className={h.mobileSchedulePreview}>
       <div className={h.mobileSchedulePreview__header}>
@@ -146,35 +151,29 @@ export default function MobileSchedulePreview() {
         </h3>
       </div>
       <div className={h.mobileSchedulePreview__list}>
-        {topSchedules.length === 0 ? (
-          <div className={h.mobileSchedulePreview__empty}>
-            예정된 일정이 없습니다
-          </div>
-        ) : (
-          topSchedules.map((event) => {
-            const dDayLabel = getDDayLabel(event);
-            const isOngoing = event.ongoing;
+        {topSchedules.map((event) => {
+          const dDayLabel = getDDayLabel(event);
+          const isOngoing = event.ongoing;
 
-            return (
-              <div
-                key={event.id}
-                className={`${h.mobileSchedulePreview__item} ${event.important ? h.important : ''}`}
-              >
-                <div className={h.mobileSchedulePreview__itemHeader}>
-                  <div className={h.mobileSchedulePreview__itemTitle}>{event.title}</div>
-                  <div className={h.mobileSchedulePreview__itemLabels}>
-                    {isOngoing && (
-                      <span className={h.mobileSchedulePreview__itemOngoing}>진행중</span>
-                    )}
-                    {dDayLabel && (
-                      <span className={h.mobileSchedulePreview__itemDDay}>{dDayLabel}</span>
-                    )}
-                  </div>
+          return (
+            <div
+              key={event.id}
+              className={`${h.mobileSchedulePreview__item} ${event.important ? h.important : ''}`}
+            >
+              <div className={h.mobileSchedulePreview__itemHeader}>
+                <div className={h.mobileSchedulePreview__itemTitle}>{event.title}</div>
+                <div className={h.mobileSchedulePreview__itemLabels}>
+                  {isOngoing && (
+                    <span className={h.mobileSchedulePreview__itemOngoing}>진행중</span>
+                  )}
+                  {dDayLabel && (
+                    <span className={h.mobileSchedulePreview__itemDDay}>{dDayLabel}</span>
+                  )}
                 </div>
               </div>
-            );
-          })
-        )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

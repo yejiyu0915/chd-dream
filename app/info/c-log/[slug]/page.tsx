@@ -19,6 +19,7 @@ import CLogDetailHeader from '@/app/info/c-log/[slug]/components/CLogDetailHeade
 import CLogDetailFooter from '@/app/info/c-log/[slug]/components/CLogDetailFooter';
 import CLogContent from '@/app/info/c-log/[slug]/components/CLogContent';
 import CLogBandLinks from '@/app/info/c-log/[slug]/components/CLogBandLinks';
+import CLogRecommendedPosts from '@/app/info/c-log/[slug]/components/CLogRecommendedPosts';
 import ContentSkeleton from '@/common/components/skeletons/ContentSkeleton';
 import { getCurrentSeason } from '@/common/utils/season';
 import { generateDynamicMetadata } from '@/common/data/metadata';
@@ -245,6 +246,11 @@ export default async function CLogDetailPage({ params }: { params: Promise<{ slu
         <FooterSection slug={slug} />
       </Suspense>
 
+      {/* 5단계: 추천글 Streaming */}
+      <Suspense fallback={<div style={{ minHeight: '200px', backgroundColor: 'transparent' }} />}>
+        <RecommendedSection slug={slug} category={category} tags={tags} />
+      </Suspense>
+
       <aside className="relative hidden md:block">{/* 목차 */}</aside>
     </div>
   );
@@ -271,5 +277,40 @@ async function FooterSection({ slug }: { slug: string }) {
     // 에러 발생 시 이전/다음 포스트 없이 Footer 표시
     console.error('Footer 섹션 로딩 중 오류 발생:', error);
     return <CLogDetailFooter prevPost={null} nextPost={null} />;
+  }
+}
+
+// 추천글 섹션 (비동기 컴포넌트)
+async function RecommendedSection({
+  slug,
+  category,
+  tags,
+}: {
+  slug: string;
+  category: string;
+  tags: string[];
+}) {
+  try {
+    // 현재 글 정보 가져오기
+    const notionData = await getNotionPageAndContentBySlug('NOTION_CLOG_ID', slug);
+    if (!notionData) {
+      return null;
+    }
+
+    const currentPost = {
+      id: notionData.page.id,
+      category,
+      tags,
+      slug,
+    };
+
+    // 모든 C-log 데이터 가져오기
+    const allPosts = await getCLogData();
+
+    return <CLogRecommendedPosts currentPost={currentPost} allPosts={allPosts} />;
+  } catch (error) {
+    // 에러 발생 시 추천글 표시하지 않음
+    console.error('추천글 섹션 로딩 중 오류 발생:', error);
+    return null;
   }
 }
