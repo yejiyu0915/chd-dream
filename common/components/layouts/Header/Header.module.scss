@@ -897,9 +897,10 @@ $moSns: '.mobileSns';
     background: var(--bg-page);
     // border-top: vw(2) solid var(--accent-border);
     box-shadow: 0 vw(-5) vw(10) rgba(0, 0, 0, 0.04);
-    padding: vw(16) var(--inner-padding);
-    max-height: vw(200);
+    padding: vw(12) var(--inner-padding);
+    max-height: min(vw(200), 30vh); // viewport 높이의 30% 또는 200vw 중 작은 값
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   &__header {
@@ -927,7 +928,7 @@ $moSns: '.mobileSns';
   &__list {
     display: flex;
     flex-direction: column;
-    gap: vw(8);
+    gap: vw(6);
   }
 
   &__empty {
@@ -940,11 +941,12 @@ $moSns: '.mobileSns';
   &__item {
     display: flex;
     flex-direction: column;
-    gap: vw(8);
+    gap: vw(6);
     background: #f7f8f9;
-    padding: vw(12);
+    padding: vw(10);
     border: vw(2) solid var(--accent-border-subtle);
     border-radius: vw(8);
+    flex-shrink: 0; // 아이템이 축소되지 않도록
 
     &.important {
       border-color: var(--important-color);
@@ -960,13 +962,14 @@ $moSns: '.mobileSns';
   }
 
   &__itemTitle {
-    font-size: vw(14);
+    font-size: vw(13);
     font-weight: 700;
     color: #333;
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    line-height: 1.3;
   }
 
   &__itemLabels {
@@ -1022,7 +1025,7 @@ $moSns: '.mobileSns';
 
   @include mq(ta) {
     display: block;
-    padding: vw(40) 0 vw(20);
+    padding: vw(8) 0 vw(20);
   }
 
   &__title {
@@ -1067,7 +1070,7 @@ $moSns: '.mobileSns';
     height: 100%;
     text-decoration: none;
     width: 100%;
-    max-width: vw(140);
+    max-width: vw(200);
     flex-shrink: 0;
 
     @media (hover: hover) and (pointer: fine) {
@@ -1087,8 +1090,8 @@ $moSns: '.mobileSns';
   &__imageWrapper {
     position: relative;
     overflow: hidden;
-    border-radius: vw(8);
-    aspect-ratio: 16/9;
+    border-radius: vw(20);
+    aspect-ratio: 12/8;
     flex-shrink: 0;
 
     // 그라데이션 오버레이 (하단에서 상단으로)
@@ -1133,7 +1136,7 @@ $moSns: '.mobileSns';
     left: 0;
     right: 0;
     z-index: 2;
-    padding: vw(8) vw(10);
+    padding: vw(12) vw(10);
     display: flex;
     flex-direction: column;
     gap: vw(6);

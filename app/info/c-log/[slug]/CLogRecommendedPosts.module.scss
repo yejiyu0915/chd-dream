@@ -18,19 +18,19 @@
   }
 
   &__title {
-    @include font-vw(36, $weight: 700);
+    @include font-vw(40, $weight: 700);
     color: var(--text-main);
     margin-block-end: vw(40);
     padding-inline: var(--inner-padding); // 양옆 패딩 추가
 
     @include mq(pc-sm) {
-      @include font-vw(28);
+      @include font-vw(32);
       margin-block-end: vw(32);
     }
 
     @include mq(mo) {
-      @include font-vw(24);
-      margin-block-end: vw(24);
+      @include font-vw(20);
+      margin-block-end: vw(16);
     }
   }
 
@@ -38,12 +38,12 @@
   &__grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: vw(32);
+    gap: vw(24);
     padding-inline: var(--inner-padding); // PC에서 타이틀과 동일한 패딩
 
     @include mq(pc-sm) {
       grid-template-columns: repeat(5, 1fr);
-      gap: vw(24);
+      gap: vw(20);
     }
 
     @include mq(ta) {
@@ -80,7 +80,7 @@
     height: auto;
 
     @include mq(mo) {
-      width: vw(140);
+      width: vw(160);
     }
   }
 
@@ -150,13 +150,13 @@
   &__content {
     display: flex;
     flex-direction: column;
-    gap: vw(6);
-    margin-block-start: vw(12);
+    gap: vw(12);
+    margin-block-start: vw(16);
     flex: 1;
 
     @include mq(pc-sm) {
-      gap: vw(5);
-      margin-block-start: vw(10);
+      gap: vw(10);
+      margin-block-start: vw(14);
     }
 
     @include mq(mo) {
@@ -306,8 +306,8 @@
 
         [class*='swiper-button-prev'],
         [class*='swiper-button-next'] {
-          // 모바일 슬라이드 width(140) 기준으로 썸네일 가운데 위치
-          top: calc(vw(140) * 3 / 4 / 2);
+          // 모바일 슬라이드 width(160) 기준으로 썸네일 가운데 위치
+          top: calc(vw(160) * 3 / 4 / 2);
           width: vw(32);
           height: vw(64);
         }
