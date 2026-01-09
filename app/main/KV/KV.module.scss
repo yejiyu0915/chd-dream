@@ -1158,14 +1158,19 @@
     @include mq(mo) {
       .content {
         &__text {
-          bottom: vw(220);
+          bottom: vw(260);
+        }
+        &__desc {
+          margin-block-start: vw(16);
+          padding-block-start: vw(8);
         }
       }
       .news {
-        bottom: vw(80);
+        gap: vw(20);
+        bottom: vw(100);
       }
       .progressBarContainer {
-        bottom: vw(260);
+        bottom: vw(290);
       }
     }
   }

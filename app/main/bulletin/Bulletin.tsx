@@ -115,7 +115,7 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
             viewport={{ margin: '-100px' }}
           >
             <motion.h2 className={s.eyebrow} variants={itemVariants}>
-              <Icon name="book-open" className={s.eyebrow__icon} /> 오전 예배
+              <Icon name="book-open" className={s.eyebrow__icon} /> 11시 오전 예배
               <br />
               {bulletinData.date}
             </motion.h2>

@@ -384,6 +384,13 @@
     }
   }
 
+  .eventItemHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: vw(12);
+  }
+
   .eventItemTitle {
     font-size: vw(28);
     font-weight: 700;
@@ -395,6 +402,76 @@
 
     @include mq(mo) {
       font-size: vw(14);
+    }
+  }
+
+  .eventItemLabels {
+    display: flex;
+    align-items: center;
+    gap: vw(8);
+    flex-shrink: 0;
+
+    @include mq(ta) {
+      gap: vw(6);
+    }
+
+    @include mq(mo) {
+      gap: vw(4);
+    }
+  }
+
+  .eventItemOngoing {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: vw(6) vw(12);
+    // border: 1px solid var(--accent-border-subtle);
+    background: var(--bg-page);
+    color: var(--accent-brand);
+    border-radius: vw(20);
+    font-size: vw(16);
+    font-weight: 700;
+    white-space: nowrap;
+
+    box-shadow: 0 0 vw(3) vw(2) var(--accent-border-subtle);
+
+    @include mq(ta) {
+      padding: vw(4) vw(10);
+      font-size: vw(12);
+      border-radius: vw(16);
+    }
+
+    @include mq(mo) {
+      padding: vw(3) vw(8);
+      font-size: vw(11);
+      border-radius: vw(12);
+    }
+  }
+
+  .eventItemDDay {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: vw(6) vw(12);
+    border: 1px solid var(--accent-border-subtle);
+    background: var(--accent-brand);
+    color: #ffffff;
+    border-radius: vw(20);
+    font-size: vw(16);
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 0 vw(3) vw(2) var(--accent-border-subtle);
+
+    @include mq(ta) {
+      padding: vw(4) vw(10);
+      font-size: vw(12);
+      border-radius: vw(16);
+    }
+
+    @include mq(mo) {
+      padding: vw(3) vw(8);
+      font-size: vw(11);
+      border-radius: vw(12);
     }
   }
 
@@ -604,7 +681,23 @@
   position: relative;
   padding: 0 vw(24) vw(24) 0;
   @include mq(mo) {
-    padding: vw(6) 0 vw(24) 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: vw(8);
+    padding: vw(8) 0 vw(24) 0;
+  }
+  @include mq(mo-sm) {
+    // flex-direction: column;
+    // align-items: flex-start;
+    gap: vw(16);
+    padding-block: vw(24) vw(16);
+    border-top: 1px solid var(--accent-border-subtle);
+  }
+  @include mq(mo-xs) {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    padding-block-start: vw(16);
   }
 }
 
@@ -616,20 +709,28 @@
     font-size: vw(16);
   }
   @include mq(mo) {
+    // margin-inline-start: auto;
     font-size: vw(14);
+    line-height: 1.6;
+    text-wrap: balance;
   }
 }
 
 .scheduleListToggleButtons {
-  position: absolute;
-  top: vw(-12);
-  right: 0;
+  // position: absolute;
+  // top: vw(8);
+  // right: 0;
   display: flex;
   gap: vw(8);
   align-items: center;
 
   @include mq(ta) {
     gap: vw(6);
+  }
+  @include mq(mo-xs) {
+    margin-inline-start: auto;
+    // flex-direction: column;
+    // align-items: flex-end;
   }
 
   // @include mq(mo-sm) {
@@ -837,6 +938,21 @@
   }
 }
 
+.scheduleListEventHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: vw(12);
+
+  @include mq(ta) {
+    gap: vw(8);
+  }
+
+  @include mq(mo) {
+    gap: vw(6);
+  }
+}
+
 .scheduleListEventTitle {
   font-size: vw(28);
   font-weight: 700;
@@ -847,6 +963,76 @@
 
   @include mq(mo) {
     font-size: vw(14);
+  }
+}
+
+.scheduleListEventLabels {
+  display: flex;
+  align-items: center;
+  gap: vw(8);
+  flex-shrink: 0;
+
+  @include mq(ta) {
+    gap: vw(6);
+  }
+
+  @include mq(mo) {
+    gap: vw(4);
+  }
+}
+
+.scheduleListEventOngoing {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: vw(6) vw(12);
+  // border: 1px solid var(--accent-border-subtle);
+  background: var(--bg-page);
+  color: var(--accent-brand);
+  border-radius: vw(20);
+  font-size: vw(16);
+  font-weight: 700;
+  white-space: nowrap;
+
+  box-shadow: 0 0 vw(3) vw(2) var(--accent-border-subtle);
+
+  @include mq(ta) {
+    padding: vw(4) vw(10);
+    font-size: vw(12);
+    border-radius: vw(16);
+  }
+
+  @include mq(mo) {
+    padding: vw(3) vw(8);
+    font-size: vw(11);
+    border-radius: vw(12);
+  }
+}
+
+.scheduleListEventDDay {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: vw(6) vw(12);
+  border: 1px solid var(--accent-border-subtle);
+  background: var(--accent-brand);
+  color: #ffffff;
+  border-radius: vw(20);
+  font-size: vw(16);
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 0 vw(3) vw(2) var(--accent-border-subtle);
+
+  @include mq(ta) {
+    padding: vw(4) vw(10);
+    font-size: vw(12);
+    border-radius: vw(16);
+  }
+
+  @include mq(mo) {
+    padding: vw(3) vw(8);
+    font-size: vw(11);
+    border-radius: vw(12);
   }
 }
 

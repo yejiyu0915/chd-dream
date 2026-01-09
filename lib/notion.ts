@@ -268,6 +268,7 @@ export interface ScheduleItem {
   important?: boolean; // 중요 일정 여부 (선택사항)
   startDate?: string; // 시작 날짜/시간 (ISO 문자열)
   endDate?: string; // 종료 날짜/시간 (ISO 문자열)
+  ongoing?: boolean; // 상시 일정 여부 (종료일 미정)
 }
 
 // KV Slider 데이터 타입 정의
@@ -596,6 +597,7 @@ const mapPageToScheduleItem: ItemMapper<ScheduleItem> = (page) => {
   const categoryProperty = properties.Category as NotionProperty | undefined;
   const tagsProperty = properties.Tags as NotionProperty | undefined;
   const importantProperty = properties.Important as NotionProperty | undefined;
+  const ongoingProperty = properties.Ongoing as NotionProperty | undefined; // Ongoing 체크박스 필드
 
   // 날짜를 ISO 문자열로 변환
   let dateString = '';
@@ -613,6 +615,10 @@ const mapPageToScheduleItem: ItemMapper<ScheduleItem> = (page) => {
       endDateString = dateProperty.date.end;
     }
   }
+
+  // Ongoing 체크박스 값 추출
+  const ongoingValue =
+    (ongoingProperty && 'checkbox' in ongoingProperty && ongoingProperty.checkbox) || false;
 
   return {
     id: page.id,
@@ -634,6 +640,7 @@ const mapPageToScheduleItem: ItemMapper<ScheduleItem> = (page) => {
       (importantProperty && 'checkbox' in importantProperty && importantProperty.checkbox) || false,
     startDate: startDateString || undefined,
     endDate: endDateString || undefined,
+    ongoing: ongoingValue, // 상시 일정 여부
   };
 };
 

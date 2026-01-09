@@ -5,6 +5,40 @@ import { formatTimeInfo } from '@/app/info/schedule/types/utils';
 import Icon from '@/common/components/utils/Icons';
 import s from '@/app/info/schedule/Schedule.module.scss';
 
+/**
+ * D-day 라벨을 계산하는 헬퍼 함수
+ * 미래 일정에만 D-3, D-2, D-1, D-day 표시
+ */
+function getDDayLabel(event: ScheduleItem): string | null {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // 일정의 시작일 가져오기
+  const eventStartDate = event.startDate ? new Date(event.startDate) : new Date(event.date);
+  eventStartDate.setHours(0, 0, 0, 0);
+
+  // 과거 일정이면 라벨 표시 안 함
+  if (eventStartDate < today) {
+    return null;
+  }
+
+  // 날짜 차이 계산 (밀리초를 일 단위로 변환)
+  const diffTime = eventStartDate.getTime() - today.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  // 당일은 D-day
+  if (diffDays === 0) {
+    return 'D-day';
+  }
+
+  // D-3, D-2, D-1만 표시 (그 이상은 표시 안 함)
+  if (diffDays <= 3 && diffDays > 0) {
+    return `D-${diffDays}`;
+  }
+
+  return null;
+}
+
 interface ScheduleListViewProps {
   scheduleData: ScheduleItem[];
   currentDate: Date;
@@ -109,6 +143,11 @@ export default function ScheduleListView({
 
     // 기간과 겹치는 모든 일정 찾기
     const filteredData = scheduleData.filter((event) => {
+      // 상시 일정(ongoing)인 경우 항상 표시
+      if (event.ongoing) {
+        return true;
+      }
+
       const eventStartDate = event.startDate ? new Date(event.startDate) : new Date(event.date);
       const eventEndDate = event.endDate ? new Date(event.endDate) : eventStartDate;
 
@@ -121,6 +160,12 @@ export default function ScheduleListView({
     const periodEvents: ScheduleItem[] = [];
 
     filteredData.forEach((event) => {
+      // 상시 일정(ongoing)인 경우 항상 "진행 중인 일정" 섹션에 표시
+      if (event.ongoing) {
+        ongoingEvents.push(event);
+        return;
+      }
+
       const eventStartDate = event.startDate ? new Date(event.startDate) : new Date(event.date);
 
       if (eventStartDate < dateRange.startDate) {
@@ -192,18 +237,36 @@ export default function ScheduleListView({
     return allDateKeys.size > 0 && Array.from(allDateKeys).every((key) => expandedDates.has(key));
   }, [expandedDates, groupedScheduleData, ongoingEvents.length]);
 
-  // 기간 내 일정들의 날짜 키들을 기본적으로 펼침 상태로 설정
+  // 기간 내 일정들의 날짜 키들을 오늘 날짜 기준으로 펼침/접힘 상태 설정
   useEffect(() => {
-    if (groupedScheduleData.length === 0) return;
-
-    const dateKeys = groupedScheduleData.map(({ date }) => date.toISOString().split('T')[0]);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // 오늘 날짜의 00:00:00으로 설정
 
     setExpandedDates((prev) => {
       const newSet = new Set(prev);
-      dateKeys.forEach((key) => newSet.add(key));
+
+      // ongoing 일정은 항상 펼침 상태 유지
+      if (ongoingEvents.length > 0) {
+        newSet.add('ongoing');
+      }
+
+      // 기간 내 일정들의 날짜별로 오늘 기준 펼침/접힘 상태 결정
+      groupedScheduleData.forEach(({ date }) => {
+        const dateKey = date.toISOString().split('T')[0];
+        const dateOnly = new Date(date);
+        dateOnly.setHours(0, 0, 0, 0);
+
+        // 오늘 또는 미래 날짜는 펼침, 과거 날짜는 접힘
+        if (dateOnly >= today) {
+          newSet.add(dateKey); // 오늘 또는 미래: 펼침
+        } else {
+          newSet.delete(dateKey); // 과거: 접힘
+        }
+      });
+
       return newSet;
     });
-  }, [groupedScheduleData]);
+  }, [groupedScheduleData, ongoingEvents.length]);
 
   // 애니메이션 variants
   const sectionVariants = {
@@ -319,21 +382,13 @@ export default function ScheduleListView({
           )}
         </p>
         <div className={s.scheduleListToggleButtons}>
-          <button
-            type="button"
-            className={s.scheduleListToggleAll}
-            onClick={expandAll}
-          >
+          <button type="button" className={s.scheduleListToggleAll} onClick={expandAll}>
             <span className={s.toggleIcon}>+</span>
-            모두 펼치기
+            OPEN<span className="sr-only">(모든 일정 펼치기)</span>
           </button>
-          <button
-            type="button"
-            className={s.scheduleListToggleAll}
-            onClick={collapseAll}
-          >
+          <button type="button" className={s.scheduleListToggleAll} onClick={collapseAll}>
             <span className={s.toggleIcon}>-</span>
-            모두 닫기
+            CLOSE<span className="sr-only">(모든 일정 닫기)</span>
           </button>
         </div>
       </div>
@@ -363,7 +418,10 @@ export default function ScheduleListView({
                 <div className={s.scheduleListDayDate}>진행 중인 일정</div>
                 <div className={s.scheduleListDayCount}>{ongoingEvents.length}개</div>
                 <div className={s.accordionIcon}>
-                  <Icon name={expandedDates.has('ongoing') ? 'arrow-down' : 'arrow-up'} aria-hidden="true" />
+                  <Icon
+                    name={expandedDates.has('ongoing') ? 'arrow-down' : 'arrow-up'}
+                    aria-hidden="true"
+                  />
                 </div>
                 <span className="sr-only">{expandedDates.has('ongoing') ? '접기' : '펼치기'}</span>
               </button>
@@ -371,6 +429,8 @@ export default function ScheduleListView({
                 <div className={s.scheduleListEvents}>
                   {ongoingEvents.map((event, eventIndex) => {
                     const timeInfo = formatTimeInfo(event);
+                    const dDayLabel = getDDayLabel(event);
+                    const isOngoing = event.ongoing;
                     return (
                       <motion.div
                         key={event.id}
@@ -381,7 +441,17 @@ export default function ScheduleListView({
                         variants={eventVariants}
                       >
                         <div className={s.scheduleListEventContent}>
-                          <div className={s.scheduleListEventTitle}>{event.title}</div>
+                          <div className={s.scheduleListEventHeader}>
+                            <div className={s.scheduleListEventTitle}>{event.title}</div>
+                            <div className={s.scheduleListEventLabels}>
+                              {isOngoing && (
+                                <span className={s.scheduleListEventOngoing}>진행중</span>
+                              )}
+                              {dDayLabel && (
+                                <span className={s.scheduleListEventDDay}>{dDayLabel}</span>
+                              )}
+                            </div>
+                          </div>
                           {timeInfo && <div className={s.scheduleListEventTime}>{timeInfo}</div>}
                           {event.location && (
                             <div className={s.scheduleListEventLocation}>📍 {event.location}</div>
@@ -450,6 +520,8 @@ export default function ScheduleListView({
                   <div className={s.scheduleListEvents}>
                     {events.map((event, eventIndex) => {
                       const timeInfo = formatTimeInfo(event);
+                      const dDayLabel = getDDayLabel(event);
+                      const isOngoing = event.ongoing;
                       return (
                         <motion.div
                           key={event.id}
@@ -460,7 +532,17 @@ export default function ScheduleListView({
                           variants={eventVariants}
                         >
                           <div className={s.scheduleListEventContent}>
-                            <div className={s.scheduleListEventTitle}>{event.title}</div>
+                            <div className={s.scheduleListEventHeader}>
+                              <div className={s.scheduleListEventTitle}>{event.title}</div>
+                              <div className={s.scheduleListEventLabels}>
+                                {isOngoing && (
+                                  <span className={s.scheduleListEventOngoing}>진행중</span>
+                                )}
+                                {dDayLabel && (
+                                  <span className={s.scheduleListEventDDay}>{dDayLabel}</span>
+                                )}
+                              </div>
+                            </div>
                             {timeInfo && <div className={s.scheduleListEventTime}>{timeInfo}</div>}
                             {event.location && (
                               <div className={s.scheduleListEventLocation}>📍 {event.location}</div>

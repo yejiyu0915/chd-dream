@@ -54,6 +54,31 @@ export function useScheduleCalendar(currentDate: Date, scheduleData: ScheduleIte
         const eventStartDate = event.startDate ? new Date(event.startDate) : new Date(event.date);
         const eventEndDate = event.endDate ? new Date(event.endDate) : eventStartDate;
 
+        // 상시 일정(ongoing)인 경우 시작일에만 dot 표시
+        if (event.ongoing) {
+          for (let i = 0; i < days.length; i++) {
+            const dayDate = days[i].date;
+            const dayDateOnly = new Date(
+              dayDate.getFullYear(),
+              dayDate.getMonth(),
+              dayDate.getDate()
+            );
+            const eventStartDateOnly = new Date(
+              eventStartDate.getFullYear(),
+              eventStartDate.getMonth(),
+              eventStartDate.getDate()
+            );
+
+            // 시작일과 일치하는 날짜에만 dot 표시
+            if (dayDateOnly.getTime() === eventStartDateOnly.getTime()) {
+              days[i].events.push(event);
+              break; // 시작일만 표시하므로 한 번만 추가하고 종료
+            }
+          }
+          return; // ongoing 일정은 여기서 처리 완료
+        }
+
+        // 일반 일정 처리 (기존 로직)
         // 캘린더 범위 내에서 이벤트가 겹치는 날짜들 찾기
         const eventDays: number[] = [];
         for (let i = 0; i < days.length; i++) {
@@ -126,6 +151,23 @@ export function getSelectedDateEvents(
   const events: ScheduleItem[] = [];
 
   scheduleData.forEach((event) => {
+    // 상시 일정(ongoing)인 경우 시작일 이후 모든 날짜에 표시
+    if (event.ongoing && event.startDate) {
+      const eventStartDate = new Date(event.startDate);
+      const eventStartDateOnly = new Date(
+        eventStartDate.getFullYear(),
+        eventStartDate.getMonth(),
+        eventStartDate.getDate()
+      );
+
+      // 선택된 날짜가 시작일 이후인 경우 표시
+      if (selectedDateOnly >= eventStartDateOnly) {
+        events.push(event);
+      }
+      return; // ongoing 일정은 여기서 처리 완료
+    }
+
+    // 일반 일정 처리
     if (event.startDate && event.endDate) {
       const eventStartDate = new Date(event.startDate);
       const eventEndDate = new Date(event.endDate);

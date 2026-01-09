@@ -182,7 +182,7 @@ const BulletinContent = memo(function BulletinContent({
           )}
         </motion.div>
 
-        {/* 오전 예배 */}
+        {/* 11시 오전 예배 */}
         <motion.h2
           className={b.latest__titleText}
           custom={1}
@@ -190,7 +190,7 @@ const BulletinContent = memo(function BulletinContent({
           animate="visible"
           variants={itemVariants}
         >
-          오전 예배
+          11시 오전 예배
         </motion.h2>
 
         {/* 주보 제목 */}

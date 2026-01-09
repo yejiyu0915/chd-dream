@@ -10,6 +10,32 @@ export const formatTimeInfo = (event: ScheduleItem): string => {
     return dateString.includes('T');
   };
 
+  // 상시 일정인 경우 (ongoing이 true이고 endDate가 없는 경우)
+  if (event.ongoing && event.startDate && !event.endDate) {
+    const startDate = new Date(event.startDate);
+    const startDateStr = startDate
+      .toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+      })
+      .replace(/\./g, '/')
+      .replace(/\/$/, '')
+      .replace(/\s/g, ''); // 띄어쓰기 제거
+
+    const startHasTime = hasActualTime(event.startDate);
+    if (startHasTime) {
+      const startTimeStr = startDate.toLocaleTimeString('ko-KR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      });
+      return ` ${startDateStr}(${startTimeStr}) ~`;
+    } else {
+      return ` ${startDateStr} ~`;
+    }
+  }
+
   if (event.startDate && event.endDate) {
     const startDate = new Date(event.startDate);
     const endDate = new Date(event.endDate);

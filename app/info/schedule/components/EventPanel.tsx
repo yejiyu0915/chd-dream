@@ -9,6 +9,40 @@ interface EventPanelProps {
 }
 
 /**
+ * D-day 라벨을 계산하는 헬퍼 함수
+ * 미래 일정에만 D-3, D-2, D-1, D-day 표시
+ */
+function getDDayLabel(event: ScheduleItem): string | null {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // 일정의 시작일 가져오기
+  const eventStartDate = event.startDate ? new Date(event.startDate) : new Date(event.date);
+  eventStartDate.setHours(0, 0, 0, 0);
+
+  // 과거 일정이면 라벨 표시 안 함
+  if (eventStartDate < today) {
+    return null;
+  }
+
+  // 날짜 차이 계산 (밀리초를 일 단위로 변환)
+  const diffTime = eventStartDate.getTime() - today.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  // 당일은 D-day
+  if (diffDays === 0) {
+    return 'D-day';
+  }
+
+  // D-3, D-2, D-1만 표시 (그 이상은 표시 안 함)
+  if (diffDays <= 3 && diffDays > 0) {
+    return `D-${diffDays}`;
+  }
+
+  return null;
+}
+
+/**
  * 모바일 일정 상세 패널 컴포넌트
  * 선택된 날짜의 일정들을 상세히 표시
  */
@@ -38,9 +72,17 @@ export default function EventPanel({ selectedDate, events }: EventPanelProps) {
       <div className={s.eventList}>
         {events.map((event) => {
           const timeInfo = formatTimeInfo(event);
+          const dDayLabel = getDDayLabel(event);
+          const isOngoing = event.ongoing;
           return (
             <div key={event.id} className={`${s.eventItem} ${event.important ? s.important : ''}`}>
-              <div className={s.eventItemTitle}>{event.title}</div>
+              <div className={s.eventItemHeader}>
+                <div className={s.eventItemTitle}>{event.title}</div>
+                <div className={s.eventItemLabels}>
+                  {isOngoing && <span className={s.eventItemOngoing}>진행중</span>}
+                  {dDayLabel && <span className={s.eventItemDDay}>{dDayLabel}</span>}
+                </div>
+              </div>
               {timeInfo && <div className={s.eventItemTime}>{timeInfo}</div>}
               {event.location && <div className={s.eventItemTime}>📍 {event.location}</div>}
               {event.tags && event.tags.length > 0 && (
