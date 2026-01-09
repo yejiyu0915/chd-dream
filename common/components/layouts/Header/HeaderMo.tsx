@@ -7,6 +7,7 @@ import Icon from '@/common/components/utils/Icons';
 import h from '@/common/components/layouts/Header/Header.module.scss';
 import { useMobileMenu } from '@/common/components/layouts/Header/MobileMenuContext';
 import { menuData, snsLinks, prevLinks } from '@/common/data/info';
+import MobileSchedulePreview from '@/common/components/layouts/Header/MobileSchedulePreview';
 
 interface HeaderMoProps {
   isScrolled: boolean;
@@ -52,130 +53,135 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
   };
 
   return (
-    <div
-      className={`${h.mobileMenu__overlay} ${isMobileMenuOpen ? h.open : ''} ${isMobileMenuOpen || isScrolled ? h.scroll : ''}`}
-    >
-      <div className={h.mobileMenu__content}>
-        <nav className={h.mobileNav} aria-label="모바일 메뉴">
-          <ul className={h.mobileMenu__list}>
-            {menuData.map((menuItem, index) => (
-              <li key={index} className={h.mobileMenu__item}>
-                <button
-                  type="button"
-                  className={`${h.mobileMenu__button} ${activeMobileMenu.includes(menuItem.name) ? h.active : ''}`}
-                  onClick={() => handleMobileMenuClick(menuItem.name)}
-                >
-                  <span>{menuItem.name}</span>
-                  <Icon name="accordion" className={h.mobileMenu__icon} />
-                </button>
-
-                {menuItem.subMenu && (
-                  <div
-                    className={`${h.mobileSubMenu} ${activeMobileMenu.includes(menuItem.name) ? h.show : ''}`}
+    <>
+      <div
+        className={`${h.mobileMenu__overlay} ${isMobileMenuOpen ? h.open : ''} ${isMobileMenuOpen || isScrolled ? h.scroll : ''}`}
+      >
+        <div className={h.mobileMenu__content}>
+          <nav className={h.mobileNav} aria-label="모바일 메뉴">
+            <ul className={h.mobileMenu__list}>
+              {menuData.map((menuItem, index) => (
+                <li key={index} className={h.mobileMenu__item}>
+                  <button
+                    type="button"
+                    className={`${h.mobileMenu__button} ${activeMobileMenu.includes(menuItem.name) ? h.active : ''}`}
+                    onClick={() => handleMobileMenuClick(menuItem.name)}
                   >
-                    <div className={h.mobileSubMenu__content}>
-                      <div className={h.mobileSubMenu__top}>
-                        <ul className={h.mobileSubMenu__list}>
-                          {menuItem.subMenu.map((subItem, subIndex) => (
-                            <li key={subIndex} className={h.mobileSubMenu__item}>
-                              <Link
-                                href={subItem.href}
-                                className={h.mobileSubMenu__link}
-                                onClick={(e) => {
-                                  // 같은 페이지 링크인 경우 메뉴 닫기
-                                  if (pathname === subItem.href) {
-                                    e.preventDefault();
-                                    closeMobileMenu();
-                                    setActiveMobileMenu([]);
-                                  }
+                    <span>{menuItem.name}</span>
+                    <Icon name="accordion" className={h.mobileMenu__icon} />
+                  </button>
+
+                  {menuItem.subMenu && (
+                    <div
+                      className={`${h.mobileSubMenu} ${activeMobileMenu.includes(menuItem.name) ? h.show : ''}`}
+                    >
+                      <div className={h.mobileSubMenu__content}>
+                        <div className={h.mobileSubMenu__top}>
+                          <ul className={h.mobileSubMenu__list}>
+                            {menuItem.subMenu.map((subItem, subIndex) => (
+                              <li key={subIndex} className={h.mobileSubMenu__item}>
+                                <Link
+                                  href={subItem.href}
+                                  className={h.mobileSubMenu__link}
+                                  onClick={(e) => {
+                                    // 같은 페이지 링크인 경우 메뉴 닫기
+                                    if (pathname === subItem.href) {
+                                      e.preventDefault();
+                                      closeMobileMenu();
+                                      setActiveMobileMenu([]);
+                                    }
+                                  }}
+                                >
+                                  {subItem.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className={h.mobileSubMenu__bottom}>
+                          <div className={h.mobileSubMenu__visual}>
+                            <div
+                              className={h.mobileSubMenu__visualImage}
+                              style={{ position: 'relative' }}
+                            >
+                              <Image
+                                src={`/images/common/gnb-${index + 1}.jpg`}
+                                alt={`${menuItem.name} 서브메뉴 이미지`}
+                                fill
+                                style={{
+                                  objectFit: 'cover',
+                                  objectPosition: 'center',
                                 }}
-                              >
-                                {subItem.name}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div className={h.mobileSubMenu__bottom}>
-                        <div className={h.mobileSubMenu__visual}>
-                          <div
-                            className={h.mobileSubMenu__visualImage}
-                            style={{ position: 'relative' }}
-                          >
-                            <Image
-                              src={`/images/common/gnb-${index + 1}.jpg`}
-                              alt={`${menuItem.name} 서브메뉴 이미지`}
-                              fill
-                              style={{
-                                objectFit: 'cover',
-                                objectPosition: 'center',
-                              }}
-                              sizes="(max-width: 768px) 100vw, 50vw"
-                              priority={false}
-                            />
-                          </div>
-                          <div className={h.mobileSubMenu__visualContent}>
-                            <p>
-                              {menuItem.content?.description || '하나님의 사랑으로 함께하는 교회'}
-                            </p>
+                                sizes="(max-width: 768px) 100vw, 50vw"
+                                priority={false}
+                              />
+                            </div>
+                            <div className={h.mobileSubMenu__visualContent}>
+                              <p>
+                                {menuItem.content?.description || '하나님의 사랑으로 함께하는 교회'}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
-          <div className={h.mobileSns}>
-            <ul className={h.mobileSns__list}>
-              {snsLinks
-                .filter((snsLink) => !snsLink.disabled) // 준비중인 SNS는 모바일에서 노출하지 않음
-                .map((snsLink, index) => (
-                  <li key={index} className={h.mobileSns__item}>
-                    <Link href={snsLink.href} className={h.mobileSns__link} target="_blank">
-                      <span className="sr-only">행복으로가는교회 {snsLink.name} 바로가기</span>
-                      <Icon name={snsLink.icon} className={h.mobileSns__icon} />
-                    </Link>
-                  </li>
-                ))}
+                  )}
+                </li>
+              ))}
             </ul>
-          </div>
+            <div className={h.mobileSns}>
+              <ul className={h.mobileSns__list}>
+                {snsLinks
+                  .filter((snsLink) => !snsLink.disabled) // 준비중인 SNS는 모바일에서 노출하지 않음
+                  .map((snsLink, index) => (
+                    <li key={index} className={h.mobileSns__item}>
+                      <Link href={snsLink.href} className={h.mobileSns__link} target="_blank">
+                        <span className="sr-only">행복으로가는교회 {snsLink.name} 바로가기</span>
+                        <Icon name={snsLink.icon} className={h.mobileSns__icon} />
+                      </Link>
+                    </li>
+                  ))}
+              </ul>
+            </div>
 
-          {/* <div className={h.mobilePrev__links}>
-            {prevLinks.map((prevInfo, index) => {
-              // 활성화된 링크만 필터링
-              const activeLinks = prevInfo.links.filter((link) => !link.disabled);
+            {/* <div className={h.mobilePrev__links}>
+              {prevLinks.map((prevInfo, index) => {
+                // 활성화된 링크만 필터링
+                const activeLinks = prevInfo.links.filter((link) => !link.disabled);
 
-              // 활성화된 링크가 없으면 해당 그룹 자체를 렌더링하지 않음
-              if (activeLinks.length === 0) return null;
+                // 활성화된 링크가 없으면 해당 그룹 자체를 렌더링하지 않음
+                if (activeLinks.length === 0) return null;
 
-              return (
-                <div key={index} className={h.mobilePrev__group}>
-                  <div className={h.mobilePrev__row}>
-                    <p className={h.mobilePrev__title}>{prevInfo.name}</p>
-                    <ul className={h.mobilePrev__list}>
-                      {activeLinks.map((link, linkIndex) => (
-                        <li key={linkIndex} className={h.mobilePrev__item}>
-                          <Link
-                            href={link.href}
-                            className={h.mobilePrev__link}
-                            target="_blank"
-                            title={`${prevInfo.name} ${link.name} 바로가기`}
-                          >
-                            <span className="sr-only">{link.name}</span>
-                            <Icon name={link.icon} className={h.mobilePrev__icon} />
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
+                return (
+                  <div key={index} className={h.mobilePrev__group}>
+                    <div className={h.mobilePrev__row}>
+                      <p className={h.mobilePrev__title}>{prevInfo.name}</p>
+                      <ul className={h.mobilePrev__list}>
+                        {activeLinks.map((link, linkIndex) => (
+                          <li key={linkIndex} className={h.mobilePrev__item}>
+                            <Link
+                              href={link.href}
+                              className={h.mobilePrev__link}
+                              target="_blank"
+                              title={`${prevInfo.name} ${link.name} 바로가기`}
+                            >
+                              <span className="sr-only">{link.name}</span>
+                              <Icon name={link.icon} className={h.mobilePrev__icon} />
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div> */}
-        </nav>
+                );
+              })}
+            </div> */}
+          </nav>
+        </div>
+        <div className={h.mobileSchedulePreview__wrapper}>
+          <MobileSchedulePreview />
+        </div>
       </div>
-    </div>
+    </>
   );
 }

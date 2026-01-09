@@ -23,6 +23,7 @@
   --gradient-light-end: #e9ecef; // Header 그라데이션 끝
   --header-color: #fff;
   --header-color-logo: #fff;
+  --important-color: var(--accent-brand); // 중요 일정 색상
   position: fixed;
   top: 0;
   left: 0;
@@ -868,5 +869,147 @@ $moSns: '.mobileSns';
       width: vw(28);
       height: vw(28);
     }
+  }
+}
+
+// 모바일 일정 미리보기 (하단 고정)
+.mobileSchedulePreview__wrapper {
+  display: none;
+
+  @include mq(ta) {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1002; // overlay보다 높은 z-index
+  }
+}
+
+.mobileSchedulePreview {
+  --important-color: var(--accent-brand); // 중요 일정 색상
+  display: none;
+
+  @include mq(ta) {
+    display: block;
+    background: var(--bg-page);
+    // border-top: vw(2) solid var(--accent-border);
+    box-shadow: 0 vw(-5) vw(10) rgba(0, 0, 0, 0.04);
+    padding: vw(16) var(--inner-padding);
+    max-height: vw(200);
+    overflow-y: auto;
+  }
+
+  &__header {
+    display: none; // 타이틀이 숨김 텍스트이므로 header 숨김
+  }
+
+  &__title {
+    font-size: vw(16);
+    font-weight: 700;
+    color: var(--accent-brand);
+    margin: 0;
+  }
+
+  &__more {
+    font-size: vw(12);
+    color: var(--text-caption);
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--accent-brand);
+    }
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: vw(8);
+  }
+
+  &__empty {
+    font-size: vw(12);
+    color: var(--text-caption);
+    text-align: center;
+    padding: vw(8) 0;
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: vw(8);
+    background: #f7f8f9;
+    padding: vw(12);
+    border-left: vw(4) solid #000;
+    border-radius: 0 vw(8) vw(8) 0;
+
+    &.important {
+      border-left-color: var(--important-color);
+      background-color: var(--accent-secondary);
+    }
+  }
+
+  &__itemHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: vw(8);
+  }
+
+  &__itemTitle {
+    font-size: vw(14);
+    font-weight: 700;
+    color: #333;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__itemLabels {
+    display: flex;
+    align-items: center;
+    gap: vw(4);
+    flex-shrink: 0;
+  }
+
+  &__itemOngoing {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: vw(3) vw(8);
+    background: var(--bg-page);
+    color: var(--accent-brand);
+    border-radius: vw(12);
+    font-size: vw(11);
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 0 vw(3) vw(2) var(--accent-border-subtle);
+  }
+
+  &__itemDDay {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: vw(3) vw(8);
+    border: 1px solid var(--accent-border-subtle);
+    background: var(--accent-brand);
+    color: #ffffff;
+    border-radius: vw(12);
+    font-size: vw(11);
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 0 vw(3) vw(2) var(--accent-border-subtle);
+  }
+
+  &__itemTime {
+    font-size: vw(12);
+    color: #666;
+  }
+
+  &__itemLocation {
+    font-size: vw(12);
+    color: #666;
   }
 }

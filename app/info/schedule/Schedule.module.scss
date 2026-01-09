@@ -678,13 +678,13 @@
 }
 
 .scheduleListInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: vw(8);
   position: relative;
-  padding: 0 vw(24) vw(24) 0;
+  padding: 0 0 vw(24) 0;
   @include mq(mo) {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: vw(8);
     padding: vw(8) 0 vw(24) 0;
   }
   @include mq(mo-sm) {
