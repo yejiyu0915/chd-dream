@@ -680,8 +680,8 @@ $moSns: '.mobileSns';
       -webkit-overflow-scrolling: touch;
       min-height: 0; // flex item이 overflow를 위해 필요
       nav {
-        // padding-block-end: vw(200);
-        padding-block-end: vw(20);
+        padding-block-end: vw(120);
+        // padding-block-end: vw(20);
       }
     }
     &__list {
@@ -896,7 +896,7 @@ $moSns: '.mobileSns';
   @include mq(ta) {
     display: block;
     background: var(--bg-page);
-    // border-top: vw(2) solid var(--accent-border);
+    border-top: 1px solid var(--accent-border-subtle);
     box-shadow: 0 vw(-5) vw(10) rgba(0, 0, 0, 0.04);
     padding: vw(12) var(--inner-padding);
     max-height: min(vw(180), 25vh); // viewport 높이의 25% 또는 180vw 중 작은 값
@@ -948,6 +948,21 @@ $moSns: '.mobileSns';
     border: vw(2) solid var(--accent-border-subtle);
     border-radius: vw(8);
     flex-shrink: 0; // 아이템이 축소되지 않도록
+    text-decoration: none;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        transform: translateY(vw(-2));
+        box-shadow: 0 vw(4) vw(8) rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
 
     &.important {
       border-color: var(--important-color);

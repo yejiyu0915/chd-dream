@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
+import Link from 'next/link';
 import { ScheduleItem } from '@/lib/notion';
 import h from '@/common/components/layouts/Header/Header.module.scss';
 
@@ -156,8 +157,9 @@ export default function MobileSchedulePreview() {
           const isOngoing = event.ongoing;
 
           return (
-            <div
+            <Link
               key={event.id}
+              href="/info/schedule"
               className={`${h.mobileSchedulePreview__item} ${event.important ? h.important : ''}`}
             >
               <div className={h.mobileSchedulePreview__itemHeader}>
@@ -171,7 +173,7 @@ export default function MobileSchedulePreview() {
                   )}
                 </div>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>
