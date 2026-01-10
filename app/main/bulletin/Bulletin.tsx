@@ -149,7 +149,7 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
                 </Link>
               </motion.li>
               <motion.li className={s.link__item} variants={linkVariants}>
-                <Link href="https://band.us/band/5843149" target="_blank" rel="noopener noreferrer">
+                <Link href="https://band.us/band/98384389" target="_blank" rel="noopener noreferrer">
                   <span className={s.link__text}>
                     네이버 밴드
                     <Icon name="external-link" className={s.link__icon} />
