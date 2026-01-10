@@ -94,7 +94,7 @@ export interface SnsLink {
 }
 
 export const snsLinks: SnsLink[] = [
-  { name: 'Band', href: 'https://band.us/band/5843149', icon: 'sns-band' },
+  { name: 'Band', href: 'https://band.us/band/98384389', icon: 'sns-band' },
   {
     name: 'Youtube',
     href: '',
