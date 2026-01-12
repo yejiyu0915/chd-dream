@@ -41,6 +41,11 @@
     gap: vw(24);
     padding-inline: var(--inner-padding); // PC에서 타이틀과 동일한 패딩
 
+    // 그리드 아이템이 동일한 너비 유지 (긴 텍스트로 인한 확장 방지)
+    > * {
+      min-width: 0; // 그리드 아이템이 콘텐츠보다 작아질 수 있도록
+    }
+
     @include mq(pc-sm) {
       grid-template-columns: repeat(5, 1fr);
       gap: vw(20);
@@ -90,6 +95,8 @@
     border-radius: vw(20) vw(20) 0 0;
     overflow: hidden;
     height: 100%;
+    width: 100%; // 그리드 셀 너비에 맞춤
+    min-width: 0; // 콘텐츠로 인한 확장 방지
 
     @include mq(mo) {
       border-radius: vw(16) vw(16) 0 0;
@@ -153,6 +160,7 @@
     gap: vw(12);
     margin-block-start: vw(16);
     flex: 1;
+    min-width: 0; // 콘텐츠로 인한 확장 방지
 
     @include mq(pc-sm) {
       gap: vw(10);
