@@ -234,24 +234,35 @@ export default function CLog({ initialCLogData }: CLogProps) {
   return (
     <section className={c.cLog}>
       <div className={`${c.inner} inner`}>
-        <motion.h2
-          className={c.title}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ margin: '-100px' }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const }}
-        >
-          C-log
-        </motion.h2>
-        <motion.p
-          className={c.desc}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ margin: '-100px' }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const, delay: 0.1 }}
-        >
-          교회의 다양한 이야기를 소개합니다.
-        </motion.p>
+        {isMobile ? (
+          // 모바일: 애니메이션 제거 (떨림 현상 방지)
+          <>
+            <h2 className={c.title}>C-log</h2>
+            <p className={c.desc}>교회의 다양한 이야기를 소개합니다.</p>
+          </>
+        ) : (
+          // 데스크톱: 애니메이션 유지
+          <>
+            <motion.h2
+              className={c.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ margin: '-100px', once: true }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const }}
+            >
+              C-log
+            </motion.h2>
+            <motion.p
+              className={c.desc}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ margin: '-100px', once: true }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const, delay: 0.1 }}
+            >
+              교회의 다양한 이야기를 소개합니다.
+            </motion.p>
+          </>
+        )}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1, y: 0 }}

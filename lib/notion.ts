@@ -960,11 +960,11 @@ export async function getKVSliderData(): Promise<KVSliderItem[]> {
   )();
 }
 
-// Notion 데이터베이스에서 메인 페이지용 C-log 데이터 (6개) 가져오기
+// Notion 데이터베이스에서 메인 페이지용 C-log 데이터 (4개) 가져오기
 export async function getCLogMainData(): Promise<CLogItem[]> {
   return unstable_cache(
     async () => {
-      return getPublishedNotionData<CLogItem>('NOTION_CLOG_ID', mapPageToCLogItem, 6);
+      return getPublishedNotionData<CLogItem>('NOTION_CLOG_ID', mapPageToCLogItem, 4);
     },
     ['clog-main-data'],
     { revalidate: REVALIDATE_TIME.LIST, tags: ['clog-list'] } // 3분 캐시, 태그 기반 재검증

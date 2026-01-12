@@ -59,7 +59,7 @@
   .list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0 vw(60);
+    gap: vw(40) vw(60); // row 간격 추가 (2-5번, 3-6번 간격 개선)
     margin-block-start: vw(40);
     padding-inline: vw(200) vw(100);
     position: relative; // framer-motion useScroll의 스크롤 오프셋 계산을 위한 위치 기준점
@@ -79,11 +79,11 @@
         padding-block-start: vw(50);
       }
       &:nth-child(5) {
-        margin-block-start: vw(-50);
+        margin-block-start: vw(-10); // -50에서 -10으로 조정 (간격 개선)
         padding-block-start: 0;
       }
       &:nth-child(6) {
-        padding-block-start: vw(100);
+        padding-block-start: vw(140); // 100에서 140으로 증가 (간격 개선)
       }
     }
     &__link {
@@ -290,7 +290,7 @@
       @include font-cqi(24, $min: 18);
     }
     .list {
-      gap: 0 cqi(60);
+      gap: cqi(40) cqi(60); // row 간격 추가 (2-5번, 3-6번 간격 개선)
       margin-block-start: cqi(40);
       padding-inline: cqi(200) 0;
       &__item {
@@ -308,11 +308,11 @@
           padding-block-start: cqi(50);
         }
         &:nth-child(5) {
-          margin-block-start: cqi(-50);
+          margin-block-start: cqi(-10); // -50에서 -10으로 조정 (간격 개선)
           padding-block-start: 0;
         }
         &:nth-child(6) {
-          padding-block-start: cqi(100);
+          padding-block-start: cqi(140); // 100에서 140으로 증가 (간격 개선)
         }
       }
       &__link {

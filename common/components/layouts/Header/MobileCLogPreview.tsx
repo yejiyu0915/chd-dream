@@ -72,7 +72,7 @@ export default function MobileCLogPreview() {
     fetchCLogData();
   }, []);
 
-  // 최신 3개 글 선택
+  // 최신 4개 글 선택
   const latestPosts = useMemo(() => {
     if (!cLogData || cLogData.length === 0) {
       return [];
@@ -85,7 +85,7 @@ export default function MobileCLogPreview() {
       return dateB - dateA; // 내림차순
     });
 
-    return sorted.slice(0, 3);
+    return sorted.slice(0, 4);
   }, [cLogData]);
 
   // 데이터가 없고 로딩도 완료되었을 때만 표시하지 않음 (깜빡임 방지)
@@ -99,7 +99,7 @@ export default function MobileCLogPreview() {
       {!isLoading && !error && latestPosts.length > 0 && (
         <>
           <div className={h.mobileCLogPreview__list}>
-            {/* 최신글 3개의 타이틀을 태그 버튼 스타일로 표시 */}
+            {/* 최신글 4개의 타이틀을 태그 버튼 스타일로 표시 */}
             {latestPosts.map((post) => (
               <Link
                 key={post.id}
