@@ -23,6 +23,7 @@ interface BulletinListProps {
   totalPages: number;
   currentPage: number;
   onBulletinClick: (item: BulletinItem) => void;
+  onBulletinHover?: (item: BulletinItem) => void; // 호버 프리로드용
   onPageChange: (page: number) => void;
   formatDate: (dateString: string) => {
     date: string;
@@ -45,6 +46,7 @@ const BulletinList = memo(function BulletinList({
   totalPages,
   currentPage,
   onBulletinClick,
+  onBulletinHover,
   onPageChange,
   formatDate,
   selectedYear,
@@ -135,6 +137,7 @@ const BulletinList = memo(function BulletinList({
                   <button
                     type="button"
                     onClick={() => onBulletinClick(item)}
+                    onMouseEnter={() => onBulletinHover?.(item)}
                     className={b.item__info}
                     tabIndex={0}
                   >

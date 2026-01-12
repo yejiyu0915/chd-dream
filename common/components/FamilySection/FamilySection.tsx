@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import Image from 'next/image';
 import s from '@/common/components/FamilySection/FamilySection.module.scss';
 
 // ============================================
@@ -440,13 +441,15 @@ export default function FamilySection({
                 const imageSrc = `/images/vision/${prefix}${imageNum}.jpg`;
 
                 cellContent = (
-                  <div className={s.familyGridImage} style={{ opacity }} data-part={part.id}>
-                    {/* 플리커 방지: eager 로딩 + sync 디코딩으로 이미지 로드 최적화 */}
-                    <img
+                  <div className={s.familyGridImage} style={{ opacity, position: 'relative' }} data-part={part.id}>
+                    {/* Next.js Image 컴포넌트 사용 */}
+                    <Image
                       src={imageSrc}
                       alt={`${part.boldText}${part.restText} ${imageNum}`}
+                      fill
+                      style={{ objectFit: 'cover', objectPosition: 'center' }}
                       loading="eager"
-                      decoding="sync"
+                      sizes="(max-width: 768px) 50vw, 10vw"
                     />
                   </div>
                 );

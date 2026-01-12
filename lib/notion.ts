@@ -685,66 +685,110 @@ const mapPageToKVSliderItem: ItemMapper<KVSliderItem> = (page) => {
   };
 };
 
-// Notion 데이터베이스에서 C-log 데이터 가져오기
+// C-log 데이터 인메모리 캐시 (성능 최적화)
+const clogDataCache = new Map<string, { data: CLogItem[]; timestamp: number }>();
+const CLOG_DATA_CACHE_TTL = 10 * 60 * 1000; // 10분
+const clogDataFetchingRef = new Map<string, Promise<CLogItem[]>>();
+
+// Notion 데이터베이스에서 C-log 데이터 가져오기 (인메모리 캐시 + Next.js 캐시)
 export async function getCLogData(): Promise<CLogItem[]> {
-  return unstable_cache(
-    async () => {
-      const startTime = Date.now();
-      try {
-        const data = await getPublishedNotionData<CLogItem>('NOTION_CLOG_ID', mapPageToCLogItem);
-        const duration = Date.now() - startTime;
-        
-        // 데이터 검증 및 상세 로깅
-        if (!data) {
-          console.error('[C-log] getCLogData: data가 null/undefined입니다.', {
-            timestamp: new Date().toISOString(),
-            duration: `${duration}ms`,
-          });
-          return [];
-        }
-        
-        if (data.length === 0) {
-          console.warn('[C-log] getCLogData: 데이터가 비어있습니다.', {
-            timestamp: new Date().toISOString(),
-            duration: `${duration}ms`,
-            possibleCauses: [
-              'Notion에 Published 상태의 항목이 없음',
-              '모든 항목이 Preview 상태',
-              'Notion 데이터베이스 필터 조건 불일치',
-              'Notion에서 수정 중일 때 일시적 문제',
-            ],
-          });
-        } else {
-          console.log(`[C-log] getCLogData: ${data.length}개의 항목을 가져왔습니다. (${duration}ms)`);
-        }
-        
-        return data;
-      } catch (error) {
-        const duration = Date.now() - startTime;
-        // 에러 발생 시 상세 로깅
-        const errorDetails = {
-          message: error instanceof Error ? error.message : String(error),
-          name: error instanceof Error ? error.name : 'UnknownError',
-          stack: error instanceof Error ? error.stack : undefined,
-          timestamp: new Date().toISOString(),
-          duration: `${duration}ms`,
-          possibleCauses: [
-            'Notion API rate limit 초과',
-            '네트워크 타임아웃',
-            'Notion 데이터베이스 접근 권한 문제',
-            'Notion에서 수정 중일 때 일시적 오류',
-            'Notion API 서버 문제',
-          ],
-        };
-        console.error('[C-log] getCLogData 내부 에러:', errorDetails);
-        
-        // 에러 발생 시 빈 배열 반환 (캐시는 이전 값 유지)
-        return [];
-      }
-    },
-    ['clog-data'],
-    { revalidate: REVALIDATE_TIME.LIST, tags: ['clog-list'] } // 3분 캐시, 태그 기반 재검증
-  )();
+  const cacheKey = 'clog-all-data';
+  const now = Date.now();
+
+  // 인메모리 캐시 확인
+  const cached = clogDataCache.get(cacheKey);
+  if (cached && now - cached.timestamp < CLOG_DATA_CACHE_TTL) {
+    return cached.data;
+  }
+
+  // 이미 요청 중인 경우 기존 Promise 반환 (중복 요청 방지)
+  const existingFetch = clogDataFetchingRef.get(cacheKey);
+  if (existingFetch) {
+    return existingFetch;
+  }
+
+  // 새로운 요청 시작
+  const fetchPromise = (async () => {
+    try {
+      const result = await unstable_cache(
+        async () => {
+          const startTime = Date.now();
+          try {
+            const data = await getPublishedNotionData<CLogItem>(
+              'NOTION_CLOG_ID',
+              mapPageToCLogItem
+            );
+            const duration = Date.now() - startTime;
+
+            // 데이터 검증 및 상세 로깅
+            if (!data) {
+              console.error('[C-log] getCLogData: data가 null/undefined입니다.', {
+                timestamp: new Date().toISOString(),
+                duration: `${duration}ms`,
+              });
+              return [];
+            }
+
+            if (data.length === 0) {
+              console.warn('[C-log] getCLogData: 데이터가 비어있습니다.', {
+                timestamp: new Date().toISOString(),
+                duration: `${duration}ms`,
+                possibleCauses: [
+                  'Notion에 Published 상태의 항목이 없음',
+                  '모든 항목이 Preview 상태',
+                  'Notion 데이터베이스 필터 조건 불일치',
+                  'Notion에서 수정 중일 때 일시적 문제',
+                ],
+              });
+            } else {
+              console.log(
+                `[C-log] getCLogData: ${data.length}개의 항목을 가져왔습니다. (${duration}ms)`
+              );
+            }
+
+            return data;
+          } catch (error) {
+            const duration = Date.now() - startTime;
+            // 에러 발생 시 상세 로깅
+            const errorDetails = {
+              message: error instanceof Error ? error.message : String(error),
+              name: error instanceof Error ? error.name : 'UnknownError',
+              stack: error instanceof Error ? error.stack : undefined,
+              timestamp: new Date().toISOString(),
+              duration: `${duration}ms`,
+              possibleCauses: [
+                'Notion API rate limit 초과',
+                '네트워크 타임아웃',
+                'Notion 데이터베이스 접근 권한 문제',
+                'Notion에서 수정 중일 때 일시적 오류',
+                'Notion API 서버 문제',
+              ],
+            };
+            console.error('[C-log] getCLogData 내부 에러:', errorDetails);
+
+            // 에러 발생 시 빈 배열 반환 (캐시는 이전 값 유지)
+            return [];
+          }
+        },
+        ['clog-data'],
+        { revalidate: REVALIDATE_TIME.LIST, tags: ['clog-list'] } // 3분 캐시, 태그 기반 재검증
+      )();
+
+      // 인메모리 캐시에 저장
+      clogDataCache.set(cacheKey, {
+        data: result,
+        timestamp: now,
+      });
+
+      return result;
+    } finally {
+      // 요청 완료 후 fetching ref에서 제거
+      clogDataFetchingRef.delete(cacheKey);
+    }
+  })();
+
+  clogDataFetchingRef.set(cacheKey, fetchPromise);
+  return fetchPromise;
 }
 
 // C-log 데이터 가져오기 (NewsItem 타입으로)
@@ -947,13 +991,92 @@ export async function getScheduleData(): Promise<ScheduleItem[]> {
   )();
 }
 
+// 전역 인메모리 캐시 (C-log 상세페이지 성능 최적화)
+const clogDetailCache = new Map<
+  string,
+  { data: { page: PageObjectResponse; blocks: BlockObjectResponse[] } | null; timestamp: number }
+>();
+const CLOG_DETAIL_CACHE_TTL = 30 * 60 * 1000; // 30분으로 증가 (더 빠른 로딩)
+const clogDetailFetchingRef = new Map<
+  string,
+  Promise<{ page: PageObjectResponse; blocks: BlockObjectResponse[] } | null>
+>();
+
+// 전역 타입 선언 (메타데이터 전용 캐시)
+declare global {
+  // eslint-disable-next-line no-var
+  var clogMetadataOnlyCache:
+    | Map<string, { data: PageObjectResponse | null; timestamp: number }>
+    | undefined;
+}
+
 export async function getNotionPageAndContentBySlug(
   databaseIdEnvVar: string,
   slug: string
 ): Promise<{ page: PageObjectResponse; blocks: BlockObjectResponse[] } | null> {
-  // 개발 환경에서는 캐시를 비활성화
+  // C-log 상세페이지인 경우 인메모리 캐시 사용
+  if (databaseIdEnvVar === 'NOTION_CLOG_ID') {
+    const cacheKey = `${databaseIdEnvVar}-${slug}`;
+    const now = Date.now();
+
+    // 캐시 확인
+    const cached = clogDetailCache.get(cacheKey);
+    if (cached && now - cached.timestamp < CLOG_DETAIL_CACHE_TTL) {
+      return cached.data;
+    }
+
+    // 이미 요청 중인 경우 기존 Promise 반환 (중복 요청 방지)
+    const existingFetch = clogDetailFetchingRef.get(cacheKey);
+    if (existingFetch) {
+      return existingFetch;
+    }
+
+    // 새로운 요청 시작
+    const fetchPromise = (async () => {
+      try {
+        // Next.js 캐시도 함께 사용
+        const cachedFn = unstable_cache(
+          async () => {
+            return getNotionPageAndContentBySlugInternal(databaseIdEnvVar, slug);
+          },
+          [`${databaseIdEnvVar}-detail-${slug}`],
+          {
+            revalidate: REVALIDATE_TIME.DETAIL,
+            tags: [`${databaseIdEnvVar}-post-${slug}`, 'clog-content'],
+          }
+        );
+        const result = await cachedFn();
+
+        // 인메모리 캐시에 저장
+        clogDetailCache.set(cacheKey, {
+          data: result,
+          timestamp: now,
+        });
+
+        return result;
+      } finally {
+        // 요청 완료 후 fetching ref에서 제거
+        clogDetailFetchingRef.delete(cacheKey);
+      }
+    })();
+
+    clogDetailFetchingRef.set(cacheKey, fetchPromise);
+    return fetchPromise;
+  }
+
+  // 다른 데이터베이스는 기존 로직 사용
+  // 개발 환경에서는 짧은 캐시 사용
   if (process.env.NODE_ENV === 'development') {
-    return getNotionPageAndContentBySlugInternal(databaseIdEnvVar, slug);
+    return unstable_cache(
+      async (databaseIdEnvVar: string, slug: string) => {
+        return getNotionPageAndContentBySlugInternal(databaseIdEnvVar, slug);
+      },
+      [`${databaseIdEnvVar}-detail-${slug}`],
+      {
+        revalidate: 300, // 개발 환경: 5분 캐시 (더 빠른 로딩)
+        tags: [`${databaseIdEnvVar}-post-${slug}`],
+      }
+    )(databaseIdEnvVar, slug);
   }
 
   return unstable_cache(
@@ -966,6 +1089,135 @@ export async function getNotionPageAndContentBySlug(
       tags: [`${databaseIdEnvVar}-post-${slug}`, 'bulletin-content'],
     }
   )(databaseIdEnvVar, slug);
+}
+
+// 메타데이터만 빠르게 가져오는 함수 (blocks 제외 - 성능 최적화)
+// Next.js 캐시와 인메모리 캐시 모두 활용
+export async function getNotionPageMetadataBySlug(
+  databaseIdEnvVar: string,
+  slug: string
+): Promise<PageObjectResponse | null> {
+  // C-log인 경우 인메모리 캐시 우선 사용
+  if (databaseIdEnvVar === 'NOTION_CLOG_ID') {
+    const cacheKey = `clog-metadata-only-${slug}`;
+    const now = Date.now();
+    const METADATA_ONLY_CACHE_TTL = 30 * 60 * 1000; // 30분
+
+    // 인메모리 캐시 확인 (전역 변수로 관리)
+    if (!globalThis.clogMetadataOnlyCache) {
+      globalThis.clogMetadataOnlyCache = new Map<
+        string,
+        { data: PageObjectResponse | null; timestamp: number }
+      >();
+    }
+
+    const cached = globalThis.clogMetadataOnlyCache.get(cacheKey);
+    if (cached && now - cached.timestamp < METADATA_ONLY_CACHE_TTL) {
+      return cached.data;
+    }
+
+    // Next.js 캐시 사용
+    const cachedFn = unstable_cache(
+      async () => {
+        return getNotionPageMetadataBySlugInternal(databaseIdEnvVar, slug);
+      },
+      [`${databaseIdEnvVar}-metadata-${slug}`],
+      {
+        revalidate: REVALIDATE_TIME.DETAIL, // 1시간 캐시
+        tags: [`${databaseIdEnvVar}-metadata-${slug}`, 'clog-metadata'],
+      }
+    );
+
+    const result = await cachedFn();
+
+    // 인메모리 캐시에 저장
+    globalThis.clogMetadataOnlyCache.set(cacheKey, {
+      data: result,
+      timestamp: now,
+    });
+
+    return result;
+  }
+
+  // 다른 데이터베이스는 Next.js 캐시만 사용
+  return unstable_cache(
+    async () => {
+      return getNotionPageMetadataBySlugInternal(databaseIdEnvVar, slug);
+    },
+    [`${databaseIdEnvVar}-metadata-${slug}`],
+    {
+      revalidate: REVALIDATE_TIME.DETAIL,
+      tags: [`${databaseIdEnvVar}-metadata-${slug}`],
+    }
+  )();
+}
+
+// 메타데이터만 가져오는 내부 함수 (blocks 제외)
+async function getNotionPageMetadataBySlugInternal(
+  databaseIdEnvVar: string,
+  slug: string
+): Promise<PageObjectResponse | null> {
+  const notionDatabaseId = process.env[databaseIdEnvVar];
+  if (!process.env.NOTION_TOKEN || !notionDatabaseId) {
+    return null;
+  }
+
+  try {
+    // 2025-09-03 버전업에 따라 data_source_id를 먼저 가져와야 함
+    const databaseInfo = await notion.databases.retrieve({ database_id: notionDatabaseId });
+
+    let dataSourceId: string | undefined;
+    if (
+      'data_sources' in databaseInfo &&
+      Array.isArray(databaseInfo.data_sources) &&
+      databaseInfo.data_sources.length > 0
+    ) {
+      dataSourceId = databaseInfo.data_sources[0].id;
+    } else {
+      dataSourceId = notionDatabaseId;
+    }
+
+    // 슬러그로 페이지 찾기 (blocks 제외 - 빠른 조회)
+    const response: any = await notion.dataSources.query({
+      data_source_id: dataSourceId as string,
+      filter: {
+        and: [
+          {
+            property: 'Slug',
+            rich_text: {
+              equals: slug,
+            },
+          },
+          {
+            or: [
+              {
+                property: 'Status',
+                select: {
+                  equals: 'Published',
+                },
+              },
+              {
+                property: 'Status',
+                select: {
+                  equals: 'Preview',
+                },
+              },
+            ],
+          },
+        ],
+      },
+      page_size: 1,
+    });
+
+    if (response.results.length === 0) {
+      return null;
+    }
+
+    return response.results[0] as PageObjectResponse;
+  } catch (error: unknown) {
+    void error;
+    return null;
+  }
 }
 
 // 실제 데이터 가져오기 로직을 분리한 내부 함수

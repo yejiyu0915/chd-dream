@@ -40,19 +40,43 @@ export default function CLogList({
   const observerRef = useRef<IntersectionObserver | null>(null);
   const prefetchedLinks = useRef<Set<string>>(new Set());
 
-  // hover 시 페이지 프리패치 (PC용)
+  // hover 시 페이지 프리패치 (PC용) - 더 적극적으로
   const handleMouseEnter = (link: string) => {
     if (!prefetchedLinks.current.has(link)) {
+      // 즉시 프리패치
       router.prefetch(link);
       prefetchedLinks.current.add(link);
+      
+      // 추가: API 라우트도 프리페치하여 데이터 미리 로드
+      if (link.includes('/c-log/')) {
+        const slug = link.split('/c-log/')[1]?.split('?')[0];
+        if (slug) {
+          // 백그라운드에서 데이터 미리 가져오기 (캐시에 저장)
+          fetch(`/api/c-log/${slug}`).catch(() => {
+            // 에러는 무시 (프리페치는 선택적)
+          });
+        }
+      }
     }
   };
 
-  // touchstart 시 페이지 프리패치 (모바일용)
+  // touchstart 시 페이지 프리패치 (모바일용) - 더 적극적으로
   const handleTouchStart = (link: string) => {
     if (!prefetchedLinks.current.has(link)) {
+      // 즉시 프리패치
       router.prefetch(link);
       prefetchedLinks.current.add(link);
+      
+      // 추가: API 라우트도 프리페치하여 데이터 미리 로드
+      if (link.includes('/c-log/')) {
+        const slug = link.split('/c-log/')[1]?.split('?')[0];
+        if (slug) {
+          // 백그라운드에서 데이터 미리 가져오기 (캐시에 저장)
+          fetch(`/api/c-log/${slug}`).catch(() => {
+            // 에러는 무시 (프리페치는 선택적)
+          });
+        }
+      }
     }
   };
 

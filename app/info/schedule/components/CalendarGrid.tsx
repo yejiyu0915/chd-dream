@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { CalendarDay, DAYS_OF_WEEK } from '@/app/info/schedule/types/types';
 import s from '@/app/info/schedule/Schedule.module.scss';
 
@@ -11,13 +11,9 @@ interface CalendarGridProps {
 /**
  * 캘린더 그리드 컴포넌트
  * 요일 헤더와 날짜 셀들을 렌더링
+ * 수동 최적화 적용
  */
-export default function CalendarGrid({
-  calendarData,
-  selectedDate,
-  onDateClick,
-}: CalendarGridProps) {
-  'use memo'; // React 컴파일러 최적화 적용
+function CalendarGrid({ calendarData, selectedDate, onDateClick }: CalendarGridProps) {
 
   return (
     <div className={s.calendarGrid}>
@@ -76,3 +72,20 @@ export default function CalendarGrid({
     </div>
   );
 }
+
+// React.memo로 컴포넌트 메모이제이션 (수동 최적화)
+export default memo(CalendarGrid, (prevProps, nextProps) => {
+  // calendarData 배열이 동일한지 확인
+  if (prevProps.calendarData !== nextProps.calendarData) {
+    return false; // 리렌더링 필요
+  }
+  // selectedDate가 동일한지 확인
+  if (prevProps.selectedDate.getTime() !== nextProps.selectedDate.getTime()) {
+    return false; // 리렌더링 필요
+  }
+  // onDateClick 함수가 동일한지 확인
+  if (prevProps.onDateClick !== nextProps.onDateClick) {
+    return false; // 리렌더링 필요
+  }
+  return true; // props가 동일하면 리렌더링 불필요
+});

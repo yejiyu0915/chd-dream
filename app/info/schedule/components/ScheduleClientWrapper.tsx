@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { memo } from 'react';
 import { ScheduleItem } from '@/lib/notion';
 import { ScheduleProvider } from '@/app/info/schedule/context/ScheduleContext';
 import { useScheduleContext } from '@/app/info/schedule/context/ScheduleContext';
@@ -14,8 +14,8 @@ interface ScheduleClientWrapperProps {
   searchParams: { view?: string; date?: string; period?: string; start?: string };
 }
 
-// 필터 컴포넌트 (Context 사용)
-function ScheduleFilters() {
+// 필터 컴포넌트 (Context 사용) - 수동 최적화
+const ScheduleFilters = memo(function ScheduleFilters() {
   const { viewMode, period, setViewMode, setPeriod } = useScheduleContext();
 
   return (
@@ -24,19 +24,21 @@ function ScheduleFilters() {
       {viewMode === 'list' && <SchedulePeriodFilter period={period} onPeriodChange={setPeriod} />}
     </div>
   );
-}
+});
 
-// 메인 일정 컨텐츠 (서버에서 받은 데이터만 사용)
-function ScheduleContent({ scheduleData }: { scheduleData: ScheduleItem[] }) {
-  // Next.js가 자동으로 스크롤 복원을 처리하므로 제거
-
+// 메인 일정 컨텐츠 (서버에서 받은 데이터만 사용) - 수동 최적화
+const ScheduleContent = memo(function ScheduleContent({
+  scheduleData,
+}: {
+  scheduleData: ScheduleItem[];
+}) {
   return (
     <>
       <ScheduleFilters />
       <ScheduleCalendarView scheduleData={scheduleData} />
     </>
   );
-}
+});
 
 // 클라이언트 래퍼 (Provider 포함)
 export default function ScheduleClientWrapper({

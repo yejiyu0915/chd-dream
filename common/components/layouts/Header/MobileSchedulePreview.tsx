@@ -1,9 +1,16 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { ScheduleItem } from '@/lib/notion';
 import h from '@/common/components/layouts/Header/Header.module.scss';
+
+// 전역 캐시 (컴포넌트 간 공유)
+const scheduleDataCache = {
+  data: null as ScheduleItem[] | null,
+  timestamp: 0,
+  TTL: 5 * 60 * 1000, // 5분 캐시
+};
 
 /**
  * D-day 라벨을 계산하는 헬퍼 함수
@@ -46,25 +53,48 @@ export default function MobileSchedulePreview() {
   const [scheduleData, setScheduleData] = useState<ScheduleItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isFetchingRef = useRef(false); // 중복 요청 방지
 
-  // 일정 데이터 가져오기
+  // 일정 데이터 가져오기 (캐싱 적용)
   useEffect(() => {
     const fetchScheduleData = async () => {
+      // 중복 요청 방지
+      if (isFetchingRef.current) return;
+      
+      // 캐시 확인
+      const now = Date.now();
+      if (
+        scheduleDataCache.data &&
+        now - scheduleDataCache.timestamp < scheduleDataCache.TTL
+      ) {
+        setScheduleData(scheduleDataCache.data);
+        setIsLoading(false);
+        setError(null);
+        return;
+      }
+
       try {
+        isFetchingRef.current = true;
         setIsLoading(true);
-        // 캐시 없이 항상 최신 데이터 가져오기
+        
         const response = await fetch('/api/schedule', {
-          cache: 'no-store',
           headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            Pragma: 'no-cache',
+            'Cache-Control': 'max-age=300', // 5분 캐시
           },
         });
+        
         if (!response.ok) {
           throw new Error('일정 데이터를 가져오는데 실패했습니다.');
         }
+        
         const data = await response.json();
-        setScheduleData(data || []);
+        const scheduleList = data || [];
+        
+        // 캐시 업데이트
+        scheduleDataCache.data = scheduleList;
+        scheduleDataCache.timestamp = now;
+        
+        setScheduleData(scheduleList);
         setError(null);
       } catch (err) {
         console.error('일정 데이터 가져오기 실패:', err);
@@ -72,14 +102,18 @@ export default function MobileSchedulePreview() {
         setScheduleData([]);
       } finally {
         setIsLoading(false);
+        isFetchingRef.current = false;
       }
     };
 
     fetchScheduleData();
 
-    // 페이지 포커스 시 데이터 다시 가져오기 (다른 탭에서 돌아왔을 때)
+    // 페이지 포커스 시 캐시 만료 확인 후 필요시 재요청
     const handleFocus = () => {
-      fetchScheduleData();
+      const now = Date.now();
+      if (now - scheduleDataCache.timestamp >= scheduleDataCache.TTL) {
+        fetchScheduleData();
+      }
     };
 
     window.addEventListener('focus', handleFocus);

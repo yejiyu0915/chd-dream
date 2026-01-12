@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, ReactNode, useCallback } from 'react';
 import { motion, useInView } from 'framer-motion';
+import Image from 'next/image';
 import v from '@/app/about/vision/Vision.module.scss';
 import FamilySection from '@/common/components/FamilySection';
 
@@ -10,7 +11,8 @@ import FamilySection from '@/common/components/FamilySection';
 // ============================================
 const preloadImages = (urls: string[]) => {
   urls.forEach((url) => {
-    const img = new Image();
+    // 네이티브 Image 생성자 사용 (Next.js Image 컴포넌트와 충돌 방지)
+    const img = new window.Image();
     img.src = url;
   });
 };
@@ -599,10 +601,18 @@ function TextReveal({
           style={{
             opacity: getImageOpacity(),
             transform: `scale(${getImageScale()})`,
+            position: 'relative',
           }}
         >
-          {/* 초기 로딩 최적화: eager + sync 디코딩 */}
-          <img src={image} alt={title || '비전 이미지'} loading="eager" decoding="sync" />
+          {/* Next.js Image 컴포넌트 사용 */}
+          <Image
+            src={image}
+            alt={title || '비전 이미지'}
+            fill
+            style={{ objectFit: 'cover', objectPosition: 'center' }}
+            loading="eager"
+            sizes="(max-width: 768px) 100vw, 50vw"
+          />
         </div>
       )}
     </div>

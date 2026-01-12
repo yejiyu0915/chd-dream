@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 import { ScheduleItem } from '@/lib/notion';
 import { formatTimeInfo } from '@/app/info/schedule/types/utils';
 import s from '@/app/info/schedule/Schedule.module.scss';
@@ -45,28 +45,37 @@ function getDDayLabel(event: ScheduleItem): string | null {
 /**
  * 모바일 일정 상세 패널 컴포넌트
  * 선택된 날짜의 일정들을 상세히 표시
+ * 수동 최적화 적용
  */
-export default function EventPanel({ selectedDate, events }: EventPanelProps) {
-  'use memo'; // React 컴파일러 최적화 적용
+function EventPanel({ selectedDate, events }: EventPanelProps) {
+  // 날짜 포맷팅 (수동 최적화 - useMemo)
+  const formattedDate = useMemo(
+    () =>
+      selectedDate.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        weekday: 'long',
+      }),
+    [selectedDate]
+  );
+
+  // 오늘 여부 확인 (수동 최적화 - useMemo)
+  const isToday = useMemo(() => {
+    const today = new Date();
+    return (
+      selectedDate.getFullYear() === today.getFullYear() &&
+      selectedDate.getMonth() === today.getMonth() &&
+      selectedDate.getDate() === today.getDate()
+    );
+  }, [selectedDate]);
 
   return (
     <div className={s.eventPanel}>
       <div className={s.eventPanelHeader}>
         <div className={s.eventPanelTitle}>
-          {selectedDate.toLocaleDateString('ko-KR', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            weekday: 'long',
-          })}
-          {(() => {
-            const today = new Date();
-            const isToday =
-              selectedDate.getFullYear() === today.getFullYear() &&
-              selectedDate.getMonth() === today.getMonth() &&
-              selectedDate.getDate() === today.getDate();
-            return isToday ? ' (오늘)' : '';
-          })()}
+          {formattedDate}
+          {isToday && ' (오늘)'}
         </div>
       </div>
       <div className={s.eventList}>
@@ -106,3 +115,22 @@ export default function EventPanel({ selectedDate, events }: EventPanelProps) {
     </div>
   );
 }
+
+// React.memo로 컴포넌트 메모이제이션 (수동 최적화)
+export default memo(EventPanel, (prevProps, nextProps) => {
+  // selectedDate가 동일한지 확인
+  if (prevProps.selectedDate.getTime() !== nextProps.selectedDate.getTime()) {
+    return false; // 리렌더링 필요
+  }
+  // events 배열이 동일한지 확인
+  if (prevProps.events !== nextProps.events) {
+    if (prevProps.events.length !== nextProps.events.length) {
+      return false; // 리렌더링 필요
+    }
+    // 배열 내용이 동일한지 확인
+    const prevIds = prevProps.events.map((item) => item.id).join(',');
+    const nextIds = nextProps.events.map((item) => item.id).join(',');
+    return prevIds === nextIds; // ID가 동일하면 리렌더링 불필요
+  }
+  return true; // props가 동일하면 리렌더링 불필요
+});

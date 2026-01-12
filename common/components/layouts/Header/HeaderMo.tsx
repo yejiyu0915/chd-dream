@@ -20,36 +20,79 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
   const pathname = usePathname();
 
   const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useMobileMenu();
-  const [activeMobileMenu, setActiveMobileMenu] = useState<string[]>([]); // 배열로 변경 (여러 개 열기 가능)
+  const [activeMobileMenu, setActiveMobileMenu] = useState<string | null>(null); // 하나만 열리도록 단일 값으로 변경
 
   // pathname 변경 시 메뉴 닫기
   useEffect(() => {
     if (isMobileMenuOpen) {
       closeMobileMenu();
-      setActiveMobileMenu([]); // 서브메뉴도 모두 닫기
+      setActiveMobileMenu(null); // 서브메뉴도 모두 닫기
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
-  // 모바일 메뉴 열림/닫힘에 따른 body 스크롤 제어
+  // activeMobileMenu 변경 시 스타일 초기화 및 높이 계산
+  useEffect(() => {
+    if (!isMobileMenuOpen) return; // 모바일 메뉴가 닫혀있으면 실행하지 않음
+
+    // 모든 서브메뉴의 인라인 스타일 초기화
+    const allSubMenus = document.querySelectorAll(`[data-menu-name]`) as NodeListOf<HTMLElement>;
+    allSubMenus.forEach((subMenu) => {
+      const menuName = subMenu.getAttribute('data-menu-name');
+      if (menuName !== activeMobileMenu) {
+        // 닫힌 메뉴는 스타일 초기화
+        subMenu.style.maxHeight = '';
+      }
+    });
+
+    // 열린 메뉴의 실제 높이 계산
+    if (activeMobileMenu) {
+      requestAnimationFrame(() => {
+        const subMenu = document.querySelector(`[data-menu-name="${activeMobileMenu}"]`) as HTMLElement;
+        if (subMenu) {
+          // CSS 모듈 클래스명을 직접 사용하지 않고 일반 클래스 선택자 사용
+          const content = subMenu.querySelector('[class*="mobileSubMenu__content"]') as HTMLElement;
+          if (content) {
+            // 임시로 높이를 auto로 설정하여 실제 높이 측정
+            subMenu.style.maxHeight = 'none';
+            const actualHeight = content.scrollHeight;
+            // 다시 0으로 리셋 후 실제 높이로 애니메이션
+            subMenu.style.maxHeight = '0px';
+            // 다음 프레임에서 실제 높이로 설정 (애니메이션 트리거)
+            requestAnimationFrame(() => {
+              subMenu.style.maxHeight = `${actualHeight}px`;
+            });
+          }
+        }
+      });
+    }
+  }, [activeMobileMenu, isMobileMenuOpen]);
+
+  // 모바일 메뉴 열림/닫힘에 따른 body 스크롤 제어 및 아코디언 초기화
   useEffect(() => {
     if (isMobileMenuOpen) {
       // 메뉴 열릴 때 body 스크롤 차단
       document.body.classList.add('mobile-menu-open');
+      // 메뉴가 열릴 때는 상태를 유지 (사용자가 클릭하기 전까지)
     } else {
-      // 메뉴 닫힐 때 body 스크롤 복원
+      // 메뉴 닫힐 때 body 스크롤 복원 및 아코디언 상태 초기화
       document.body.classList.remove('mobile-menu-open');
+      setActiveMobileMenu(null);
+      // 모든 서브메뉴의 인라인 스타일도 초기화
+      const allSubMenus = document.querySelectorAll(`[data-menu-name]`) as NodeListOf<HTMLElement>;
+      allSubMenus.forEach((subMenu) => {
+        subMenu.style.maxHeight = '';
+      });
     }
   }, [isMobileMenuOpen]);
 
   const handleMobileMenuClick = (menuName: string) => {
-    const isOpen = activeMobileMenu.includes(menuName);
-
-    // 토글: 열려있으면 닫고, 닫혀있으면 열기
-    if (isOpen) {
-      setActiveMobileMenu(activeMobileMenu.filter((name) => name !== menuName));
+    // 하나만 열리도록: 같은 메뉴면 닫고, 다른 메뉴면 기존 닫고 새로 열기
+    if (activeMobileMenu === menuName) {
+      setActiveMobileMenu(null);
     } else {
-      setActiveMobileMenu([...activeMobileMenu, menuName]);
+      setActiveMobileMenu(menuName);
+      // useEffect에서 높이 계산 처리
     }
   };
 
@@ -65,7 +108,7 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
                 <li key={index} className={h.mobileMenu__item}>
                   <button
                     type="button"
-                    className={`${h.mobileMenu__button} ${activeMobileMenu.includes(menuItem.name) ? h.active : ''}`}
+                    className={`${h.mobileMenu__button} ${activeMobileMenu === menuItem.name ? h.active : ''}`}
                     onClick={() => handleMobileMenuClick(menuItem.name)}
                   >
                     <span>{menuItem.name}</span>
@@ -74,7 +117,8 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
 
                   {menuItem.subMenu && (
                     <div
-                      className={`${h.mobileSubMenu} ${activeMobileMenu.includes(menuItem.name) ? h.show : ''}`}
+                      className={`${h.mobileSubMenu} ${activeMobileMenu === menuItem.name ? h.show : ''}`}
+                      data-menu-name={menuItem.name}
                     >
                       <div className={h.mobileSubMenu__content}>
                         <div className={h.mobileSubMenu__top}>
@@ -89,7 +133,7 @@ export default function HeaderMo({ isScrolled }: HeaderMoProps) {
                                     if (pathname === subItem.href) {
                                       e.preventDefault();
                                       closeMobileMenu();
-                                      setActiveMobileMenu([]);
+                                      setActiveMobileMenu(null);
                                     }
                                   }}
                                 >

@@ -32,10 +32,8 @@ function getRecommendedPosts(
   currentPost: { id: string; category: string; tags: string[]; slug: string },
   allPosts: CLogItem[]
 ): CLogItem[] {
-  // 현재 글 제외
-  const filteredPosts = allPosts.filter(
-    (post) => post.id !== currentPost.id && post.slug !== currentPost.slug
-  );
+  // 현재 글 제외 (slug로만 필터링 - 더 빠름)
+  const filteredPosts = allPosts.filter((post) => post.slug !== currentPost.slug);
 
   if (filteredPosts.length === 0) {
     return [];

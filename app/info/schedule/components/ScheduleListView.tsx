@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, memo } from 'react';
 import { motion } from 'framer-motion';
 import { ScheduleItem } from '@/lib/notion';
 import { formatTimeInfo } from '@/app/info/schedule/types/utils';
@@ -56,8 +56,9 @@ interface ScheduleListViewProps {
 /**
  * 일정 리스트 뷰 컴포넌트
  * 일정이 있는 날짜만 표시하고 날짜별로 그룹화
+ * 수동 최적화 적용 (복잡한 데이터 처리)
  */
-export default function ScheduleListView({
+function ScheduleListView({
   scheduleData,
   currentDate,
   period,
@@ -70,8 +71,6 @@ export default function ScheduleListView({
   onPreviousPeriod,
   onNextPeriod,
 }: ScheduleListViewProps) {
-  'use memo'; // React 컴파일러 최적화 적용
-
   // 아코디언 상태 관리 (lazy initialization)
   const [expandedDates, setExpandedDates] = useState<Set<string>>(() => new Set(['ongoing']));
 
@@ -570,3 +569,33 @@ export default function ScheduleListView({
     </div>
   );
 }
+
+// React.memo로 컴포넌트 메모이제이션 (수동 최적화)
+export default memo(ScheduleListView, (prevProps, nextProps) => {
+  // scheduleData 배열이 동일한지 확인
+  if (prevProps.scheduleData !== nextProps.scheduleData) {
+    if (prevProps.scheduleData.length !== nextProps.scheduleData.length) {
+      return false;
+    }
+    const prevIds = prevProps.scheduleData.map((item) => item.id).join(',');
+    const nextIds = nextProps.scheduleData.map((item) => item.id).join(',');
+    return prevIds === nextIds;
+  }
+  // currentDate가 동일한지 확인
+  if (prevProps.currentDate.getTime() !== nextProps.currentDate.getTime()) {
+    return false;
+  }
+  // period가 동일한지 확인
+  if (prevProps.period !== nextProps.period) {
+    return false;
+  }
+  // 함수들이 동일한지 확인
+  if (
+    prevProps.onPreviousPeriod !== nextProps.onPreviousPeriod ||
+    prevProps.onNextPeriod !== nextProps.onNextPeriod ||
+    prevProps.onGoToToday !== nextProps.onGoToToday
+  ) {
+    return false;
+  }
+  return true;
+});

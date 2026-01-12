@@ -7,7 +7,8 @@ import s from '@/app/main/bulletin/Bulletin.module.scss';
 import { BulletinItem } from '@/lib/notion';
 import BulletinSkeleton from '@/app/main/bulletin/BulletinSkeleton';
 import { getClientSeason } from '@/common/utils/season';
-import { useState, useEffect } from 'react';
+import { snsLinks } from '@/common/data/info';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 
 interface BulletinProps {
@@ -21,6 +22,12 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
   const bulletinData = initialBulletinData;
   const isLoading = false;
   const isError = false;
+
+  // 네이버 밴드 링크 가져오기 (common/data/info.ts에서)
+  const bandLink = useMemo(() => {
+    const band = snsLinks.find((link) => link.name === 'Band');
+    return band?.href || 'https://band.us/band/98384389'; // fallback
+  }, []);
 
   // 계절별 배경 이미지 자동 설정 (개발자 도구에서 data-season 변경 시 반응)
   const [backgroundImage, setBackgroundImage] = useState(`/images/bulletin/winter.jpg`);
@@ -149,7 +156,7 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
                 </Link>
               </motion.li>
               <motion.li className={s.link__item} variants={linkVariants}>
-                <Link href="https://band.us/band/98384389" target="_blank" rel="noopener noreferrer">
+                <Link href={bandLink} target="_blank" rel="noopener noreferrer">
                   <span className={s.link__text}>
                     네이버 밴드
                     <Icon name="external-link" className={s.link__icon} />

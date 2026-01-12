@@ -5,40 +5,65 @@ import rehypeExtractToc from '@stefanprobst/rehype-extract-toc';
 import withTocExport from '@stefanprobst/rehype-extract-toc/mdx';
 import rehypeSlug from 'rehype-slug';
 
-import { compile } from '@mdx-js/mdx';
-
 import {
   getNotionPageAndContentBySlug,
+  getNotionPageMetadataBySlug,
   notion,
   getPrevNextCLogPosts,
   getCLogData,
 } from '@/lib/notion';
 import { NotionToMarkdown } from 'notion-to-md';
+import { getCachedMarkdown } from '@/lib/clogMarkdownCache';
 import l from '@/common/styles/mdx/MdxLayout.module.scss';
 import CLogDetailHeader from '@/app/info/c-log/[slug]/components/CLogDetailHeader';
 import CLogDetailFooter from '@/app/info/c-log/[slug]/components/CLogDetailFooter';
 import CLogContent from '@/app/info/c-log/[slug]/components/CLogContent';
 import CLogBandLinks from '@/app/info/c-log/[slug]/components/CLogBandLinks';
-import CLogRecommendedPosts from '@/app/info/c-log/[slug]/components/CLogRecommendedPosts';
+import CLogRecommendedPostsClient from '@/app/info/c-log/[slug]/components/CLogRecommendedPostsClient';
 import ContentSkeleton from '@/common/components/skeletons/ContentSkeleton';
 import { getCurrentSeason } from '@/common/utils/season';
 import { generateDynamicMetadata } from '@/common/data/metadata';
 import { extractDetailPageMetadataWithCategory } from '@/lib/notionUtils';
 
-// 메타데이터만 먼저 가져오는 함수 (blocks 제외 - 진짜 Streaming!)
-async function getPageMetadata(slug: string) {
-  try {
-    const notionData = await getNotionPageAndContentBySlug('NOTION_CLOG_ID', slug);
+// ISR 설정: 10분마다 재생성 (성능 최적화)
+export const revalidate = 600; // 10분
 
-    if (!notionData) {
+// 메타데이터 캐시 (성능 최적화)
+const metadataCache = new Map<string, { data: any; timestamp: number }>();
+const METADATA_CACHE_TTL = 30 * 60 * 1000; // 30분
+
+// 메타데이터만 먼저 가져오는 함수 (blocks 제외 - 진짜 Streaming!, 캐싱 적용)
+// 성능 최적화: blocks를 가져오지 않아서 훨씬 빠름
+async function getPageMetadata(slug: string) {
+  const cacheKey = `clog-metadata-${slug}`;
+  const now = Date.now();
+
+  // 캐시 확인
+  const cached = metadataCache.get(cacheKey);
+  if (cached && now - cached.timestamp < METADATA_CACHE_TTL) {
+    return cached.data;
+  }
+
+  try {
+    // blocks 제외하고 page만 가져오기 (훨씬 빠름!)
+    const page = await getNotionPageMetadataBySlug('NOTION_CLOG_ID', slug);
+
+    if (!page) {
       return null;
     }
 
-    const { page } = notionData;
     const currentSeason = getCurrentSeason();
 
     // 공통 함수 사용 (카테고리 포함)
-    return extractDetailPageMetadataWithCategory(page, currentSeason);
+    const metadata = extractDetailPageMetadataWithCategory(page, currentSeason);
+
+    // 캐시에 저장
+    metadataCache.set(cacheKey, {
+      data: metadata,
+      timestamp: now,
+    });
+
+    return metadata;
   } catch (error) {
     // 에러 발생 시 null 반환하여 notFound() 호출
     console.error('C-log 메타데이터를 가져오는 중 오류 발생:', error);
@@ -46,106 +71,100 @@ async function getPageMetadata(slug: string) {
   }
 }
 
-// Markdown 콘텐츠를 생성하는 함수 (무거운 작업 - Suspense 안에서 실행)
+// Markdown 콘텐츠를 생성하는 함수 (무거운 작업 - Suspense 안에서 실행, 캐싱 적용)
 async function getMarkdownContent(slug: string) {
-  try {
-    // Suspense 안에서 blocks를 가져옴 (진짜 Streaming!)
-    const notionData = await getNotionPageAndContentBySlug('NOTION_CLOG_ID', slug);
-
-    if (!notionData) {
-      console.error(`[C-log] slug "${slug}"에 대한 Notion 데이터를 찾을 수 없습니다.`);
-      return '';
-    }
-
-    // 이미지 블록이 있는지 확인 (디버깅용)
-    const imageBlocks = notionData.blocks.filter(
-      (block: any) => block.type === 'image'
-    );
-    if (imageBlocks.length > 0) {
-      console.log(`[C-log] 이미지 블록 ${imageBlocks.length}개 발견 (slug: ${slug})`);
-      // 이미지 블록 정보 로깅 (디버깅용)
-      imageBlocks.forEach((block: any, index: number) => {
-        const imageUrl =
-          block.image?.type === 'external'
-            ? block.image.external?.url
-            : block.image?.type === 'file'
-              ? block.image.file?.url
-              : 'unknown';
-        console.log(`[C-log] 이미지 ${index + 1}: ${imageUrl}`);
-      });
-    }
-
-    const n2m = new NotionToMarkdown({
-      notionClient: notion,
-    });
-
-    // blocksToMarkdown 단계별로 에러 처리
-    let markdownBlocks;
+  // 캐시된 Markdown 변환 결과 사용
+  return getCachedMarkdown(slug, async () => {
     try {
-      markdownBlocks = await n2m.blocksToMarkdown(notionData.blocks);
-    } catch (blocksError: any) {
-      console.error('[C-log] blocksToMarkdown 변환 중 오류 발생:', {
-        slug,
-        error: blocksError?.message || blocksError,
-        stack: blocksError?.stack,
-        imageBlocksCount: imageBlocks.length,
-      });
-      // 이미지 블록이 있는 경우, 이미지 블록만 제외하고 다시 시도
-      if (imageBlocks.length > 0) {
-        console.log('[C-log] 이미지 블록을 제외하고 다시 시도합니다...');
-        const blocksWithoutImages = notionData.blocks.filter(
-          (block: any) => block.type !== 'image'
-        );
-        try {
-          markdownBlocks = await n2m.blocksToMarkdown(blocksWithoutImages);
-          console.log('[C-log] 이미지 블록 제외 후 변환 성공');
-        } catch (retryError: any) {
-          console.error('[C-log] 이미지 블록 제외 후에도 변환 실패:', retryError?.message || retryError);
-          return '';
-        }
-      } else {
+      // Suspense 안에서 blocks를 가져옴 (진짜 Streaming!)
+      const notionData = await getNotionPageAndContentBySlug('NOTION_CLOG_ID', slug);
+
+      if (!notionData) {
+        console.error(`[C-log] slug "${slug}"에 대한 Notion 데이터를 찾을 수 없습니다.`);
         return '';
       }
-    }
 
-    // toMarkdownString 변환
-    let markdown: string;
-    try {
-      const result = n2m.toMarkdownString(markdownBlocks);
-      markdown = result.parent;
-    } catch (markdownError: any) {
-      console.error('[C-log] toMarkdownString 변환 중 오류 발생:', {
+      // 이미지 블록이 있는지 확인 (디버깅용)
+      const imageBlocks = notionData.blocks.filter((block: any) => block.type === 'image');
+      if (imageBlocks.length > 0) {
+        console.log(`[C-log] 이미지 블록 ${imageBlocks.length}개 발견 (slug: ${slug})`);
+        // 이미지 블록 정보 로깅 (디버깅용)
+        imageBlocks.forEach((block: any, index: number) => {
+          const imageUrl =
+            block.image?.type === 'external'
+              ? block.image.external?.url
+              : block.image?.type === 'file'
+                ? block.image.file?.url
+                : 'unknown';
+          console.log(`[C-log] 이미지 ${index + 1}: ${imageUrl}`);
+        });
+      }
+
+      const n2m = new NotionToMarkdown({
+        notionClient: notion,
+      });
+
+      // blocksToMarkdown 단계별로 에러 처리
+      let markdownBlocks;
+      try {
+        markdownBlocks = await n2m.blocksToMarkdown(notionData.blocks);
+      } catch (blocksError: any) {
+        console.error('[C-log] blocksToMarkdown 변환 중 오류 발생:', {
+          slug,
+          error: blocksError?.message || blocksError,
+          stack: blocksError?.stack,
+          imageBlocksCount: imageBlocks.length,
+        });
+        // 이미지 블록이 있는 경우, 이미지 블록만 제외하고 다시 시도
+        if (imageBlocks.length > 0) {
+          console.log('[C-log] 이미지 블록을 제외하고 다시 시도합니다...');
+          const blocksWithoutImages = notionData.blocks.filter(
+            (block: any) => block.type !== 'image'
+          );
+          try {
+            markdownBlocks = await n2m.blocksToMarkdown(blocksWithoutImages);
+            console.log('[C-log] 이미지 블록 제외 후 변환 성공');
+          } catch (retryError: any) {
+            console.error(
+              '[C-log] 이미지 블록 제외 후에도 변환 실패:',
+              retryError?.message || retryError
+            );
+            return '';
+          }
+        } else {
+          return '';
+        }
+      }
+
+      // toMarkdownString 변환
+      let markdown: string;
+      try {
+        const result = n2m.toMarkdownString(markdownBlocks);
+        markdown = result.parent;
+      } catch (markdownError: any) {
+        console.error('[C-log] toMarkdownString 변환 중 오류 발생:', {
+          slug,
+          error: markdownError?.message || markdownError,
+          stack: markdownError?.stack,
+        });
+        return '';
+      }
+
+      // MDX 컴파일은 제거 (MDXRemote에서 처리하므로 불필요, 성능 향상)
+      // compile 함수는 검증용이었지만 실제로는 사용되지 않음
+
+      return markdown;
+    } catch (error: any) {
+      // 예상치 못한 에러 발생 시 상세 로그
+      console.error('[C-log] 콘텐츠를 가져오는 중 예상치 못한 오류 발생:', {
         slug,
-        error: markdownError?.message || markdownError,
-        stack: markdownError?.stack,
+        error: error?.message || error,
+        stack: error?.stack,
+        name: error?.name,
       });
       return '';
     }
-
-    // MDX 컴파일 (에러가 나도 마크다운은 반환)
-    try {
-      await compile(markdown, {
-        rehypePlugins: [rehypeSlug, rehypeExtractToc, withTocExport],
-      });
-    } catch (compileError: any) {
-      console.warn('[C-log] MDX 컴파일 중 경고 (마크다운은 반환):', {
-        slug,
-        error: compileError?.message || compileError,
-      });
-      // 컴파일 에러가 있어도 마크다운은 반환 (렌더링은 시도)
-    }
-
-    return markdown;
-  } catch (error: any) {
-    // 예상치 못한 에러 발생 시 상세 로그
-    console.error('[C-log] 콘텐츠를 가져오는 중 예상치 못한 오류 발생:', {
-      slug,
-      error: error?.message || error,
-      stack: error?.stack,
-      name: error?.name,
-    });
-    return '';
-  }
+  });
 }
 
 // 빌드 타임에 정적 경로 생성 (운영 환경에서 페이지가 보이도록)
@@ -204,12 +223,12 @@ export default async function CLogDetailPage({ params }: { params: Promise<{ slu
     notFound();
   }
 
-  // 1단계: 메타데이터만 먼저 가져오기 (초고속 - 헤더 즉시 표시!)
+  // 메타데이터만 먼저 가져오기 (헤더 즉시 표시를 위해)
+  // 콘텐츠는 Suspense에서 별도로 처리하여 스트리밍
   let metadata;
   try {
     metadata = await getPageMetadata(slug);
   } catch (error) {
-    // 에러 발생 시 notFound() 호출
     console.error('C-log 페이지 메타데이터를 가져오는 중 오류 발생:', error);
     notFound();
   }
@@ -237,19 +256,15 @@ export default async function CLogDetailPage({ params }: { params: Promise<{ slu
       </Suspense>
 
       {/* 3단계: Band 링크 영역 (MDX 콘텐츠 하단) */}
-      {(band1 || band2) && (
-        <CLogBandLinks band1={band1 || null} band2={band2 || null} />
-      )}
+      {(band1 || band2) && <CLogBandLinks band1={band1 || null} band2={band2 || null} />}
 
       {/* 4단계: Footer Streaming */}
       <Suspense fallback={<div style={{ minHeight: '200px', backgroundColor: 'transparent' }} />}>
         <FooterSection slug={slug} />
       </Suspense>
 
-      {/* 5단계: 추천글 Streaming */}
-      <Suspense fallback={<div style={{ minHeight: '200px', backgroundColor: 'transparent' }} />}>
-        <RecommendedSection slug={slug} category={category} tags={tags} />
-      </Suspense>
+      {/* 5단계: 추천글 클라이언트 지연 로드 (서버 렌더링 블로킹 방지) */}
+      <CLogRecommendedPostsClient slug={slug} category={category} tags={tags} />
 
       <aside className="relative hidden md:block">{/* 목차 */}</aside>
     </div>
@@ -280,37 +295,3 @@ async function FooterSection({ slug }: { slug: string }) {
   }
 }
 
-// 추천글 섹션 (비동기 컴포넌트)
-async function RecommendedSection({
-  slug,
-  category,
-  tags,
-}: {
-  slug: string;
-  category: string;
-  tags: string[];
-}) {
-  try {
-    // 현재 글 정보 가져오기
-    const notionData = await getNotionPageAndContentBySlug('NOTION_CLOG_ID', slug);
-    if (!notionData) {
-      return null;
-    }
-
-    const currentPost = {
-      id: notionData.page.id,
-      category,
-      tags,
-      slug,
-    };
-
-    // 모든 C-log 데이터 가져오기
-    const allPosts = await getCLogData();
-
-    return <CLogRecommendedPosts currentPost={currentPost} allPosts={allPosts} />;
-  } catch (error) {
-    // 에러 발생 시 추천글 표시하지 않음
-    console.error('추천글 섹션 로딩 중 오류 발생:', error);
-    return null;
-  }
-}

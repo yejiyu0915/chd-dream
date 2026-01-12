@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
+import Image from 'next/image';
 import { PopupData } from '@/lib/notion';
 import { BlockObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 import Icon from '@/common/components/utils/Icons';
@@ -295,8 +296,11 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
         let caption = '';
 
         if (image.type === 'external') {
+          // 외부 이미지는 그대로 사용 (remotePatterns에 설정됨)
           imageUrl = image.external.url;
         } else if (image.type === 'file') {
+          // Notion file 타입 이미지는 임시 URL이 만료될 수 있으므로
+          // unoptimized로 처리하여 Next.js 최적화 우회 (에러 방지)
           imageUrl = image.file.url;
         }
 
@@ -309,7 +313,21 @@ export default function PopupModal({ newsItem, onClose }: PopupModalProps) {
 
         return imageUrl ? (
           <div className={styles.imageContainer}>
-            <img src={imageUrl} alt={altText} className={styles.image} loading="lazy" />
+            <Image
+              src={imageUrl}
+              alt={altText}
+              width={800}
+              height={600}
+              className={styles.image}
+              loading="lazy"
+              unoptimized={image.type === 'file'} // Notion file 타입은 unoptimized로 처리
+              style={{ objectFit: 'contain', width: '100%', height: 'auto' }}
+              onError={(e) => {
+                // 이미지 로드 실패 시 대체 처리
+                console.error('PopupModal 이미지 로드 실패:', imageUrl);
+                e.currentTarget.style.display = 'none';
+              }}
+            />
             {caption && (
               <p className={styles.imageCaption} role="note">
                 {caption}

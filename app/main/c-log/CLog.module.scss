@@ -123,7 +123,7 @@
     }
     &__title {
       margin-block-end: 1em;
-      @include font-vw(32, 45, $weight: 700);
+      @include font-vw(32, 48, $weight: 700);
       color: var(--text-main);
       @include ellipsis(2);
     }

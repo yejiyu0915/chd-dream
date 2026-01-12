@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo, useCallback, memo } from 'react';
 import { ScheduleItem } from '@/lib/notion';
 import { useScheduleContext } from '@/app/info/schedule/context/ScheduleContext';
 import {
@@ -19,8 +19,9 @@ interface ScheduleCalendarViewProps {
 
 /**
  * 일정 캘린더 뷰 컴포넌트 (UI 렌더링만 담당)
+ * 수동 최적화 적용 (복잡한 계산이 많아 수동 최적화가 더 효율적)
  */
-export default function ScheduleCalendarView({ scheduleData }: ScheduleCalendarViewProps) {
+function ScheduleCalendarView({ scheduleData }: ScheduleCalendarViewProps) {
   // Context에서 상태와 액션 가져오기
   const {
     currentDate,
@@ -37,23 +38,33 @@ export default function ScheduleCalendarView({ scheduleData }: ScheduleCalendarV
     goToNextPeriod,
   } = useScheduleContext();
 
-  // 캘린더 데이터 생성
+  // 캘린더 데이터 생성 (이미 useMemo로 최적화됨)
   const calendarData = useScheduleCalendar(currentDate, scheduleData);
 
-  // 날짜 클릭 핸들러
-  const handleDateClick = (date: Date) => {
-    setSelectedDate(date);
-    setIsMobilePanelOpen(true);
-  };
+  // 날짜 클릭 핸들러 (수동 최적화 - useCallback)
+  const handleDateClick = useCallback(
+    (date: Date) => {
+      setSelectedDate(date);
+      setIsMobilePanelOpen(true);
+    },
+    [setSelectedDate, setIsMobilePanelOpen]
+  );
 
-  // 선택된 날짜의 일정 가져오기
-  const selectedDateEventsList = getSelectedDateEvents(selectedDate, scheduleData);
+  // 선택된 날짜의 일정 가져오기 (수동 최적화 - useMemo)
+  const selectedDateEventsList = useMemo(
+    () => getSelectedDateEvents(selectedDate, scheduleData),
+    [selectedDate, scheduleData]
+  );
 
-  // 월/년 표시
-  const monthYear = currentDate.toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'long',
-  });
+  // 월/년 표시 (수동 최적화 - useMemo)
+  const monthYear = useMemo(
+    () =>
+      currentDate.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+      }),
+    [currentDate]
+  );
 
   return (
     <div className={s.calendarContainer} suppressHydrationWarning>
@@ -96,3 +107,18 @@ export default function ScheduleCalendarView({ scheduleData }: ScheduleCalendarV
     </div>
   );
 }
+
+// React.memo로 컴포넌트 메모이제이션 (수동 최적화)
+export default memo(ScheduleCalendarView, (prevProps, nextProps) => {
+  // scheduleData 배열이 동일한지 확인
+  if (prevProps.scheduleData !== nextProps.scheduleData) {
+    if (prevProps.scheduleData.length !== nextProps.scheduleData.length) {
+      return false; // 리렌더링 필요
+    }
+    // 배열 내용이 동일한지 확인
+    const prevIds = prevProps.scheduleData.map((item) => item.id).join(',');
+    const nextIds = nextProps.scheduleData.map((item) => item.id).join(',');
+    return prevIds === nextIds; // ID가 동일하면 리렌더링 불필요
+  }
+  return true; // props가 동일하면 리렌더링 불필요
+});

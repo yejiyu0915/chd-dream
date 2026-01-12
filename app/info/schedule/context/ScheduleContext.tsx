@@ -1,6 +1,14 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useMemo,
+  useCallback,
+} from 'react';
 import { useRouter } from 'next/navigation';
 
 // 뷰 모드 타입
@@ -148,56 +156,65 @@ export function ScheduleProvider({ children, searchParams }: ScheduleProviderPro
     }
   }, [startParam, viewMode]);
 
-  // viewMode 변경 핸들러 (URL 업데이트 포함)
-  const setViewMode = (mode: ViewMode) => {
-    setViewModeState(mode);
-    // calendar 모드: 날짜 파라미터 유지
-    if (mode === 'calendar' && dateParam) {
-      router.push(`/info/schedule?view=${mode}&date=${dateParam}`, { scroll: false });
-    }
-    // list 모드: period + start 파라미터 추가
-    else if (mode === 'list') {
-      const startString = dateToParam(currentDate);
-      router.push(`/info/schedule?view=${mode}&period=${period}&start=${startString}`, {
-        scroll: false,
-      });
-    } else {
-      router.push(`/info/schedule?view=${mode}`, { scroll: false });
-    }
-  };
+  // viewMode 변경 핸들러 (URL 업데이트 포함) - 수동 최적화
+  const setViewMode = useCallback(
+    (mode: ViewMode) => {
+      setViewModeState(mode);
+      // calendar 모드: 날짜 파라미터 유지
+      if (mode === 'calendar' && dateParam) {
+        router.push(`/info/schedule?view=${mode}&date=${dateParam}`, { scroll: false });
+      }
+      // list 모드: period + start 파라미터 추가
+      else if (mode === 'list') {
+        const startString = dateToParam(currentDate);
+        router.push(`/info/schedule?view=${mode}&period=${period}&start=${startString}`, {
+          scroll: false,
+        });
+      } else {
+        router.push(`/info/schedule?view=${mode}`, { scroll: false });
+      }
+    },
+    [dateParam, currentDate, period, router]
+  );
 
-  // selectedDate 변경 핸들러 (URL 업데이트 포함 - calendar 모드일 때만)
-  const setSelectedDate = (date: Date) => {
-    setSelectedDateState(date);
-    if (viewMode === 'calendar') {
-      const dateString = dateToParam(date);
-      router.push(`/info/schedule?view=calendar&date=${dateString}`, { scroll: false });
-    }
-  };
+  // selectedDate 변경 핸들러 (URL 업데이트 포함 - calendar 모드일 때만) - 수동 최적화
+  const setSelectedDate = useCallback(
+    (date: Date) => {
+      setSelectedDateState(date);
+      if (viewMode === 'calendar') {
+        const dateString = dateToParam(date);
+        router.push(`/info/schedule?view=calendar&date=${dateString}`, { scroll: false });
+      }
+    },
+    [viewMode, router]
+  );
 
-  // period 변경 핸들러 (URL 업데이트 포함 - list 모드일 때만)
-  const setPeriod = (newPeriod: Period) => {
-    setPeriodState(newPeriod);
-    if (viewMode === 'list') {
-      const startString = dateToParam(currentDate);
-      router.push(`/info/schedule?view=list&period=${newPeriod}&start=${startString}`, {
-        scroll: false,
-      });
-    }
-  };
+  // period 변경 핸들러 (URL 업데이트 포함 - list 모드일 때만) - 수동 최적화
+  const setPeriod = useCallback(
+    (newPeriod: Period) => {
+      setPeriodState(newPeriod);
+      if (viewMode === 'list') {
+        const startString = dateToParam(currentDate);
+        router.push(`/info/schedule?view=list&period=${newPeriod}&start=${startString}`, {
+          scroll: false,
+        });
+      }
+    },
+    [viewMode, currentDate, router]
+  );
 
-  // 이전 달로 이동
-  const goToPreviousMonth = () => {
+  // 이전 달로 이동 (수동 최적화 - useCallback)
+  const goToPreviousMonth = useCallback(() => {
     setCurrentDate((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
-  };
+  }, []);
 
-  // 다음 달로 이동
-  const goToNextMonth = () => {
+  // 다음 달로 이동 (수동 최적화 - useCallback)
+  const goToNextMonth = useCallback(() => {
     setCurrentDate((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
-  };
+  }, []);
 
-  // 오늘로 이동
-  const goToToday = () => {
+  // 오늘로 이동 (수동 최적화 - useCallback)
+  const goToToday = useCallback(() => {
     const today = new Date();
     const todayDateOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     setCurrentDate(todayDateOnly);
@@ -213,81 +230,116 @@ export function ScheduleProvider({ children, searchParams }: ScheduleProviderPro
         scroll: false,
       });
     }
-  };
+  }, [viewMode, period, router]);
 
-  // 이전 기간으로 이동
-  const goToPreviousPeriod = () => {
-    const newDate = new Date(currentDate);
-    switch (period) {
-      case '1month':
-        newDate.setMonth(newDate.getMonth() - 1);
-        break;
-      case '3months':
-        newDate.setMonth(newDate.getMonth() - 3);
-        break;
-      case '6months':
-        newDate.setMonth(newDate.getMonth() - 6);
-        break;
-      case '1year':
-        newDate.setFullYear(newDate.getFullYear() - 1);
-        break;
-    }
-    setCurrentDate(newDate);
+  // 이전 기간으로 이동 (수동 최적화 - useCallback)
+  const goToPreviousPeriod = useCallback(() => {
+    setCurrentDate((prev) => {
+      const newDate = new Date(prev);
+      switch (period) {
+        case '1month':
+          newDate.setMonth(newDate.getMonth() - 1);
+          break;
+        case '3months':
+          newDate.setMonth(newDate.getMonth() - 3);
+          break;
+        case '6months':
+          newDate.setMonth(newDate.getMonth() - 6);
+          break;
+        case '1year':
+          newDate.setFullYear(newDate.getFullYear() - 1);
+          break;
+      }
 
-    // URL 업데이트 (list 모드일 때만)
-    if (viewMode === 'list') {
-      const startString = dateToParam(newDate);
-      router.push(`/info/schedule?view=list&period=${period}&start=${startString}`, {
-        scroll: false,
-      });
-    }
-  };
+      // URL 업데이트 (list 모드일 때만)
+      if (viewMode === 'list') {
+        const startString = dateToParam(newDate);
+        router.push(`/info/schedule?view=list&period=${period}&start=${startString}`, {
+          scroll: false,
+        });
+      }
 
-  // 다음 기간으로 이동
-  const goToNextPeriod = () => {
-    const newDate = new Date(currentDate);
-    switch (period) {
-      case '1month':
-        newDate.setMonth(newDate.getMonth() + 1);
-        break;
-      case '3months':
-        newDate.setMonth(newDate.getMonth() + 3);
-        break;
-      case '6months':
-        newDate.setMonth(newDate.getMonth() + 6);
-        break;
-      case '1year':
-        newDate.setFullYear(newDate.getFullYear() + 1);
-        break;
-    }
-    setCurrentDate(newDate);
+      return newDate;
+    });
+  }, [period, viewMode, router]);
 
-    // URL 업데이트 (list 모드일 때만)
-    if (viewMode === 'list') {
-      const startString = dateToParam(newDate);
-      router.push(`/info/schedule?view=list&period=${period}&start=${startString}`, {
-        scroll: false,
-      });
-    }
-  };
+  // 다음 기간으로 이동 (수동 최적화 - useCallback)
+  const goToNextPeriod = useCallback(() => {
+    setCurrentDate((prev) => {
+      const newDate = new Date(prev);
+      switch (period) {
+        case '1month':
+          newDate.setMonth(newDate.getMonth() + 1);
+          break;
+        case '3months':
+          newDate.setMonth(newDate.getMonth() + 3);
+          break;
+        case '6months':
+          newDate.setMonth(newDate.getMonth() + 6);
+          break;
+        case '1year':
+          newDate.setFullYear(newDate.getFullYear() + 1);
+          break;
+      }
 
-  const value: ScheduleContextState = {
-    currentDate,
-    selectedDate,
-    viewMode,
-    period,
-    isMobilePanelOpen,
-    setCurrentDate,
-    setSelectedDate,
-    setViewMode,
-    setPeriod,
-    setIsMobilePanelOpen,
-    goToPreviousMonth,
-    goToNextMonth,
-    goToToday,
-    goToPreviousPeriod,
-    goToNextPeriod,
-  };
+      // URL 업데이트 (list 모드일 때만)
+      if (viewMode === 'list') {
+        const startString = dateToParam(newDate);
+        router.push(`/info/schedule?view=list&period=${period}&start=${startString}`, {
+          scroll: false,
+        });
+      }
+
+      return newDate;
+    });
+  }, [period, viewMode, router]);
+
+  // setCurrentDate와 setIsMobilePanelOpen도 메모이제이션
+  const setCurrentDateMemo = useCallback((date: Date) => {
+    setCurrentDate(date);
+  }, []);
+
+  const setIsMobilePanelOpenMemo = useCallback((open: boolean) => {
+    setIsMobilePanelOpen(open);
+  }, []);
+
+  // Context value 메모이제이션 (불필요한 리렌더링 방지 - 수동 최적화)
+  const value: ScheduleContextState = useMemo(
+    () => ({
+      currentDate,
+      selectedDate,
+      viewMode,
+      period,
+      isMobilePanelOpen,
+      setCurrentDate: setCurrentDateMemo,
+      setSelectedDate,
+      setViewMode,
+      setPeriod,
+      setIsMobilePanelOpen: setIsMobilePanelOpenMemo,
+      goToPreviousMonth,
+      goToNextMonth,
+      goToToday,
+      goToPreviousPeriod,
+      goToNextPeriod,
+    }),
+    [
+      currentDate,
+      selectedDate,
+      viewMode,
+      period,
+      isMobilePanelOpen,
+      setCurrentDateMemo,
+      setSelectedDate,
+      setViewMode,
+      setPeriod,
+      setIsMobilePanelOpenMemo,
+      goToPreviousMonth,
+      goToNextMonth,
+      goToToday,
+      goToPreviousPeriod,
+      goToNextPeriod,
+    ]
+  );
 
   return <ScheduleContext.Provider value={value}>{children}</ScheduleContext.Provider>;
 }

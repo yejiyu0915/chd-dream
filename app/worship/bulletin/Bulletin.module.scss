@@ -565,7 +565,7 @@
     margin-block: vw(44);
 
     border-left: vw(4) solid var(--text-main);
-    @include font-vw(56, 72, $ls: -0.025, $weight: 700, $color: var(--text-main));
+    @include font-vw(56, 80, $ls: -0.025, $weight: 700, $color: var(--text-main));
   }
 
   &__sections {
@@ -593,10 +593,34 @@
     line-height: 1.4;
   }
 
-  &__content {
+  // 레이아웃 고정 영역 (헤더) - 스타일은 필요시 추가
+
+  // 컨텐츠 래퍼 (컨텐츠만 교체되는 영역)
+  &__contentWrapper {
     margin-top: vw(80);
+    // 컨텐츠 전환 시 부드러운 애니메이션
+    transition: opacity 0.3s ease-in-out;
+    @include mq(mo) {
+      margin-top: vw(40);
+    }
+  }
+
+  &__content {
     padding-top: vw(24);
     border-top: vw(--border-width) solid var(--accent-brand);
+    // 컨텐츠 전환 시 부드러운 애니메이션
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   &__contentTitle {
@@ -766,7 +790,7 @@
 
     &__bulletinTitle {
       margin-block: vw(32);
-      border-width: vw(2);
+      border-width: vw(3);
       @include font-vw(40);
     }
 

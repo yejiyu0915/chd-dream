@@ -35,7 +35,7 @@
 }
 .title {
   @include font-vw(56, $weight: 700, $color: var(--bg-page));
-  line-height: 1.2;
+  line-height: 1.45;
   @include ellipsis(3);
 }
 .date {
