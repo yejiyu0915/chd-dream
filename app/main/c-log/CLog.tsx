@@ -210,8 +210,8 @@ export default function CLog({ initialCLogData }: CLogProps) {
           </Link>
           <div className={c.content}>
             <ul className={c.skeletonList}>
-              {/* 메인 페이지는 6개만 표시하므로 6개 스켈레톤 렌더링 */}
-              {Array.from({ length: 6 }).map((_, index) => (
+              {/* 메인 페이지는 PC 6개, 모바일 4개만 표시하므로 스켈레톤 렌더링 */}
+              {Array.from({ length: isMobile ? 4 : 6 }).map((_, index) => (
                 <CLogSkeleton key={index} />
               ))}
             </ul>
@@ -282,7 +282,7 @@ export default function CLog({ initialCLogData }: CLogProps) {
         <div className={c.content}>
           {cLogData && cLogData.length > 0 ? (
             <ul className={c.list}>
-              {cLogData.map((item: CLogItem, index: number) => (
+              {cLogData.slice(0, isMobile ? 4 : 6).map((item: CLogItem, index: number) => (
                 <CLogCard key={item.id} item={item} index={index} />
               ))}
             </ul>

@@ -964,7 +964,7 @@ export async function getKVSliderData(): Promise<KVSliderItem[]> {
 export async function getCLogMainData(): Promise<CLogItem[]> {
   return unstable_cache(
     async () => {
-      return getPublishedNotionData<CLogItem>('NOTION_CLOG_ID', mapPageToCLogItem, 4);
+      return getPublishedNotionData<CLogItem>('NOTION_CLOG_ID', mapPageToCLogItem, 6);
     },
     ['clog-main-data'],
     { revalidate: REVALIDATE_TIME.LIST, tags: ['clog-list'] } // 3분 캐시, 태그 기반 재검증

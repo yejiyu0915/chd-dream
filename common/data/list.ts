@@ -124,7 +124,7 @@ export const pageMeta: Record<string, PageMeta> = {
   },
   '/info/c-log': {
     ...generatedMeta['/info/c-log'],
-    description: 'Church Blog 💕 교회의 다양한 이야기를 만나보세요.',
+    description: '교회의 다양한 이야기를 만나보세요.',
   },
   '/info/schedule': {
     ...generatedMeta['/info/schedule'],
