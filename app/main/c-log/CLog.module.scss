@@ -426,6 +426,14 @@
       margin-block-start: 0;
       padding-inline-start: 0;
     }
+    .list {
+      gap: vw(60) vw(40); // row gap 추가 (2-5번, 3-6번 간격 개선)
+      &__item {
+        &:nth-child(5) {
+          margin-block-start: 0; // margin 제거
+        }
+      }
+    }
   }
   @include mq(ta) {
     .inner {
@@ -464,7 +472,7 @@
       text-align: center;
     }
     .list {
-      gap: 0 vw(24);
+      gap: vw(60) vw(24); // row gap 추가 (2-5번, 3-6번 간격 개선)
       padding-inline-start: 0;
       &__item {
         border-radius: vw(12) vw(12) 0 0;
@@ -481,7 +489,7 @@
           padding-block-start: vw(30);
         }
         &:nth-child(5) {
-          margin-block-start: vw(-30);
+          margin-block-start: 0; // margin 제거하여 row gap이 적용되도록
           padding-block-start: 0;
         }
         &:nth-child(6) {
@@ -526,7 +534,7 @@
       }
     }
     .skeletonList {
-      gap: vw(24);
+      gap: vw(60) vw(24); // row gap 추가 (2-5번, 3-6번 간격 개선)
       padding-inline: 0;
       .skeleton__item {
         border-radius: vw(12) vw(12) 0 0;
@@ -543,7 +551,7 @@
           padding-block-start: vw(30);
         }
         &:nth-child(5) {
-          margin-block-start: vw(-30);
+          margin-block-start: 0; // margin 제거하여 row gap이 적용되도록
           padding-block-start: 0;
         }
         &:nth-child(6) {
