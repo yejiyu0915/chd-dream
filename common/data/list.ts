@@ -89,8 +89,8 @@ export const pageMeta: Record<string, PageMeta> = {
     description: '청년부를 소개합니다.',
   },
   '/about/group/student': {
-    title: '예꿈(초·중·고)',
-    description: '예꿈(초·중·고)을 소개합니다.',
+    title: '하소소',
+    description: '하소소(하나님의 소년·소녀)를 소개합니다.',
   },
   '/about/group/newfamily': {
     title: '새가족부',

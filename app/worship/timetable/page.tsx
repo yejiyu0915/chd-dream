@@ -125,8 +125,7 @@ export default function TimetablePage() {
               </tr>
               <tr className={t.borderBottom}>
                 <th className={t.assemblyTitle}>
-                  예꿈 예배 <br className="only-mo" />
-                  (초·중·고)
+                  하소소 예배
                 </th>
                 <td className={t.assemblyTime}>주일 오후 2:00</td>
                 <td>4층 본당</td>

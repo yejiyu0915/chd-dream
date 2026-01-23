@@ -114,13 +114,13 @@ export const groupData: GroupDataType[] = [
   },
   {
     id: 'student',
-    title: '예꿈(초·중·고)',
+    title: '하소소',
     path: '/about/group/student',
     // image: '/images/group/student.jpg',
     description: `
-      유아부터 고등학생까지 미성년 친구들이 모여 하나님의 사랑 안에서 믿음으로 함께 성장해나가는 예수님의 꿈나무입니다!<br />
+      유아부터 고등학생까지 미성년 친구들이 모여 하나님의 사랑 안에서 믿음으로 함께 성장해나가는 하나님의 소년·소녀들입니다!<br />
       <br />
-      행복으로가는교회 예꿈은요,<br />
+      행복으로가는교회 하소소는요,<br />
       <br />
       <span style="color:var(--accent-brand); font-weight: 900;">하나!</span> 하나님의 사랑 안에서 자라나는 다음 세대 교구로<br />
       <p style="padding-left: 2.35em;">
@@ -137,8 +137,8 @@ export const groupData: GroupDataType[] = [
       우리 교구는 하나님의 사랑 안에서 하나되어 나아가<br />
       세상에도 선한 영향력으로 하나님의 사랑을 전하는 거룩한 무리입니다!
     `,
-    meetingPlace: '본당 5층, 본당 4층, 2층 예꿈실',
-    meetingTime: '매 주일 본 예배 후, 오후 2시 예꿈 예배 후',
+    meetingPlace: '본당 5층, 본당 4층, 2층 하소소실',
+    meetingTime: '매 주일 본 예배 후, 오후 2시 하소소 예배 후',
     subGroups: [
       {
         id: 'student-middle',
