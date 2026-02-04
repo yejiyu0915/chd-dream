@@ -46,7 +46,7 @@ export const groupData: GroupDataType[] = [
     description: `행복으로가는교회 남선교는
 믿음으로 서로를 품고 세워 교회의 기둥으로 우뚝 서는 공동체입니다.
 기도와 순종으로 앞장서며, 섬김과 헌신의 현장에서 교회를 지탱하고 사명을 힘있게 감당하는 믿음의 용사들입니다.`,
-    pastor: '송순옥 강도사',
+    pastor: '주애순 전도사',
     meetingPlace: '4층 남선교실',
     meetingTime: '매 주일 본 예배 후, 식사 후 오후 2시',
   },
@@ -72,16 +72,11 @@ export const groupData: GroupDataType[] = [
       {
         id: 'women-2',
         title: '2 여선교',
-        pastor: '유정란 전도사',
+        pastor: '임선의 전도사',
       },
       {
         id: 'women-3',
         title: '3 여선교',
-        pastor: '임선의 전도사',
-      },
-      {
-        id: 'women-4',
-        title: '4 여선교',
         pastor: '장은연 전도사',
       },
     ],
@@ -162,7 +157,7 @@ export const groupData: GroupDataType[] = [
 사랑의 하나님을 만나고, 하나님 안에서 치유와 회복을 경험하도록 돕는 공동체입니다.
 처음 교회에 발걸음한 순간부터 환영과 섬김으로 함께하며, 믿음의 자리로 온전히 세워질 수 있도록 동행합니다.
       `,
-    pastor: '주애순 전도사, 이민아 전도사',
+    pastor: '주애순 전도사, 송순옥 강도사, 이민아 전도사, 유정란 전도사',
     meetingPlace: '3층 V.VIP실',
     meetingTime: '매 주일 본 예배 후',
     activities: ['새가족 교육 9주 후 수료', '10주차 수료식'],
