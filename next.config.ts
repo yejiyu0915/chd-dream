@@ -3,6 +3,8 @@ import createMDX from '@next/mdx';
 
 const nextConfig: NextConfig = {
   /* config options here */
+  // next-mdx-remote v6 (Turbopack 호환)
+  transpilePackages: ['next-mdx-remote'],
   typescript: {
     // 타입 에러 체크 활성화 (배포 안정성 향상)
     ignoreBuildErrors: false,
