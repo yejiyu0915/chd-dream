@@ -160,7 +160,7 @@
       word-break: break-all; // 추가: 긴 단어가 있을 경우 줄바꿈 강제
       max-width: 100%; // 추가: flex item이 부모 너비를 초과하지 않도록 함
       &Title {
-        @include ellipsis(2);
+        @include ellipsis(1);
         max-width: 100%;
         min-width: 0;
       }

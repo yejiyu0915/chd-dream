@@ -102,6 +102,9 @@ export default function BulletinClient({
   // 프리로드 중인 주보 추적 (중복 프리로드 방지)
   const prefetchingBulletins = useRef<Set<string>>(new Set());
 
+  // 서버 초기 콘텐츠 설정 완료 여부 (중복 loadBulletinContent 호출 방지)
+  const hasSetContentFromInitialRef = useRef(false);
+
   // ref 동기화 (최신 상태 유지)
   useEffect(() => {
     contentLoadingRef.current = contentLoading;
@@ -175,21 +178,23 @@ export default function BulletinClient({
 
       // 서버에서 미리 로드한 최신 주보 내용이 있으면 즉시 변환하여 캐시에 저장 및 표시
       if (initialLatestBulletinContent && initialLatestBulletinContent.bulletinId === latest.id) {
-        // 변환 작업 (동기적으로 빠르게 처리)
-        const mdxHtml = convertBlocksToMdxHtml(initialLatestBulletinContent.blocks);
-        const processedHtml = processHtmlTags(mdxHtml);
+        try {
+          const mdxHtml = convertBlocksToMdxHtml(initialLatestBulletinContent.blocks);
+          const processedHtml = processHtmlTags(mdxHtml);
 
-        // 캐시에 저장
-        bulletinContentCache.current.set(latest.id, processedHtml);
+          bulletinContentCache.current.set(latest.id, processedHtml);
+          hasSetContentFromInitialRef.current = true;
 
-        // 즉시 표시 (로딩 없이)
-        setSelectedBulletin(latest);
-        setBulletinContent(processedHtml);
-        setContentLoading(false);
+          setSelectedBulletin(latest);
+          setBulletinContent(processedHtml);
+          setContentLoading(false);
+        } catch {
+          // 변환 실패 시 클라이언트 fetch로 폴백 (hasSetContentFromInitialRef는 false 유지)
+        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bulletinList, latestBulletin, initialLatestBulletinId]); // 안정적인 값 사용
+  }, [bulletinList, latestBulletin, initialLatestBulletinId]);
 
   // URL 파라미터 처리 (중복 실행 방지)
   useEffect(() => {
@@ -499,18 +504,21 @@ export default function BulletinClient({
 
   // 최신 주보 자동 로드 (URL 파라미터 없을 때만, 서버에서 미리 로드하지 않은 경우)
   useEffect(() => {
-    // ref를 사용하여 중복 체크 (함수 재생성 방지)
-    // 서버에서 이미 로드한 경우는 스킵 (위의 useEffect에서 처리됨)
+    // 서버 초기 콘텐츠로 이미 설정했으면 절대 스킵 (프로덕션 깜빡임 방지)
+    if (hasSetContentFromInitialRef.current) return;
+
+    // 서버에서 이미 로드한 경우 (ID 일치) 스킵
+    if (initialLatestBulletinId === latestBulletin?.id) return;
+
     if (
       latestBulletin &&
       !selectedBulletinIdRef.current &&
-      !contentParam &&
-      initialLatestBulletinId !== latestBulletin.id
+      !contentParam
     ) {
       loadBulletinContent(latestBulletin);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [latestBulletin, contentParam, initialLatestBulletinId]); // 안정적인 값 사용 (무한 루프 방지)
+  }, [latestBulletin, contentParam, initialLatestBulletinId]);
 
   // 로딩 상태 처리 (초기 로드 시에만)
   if (loading && bulletinList.length === 0) {
