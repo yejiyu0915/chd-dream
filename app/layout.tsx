@@ -102,7 +102,7 @@ export default async function RootLayout({
   const currentSeason = getCurrentSeason();
 
   return (
-    <html lang="ko" data-season={currentSeason}>
+    <html lang="ko" data-season={currentSeason} data-scroll-behavior="smooth">
       {/* 개발자 도구에서 수동 변경 가능 */}
       <body>
         <Providers>

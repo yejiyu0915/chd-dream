@@ -176,20 +176,28 @@ export default function BulletinClient({
       const latest = bulletinList[0];
       setLatestBulletin(latest);
 
-      // 서버에서 미리 로드한 최신 주보 내용이 있으면 즉시 변환하여 캐시에 저장 및 표시
+      // 서버에서 미리 로드한 최신 주보 내용이 있으면 즉시 변환하여 표시
+      // 본문 영역은 selectedBulletin이 있어야 렌더되므로, 초기 content 여부와 관계없이 selectedBulletin 설정
+      setSelectedBulletin(latest);
+
       if (initialLatestBulletinContent && initialLatestBulletinContent.bulletinId === latest.id) {
         try {
-          const mdxHtml = convertBlocksToMdxHtml(initialLatestBulletinContent.blocks);
-          const processedHtml = processHtmlTags(mdxHtml);
+          const blocks = initialLatestBulletinContent.blocks;
+          const hasValidBlocks = Array.isArray(blocks) && blocks.length > 0;
 
-          bulletinContentCache.current.set(latest.id, processedHtml);
-          hasSetContentFromInitialRef.current = true;
+          if (hasValidBlocks) {
+            const mdxHtml = convertBlocksToMdxHtml(blocks);
+            const processedHtml = processHtmlTags(mdxHtml);
 
-          setSelectedBulletin(latest);
-          setBulletinContent(processedHtml);
-          setContentLoading(false);
+            if (processedHtml.trim().length > 0) {
+              bulletinContentCache.current.set(latest.id, processedHtml);
+              hasSetContentFromInitialRef.current = true;
+              setBulletinContent(processedHtml);
+              setContentLoading(false);
+            }
+          }
         } catch {
-          // 변환 실패 시 클라이언트 fetch로 폴백 (hasSetContentFromInitialRef는 false 유지)
+          // 변환 실패 시 hasSetContentFromInitialRef는 false → 폴백 useEffect가 loadBulletinContent 호출
         }
       }
     }
@@ -502,21 +510,12 @@ export default function BulletinClient({
     }
   }, [bulletinList.length, itemsPerPage, filteredItems.length]);
 
-  // 최신 주보 자동 로드 (URL 파라미터 없을 때만, 서버에서 미리 로드하지 않은 경우)
+  // 최신 주보 자동 로드 (URL 파라미터 없을 때만, 서버 초기 콘텐츠가 없을 때)
   useEffect(() => {
-    // 서버 초기 콘텐츠로 이미 설정했으면 절대 스킵 (프로덕션 깜빡임 방지)
     if (hasSetContentFromInitialRef.current) return;
+    if (!latestBulletin || contentParam) return;
 
-    // 서버에서 이미 로드한 경우 (ID 일치) 스킵
-    if (initialLatestBulletinId === latestBulletin?.id) return;
-
-    if (
-      latestBulletin &&
-      !selectedBulletinIdRef.current &&
-      !contentParam
-    ) {
-      loadBulletinContent(latestBulletin);
-    }
+    loadBulletinContent(latestBulletin);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [latestBulletin, contentParam, initialLatestBulletinId]);
 

@@ -44,7 +44,6 @@ export async function getNotionData<T extends GenericItem>(
   // 환경 변수에서 Notion 토큰과 데이터베이스 ID 가져오기
   const notionDatabaseId = process.env[databaseIdEnvVar];
   if (!process.env.NOTION_TOKEN || !notionDatabaseId) {
-    // console.error(`Notion 토큰 또는 데이터베이스 ID (${databaseIdEnvVar})가 누락되었습니다.`);
     return [];
   }
 
@@ -63,10 +62,9 @@ export async function getNotionData<T extends GenericItem>(
         Array.isArray(databaseInfo.data_sources) &&
         databaseInfo.data_sources.length > 0
       ) {
-        dataSourceId = databaseInfo.data_sources[0].id; // 첫 번째 data_source_id 사용
+        dataSourceId = databaseInfo.data_sources[0].id;
       } else {
-        // data_sources가 없거나 비어있는 경우, 이전처럼 database_id를 사용 (하위 호환성을 위해)
-        dataSourceId = notionDatabaseId; // 이 부분은 실제 API 호출에서 database_id로 대체될 수 있습니다.
+        dataSourceId = notionDatabaseId;
       }
 
       // Notion 데이터베이스 쿼리
@@ -1199,7 +1197,7 @@ async function getNotionPageMetadataBySlugInternal(
               {
                 property: 'Status',
                 select: {
-                  equals: 'Preview',
+                  equals: 'Draft',
                 },
               },
             ],
@@ -1231,7 +1229,6 @@ async function getNotionPageAndContentBySlugInternal(
   }
 
   try {
-    // 2025-09-03 버전업에 따라 data_source_id를 먼저 가져와야 함
     const databaseInfo = await notion.databases.retrieve({ database_id: notionDatabaseId });
 
     let dataSourceId: string | undefined;
@@ -1245,33 +1242,19 @@ async function getNotionPageAndContentBySlugInternal(
       dataSourceId = notionDatabaseId; // data_sources가 없거나 비어있는 경우, 이전처럼 database_id를 사용
     }
 
-    // 1. 슬러그로 페이지 찾기 (Published 또는 Preview 상태만 허용)
-    // 리스트에는 Published만 보이지만, 상세 페이지는 Preview도 접근 가능하도록 함
+    // 1. 슬러그로 페이지 찾기 (Published 또는 Draft 상태 허용)
     const response: any = await notion.dataSources.query({
-      // Notion SDK v5에서는 dataSources.query를 사용
-      data_source_id: dataSourceId as string, // data_source_id 사용
+      data_source_id: dataSourceId as string,
       filter: {
         and: [
           {
-            property: 'Slug', // Notion 데이터베이스의 slug 속성 이름
-            rich_text: {
-              equals: slug,
-            },
+            property: 'Slug',
+            rich_text: { equals: slug },
           },
           {
             or: [
-              {
-                property: 'Status',
-                select: {
-                  equals: 'Published',
-                },
-              },
-              {
-                property: 'Status',
-                select: {
-                  equals: 'Preview',
-                },
-              },
+              { property: 'Status', select: { equals: 'Published' } },
+              { property: 'Status', select: { equals: 'Draft' } },
             ],
           },
         ],
@@ -1283,9 +1266,9 @@ async function getNotionPageAndContentBySlugInternal(
       return null; // 페이지를 찾을 수 없으면 null 반환
     }
 
-    const page = response.results[0]; // 첫 번째 결과가 페이지 객체여야 합니다.
+    const page = response.results[0];
 
-    // 2. 페이지의 모든 블록 가져오기 (최적화된 버전)
+    // 2. 페이지의 모든 블록 가져오기
     const getAllBlocksWithChildren = async (blockId: string, depth = 0): Promise<any[]> => {
       // 최대 깊이 제한 (성능 최적화)
       if (depth > 3) {
@@ -1354,7 +1337,6 @@ async function getNotionPageAndContentBySlugInternal(
     return { page: page as PageObjectResponse, blocks };
   } catch (error: unknown) {
     void error;
-    // console.error(`Notion 페이지 및 콘텐츠 가져오기 중 오류 발생:`, error);
     return null;
   }
 }

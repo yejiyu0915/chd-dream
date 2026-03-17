@@ -670,11 +670,24 @@
     }
     // 테이블 래퍼 (가로 스크롤 처리)
     [class^='table-wrapper'] {
+      // width: calc(100% + vw(120));
+      // padding-inline: vw(60);
+      // margin-inline: calc(vw(60) * -1);
       width: 100%;
       overflow: hidden;
       overflow-x: auto;
       margin-bottom: vw(16);
       -webkit-overflow-scrolling: touch; // 모바일에서 부드러운 스크롤
+      // @include mq(pc-sm) {
+      //   width: calc(100% + vw(80));
+      //   padding-inline: vw(40);
+      //   margin-inline: calc(vw(40) * -1);
+      // }
+      // @include mq(mo) {
+      //   width: calc(100% + vw(48));
+      //   padding-inline: vw(24);
+      //   margin-inline: calc(vw(24) * -1);
+      // }
     }
     table {
       width: auto;

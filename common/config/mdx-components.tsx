@@ -21,11 +21,10 @@ export const mdxComponents: MDXComponents = {
   code: ({ children }) => <code>{children}</code>,
   pre: ({ children }) => <pre>{children}</pre>,
   img: ({ src, alt }) => {
-    // Cloudinary URL의 query string은 이미지 변환 파라미터이므로 유지
-    // Next.js Image가 query string을 포함한 URL을 처리하지 못하므로 unoptimized 사용
-    // 내용이 많은 페이지 최적화: lazy loading 적용
+    // span 사용: MDX가 img를 <p>로 감싸므로, div는 HTML 유효성 위반 (<p> 내부에 block 불가)
+    // display:block으로 블록 레이아웃 유지
     return (
-      <div data-mdx-image-wrapper="true">
+      <span data-mdx-image-wrapper="true" style={{ display: 'block' }}>
         <Image
           src={src || ''}
           alt={alt || ''}
@@ -33,10 +32,10 @@ export const mdxComponents: MDXComponents = {
           height={1000}
           sizes="(max-width: 768px) 100vw, 80vw"
           unoptimized={true}
-          loading="lazy" // lazy loading 명시적 적용 (성능 최적화)
-          decoding="async" // 비동기 디코딩 (성능 최적화)
+          loading="lazy"
+          decoding="async"
         />
-      </div>
+      </span>
     );
   },
   table: ({ children }) => (

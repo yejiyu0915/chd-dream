@@ -62,8 +62,8 @@ export default function MdxImageSwiperWrapper({ children }: MdxImageSwiperWrappe
 
     // 모든 이미지 wrapper 찾기
     const imageWrappers = Array.from(
-      container.querySelectorAll('div[data-mdx-image-wrapper="true"]')
-    ) as HTMLDivElement[];
+      container.querySelectorAll('[data-mdx-image-wrapper="true"]')
+    ) as HTMLElement[];
 
     // wrapper 내부의 img 요소 추출
     const images = imageWrappers
@@ -82,9 +82,9 @@ export default function MdxImageSwiperWrapper({ children }: MdxImageSwiperWrappe
     images.forEach((img, index) => {
       const prevImg = images[index - 1];
       const prevWrapper = prevImg
-        ? (prevImg.closest('div[data-mdx-image-wrapper="true"]') as HTMLDivElement)
+        ? (prevImg.closest('[data-mdx-image-wrapper="true"]') as HTMLElement)
         : null;
-      const currentWrapper = img.closest('div[data-mdx-image-wrapper="true"]') as HTMLDivElement;
+      const currentWrapper = img.closest('[data-mdx-image-wrapper="true"]') as HTMLElement;
 
       // 첫 번째 이미지이거나, 이전 이미지와 연속인지 확인
       if (!prevImg || !prevWrapper) {
@@ -176,7 +176,7 @@ export default function MdxImageSwiperWrapper({ children }: MdxImageSwiperWrappe
   /**
    * 두 이미지 wrapper가 연속인지 확인 (사이에 다른 요소가 없는지 체크)
    */
-  function checkConsecutiveWrappers(wrapper1: HTMLDivElement, wrapper2: HTMLDivElement): boolean {
+  function checkConsecutiveWrappers(wrapper1: HTMLElement, wrapper2: HTMLElement): boolean {
     let current: Node | null = wrapper1.nextSibling;
 
     // wrapper1과 wrapper2 사이의 모든 노드를 확인
@@ -208,14 +208,14 @@ export default function MdxImageSwiperWrapper({ children }: MdxImageSwiperWrappe
    */
   function convertToSwiper(group: ImageGroup, groupIndex: number) {
     const firstImg = group.firstImageElement;
-    const firstWrapper = firstImg.closest('div[data-mdx-image-wrapper="true"]') as HTMLDivElement;
+    const firstWrapper = firstImg.closest('[data-mdx-image-wrapper="true"]') as HTMLElement;
     if (!firstWrapper) return;
 
     const parent = firstWrapper.parentElement;
     if (!parent) return;
 
     // 그룹에 속한 모든 wrapper 찾기
-    const wrappersToRemove: HTMLDivElement[] = [firstWrapper];
+    const wrappersToRemove: HTMLElement[] = [firstWrapper];
     let current: Node | null = firstWrapper.nextSibling;
     let foundCount = 1;
 
@@ -224,7 +224,7 @@ export default function MdxImageSwiperWrapper({ children }: MdxImageSwiperWrappe
       if (current.nodeType === Node.ELEMENT_NODE) {
         const element = current as HTMLElement;
         if (element.getAttribute('data-mdx-image-wrapper') === 'true') {
-          wrappersToRemove.push(element as HTMLDivElement);
+          wrappersToRemove.push(element as HTMLElement);
           foundCount++;
         } else {
           // 다른 요소가 있으면 중단
