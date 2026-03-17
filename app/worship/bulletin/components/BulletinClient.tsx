@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import BulletinList from '@/app/worship/bulletin/components/BulletinList';
 import BulletinContent from '@/app/worship/bulletin/components/BulletinContent';
 import Spinner from '@/common/components/utils/Spinner';
@@ -62,7 +61,6 @@ export default function BulletinClient({
   contentParam,
   initialLatestBulletinContent,
 }: BulletinClientProps) {
-  const router = useRouter();
 
   // 서버에서 받은 데이터를 직접 사용
   const bulletinList = initialBulletinList || [];
@@ -204,21 +202,18 @@ export default function BulletinClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bulletinList, latestBulletin, initialLatestBulletinId]);
 
-  // URL 파라미터 처리 (중복 실행 방지)
+  // URL 파라미터 처리 (초기 직접 진입 시에만 동작)
+  // window.history.replaceState 사용으로 클릭 시 contentParam props가 변경되지 않아 이 effect는 초기 1회만 실행됨
   useEffect(() => {
-    // 이미 처리한 파라미터면 스킵
     if (contentParam === lastProcessedParam.current) {
       return;
     }
 
     if (contentParam && bulletinList.length > 0) {
       const bulletin = findBulletinByParam(contentParam);
-      // ref를 사용하여 중복 체크 (함수 재생성 방지)
       if (bulletin && bulletin.id !== selectedBulletinIdRef.current) {
-        // 마지막 처리한 파라미터 기록
         lastProcessedParam.current = contentParam;
 
-        // 내용 로드 (URL 업데이트 없이)
         loadBulletinContent(bulletin);
 
         // 해당 주보가 있는 페이지로 이동
@@ -371,7 +366,6 @@ export default function BulletinClient({
   // 캐싱 처리로 이미 로드한 주보는 즉시 표시
   const loadBulletinContent = useCallback(
     async (item: BulletinItem) => {
-      // ref를 사용하여 최신 상태 확인 (함수 재생성 방지)
       if (contentLoadingRef.current) return;
       if (selectedBulletinIdRef.current === item.id && bulletinContentRef.current) {
         return;
@@ -384,7 +378,7 @@ export default function BulletinClient({
         setBulletinContent(cachedContent);
         setContentLoading(false);
         setLoadingStep('');
-        return; // 캐시에서 가져왔으므로 API 요청 불필요
+        return;
       }
 
       // 캐시에 없으면 API 요청
@@ -484,23 +478,22 @@ export default function BulletinClient({
   );
 
   // 주보 아이템 클릭 핸들러 (URL 파라미터 업데이트 + 내용 로드)
+  // router.push 대신 window.history.replaceState 사용:
+  // router.push는 force-dynamic 페이지를 서버에서 재렌더링시켜 contentParam props를 변경함
+  // → 빠른 연속 클릭 시 stale navigation 결과가 URL param effect를 재발동시켜 wrong content 표시 (race condition)
+  // window.history.replaceState는 URL만 업데이트하고 Next.js navigation을 트리거하지 않으므로 race condition 없음
   const handleBulletinClick = useCallback(
     (item: BulletinItem) => {
-      // 미리 계산된 URL 파라미터 가져오기 (즉시 실행)
       const finalParam = bulletinParamMap.get(item.id);
 
       if (finalParam) {
-        // 마지막 처리한 파라미터 기록 (useEffect 중복 실행 방지)
         lastProcessedParam.current = finalParam;
-
-        // URL 파라미터 업데이트
-        router.push(`/worship/bulletin?content=${finalParam}`, { scroll: false });
+        window.history.replaceState(null, '', `/worship/bulletin?content=${finalParam}`);
       }
 
-      // 내용 로드 (병렬 처리)
       loadBulletinContent(item);
     },
-    [bulletinParamMap, loadBulletinContent, router] // loadBulletinContent는 이제 안정적이므로 포함 가능
+    [bulletinParamMap, loadBulletinContent]
   );
 
   // itemsPerPage나 필터가 변경될 때 totalPages 재계산
