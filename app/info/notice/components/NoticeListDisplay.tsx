@@ -9,6 +9,10 @@ import n from '@/app/info/notice/NoticeList.module.scss';
 import { NoticeItem } from '@/lib/notion';
 import Button from '@/common/components/utils/Button';
 import { isNewPost } from '@/common/utils/dateUtils'; // NEW 배지 판별 함수
+import {
+  FETCH_ERROR_NOTICE,
+  userFacingFetchError,
+} from '@/common/utils/userFacingFetchError';
 
 interface NoticeListDisplayProps {
   noticeData: NoticeItem[] | undefined;
@@ -104,13 +108,11 @@ export default function NoticeListDisplay({
   }
 
   if (isError) {
-    let errorMessage = '공지사항 데이터를 가져오는 데 실패했습니다.';
-    if (error) {
-      errorMessage = error.message;
-    }
     return (
       <div className={n.noticeList}>
-        <div className={n.error}>{errorMessage}</div>
+        <div className={n.error} role="alert">
+          {userFacingFetchError(FETCH_ERROR_NOTICE, error)}
+        </div>
       </div>
     );
   }
@@ -179,7 +181,15 @@ export default function NoticeListDisplay({
           </>
         ) : (
           // 로딩 중이 아니고, 전체 데이터가 로드되었지만 결과가 없을 때만 빈 메시지 표시
-          !isLoading && hasAllData && <p className={n.emptyMessage}>게시물이 없습니다.</p>
+          !isLoading &&
+          hasAllData && (
+            <div className={n.emptyWrap}>
+              <p className={n.emptyMessage}>등록된 공지가 없습니다.</p>
+              <p className={n.emptyHint}>
+                <Link href="/info/news">NEWS(교회 소식)</Link>에서도 소식을 확인해 보세요.
+              </p>
+            </div>
+          )
         )}
       </div>
     </div>

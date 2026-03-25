@@ -1,12 +1,21 @@
 'use client';
 
 import React from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import KakaoMap from '@/app/location/components/KakaoMap';
 import { contactInfo } from '@/common/data/info';
 import l from '@/app/location/Location.module.scss';
+
+const KakaoMap = dynamic(() => import('@/app/location/components/KakaoMap'), {
+  ssr: false,
+  loading: () => (
+    <div className={l.map__mapSkeleton} role="status" aria-live="polite" aria-busy="true">
+      지도를 불러오는 중…
+    </div>
+  ),
+});
 
 export default function LocationPage() {
   // 애니메이션 variants

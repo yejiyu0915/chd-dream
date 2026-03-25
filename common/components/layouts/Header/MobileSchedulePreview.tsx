@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { ScheduleItem } from '@/lib/notion';
 import h from '@/common/components/layouts/Header/Header.module.scss';
+import { parseJsonFromResponse } from '@/common/utils/safeFetchJson';
 
 // 전역 캐시 (컴포넌트 간 공유)
 const scheduleDataCache = {
@@ -52,63 +53,70 @@ function getDDayLabel(event: ScheduleItem): string | null {
 export default function MobileSchedulePreview() {
   const [scheduleData, setScheduleData] = useState<ScheduleItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [hasFetchError, setHasFetchError] = useState(false);
   const isFetchingRef = useRef(false); // 중복 요청 방지
 
   // 일정 데이터 가져오기 (캐싱 적용)
   useEffect(() => {
+    let cancelled = false;
+    const ac = new AbortController();
+
     const fetchScheduleData = async () => {
-      // 중복 요청 방지
       if (isFetchingRef.current) return;
-      
-      // 캐시 확인
+
       const now = Date.now();
       if (
         scheduleDataCache.data &&
         now - scheduleDataCache.timestamp < scheduleDataCache.TTL
       ) {
+        if (cancelled) return;
         setScheduleData(scheduleDataCache.data);
         setIsLoading(false);
-        setError(null);
+        setHasFetchError(false);
         return;
       }
 
       try {
         isFetchingRef.current = true;
         setIsLoading(true);
-        
+        setHasFetchError(false);
+
         const response = await fetch('/api/schedule', {
+          signal: ac.signal,
           headers: {
-            'Cache-Control': 'max-age=300', // 5분 캐시
+            'Cache-Control': 'max-age=300',
           },
         });
-        
+
         if (!response.ok) {
-          throw new Error('일정 데이터를 가져오는데 실패했습니다.');
+          throw new Error('SCHEDULE_FETCH_FAILED');
         }
-        
-        const data = await response.json();
-        const scheduleList = data || [];
-        
-        // 캐시 업데이트
+
+        const data = await parseJsonFromResponse<ScheduleItem[] | null>(response);
+        const scheduleList = Array.isArray(data) ? data : [];
+
         scheduleDataCache.data = scheduleList;
         scheduleDataCache.timestamp = now;
-        
+
+        if (cancelled) return;
         setScheduleData(scheduleList);
-        setError(null);
+        setHasFetchError(false);
       } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') return;
+        if (cancelled) return;
         console.error('일정 데이터 가져오기 실패:', err);
-        setError(err instanceof Error ? err.message : '알 수 없는 오류');
+        setHasFetchError(true);
         setScheduleData([]);
       } finally {
-        setIsLoading(false);
-        isFetchingRef.current = false;
+        if (!cancelled) {
+          setIsLoading(false);
+          isFetchingRef.current = false;
+        }
       }
     };
 
     fetchScheduleData();
 
-    // 페이지 포커스 시 캐시 만료 확인 후 필요시 재요청
     const handleFocus = () => {
       const now = Date.now();
       if (now - scheduleDataCache.timestamp >= scheduleDataCache.TTL) {
@@ -119,6 +127,8 @@ export default function MobileSchedulePreview() {
     window.addEventListener('focus', handleFocus);
 
     return () => {
+      cancelled = true;
+      ac.abort();
       window.removeEventListener('focus', handleFocus);
     };
   }, []);
@@ -187,8 +197,17 @@ export default function MobileSchedulePreview() {
     return null; // 로딩 중에는 표시하지 않음
   }
 
-  if (error) {
-    return null; // 에러 발생 시 표시하지 않음
+  if (hasFetchError) {
+    return (
+      <div className={h.mobileSchedulePreview}>
+        <p className={h.mobileSchedulePreview__error} role="alert">
+          일정 미리보기를 불러오지 못했습니다.{' '}
+          <Link href="/info/schedule" className={h.mobileSchedulePreview__errorLink}>
+            일정 페이지에서 보기
+          </Link>
+        </p>
+      </div>
+    );
   }
 
   // 일정이 없으면 영역 자체를 렌더링하지 않음

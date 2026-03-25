@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
 import { CLogItem } from '@/lib/notion';
@@ -90,6 +90,7 @@ function getRecommendedPosts(
  * C-log 추천글 컴포넌트
  */
 export default function CLogRecommendedPosts({ currentPost, allPosts }: CLogRecommendedPostsProps) {
+  const prefersReducedMotion = useReducedMotion() === true;
   const recommendedPosts = useMemo(
     () => getRecommendedPosts(currentPost, allPosts),
     [currentPost, allPosts]
@@ -181,6 +182,7 @@ export default function CLogRecommendedPosts({ currentPost, allPosts }: CLogReco
               clickable: true,
             }}
             navigation={true}
+            speed={prefersReducedMotion ? 0 : 300}
             spaceBetween={16}
             slidesPerView="auto"
             className={s.recommended__swiper}

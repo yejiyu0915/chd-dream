@@ -226,7 +226,9 @@ export default function CLogListClient({ initialCLogData, searchParams, error }:
           error={error || null}
           viewMode={viewMode}
           hasInitialData={hasInitialData}
-          hasAllData={hasInitialData} // 전체 데이터 존재 여부
+          hasAllData={!isInitialLoading} // 서버에서 목록 응답을 받은 뒤(빈 배열 포함) 빈 상태 안내 표시
+          hasActiveFilters={Boolean(selectedTag || selectedCategory)}
+          onClearFilters={() => router.push('/info/c-log')}
         />
       </div>
     </section>

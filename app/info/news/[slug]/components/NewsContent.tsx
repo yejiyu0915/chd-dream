@@ -1,6 +1,8 @@
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
 import rehypeSanitize from 'rehype-sanitize';
+import { mdxContentSanitizeSchema } from '@/common/config/mdx-rehype-sanitize-schema';
+import rehypeMdxJsxHtmlIntrinsicsToElements from '@/common/plugins/rehype-mdx-jsx-html-intrinsics-to-elements';
 import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeSlug from 'rehype-slug';
 import mdx from '@/common/styles/mdx/MdxContent.module.scss';
@@ -21,7 +23,12 @@ export default function NewsContent({ markdown }: NewsContentProps) {
           options={{
             mdxOptions: {
               remarkPlugins: [remarkGfm],
-              rehypePlugins: [rehypeSlug, rehypeSanitize, rehypePrettyCode],
+              rehypePlugins: [
+                rehypeMdxJsxHtmlIntrinsicsToElements,
+                rehypeSlug,
+                [rehypeSanitize, mdxContentSanitizeSchema],
+                rehypePrettyCode,
+              ],
             },
           }}
           components={mdxComponents}

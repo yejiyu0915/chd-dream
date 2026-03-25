@@ -8,7 +8,7 @@ import rehypeSlug from 'rehype-slug';
 import { compile } from '@mdx-js/mdx';
 
 import { getNotionPageAndContentBySlug, notion, getPrevNextNoticePosts, getNoticeData } from '@/lib/notion';
-import { NotionToMarkdown } from 'notion-to-md';
+import { createNotionToMarkdownWithSemanticTables } from '@/lib/notionToMarkdownWithTables';
 import l from '@/common/styles/mdx/MdxLayout.module.scss';
 import NoticeDetailHeader from '@/app/info/notice/[slug]/components/NoticeDetailHeader';
 import NoticeDetailFooter from '@/app/info/notice/[slug]/components/NoticeDetailFooter';
@@ -49,9 +49,7 @@ async function getMarkdownContent(slug: string) {
       return '';
     }
 
-    const n2m = new NotionToMarkdown({
-      notionClient: notion,
-    });
+    const n2m = createNotionToMarkdownWithSemanticTables(notion);
 
     const { parent: markdown } = n2m.toMarkdownString(await n2m.blocksToMarkdown(notionData.blocks));
     await compile(markdown, {
@@ -97,7 +95,7 @@ export async function generateMetadata({
 
     if (!metadata) {
       return {
-        title: '게시글을 찾을 수 없습니다',
+        title: '해당 공지를 찾을 수 없습니다',
       };
     }
 
@@ -109,7 +107,7 @@ export async function generateMetadata({
     // 에러 발생 시 기본 메타데이터 반환
     console.error('메타데이터 생성 중 오류 발생:', error);
     return {
-      title: '게시글을 찾을 수 없습니다',
+      title: '해당 공지를 찾을 수 없습니다',
     };
   }
 }

@@ -62,7 +62,7 @@ export default function NewsSection({ initialNewsData }: NewsSectionProps) {
         <h2 className={kv.news__title}>NEWS</h2>
         <ul className={kv.news__list}>
           <li>
-            <p className={kv.emptyState}>에러: 뉴스 데이터를 가져오는 데 실패했습니다.</p>
+            <p className={kv.emptyState}>지금은 최신 소식을 불러오지 못했습니다.</p>
           </li>
         </ul>
       </div>
@@ -76,7 +76,7 @@ export default function NewsSection({ initialNewsData }: NewsSectionProps) {
         <h2 className={kv.news__title}>NEWS</h2>
         <ul className={kv.news__list}>
           <li>
-            <p className={kv.emptyState}>최신 뉴스를 불러올 수 없습니다.</p>
+            <p className={kv.emptyState}>등록된 소식이 없습니다.</p>
           </li>
         </ul>
       </div>
@@ -103,7 +103,7 @@ export default function NewsSection({ initialNewsData }: NewsSectionProps) {
           ))
         ) : (
           <li>
-            <p className={kv.emptyState}>최신 뉴스를 불러올 수 없습니다.</p>
+            <p className={kv.emptyState}>등록된 소식이 없습니다.</p>
           </li>
         )}
       </motion.ul>

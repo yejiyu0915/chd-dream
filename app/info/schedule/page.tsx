@@ -18,14 +18,24 @@ export default async function SchedulePage({
   // searchParams를 await로 받기 (Next.js 16 권장 방식)
   const params = await searchParams;
 
-  // 서버에서 일정 데이터를 가져옴
-  const scheduleData = await getScheduleData();
+  let scheduleData: Awaited<ReturnType<typeof getScheduleData>> = [];
+  let fetchError: Error | null = null;
+
+  try {
+    scheduleData = await getScheduleData();
+  } catch (error) {
+    fetchError = error instanceof Error ? error : new Error(String(error));
+    console.error('일정 데이터를 가져오는 중 오류 발생:', error);
+  }
 
   return (
     <section className={s.scheduleMain}>
       <div className={`detail-inner`}>
-        {/* 클라이언트 컴포넌트로 데이터와 searchParams 전달 */}
-        <ScheduleClientWrapper initialScheduleData={scheduleData} searchParams={params} />
+        <ScheduleClientWrapper
+          initialScheduleData={scheduleData}
+          searchParams={params}
+          fetchError={fetchError}
+        />
       </div>
     </section>
   );

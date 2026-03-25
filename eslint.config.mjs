@@ -4,6 +4,9 @@ import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import globals from 'globals';
 import eslintConfigPrettier from 'eslint-config-prettier';
+// eslint-plugin-jsx-a11y는 devDependencies에 포함됨.
+// ESLint flat 설정에서 next/typescript(FlatCompat)와 병합 시 일부 환경에서 순환 참조 오류가 나므로,
+// 안정화 후 아래 블록을 추가해 활성화: { files: ['**/*.{js,jsx,ts,tsx}'], ...jsxA11y.flatConfigs.recommended },
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

@@ -1,9 +1,14 @@
 import React, { useMemo, useState, useEffect, memo } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ScheduleItem } from '@/lib/notion';
 import { formatTimeInfo } from '@/app/info/schedule/types/utils';
 import Icon from '@/common/components/utils/Icons';
 import s from '@/app/info/schedule/Schedule.module.scss';
+import {
+  FETCH_ERROR_SCHEDULE,
+  userFacingFetchError,
+} from '@/common/utils/userFacingFetchError';
 
 /**
  * D-day 라벨을 계산하는 헬퍼 함수
@@ -305,9 +310,8 @@ function ScheduleListView({
   if (isError) {
     return (
       <div className={s.scheduleListContainer}>
-        <div className={s.errorState}>
-          <p>일정을 불러오는데 실패했습니다.</p>
-          <p>{error?.message}</p>
+        <div className={s.errorState} role="alert">
+          <p>{userFacingFetchError(FETCH_ERROR_SCHEDULE, error ?? null)}</p>
         </div>
       </div>
     );
@@ -395,6 +399,10 @@ function ScheduleListView({
       {ongoingEvents.length === 0 && groupedScheduleData.length === 0 ? (
         <div className={s.emptyState}>
           <p>선택한 기간에 일정이 없습니다.</p>
+          <p className={s.emptyState__next}>
+            기간을 바꿔 보시거나{' '}
+            <Link href="/worship/timetable">예배 시간표</Link>에서 정기 집회를 확인해 보세요.
+          </p>
         </div>
       ) : (
         <div className={s.scheduleList}>

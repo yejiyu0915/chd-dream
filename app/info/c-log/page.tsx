@@ -1,6 +1,7 @@
 import { getCLogData, CLogItem } from '@/lib/notion';
 import CLogListClient from '@/app/info/c-log/components/CLogListClient';
 import { generatePageMetadata } from '@/common/data/metadata';
+import { devLog } from '@/common/utils/devLog';
 
 export const metadata = generatePageMetadata('/info/c-log');
 
@@ -35,7 +36,7 @@ export default async function CLogListPage({
         ],
       });
     } else {
-      console.log(`[C-log] 리스트 페이지: ${cLogData.length}개의 항목을 가져왔습니다.`);
+      devLog(`[C-log] 리스트 페이지: ${cLogData.length}개의 항목을 가져왔습니다.`);
     }
   } catch (error) {
     // 에러 발생 시 상세 로깅

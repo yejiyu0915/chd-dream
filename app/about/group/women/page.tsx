@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import Link from 'next/link';
 import { groupData } from '@/app/about/group/data/groupData';
 import GroupContent from '@/app/about/group/components/GroupContent';
 
@@ -21,7 +22,20 @@ export default function WomenPage() {
   );
 
   if (!currentGroup) {
-    return <div>교구 정보를 찾을 수 없습니다.</div>;
+    return (
+      <div
+        className="inner"
+        style={{
+          padding: 'clamp(1.5rem, 4vw, 2.5rem)',
+          maxWidth: '36rem',
+          margin: '0 auto',
+          textAlign: 'center',
+        }}
+      >
+        <p style={{ marginBottom: '1rem' }}>교구 정보를 불러오지 못했습니다.</p>
+        <Link href="/about/group">교구 안내로 돌아가기</Link>
+      </div>
+    );
   }
 
   return <GroupContent data={currentGroup} prevGroup={prevGroup} nextGroup={nextGroup} />;

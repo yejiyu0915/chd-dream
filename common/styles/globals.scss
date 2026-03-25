@@ -11,6 +11,13 @@ body {
   max-width: 100vw;
   scroll-behavior: smooth; // 부드러운 스크롤
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body.mobile-menu-open {
   overflow: hidden;
 }
@@ -478,8 +485,8 @@ main {
   height: vw(72);
   position: fixed;
   z-index: 900;
-  right: vw(40);
-  bottom: vw(56);
+  right: calc(#{vw(40)} + env(safe-area-inset-right, 0px));
+  bottom: calc(#{vw(56)} + env(safe-area-inset-bottom, 0px));
   // border: vw(2) solid var(--bg-page);
   box-shadow: 0 vw(4) vw(4) rgba(0, 0, 0, 0.03);
   border-radius: 50%;
@@ -538,19 +545,19 @@ main {
   @include mq(pc-sm) {
     width: vw(64);
     height: vw(64);
-    right: vw(32);
-    bottom: vw(42);
+    right: calc(#{vw(32)} + env(safe-area-inset-right, 0px));
+    bottom: calc(#{vw(42)} + env(safe-area-inset-bottom, 0px));
     @include font-vw(20);
   }
 
   @include mq(mo) {
     width: vw(48);
     height: vw(48);
-    right: vw(20);
-    bottom: vw(32);
+    right: calc(#{vw(20)} + env(safe-area-inset-right, 0px));
+    bottom: calc(#{vw(32)} + env(safe-area-inset-bottom, 0px));
   }
   @include mq(mo-sm) {
-    bottom: vw(26);
+    bottom: calc(#{vw(26)} + env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -597,6 +604,50 @@ main {
         opacity: 1;
       }
     }
+  }
+}
+
+.share-button__wrap {
+  @include mq(mo) {
+    display: flex;
+    position: absolute;
+    z-index: 900;
+    left: var(--inner-padding);
+    bottom: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: vw(8);
+    max-width: calc(100% - var(--inner-padding) * 2);
+    transform: translate(0, 50%);
+    pointer-events: none;
+  }
+
+  .share-button {
+    pointer-events: auto;
+  }
+}
+
+.share-button__wrap .share-button {
+  @include mq(mo) {
+    position: static;
+    left: auto;
+    bottom: auto;
+    transform: none;
+  }
+}
+
+.share-button__status {
+  pointer-events: none;
+  @include mq(mo) {
+    max-width: min(#{vw(280)}, 70vw);
+    padding: vw(8) vw(10);
+    border: 1px solid var(--accent-border-subtle);
+    border-radius: vw(8);
+    background-color: var(--bg-page);
+    box-shadow: 0 vw(2) vw(8) rgba(0, 0, 0, 0.06);
+    @include font-vw(12);
+    color: var(--text-body);
+    line-height: 1.4;
   }
 }
 

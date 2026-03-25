@@ -20,9 +20,10 @@ export default function KakaoMap({
     appkey: process.env.NEXT_PUBLIC_KAKAO_MAP_KEY!,
   });
 
+  const kakaoMapUrl = `https://map.kakao.com/link/map/${encodeURIComponent(address)},${latitude},${longitude}`;
+
   // 마커 클릭 시 카카오맵 앱/웹 열기
   const handleMarkerClick = () => {
-    const kakaoMapUrl = `https://map.kakao.com/link/map/${encodeURIComponent(address)},${latitude},${longitude}`;
     window.open(kakaoMapUrl, '_blank');
   };
 
@@ -37,11 +38,11 @@ export default function KakaoMap({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#f5f5f5',
+          backgroundColor: 'var(--bg-section)',
           borderRadius: '8px',
         }}
       >
-        <p style={{ color: '#666' }}>지도를 불러오는 중...</p>
+        <p style={{ color: 'var(--text-caption)' }}>지도를 불러오는 중...</p>
       </div>
     );
   }
@@ -58,15 +59,35 @@ export default function KakaoMap({
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#f5f5f5',
+          backgroundColor: 'var(--bg-section)',
           borderRadius: '8px',
           padding: '20px',
         }}
       >
-        <p style={{ color: '#e53e3e', marginBottom: '10px' }}>⚠️ 카카오맵을 불러올 수 없습니다.</p>
-        <p style={{ color: '#999', fontSize: '14px' }}>
-          카카오 개발자 사이트에서 도메인 등록 및 앱 사용 설정을 확인해주세요.
+        <p style={{ color: 'var(--semantic-danger)', marginBottom: '10px' }}>
+          지도를 불러오지 못했습니다.
         </p>
+        <p
+          style={{
+            color: 'var(--text-caption)',
+            fontSize: '14px',
+            marginBottom: '12px',
+            textAlign: 'center',
+          }}
+        >
+          아래 주소로 오시거나 카카오맵에서 위치를 확인해 주세요.
+        </p>
+        <p style={{ color: 'var(--text-body)', fontSize: '15px', fontWeight: 600, marginBottom: '12px' }}>
+          {address}
+        </p>
+        <a
+          href={kakaoMapUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: 'var(--accent-brand)', fontSize: '14px', textDecoration: 'underline' }}
+        >
+          카카오맵에서 위치 열기
+        </a>
       </div>
     );
   }

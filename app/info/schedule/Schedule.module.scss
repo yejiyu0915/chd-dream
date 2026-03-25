@@ -1,9 +1,8 @@
-// CSS 모듈에서는 :root 선택자가 포함된 파일을 import할 수 없으므로 직접 색상 정의
 @use '@/common/styles/mixins/function' as *;
 
 .scheduleMain {
   --important-color: var(--accent-brand);
-  --red-color: #dc3545;
+  --red-color: var(--semantic-danger);
   padding: vw(120) 0 vw(200);
 
   @include mq(mo) {
@@ -22,7 +21,7 @@
 }
 
 .calendarContainer {
-  background: white;
+  background: var(--bg-page);
   overflow: hidden;
 }
 
@@ -31,8 +30,8 @@
   justify-content: space-between;
   align-items: center;
   padding: vw(32) 0 vw(60);
-  background: #fff;
-  color: #333;
+  background: var(--bg-page);
+  color: var(--text-body);
 
   @include mq(mo) {
     padding: 0 vw(24) vw(20);
@@ -45,9 +44,9 @@
   font-size: vw(36);
   font-weight: 600;
   margin: 0;
-  border-left: vw(4) solid #000;
+  border-left: vw(4) solid var(--text-main);
   padding-left: vw(16);
-  color: #333;
+  color: var(--text-body);
   @include mq(ta) {
     font-size: vw(28);
   }
@@ -69,11 +68,11 @@
 }
 
 .navButton {
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
+  background: var(--header-gradient-start);
+  border: 1px solid var(--header-gradient-end);
   border-radius: vw(12);
   padding: vw(12) vw(16);
-  color: #333;
+  color: var(--text-body);
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
@@ -88,8 +87,8 @@
     font-size: vw(16);
   }
   &:hover {
-    background: #e9ecef;
-    border-color: #dee2e6;
+    background: var(--header-gradient-end);
+    border-color: var(--border-neutral-mid);
   }
 
   &:disabled {
@@ -145,9 +144,9 @@
   padding: vw(20) vw(4);
   text-align: center;
   font-weight: 600;
-  color: #495057;
+  color: var(--text-muted-mid);
   font-size: vw(20);
-  border-bottom: vw(4) solid #e9ecef;
+  border-bottom: vw(4) solid var(--header-gradient-end);
   @include mq(ta) {
     border-bottom-width: vw(3);
   }
@@ -172,9 +171,9 @@
 }
 
 .dayCell {
-  background: white;
+  background: var(--bg-page);
   min-height: vw(120);
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--header-gradient-end);
   position: relative;
   transition: all 0.2s ease;
   @include mq(ta) {
@@ -185,12 +184,12 @@
   }
 
   &:hover {
-    background: #f8f9fa;
+    background: var(--header-gradient-start);
   }
 
   &.otherMonth {
-    background: #f8f9fa;
-    color: #adb5bd;
+    background: var(--header-gradient-start);
+    color: var(--text-placeholder);
   }
 
   &.today {
@@ -202,7 +201,7 @@
       z-index: 2;
       width: 100%;
       height: 100%;
-      border-bottom: vw(4) solid #bbb;
+      border-bottom: vw(4) solid var(--border-soft);
       pointer-events: none;
       @include mq(ta) {
         border-bottom-width: vw(2);
@@ -214,7 +213,7 @@
   }
 
   &.selected {
-    background-color: #f3f3f3;
+    background-color: var(--bg-section);
     &::before {
       content: '';
       position: absolute;
@@ -223,7 +222,7 @@
       z-index: 2;
       width: 100%;
       height: 100%;
-      border-bottom: vw(4) solid #000;
+      border-bottom: vw(4) solid var(--text-main);
       @include mq(ta) {
         border-bottom-width: vw(2);
       }
@@ -283,7 +282,7 @@
   width: vw(12);
   height: vw(12);
   border-radius: 50%;
-  background-color: #ccc;
+  background-color: var(--border-soft);
 
   @include mq(ta) {
     width: vw(10);
@@ -323,7 +322,7 @@
   flex: 1;
   display: block;
   padding-inline-start: vw(60);
-  border-left: vw(2) solid #e9ecef;
+  border-left: vw(2) solid var(--header-gradient-end);
 
   @include mq(ta) {
     padding-block-start: vw(24);
@@ -365,9 +364,9 @@
     display: flex;
     flex-direction: column;
     gap: vw(16);
-    background: #f7f8f9;
+    background: var(--bg-hover-muted);
     padding: vw(24) vw(24) vw(24) vw(40);
-    border-left: vw(4) solid #000;
+    border-left: vw(4) solid var(--text-main);
 
     &.important {
       border-left-color: var(--important-color);
@@ -394,7 +393,7 @@
   .eventItemTitle {
     font-size: vw(28);
     font-weight: 700;
-    color: #333;
+    color: var(--text-body);
 
     @include mq(ta) {
       font-size: vw(16);
@@ -455,7 +454,7 @@
     padding: vw(6) vw(12);
     border: 1px solid var(--accent-border-subtle);
     background: var(--accent-brand);
-    color: #ffffff;
+    color: var(--text-inverse);
     border-radius: vw(20);
     font-size: vw(16);
     font-weight: 700;
@@ -477,7 +476,7 @@
 
   .eventItemTime {
     font-size: vw(18);
-    color: #666;
+    color: var(--text-caption);
 
     @include mq(ta) {
       font-size: vw(14);
@@ -505,11 +504,11 @@
   }
 
   .eventItemTag {
-    background: #ffffff;
+    background: var(--bg-page);
     color: var(--accent-brand);
     padding: vw(8) vw(12);
     border-radius: vw(4);
-    border: 1px solid #eee;
+    border: 1px solid var(--accent-border-subtle);
     font-size: vw(16);
 
     @include mq(ta) {
@@ -529,7 +528,7 @@
   justify-content: center;
   align-items: center;
   min-height: vw(400);
-  color: #6c757d;
+  color: var(--text-caption);
   font-size: vw(16);
 }
 
@@ -544,10 +543,24 @@
   gap: vw(16);
 }
 
+.scheduleFetchBanner {
+  display: block;
+  width: 100%;
+  margin-block-end: vw(24);
+  padding-block: vw(16);
+  padding-inline: vw(20);
+  border: 1px solid var(--semantic-danger);
+  border-radius: vw(8);
+  background-color: var(--bg-section);
+  color: var(--semantic-danger);
+  text-align: center;
+  @include font-vw(14);
+}
+
 .retryButton {
-  background: #f8f9fa;
-  color: #333;
-  border: 1px solid #e9ecef;
+  background: var(--header-gradient-start);
+  color: var(--text-body);
+  border: 1px solid var(--header-gradient-end);
   padding: vw(12) vw(24);
   border-radius: vw(6);
   cursor: pointer;
@@ -555,8 +568,8 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background: #e9ecef;
-    border-color: #dee2e6;
+    background: var(--header-gradient-end);
+    border-color: var(--border-neutral-mid);
   }
 }
 
@@ -574,8 +587,8 @@
 }
 
 .viewModeFilter__button {
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
+  background: var(--header-gradient-start);
+  border: 1px solid var(--header-gradient-end);
   border-radius: vw(6);
   padding: vw(15) vw(18);
   cursor: pointer;
@@ -596,14 +609,14 @@
   }
 
   &:hover {
-    background: #e9ecef;
-    border-color: #dee2e6;
+    background: var(--header-gradient-end);
+    border-color: var(--border-neutral-mid);
   }
 
   &.active {
-    background: #000;
-    color: white;
-    border-color: #000;
+    background: var(--text-main);
+    color: var(--text-inverse);
+    border-color: var(--text-main);
   }
 
   @include mq(ta) {
@@ -633,7 +646,7 @@
   height: vw(56);
 
   &.active {
-    border-color: #000;
+    border-color: var(--text-main);
     font-weight: 700;
   }
 
@@ -672,7 +685,7 @@
 
 // 리스트 뷰 스타일
 .scheduleListContainer {
-  background: white;
+  background: var(--bg-page);
   border-radius: vw(12);
   overflow: hidden;
 }
@@ -703,7 +716,7 @@
 
 .scheduleListSubtitle {
   font-size: vw(24);
-  color: #333;
+  color: var(--text-body);
   margin: 0;
   @include mq(ta) {
     font-size: vw(16);
@@ -828,7 +841,7 @@
 .scheduleListDayDate {
   font-size: vw(28);
   font-weight: 600;
-  color: #333;
+  color: var(--text-body);
   @include mq(ta) {
     font-size: vw(20);
   }
@@ -889,8 +902,8 @@
 }
 
 .scheduleListEvent {
-  background: #f7f8f9;
-  border-left: vw(4) solid #000;
+  background: var(--bg-hover-muted);
+  border-left: vw(4) solid var(--text-main);
   padding: vw(24) vw(24) vw(24) vw(40);
   margin-bottom: vw(16);
   transition: all 0.2s ease;
@@ -916,7 +929,7 @@
   // 모바일에서 캘린더 뷰와 동일한 스타일 적용
   @include mq(mo) {
     padding: vw(12);
-    border-left: vw(4) solid #000;
+    border-left: vw(4) solid var(--text-main);
     margin-bottom: vw(8);
 
     &.important {
@@ -924,7 +937,7 @@
     }
 
     &.ongoingEvent {
-      border-left: vw(4) solid #000;
+      border-left: vw(4) solid var(--text-main);
     }
   }
 }
@@ -1016,7 +1029,7 @@
   padding: vw(6) vw(12);
   border: 1px solid var(--accent-border-subtle);
   background: var(--accent-brand);
-  color: #ffffff;
+  color: var(--text-inverse);
   border-radius: vw(20);
   font-size: vw(16);
   font-weight: 700;
@@ -1038,7 +1051,7 @@
 
 .scheduleListEventTime {
   font-size: vw(18);
-  color: #666;
+  color: var(--text-caption);
   @include mq(ta) {
     font-size: vw(14);
   }
@@ -1050,7 +1063,7 @@
 
 .scheduleListEventLocation {
   font-size: vw(14);
-  color: #666;
+  color: var(--text-caption);
   @include mq(mo) {
     font-size: vw(12);
   }
@@ -1074,10 +1087,10 @@
 }
 
 .scheduleListEventTag {
-  background: #ffffff;
+  background: var(--bg-page);
   color: var(--accent-brand);
   padding: vw(8) vw(12);
-  border: 1px solid #eee;
+  border: 1px solid var(--accent-border-subtle);
   border-radius: vw(4);
   font-size: vw(16);
   font-weight: 500;
@@ -1093,43 +1106,76 @@
 }
 
 .emptyState {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: vw(16);
   min-height: vw(300);
-  background: #f8f9fa !important;
+  padding-block: vw(40);
+  background: var(--header-gradient-start) !important;
   border-left: 0 !important;
   opacity: 0.7;
   font-size: vw(16);
-  color: #6c757d !important;
+  color: var(--text-caption) !important;
   font-weight: 400 !important;
-  line-height: vw(300);
+  line-height: 1.5;
   text-align: center;
+  p {
+    margin: 0;
+  }
+  &__next {
+    @include font-vw(15);
+    a {
+      color: var(--accent-brand);
+      font-weight: 600;
+      text-decoration: underline;
+    }
+  }
   @include mq(mo) {
     min-height: vw(120);
     font-size: vw(14);
-    line-height: vw(120);
+    gap: vw(12);
+    padding-block: vw(24);
   }
 }
 
 // 일정이 없을 때 스타일
 .noEventsItem {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: vw(12);
   min-height: vw(500);
-  background: #f8f9fa !important;
+  padding-block: vw(32);
+  background: var(--header-gradient-start) !important;
   border-left: 0 !important;
   opacity: 0.7;
-  line-height: vw(500);
   text-align: center;
   @include mq(ta) {
     min-height: vw(300);
-    line-height: vw(300);
   }
   @include mq(mo) {
     min-height: vw(120);
-    line-height: vw(120);
+    padding-block: vw(20);
   }
 }
 
 .noEventsTitle {
-  color: #6c757d !important;
+  color: var(--text-caption) !important;
   font-weight: 400 !important;
+}
+
+.noEventsHint {
+  margin: 0;
+  @include font-vw(15);
+  color: var(--text-caption);
+  a {
+    color: var(--accent-brand);
+    font-weight: 600;
+    text-decoration: underline;
+  }
 }
 
 // PC에서만 표시되는 요소

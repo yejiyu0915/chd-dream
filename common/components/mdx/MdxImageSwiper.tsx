@@ -7,6 +7,7 @@ import { Pagination, Navigation } from 'swiper/modules';
 import Image from 'next/image';
 import MdxImageGalleryModal from '@/common/components/mdx/MdxImageGalleryModal';
 import styles from '@/common/components/mdx/MdxImageSwiper.module.scss';
+import { getClientPrefersReducedMotion } from '@/common/utils/motionPreference';
 
 // Swiper 스타일 import
 import 'swiper/css';
@@ -290,6 +291,8 @@ export default function MdxImageSwiperWrapper({ children }: MdxImageSwiperWrappe
         ? `${styles.swiper} ${styles.singleImage}`
         : styles.swiper;
 
+      const reduceMotion = getClientPrefersReducedMotion();
+
       return (
         <Swiper
           modules={[Pagination, Navigation]}
@@ -301,6 +304,7 @@ export default function MdxImageSwiperWrapper({ children }: MdxImageSwiperWrappe
           loop={false}
           autoHeight={true}
           className={swiperClassName}
+          speed={reduceMotion ? 0 : 300}
           onSwiper={(swiper) => {
             swiperInstance = swiper;
             // 초기 로드 시 높이 업데이트

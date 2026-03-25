@@ -227,7 +227,7 @@
         height: vw(12);
         position: relative;
         border-radius: vw(6);
-        background-color: #ddd;
+        background-color: var(--border-neutral);
         opacity: 1;
         transition: all 0.2s ease;
 

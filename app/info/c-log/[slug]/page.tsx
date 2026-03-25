@@ -12,7 +12,7 @@ import {
   getPrevNextCLogPosts,
   getCLogData,
 } from '@/lib/notion';
-import { NotionToMarkdown } from 'notion-to-md';
+import { createNotionToMarkdownWithSemanticTables } from '@/lib/notionToMarkdownWithTables';
 import { getCachedMarkdown } from '@/lib/clogMarkdownCache';
 import l from '@/common/styles/mdx/MdxLayout.module.scss';
 import CLogDetailHeader from '@/app/info/c-log/[slug]/components/CLogDetailHeader';
@@ -24,6 +24,7 @@ import ContentSkeleton from '@/common/components/skeletons/ContentSkeleton';
 import { getCurrentSeason } from '@/common/utils/season';
 import { generateDynamicMetadata } from '@/common/data/metadata';
 import { extractDetailPageMetadataWithCategory } from '@/lib/notionUtils';
+import { devLog } from '@/common/utils/devLog';
 
 // ISR 설정: 10분마다 재생성 (성능 최적화)
 export const revalidate = 600; // 10분
@@ -87,7 +88,7 @@ async function getMarkdownContent(slug: string) {
       // 이미지 블록이 있는지 확인 (디버깅용)
       const imageBlocks = notionData.blocks.filter((block: any) => block.type === 'image');
       if (imageBlocks.length > 0) {
-        console.log(`[C-log] 이미지 블록 ${imageBlocks.length}개 발견 (slug: ${slug})`);
+        devLog(`[C-log] 이미지 블록 ${imageBlocks.length}개 발견 (slug: ${slug})`);
         // 이미지 블록 정보 로깅 (디버깅용)
         imageBlocks.forEach((block: any, index: number) => {
           const imageUrl =
@@ -96,13 +97,11 @@ async function getMarkdownContent(slug: string) {
               : block.image?.type === 'file'
                 ? block.image.file?.url
                 : 'unknown';
-          console.log(`[C-log] 이미지 ${index + 1}: ${imageUrl}`);
+          devLog(`[C-log] 이미지 ${index + 1}: ${imageUrl}`);
         });
       }
 
-      const n2m = new NotionToMarkdown({
-        notionClient: notion,
-      });
+      const n2m = createNotionToMarkdownWithSemanticTables(notion);
 
       // blocksToMarkdown 단계별로 에러 처리
       let markdownBlocks;
@@ -117,13 +116,13 @@ async function getMarkdownContent(slug: string) {
         });
         // 이미지 블록이 있는 경우, 이미지 블록만 제외하고 다시 시도
         if (imageBlocks.length > 0) {
-          console.log('[C-log] 이미지 블록을 제외하고 다시 시도합니다...');
+          devLog('[C-log] 이미지 블록을 제외하고 다시 시도합니다...');
           const blocksWithoutImages = notionData.blocks.filter(
             (block: any) => block.type !== 'image'
           );
           try {
             markdownBlocks = await n2m.blocksToMarkdown(blocksWithoutImages);
-            console.log('[C-log] 이미지 블록 제외 후 변환 성공');
+            devLog('[C-log] 이미지 블록 제외 후 변환 성공');
           } catch (retryError: any) {
             console.error(
               '[C-log] 이미지 블록 제외 후에도 변환 실패:',
@@ -198,7 +197,7 @@ export async function generateMetadata({
 
     if (!metadata) {
       return {
-        title: '게시글을 찾을 수 없습니다',
+        title: '해당 글을 찾을 수 없습니다',
       };
     }
 
@@ -210,7 +209,7 @@ export async function generateMetadata({
     // 에러 발생 시 기본 메타데이터 반환
     console.error('메타데이터 생성 중 오류 발생:', error);
     return {
-      title: '게시글을 찾을 수 없습니다',
+      title: '해당 글을 찾을 수 없습니다',
     };
   }
 }

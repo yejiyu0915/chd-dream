@@ -38,13 +38,22 @@
   margin-block-end: vw(240);
 
   &__wrapper {
+    display: flex;
     width: 100%;
     height: vw(600);
-    // box-sizing: content-box;
-    // border-radius: vw(20);
-    // border: vw(6) solid var(--accent-border-subtle);
-    // overflow: hidden;
     box-shadow: 0 vw(2) vw(12) rgba(0, 0, 0, 0.06);
+  }
+
+  &__mapSkeleton {
+    display: flex;
+    flex-grow: 1;
+    width: 100%;
+    min-height: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-section);
+    color: var(--text-caption);
+    @include font-vw(16);
   }
 
   &__detail {

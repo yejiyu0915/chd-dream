@@ -1,3 +1,6 @@
+// 접근성: 본문/캡션은 --bg-page 대비 AA(4.5:1) 지향.
+// 액센트 위 가독 텍스트는 --text-inverse 등 명시적 대비 조합을 유지할 것.
+
 :root {
   // === 텍스트 색상 ===
   --text-main: #000; // 메인 텍스트 (기존 --foreground)
@@ -18,6 +21,29 @@
   --accent-tertiary: #ede4f5; // 삼차 색상 (기존 --tertiary)
   --accent-border: #eceaef; // 기본 경계선 (기존 --border)
   --accent-border-subtle: #f0f0f0; // 연한 경계선 (기존 --border-light)
+
+  // 중립 UI (계절 액센트와 분리 — 팝업·코드·폼 등)
+  --border-neutral: #ddd;
+  --border-neutral-strong: #999;
+  --border-soft: #ccc;
+  --bg-hover-muted: #f9f9f9;
+  --text-muted-mid: #555;
+
+  // 헤더 메가메뉴 등 밝은 그라데이션
+  --header-gradient-start: #f8f9fa;
+  --header-gradient-end: #e9ecef;
+
+  // 의미 색·캘린더 등
+  --semantic-danger: #dc3545;
+  --border-neutral-mid: #dee2e6;
+
+  // reset.scss / 레거시 호환 별칭 (단일 토큰 소스 유지)
+  --text-color: var(--text-main);
+  --background-color: var(--bg-page);
+  --border-color: var(--accent-border-subtle);
+
+  // 수평선 등 공통 간격 (reset.scss hr)
+  --spacing-md: 1rem;
 }
 
 // === 계절별 액센트 색상 오버라이드 ===
@@ -56,3 +82,5 @@ html[data-season='winter'] {
   --accent-secondary: rgb(250, 247, 252);
   --accent-tertiary: #ede4f5;
 }
+
+// 다크 모드: .impeccable 로드맵 — 구현 시 html[data-theme='dark'] 등에서 위 토큰 오버라이드

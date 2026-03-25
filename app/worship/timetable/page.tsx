@@ -20,7 +20,7 @@ export default function TimetablePage() {
 
   return (
     <>
-      <div className={`${t.timetable} detail-inner`}>
+      <div className="detail-inner">
         <div className={t.inner}>
           {/* 예배 시간표 테이블 - 집회 안내 */}
           <motion.h2

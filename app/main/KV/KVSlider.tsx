@@ -8,6 +8,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Parallax, Pagination, Navigation, EffectFade } from 'swiper/modules';
 import { KVSliderItem } from '@/lib/notion';
 import { useRef, useEffect, useState, useCallback } from 'react';
+import { useReducedMotion } from 'framer-motion';
 import { Swiper as SwiperCore } from 'swiper/types';
 import { getClientSeason } from '@/common/utils/season';
 
@@ -30,7 +31,6 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
   const kvSliderItems = initialKvSliderItems || [];
   const isLoading = false;
   const isError = false;
-  const error = null;
 
   const sliderRef = useRef<HTMLDivElement>(null);
   const swiperRef = useRef<SwiperCore | null>(null);
@@ -44,6 +44,7 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const isInitializedRef = useRef(false); // Swiper 초기화 여부를 추적하는 ref
   const currentSlideRef = useRef<number>(0); // 현재 슬라이드 인덱스를 추적하는 ref
+  const prefersReducedMotion = useReducedMotion() === true;
 
   // 계절 테마 감지 (data-season 속성 변경 시에도 반응)
   useEffect(() => {
@@ -103,7 +104,7 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
   }, []);
 
   const handlePlayPauseToggle = useCallback(() => {
-    if (!swiperRef.current) return;
+    if (prefersReducedMotion || !swiperRef.current) return;
 
     if (isPlaying) {
       // pause: autoplay와 프로그레스바 멈춤 (현재 위치 유지)
@@ -115,7 +116,7 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
       startProgressBar(false); // 현재 위치에서 재개
     }
     setIsPlaying(!isPlaying);
-  }, [isPlaying, startProgressBar, stopProgressBar]);
+  }, [isPlaying, prefersReducedMotion, startProgressBar, stopProgressBar]);
 
   // cleanup: 컴포넌트 언마운트 시 프로그레스바 정리
   useEffect(() => {
@@ -142,10 +143,9 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
   }
 
   if (isError) {
-    const errorMessage = '슬라이드 데이터를 가져오는 데 실패했습니다.';
     return (
       <div className={kv.background} style={{ height: kvHeight, minHeight: kvHeight }}>
-        <p className={kv.emptyState}>에러: {errorMessage}</p>
+        <p className={kv.emptyState}>메인 배너를 불러오지 못했습니다. 새로고침 후 다시 확인해 주세요.</p>
       </div>
     );
   }
@@ -153,7 +153,7 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
   if (!kvSliderItems || kvSliderItems.length === 0) {
     return (
       <div className={kv.background} style={{ height: kvHeight, minHeight: kvHeight }}>
-        <p className={kv.emptyState}>슬라이드 데이터를 불러올 수 없습니다.</p>
+        <p className={kv.emptyState}>표시할 배너가 없습니다.</p>
       </div>
     );
   }
@@ -163,26 +163,41 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
       {/* isFetching 중일 때 작은 로딩 인디케이터를 추가할 수 있습니다. */}
       {/* {isFetching && <div className={kv.fetchingIndicator}>업데이트 중...</div>} */}
       <Swiper
-        modules={[Autoplay, Pagination, Navigation, Parallax, EffectFade]}
+        modules={
+          prefersReducedMotion
+            ? [Autoplay, Pagination, Navigation, EffectFade]
+            : [Autoplay, Pagination, Navigation, Parallax, EffectFade]
+        }
         onSwiper={(swiper) => {
           swiperRef.current = swiper;
           // 초기 로드 시에만 autoplay와 프로그레스바 시작 (리렌더링 시에는 실행하지 않음)
-          if (!isInitializedRef.current && isPlaying && swiperRef.current?.autoplay) {
+          if (
+            !isInitializedRef.current &&
+            isPlaying &&
+            !prefersReducedMotion &&
+            swiperRef.current?.autoplay
+          ) {
             currentSlideRef.current = swiper.realIndex; // 현재 슬라이드 인덱스 저장
             swiperRef.current.autoplay.start();
             startProgressBar(true); // 처음 시작이므로 0%부터
             isInitializedRef.current = true; // 초기화 완료 표시
+          } else if (!isInitializedRef.current) {
+            isInitializedRef.current = true;
           }
         }}
         spaceBetween={0}
         slidesPerView={1}
         effect="fade"
-        fadeEffect={{ crossFade: true }}
-        speed={1000}
-        autoplay={{
-          delay: autoplayDelay,
-          disableOnInteraction: false,
-        }}
+        fadeEffect={{ crossFade: !prefersReducedMotion }}
+        speed={prefersReducedMotion ? 0 : 1000}
+        autoplay={
+          prefersReducedMotion
+            ? false
+            : {
+                delay: autoplayDelay,
+                disableOnInteraction: false,
+              }
+        }
         pagination={{
           el: `.${kv.pagination}`,
           clickable: true,
@@ -196,7 +211,7 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
           hideOnClick: false,
         }}
         loop={kvSliderItems.length > 1} // 슬라이드가 1개일 때는 loop 비활성화
-        parallax={true}
+        parallax={!prefersReducedMotion}
         className={kv.slider}
         onSlideChange={(swiper) => {
           // 실제로 슬라이드 인덱스가 변경되었을 때만 프로그레스바를 리셋
@@ -206,21 +221,22 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
             // 슬라이드가 실제로 변경된 경우에만 프로그레스바를 0%부터 시작
             currentSlideRef.current = newSlideIndex;
 
-            if (isPlaying) {
+            if (isPlaying && !prefersReducedMotion) {
               startProgressBar(true); // 새 슬라이드이므로 0%부터 시작
             }
           }
         }}
       >
-        {kvSliderItems.map((slide) => (
+        {kvSliderItems.map((slide, index) => (
           <SwiperSlide key={slide.id} data-swiper-parallax="-23%">
             <Image
               src={slide.image}
               alt={slide.imageAlt}
               fill
-              unoptimized
+              sizes="100vw"
               style={{ objectFit: 'cover' }}
-              priority
+              priority={index === 0}
+              loading={index === 0 ? undefined : 'lazy'}
               data-swiper-parallax="-23%"
             />
             <div className={kv.overlay}></div>
@@ -255,21 +271,25 @@ export default function KVSlider({ kvHeight, initialKvSliderItems }: KVSliderPro
             </div>
             <div className={kv.controls}>
               <div className={kv.pagination}></div>
-              <button
-                type="button"
-                onClick={handlePlayPauseToggle}
-                className={kv.playPauseButton}
-                aria-label={isPlaying ? '일시정지' : '재생'}
-              >
-                <Icon name={isPlaying ? 'pause' : 'play'} />
-              </button>
+              {!prefersReducedMotion && (
+                <button
+                  type="button"
+                  onClick={handlePlayPauseToggle}
+                  className={kv.playPauseButton}
+                  aria-label={isPlaying ? '일시정지' : '재생'}
+                >
+                  <Icon name={isPlaying ? 'pause' : 'play'} />
+                </button>
+              )}
             </div>
           </>
         )}
       </Swiper>
-      <div className={kv.progressBarContainer}>
-        <div className={kv.progressBar} style={{ width: `${progressWidth}%` }}></div>
-      </div>
+      {!prefersReducedMotion && (
+        <div className={kv.progressBarContainer}>
+          <div className={kv.progressBar} style={{ width: `${progressWidth}%` }}></div>
+        </div>
+      )}
       {/* 꽃잎 애니메이션 (봄용) */}
       {isSpring && (
         <div className={kv.petals}>

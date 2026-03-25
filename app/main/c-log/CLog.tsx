@@ -225,7 +225,7 @@ export default function CLog({ initialCLogData }: CLogProps) {
     return (
       <section className={c.cLog}>
         <div className={`${c.inner} inner`}>
-          <p className={c.error}>에러: 데이터를 가져오는 데 실패했습니다.</p>
+          <p className={c.error}>C-log를 불러오지 못했습니다. 잠시 후 다시 확인해 주세요.</p>
         </div>
       </section>
     );
@@ -287,7 +287,7 @@ export default function CLog({ initialCLogData }: CLogProps) {
               ))}
             </ul>
           ) : (
-            <p className={c.desc}>표시할 Notion 데이터가 없습니다.</p>
+            <p className={c.desc}>표시할 글이 없습니다.</p>
           )}
         </div>
       </div>

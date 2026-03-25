@@ -8,10 +8,15 @@ import ScheduleCalendarView from '@/app/info/schedule/components/ScheduleCalenda
 import ScheduleViewModeFilter from '@/app/info/schedule/components/ScheduleViewModeFilter';
 import SchedulePeriodFilter from '@/app/info/schedule/components/SchedulePeriodFilter';
 import s from '@/app/info/schedule/Schedule.module.scss';
+import {
+  FETCH_ERROR_SCHEDULE_BANNER,
+  userFacingFetchError,
+} from '@/common/utils/userFacingFetchError';
 
 interface ScheduleClientWrapperProps {
   initialScheduleData: ScheduleItem[];
   searchParams: { view?: string; date?: string; period?: string; start?: string };
+  fetchError?: Error | null;
 }
 
 // 필터 컴포넌트 (Context 사용) - 수동 최적화
@@ -44,9 +49,15 @@ const ScheduleContent = memo(function ScheduleContent({
 export default function ScheduleClientWrapper({
   initialScheduleData,
   searchParams,
+  fetchError,
 }: ScheduleClientWrapperProps) {
   return (
     <ScheduleProvider searchParams={searchParams}>
+      {fetchError ? (
+        <div className={s.scheduleFetchBanner} role="alert">
+          {userFacingFetchError(FETCH_ERROR_SCHEDULE_BANNER, fetchError)}
+        </div>
+      ) : null}
       <ScheduleContent scheduleData={initialScheduleData} />
     </ScheduleProvider>
   );

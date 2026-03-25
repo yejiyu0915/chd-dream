@@ -85,7 +85,7 @@
   // PC Small 반응형
   @include mq(pc-sm) {
     .titleSection {
-      background-color: #f9f9f9;
+      background-color: var(--bg-hover-muted);
 
       &::after {
         content: '';

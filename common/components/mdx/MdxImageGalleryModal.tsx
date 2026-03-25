@@ -8,6 +8,7 @@ import type { Swiper as SwiperType } from 'swiper';
 import Image from 'next/image';
 import Icon from '@/common/components/utils/Icons';
 import styles from '@/common/components/mdx/MdxImageGalleryModal.module.scss';
+import { getClientPrefersReducedMotion } from '@/common/utils/motionPreference';
 
 // Swiper 스타일 import
 import 'swiper/css';
@@ -111,6 +112,7 @@ export default function MdxImageGalleryModal({
 
     // 모달 생성 함수
     const createModal = () => {
+      const reduceMotion = getClientPrefersReducedMotion();
       // .wrapper 찾기
       const wrapper = document.querySelector('.wrapper');
       if (!wrapper) return;
@@ -188,6 +190,7 @@ export default function MdxImageGalleryModal({
                 centeredSlides={false}
                 loop={false}
                 className={styles.swiper}
+                speed={reduceMotion ? 0 : 300}
                 onSwiper={(swiper) => {
                   swiperRef.current = swiper;
                   if (initialIndex >= 0) {

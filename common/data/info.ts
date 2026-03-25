@@ -171,10 +171,10 @@ export const quickLinkData: QuickLinkItem[][] = [
       size: 'lg',
     },
     {
-      title: '교구 소개',
+      title: '새가족 안내',
       icon: 'users',
-      href: '/about/group',
-      description: '교구 소개와 교구 활동을 확인할 수 있습니다.',
+      href: '/about/group/newfamily',
+      description: '처음 오시는 분을 위한 안내와 새가족부를 확인할 수 있습니다.',
     },
   ],
   [

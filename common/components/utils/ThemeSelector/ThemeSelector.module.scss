@@ -11,8 +11,8 @@
     height: vw(72);
     position: fixed;
     z-index: 900;
-    right: vw(40);
-    bottom: vw(148); // top-button 위에 배치
+    right: calc(#{vw(40)} + env(safe-area-inset-right, 0px));
+    bottom: calc(#{vw(148)} + env(safe-area-inset-bottom, 0px));
     border-radius: 50%;
     background-color: var(--accent-brand);
     @include font-vw(24);
@@ -52,20 +52,20 @@
     @include mq(pc-sm) {
       width: vw(64);
       height: vw(64);
-      right: vw(32);
-      bottom: vw(126); // top-button 위에 배치
+      right: calc(#{vw(32)} + env(safe-area-inset-right, 0px));
+      bottom: calc(#{vw(126)} + env(safe-area-inset-bottom, 0px));
       @include font-vw(20);
     }
 
     @include mq(mo) {
       width: vw(48);
       height: vw(48);
-      right: vw(20);
-      bottom: vw(96); // top-button 위에 배치
+      right: calc(#{vw(20)} + env(safe-area-inset-right, 0px));
+      bottom: calc(#{vw(96)} + env(safe-area-inset-bottom, 0px));
     }
 
     @include mq(mo-sm) {
-      bottom: vw(90);
+      bottom: calc(#{vw(90)} + env(safe-area-inset-bottom, 0px));
     }
   }
 

@@ -11,6 +11,7 @@ import c from '@/app/info/c-log/CLogList.module.scss'; // infoLayout.module.scss
 import Button from '@/common/components/utils/Button'; // Button 컴포넌트 임포트
 import ImageWithTheme from '@/common/components/utils/ImageWithTheme'; // 테마 반응형 이미지 컴포넌트
 import { isNewPost } from '@/common/utils/dateUtils'; // NEW 배지 판별 함수
+import { FETCH_ERROR_CLOG, userFacingFetchError } from '@/common/utils/userFacingFetchError';
 
 interface CLogListProps {
   cLogData: CLogItem[] | undefined;
@@ -20,6 +21,9 @@ interface CLogListProps {
   viewMode: 'grid' | 'list'; // viewMode prop 추가
   hasInitialData?: boolean; // 초기 데이터 존재 여부
   hasAllData?: boolean; // 전체 데이터 존재 여부 (필터링 전)
+  /** 카테고리·태그 등으로 좁혀 목록이 비었을 때 */
+  hasActiveFilters?: boolean;
+  onClearFilters?: () => void;
 }
 
 const PC_ITEMS_PER_LOAD = 6; // PC 버전에서 한 번에 불러올 아이템 개수
@@ -33,6 +37,8 @@ export default function CLogList({
   viewMode: _viewMode, // viewMode prop을 _viewMode로 변경하여 사용되지 않음을 명시
   hasInitialData = false, // 초기 데이터 존재 여부 (기본값 false)
   hasAllData = false, // 전체 데이터 존재 여부 (기본값 false)
+  hasActiveFilters = false,
+  onClearFilters,
 }: CLogListProps) {
   const router = useRouter();
   const [itemsPerPage, setItemsPerPage] = useState(PC_ITEMS_PER_LOAD);
@@ -188,19 +194,18 @@ export default function CLogList({
   }
 
   if (isError) {
-    let errorMessage = 'C-log 데이터를 가져오는 데 실패했습니다.';
-    if (error) {
-      errorMessage = error.message;
-    }
     return (
       <div className={c.cLogList}>
-        <div className={c.error}>
-          {errorMessage}
+        <div className={c.error} role="alert">
+          {userFacingFetchError(FETCH_ERROR_CLOG, error)}
           <div className={c.loadMoreWrapper}>
-            {' '}
-            {/* wrapper는 유지 */}
-            <Button onClick={handleLoadMore} className="load-more__button" icon="arrow-down">
-              다시 시도
+            <Button
+              type="button"
+              onClick={() => router.refresh()}
+              className="load-more__button"
+              icon="arrow-reload"
+            >
+              다시 불러오기
             </Button>
           </div>
         </div>
@@ -287,11 +292,22 @@ export default function CLogList({
           // 로딩 중이 아니고, 전체 데이터가 로드되었지만 필터링 결과가 없을 때만 빈 메시지 표시
           !isLoading &&
           hasAllData && (
-            <p className={c.emptyMessage}>
-              {cLogData && cLogData.length === 0
-                ? '선택한 조건에 맞는 게시물이 없습니다.'
-                : '게시물이 없습니다.'}
-            </p>
+            <div className={c.emptyWrap}>
+              <p className={c.emptyMessage}>
+                {hasActiveFilters
+                  ? '선택한 조건에 맞는 글이 없습니다.'
+                  : '등록된 글이 없습니다.'}
+              </p>
+              {hasActiveFilters && onClearFilters ? (
+                <button type="button" className={c.emptyAction} onClick={onClearFilters}>
+                  조건을 초기화하고 전체 목록 보기
+                </button>
+              ) : (
+                <p className={c.emptyHint}>
+                  <Link href="/info/news">NEWS</Link>에서 교회 소식을 확인해 보세요.
+                </p>
+              )}
+            </div>
           )
         )}
       </div>

@@ -5,6 +5,7 @@ import Breadcrumbs from '@/common/components/layouts/Breadcrumbs';
 import { getPageMeta } from '@/common/data/list';
 import { getClientSeason } from '@/common/utils/season';
 import { motion } from 'framer-motion';
+import { motionDuration, motionEaseSmooth } from '@/common/constants/motion';
 import ShareButton from '@/common/components/utils/ShareButton';
 import s from '@/common/components/layouts/SectionLayout/SectionLayout.module.scss';
 
@@ -84,8 +85,8 @@ export default function SectionLayout({
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.8,
-        ease: [0.22, 1, 0.36, 1] as const,
+        duration: motionDuration.sectionTitle,
+        ease: motionEaseSmooth,
       },
     },
   };
@@ -96,8 +97,8 @@ export default function SectionLayout({
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.7,
-        ease: [0.22, 1, 0.36, 1] as const,
+        duration: motionDuration.sectionDesc,
+        ease: motionEaseSmooth,
         delay: 0.15,
       },
     },

@@ -26,7 +26,7 @@
 
 // 팝업 모달 컨테이너
 .modal {
-  background: white;
+  background: var(--bg-page);
   border-radius: vw(20);
   box-shadow: 0 vw(20) vw(40) rgba(0, 0, 0, 0.15);
   max-width: vw(600);
@@ -54,7 +54,7 @@
 // 뉴스 배지
 .badge {
   background: var(--accent-brand);
-  color: white;
+  color: var(--text-inverse);
   padding: vw(10) vw(16);
   border-radius: vw(20);
   @include font-vw(18, $weight: 600);
@@ -69,7 +69,7 @@
 .closeButton {
   background: none;
   border: none;
-  color: #000;
+  color: var(--text-main);
   cursor: pointer;
   padding: vw(8);
   border-radius: vw(8);
@@ -79,7 +79,7 @@
   justify-content: center;
 
   &:hover {
-    background-color: #f5f5f5;
+    background-color: var(--bg-section);
   }
 
   &:active {
@@ -109,7 +109,7 @@
 // 제목
 .title {
   @include font-vw(36, $weight: 700);
-  color: #000;
+  color: var(--text-main);
   line-height: 1.4;
   margin: 0 0 vw(16) 0;
 }
@@ -128,7 +128,7 @@
   touch-action: auto;
   -webkit-overflow-scrolling: touch;
   border-top: 1px solid var(--accent-border);
-  color: #333;
+  color: var(--text-body);
 }
 
 // 로딩 상태
@@ -138,7 +138,7 @@
   align-items: center;
   justify-content: center;
   padding: vw(20);
-  color: #666;
+  color: var(--text-caption);
 }
 
 // 컨텐츠 블록들
@@ -183,16 +183,16 @@
 
 .quote {
   @include font-vw(16);
-  color: #555;
-  border-left: 0.1875em solid #000;
+  color: var(--text-muted-mid);
+  border-left: 0.1875em solid var(--text-main);
   padding-left: 0.75em;
   margin: 0.75em 0;
   font-style: italic;
 }
 
 .code {
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
+  background-color: var(--bg-section);
+  border: 1px solid var(--border-neutral);
   border-radius: 0.25em;
   padding: 0.5em;
   margin: 0.75em 0;
@@ -203,7 +203,7 @@
 
 // 인라인 코드 스타일
 .inlineCode {
-  background-color: #f5f5f5;
+  background-color: var(--bg-section);
   padding: 0.125em 0.375em;
   border-radius: 0.25em;
   font-family: 'Courier New', monospace;
@@ -257,7 +257,7 @@
 
 .imageCaption {
   @include font-vw(14);
-  color: #666;
+  color: var(--text-caption);
   margin-top: 0.5em;
   font-style: italic;
 }
@@ -266,7 +266,7 @@
 .noContent {
   text-align: center;
   padding: 1.25em;
-  color: #666;
+  color: var(--text-caption);
 
   p {
     @include font-vw(16);
@@ -278,7 +278,7 @@
 .checkboxContainer {
   margin: 0;
   padding: vw(18) 0 0 0;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--accent-border-subtle);
 }
 
 .checkboxLabel {
@@ -287,7 +287,7 @@
   cursor: pointer;
   user-select: none;
   justify-content: center;
-  color: #000;
+  color: var(--text-main);
 }
 
 .checkboxIcon {
@@ -317,19 +317,19 @@
   align-items: center;
   justify-content: center;
   height: vw(56);
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-neutral);
   border-radius: vw(16);
   background: none;
   @include font-vw(16, $weight: 500);
-  color: #000;
+  color: var(--text-main);
   text-decoration: none;
   cursor: pointer;
   flex: 1;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: #999;
-    background-color: #f9f9f9;
+    border-color: var(--border-neutral-strong);
+    background-color: var(--bg-hover-muted);
   }
 }
 
@@ -341,8 +341,8 @@
 // 닫기 텍스트 버튼
 .closeTextButton {
   background: none;
-  border: 1px solid #ddd;
-  color: #000;
+  border: 1px solid var(--border-neutral);
+  color: var(--text-main);
   height: vw(56);
   border-radius: vw(16);
   @include font-vw(16, $weight: 500);
@@ -350,8 +350,8 @@
   flex: 1;
 
   &:hover {
-    border-color: #999;
-    background-color: #f9f9f9;
+    border-color: var(--border-neutral-strong);
+    background-color: var(--bg-hover-muted);
   }
 }
 

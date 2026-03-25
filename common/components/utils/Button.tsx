@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ButtonHTMLAttributes, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import Icon from '@/common/components/utils/Icons';
 import Link from 'next/link'; // Link 컴포넌트 임포트
 
@@ -24,6 +24,8 @@ export default function Button({
   disableAnimation = false,
   ...props
 }: ButtonProps) {
+  const prefersReducedMotion = useReducedMotion() === true;
+  const effectiveDisableAnimation = disableAnimation || prefersReducedMotion;
   const buttonRef = useRef<HTMLButtonElement>(null);
   const linkRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -52,7 +54,7 @@ export default function Button({
 
   // Magnetic 효과: 마우스 위치에 따라 버튼이 살짝 끌려감
   const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (disableAnimation || !buttonRef.current) return;
+    if (effectiveDisableAnimation || !buttonRef.current) return;
 
     const rect = buttonRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width / 2;
@@ -63,7 +65,7 @@ export default function Button({
   };
 
   const handleMouseLeave = () => {
-    if (!disableAnimation) {
+    if (!effectiveDisableAnimation) {
       setPosition({ x: 0, y: 0 });
     }
   };
@@ -78,7 +80,7 @@ export default function Button({
 
   if (href) {
     // Link 버튼도 Magnetic 효과 적용
-    if (!disableAnimation) {
+    if (!effectiveDisableAnimation) {
       return (
         <motion.div
           ref={linkRef}
@@ -127,7 +129,7 @@ export default function Button({
   }
 
   // 애니메이션이 비활성화된 경우 일반 버튼으로
-  if (disableAnimation) {
+  if (effectiveDisableAnimation) {
     return (
       <button className={allClasses} {...props}>
         {buttonContent}

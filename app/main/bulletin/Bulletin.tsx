@@ -58,7 +58,7 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
     return (
       <section className={s.bulletin} style={{ backgroundImage: `url(${backgroundImage})` }}>
         <div className={s.inner}>
-          <p className={s.error}>에러: 주보 데이터를 가져오는 데 실패했습니다.</p>
+          <p className={s.error}>주보를 불러오지 못했습니다. 잠시 후 다시 확인해 주세요.</p>
         </div>
       </section>
     );
@@ -68,7 +68,7 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
     return (
       <section className={s.bulletin} style={{ backgroundImage: `url(${backgroundImage})` }}>
         <div className={s.inner}>
-          <p className={s.emptyState}>이번 주 주보 데이터를 불러올 수 없습니다.</p>
+          <p className={s.emptyState}>지금은 표시할 주보가 없습니다.</p>
         </div>
       </section>
     );

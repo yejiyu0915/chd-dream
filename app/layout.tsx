@@ -1,14 +1,19 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import '@/common/styles/globals.scss';
 import { Providers } from '@/app/providers';
 import { MobileMenuProvider } from '@/common/components/layouts/Header/MobileMenuContext';
 import LayoutContent from '@/common/components/layouts/LayoutContent';
-import { getPopupWithContent } from '@/lib/notion';
 import { getCurrentSeason } from '@/common/utils/season';
 
 // 배포 시 실제 도메인으로 교체 필요
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+};
 
 export const metadata: Metadata = {
   // 기본 메타데이터
@@ -96,9 +101,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // 서버에서 팝업 데이터 + 콘텐츠 미리 가져오기 (메타데이터 + 블록)
-  const popupData = await getPopupWithContent();
-
   // 현재 계절 판단 (서버에서 초기값 설정, 개발자 도구에서 수동 변경 가능)
   const currentSeason = getCurrentSeason();
 
@@ -108,7 +110,7 @@ export default async function RootLayout({
       <body>
         <Providers>
           <MobileMenuProvider>
-            <LayoutContent initialPopupData={popupData}>{children}</LayoutContent>
+            <LayoutContent>{children}</LayoutContent>
           </MobileMenuProvider>
         </Providers>
         <SpeedInsights />

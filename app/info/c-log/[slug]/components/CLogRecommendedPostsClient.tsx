@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import CLogRecommendedPosts from './CLogRecommendedPosts';
 import { CLogItem } from '@/lib/notion';
+import { fetchJson } from '@/common/utils/safeFetchJson';
 
 interface CLogRecommendedPostsClientProps {
   slug: string;
@@ -21,56 +22,56 @@ export default function CLogRecommendedPostsClient({
   tags,
 }: CLogRecommendedPostsClientProps) {
   const [allPosts, setAllPosts] = useState<CLogItem[] | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const hasFetchedRef = useRef(false);
+  const abortRef = useRef<AbortController | null>(null);
 
-  // Intersection Observer로 뷰포트 진입 감지
   useEffect(() => {
-    if (!containerRef.current || allPosts || isLoading) return;
+    const el = containerRef.current;
+    if (!el || hasFetchedRef.current) return;
 
-    // Observer 생성
     observerRef.current = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !allPosts && !isLoading) {
-            setIsLoading(true);
-            // 경량 API 사용 (필요한 필드만 반환)
-            fetch('/api/c-log/recommended')
-              .then((res) => res.json())
-              .then((data: CLogItem[]) => {
-                setAllPosts(data);
-                setIsLoading(false);
-                // Observer 해제
-                if (observerRef.current && containerRef.current) {
-                  observerRef.current.unobserve(containerRef.current);
-                }
-              })
-              .catch((error) => {
-                console.error('추천글 데이터 로딩 실패:', error);
-                setIsLoading(false);
-              });
-          }
-        });
+        const hit = entries.some((e) => e.isIntersecting);
+        if (!hit || hasFetchedRef.current) return;
+
+        hasFetchedRef.current = true;
+        abortRef.current?.abort();
+        const ac = new AbortController();
+        abortRef.current = ac;
+
+        fetchJson<CLogItem[]>('/api/c-log/recommended', { signal: ac.signal })
+          .then((data) => {
+            if (ac.signal.aborted) return;
+            setAllPosts(Array.isArray(data) ? data : []);
+          })
+          .catch((err) => {
+            if (err instanceof Error && err.name === 'AbortError') return;
+            console.error('추천글 데이터 로딩 실패:', err);
+            setAllPosts([]);
+          })
+          .finally(() => {
+            if (observerRef.current && containerRef.current) {
+              observerRef.current.unobserve(containerRef.current);
+            }
+          });
       },
       {
-        rootMargin: '50px', // 50px 전부터 미리 로드 (더 늦게 로드하여 메인 콘텐츠 우선)
-        threshold: 0.1, // 10% 보이면 트리거
+        rootMargin: '50px',
+        threshold: 0.1,
       }
     );
 
-    // Observer 시작
-    if (containerRef.current) {
-      observerRef.current.observe(containerRef.current);
-    }
+    observerRef.current.observe(el);
 
-    // Cleanup
     return () => {
+      abortRef.current?.abort();
       if (observerRef.current && containerRef.current) {
         observerRef.current.unobserve(containerRef.current);
       }
     };
-  }, [allPosts, isLoading]);
+  }, []);
 
   const currentPost = {
     id: slug,
@@ -79,14 +80,9 @@ export default function CLogRecommendedPostsClient({
     slug,
   };
 
-  // 데이터가 없으면 빈 div만 반환 (레이아웃 유지)
-  if (!allPosts) {
-    return <div ref={containerRef} style={{ minHeight: '200px' }} />;
-  }
-
   return (
-    <div ref={containerRef}>
-      <CLogRecommendedPosts currentPost={currentPost} allPosts={allPosts} />
+    <div ref={containerRef} style={{ minHeight: allPosts ? undefined : '200px' }}>
+      {allPosts ? <CLogRecommendedPosts currentPost={currentPost} allPosts={allPosts} /> : null}
     </div>
   );
 }

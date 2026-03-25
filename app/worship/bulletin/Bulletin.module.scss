@@ -53,9 +53,9 @@
 
   &__item {
     --item-bg-color: var(--text-inverse);
-    --item-border-color: #e2e2e2;
+    --item-border-color: var(--accent-border-subtle);
     --item-border-color2: var(--accent-border);
-    --item-text-color: #666;
+    --item-text-color: var(--text-caption);
     width: 100%;
     height: vw(240);
     border-radius: vw(--border-radius) 0 0 vw(--border-radius);
@@ -641,7 +641,7 @@
   &__contentBody {
     // MDX 스타일은 mdxContent 클래스에서 처리됨
     // --table-border-color: var(--accent-border);
-    --table-border-color: #ddd;
+    --table-border-color: var(--border-neutral);
     margin-block: 0 !important;
     padding-block-end: 0 !important;
     border: 0 !important;

@@ -7,9 +7,10 @@ import { NewsItem } from '@/lib/notion';
 
 interface NewsListClientProps {
   initialNewsData: NewsItem[];
+  error?: Error | null;
 }
 
-export default function NewsListClient({ initialNewsData }: NewsListClientProps) {
+export default function NewsListClient({ initialNewsData, error }: NewsListClientProps) {
   // 서버에서 받은 데이터를 직접 사용 (useQuery 제거)
   const newsData = initialNewsData;
 
@@ -26,8 +27,8 @@ export default function NewsListClient({ initialNewsData }: NewsListClientProps)
         <NewsListDisplay
           newsData={newsData}
           isLoading={isInitialLoading}
-          isError={false}
-          error={null}
+          isError={!!error}
+          error={error ?? null}
           hasInitialData={hasInitialData}
           hasAllData={hasInitialData}
         />

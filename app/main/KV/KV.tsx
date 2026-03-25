@@ -15,39 +15,69 @@ interface KVProps {
 export default function KV({ kvSliderItems, newsData, setKvHeightState }: KVProps) {
   'use memo'; // React 컴파일러 최적화 적용
 
-  const [kvHeight, setKvHeight] = useState('100vh'); // 초기값은 항상 '100vh'로 설정
+  const [kvHeight, setKvHeight] = useState('100vh');
 
   useEffect(() => {
-    // 모바일 디바이스 감지 함수
-    const isMobileDevice = () => {
-      return (
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent
-        ) || window.innerWidth <= 768
-      );
-    };
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      ) || window.innerWidth <= 768;
 
-    // 클라이언트 사이드에서만 window.innerHeight를 사용
+    /** 주소창·툴바 변화 반영: visualViewport 우선, 없으면 innerHeight */
+    const readVisibleHeight = () =>
+      window.visualViewport?.height ?? window.innerHeight;
+
     const setHeight = () => {
-      const newHeight = `${window.innerHeight}px`;
+      const h = readVisibleHeight();
+      if (h <= 0) return;
+      const newHeight = `${h}px`;
       setKvHeight(newHeight);
-      setKvHeightState(newHeight); // 부모 컴포넌트에게 높이 전달
+      setKvHeightState(newHeight);
     };
 
-    // 모바일에서는 초기 높이만 설정하고 resize 이벤트 무시
-    if (isMobileDevice()) {
-      setHeight(); // 컴포넌트 마운트 시에만 높이 설정
-    } else {
-      // 데스크톱에서는 기존 동작 유지
-      setHeight();
-      window.addEventListener('resize', setHeight);
+    let rafId = 0;
+    const scheduleHeight = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        setHeight();
+        rafId = 0;
+      });
+    };
+
+    setHeight();
+
+    window.addEventListener('resize', isMobile ? scheduleHeight : setHeight);
+
+    const vv = window.visualViewport;
+    if (vv && isMobile) {
+      vv.addEventListener('resize', scheduleHeight);
+      vv.addEventListener('scroll', scheduleHeight);
+    }
+
+    const orientationTimers: number[] = [];
+    const onOrientationChange = () => {
+      orientationTimers.forEach(clearTimeout);
+      orientationTimers.length = 0;
+      [0, 50, 200, 500].forEach((ms) => {
+        orientationTimers.push(window.setTimeout(setHeight, ms));
+      });
+    };
+
+    if (isMobile) {
+      window.addEventListener('orientationchange', onOrientationChange);
     }
 
     return () => {
-      // 모바일이 아닌 경우에만 이벤트 리스너 제거
-      if (!isMobileDevice()) {
-        window.removeEventListener('resize', setHeight);
+      window.removeEventListener('resize', isMobile ? scheduleHeight : setHeight);
+      if (vv && isMobile) {
+        vv.removeEventListener('resize', scheduleHeight);
+        vv.removeEventListener('scroll', scheduleHeight);
       }
+      if (isMobile) {
+        window.removeEventListener('orientationchange', onOrientationChange);
+      }
+      orientationTimers.forEach(clearTimeout);
+      cancelAnimationFrame(rafId);
     };
   }, [setKvHeightState]);
 

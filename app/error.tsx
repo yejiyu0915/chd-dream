@@ -21,12 +21,11 @@ export default function Error({
     <main className="not-found__container inner">
       <h1 className="not-found__title">
         <Icon name="info" className="not-found__icon" />
-        오류 발생
+        잠시 문제가 생겼어요
       </h1>
-      <h2 className="not-found__subtitle">문제가 발생했습니다.</h2>
       <p className="not-found__message">
-        페이지를 로드하는 중 오류가 발생했습니다. <br />
-        잠시 후 다시 시도하거나 메인 페이지로 이동해주세요.
+        페이지를 불러오지 못했습니다. <br />
+        아래에서 다시 시도하거나 메인으로 이동해 주세요.
       </p>
       <div
         style={{

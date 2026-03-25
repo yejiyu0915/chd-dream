@@ -7,9 +7,10 @@ import { NoticeItem } from '@/lib/notion';
 
 interface NoticeListClientProps {
   initialNoticeData: NoticeItem[];
+  error?: Error | null;
 }
 
-export default function NoticeListClient({ initialNoticeData }: NoticeListClientProps) {
+export default function NoticeListClient({ initialNoticeData, error }: NoticeListClientProps) {
   // 서버에서 받은 데이터를 직접 사용 (useQuery 제거)
   const noticeData = initialNoticeData;
 
@@ -26,8 +27,8 @@ export default function NoticeListClient({ initialNoticeData }: NoticeListClient
         <NoticeListDisplay
           noticeData={noticeData}
           isLoading={isInitialLoading}
-          isError={false}
-          error={null}
+          isError={!!error}
+          error={error ?? null}
           hasInitialData={hasInitialData}
           hasAllData={hasInitialData}
         />

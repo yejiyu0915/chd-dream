@@ -3,6 +3,25 @@
 .kv {
   --gradient-dark-start: rgba(0, 0, 0, 0.55); // KV 그라데이션 시작
   --gradient-dark-end: rgba(0, 0, 0, 0.25); // KV 그라데이션 끝
+
+  // 가을 낙엽 장식 칩 (KV 전용 — 전역 _colors와 분리)
+  --kv-leaf-1-start: #e67e22;
+  --kv-leaf-1-end: #d35400;
+  --kv-leaf-2-start: #c0392b;
+  --kv-leaf-2-end: #96281b;
+  --kv-leaf-3-start: #f39c12;
+  --kv-leaf-3-end: #d68910;
+  --kv-leaf-4-start: #935116;
+  --kv-leaf-4-end: #6e2c00;
+  --kv-leaf-5-start: #e74c3c;
+  --kv-leaf-5-end: #e67e22;
+  --kv-leaf-6-start: #f1c40f;
+  --kv-leaf-6-end: #e67e22;
+  --kv-leaf-7-start: #d35400;
+  --kv-leaf-7-end: #935116;
+  --kv-leaf-8-start: #c0392b;
+  --kv-leaf-8-end: #e67e22;
+
   width: 100%;
   position: fixed;
   top: 0;
@@ -1024,7 +1043,11 @@
       left: 10%;
       width: vw(14);
       height: vw(14);
-      background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+      background: linear-gradient(
+        135deg,
+        var(--kv-leaf-1-start) 0%,
+        var(--kv-leaf-1-end) 100%
+      );
       animation-duration: 20s;
       animation-delay: 0s;
     }
@@ -1033,7 +1056,11 @@
       left: 25%;
       width: vw(10);
       height: vw(10);
-      background: linear-gradient(135deg, #c0392b 0%, #96281b 100%);
+      background: linear-gradient(
+        135deg,
+        var(--kv-leaf-2-start) 0%,
+        var(--kv-leaf-2-end) 100%
+      );
       animation-duration: 25s;
       animation-delay: 2s;
       filter: blur(0.5px);
@@ -1043,7 +1070,11 @@
       left: 40%;
       width: vw(12);
       height: vw(12);
-      background: linear-gradient(135deg, #f39c12 0%, #d68910 100%);
+      background: linear-gradient(
+        135deg,
+        var(--kv-leaf-3-start) 0%,
+        var(--kv-leaf-3-end) 100%
+      );
       animation-duration: 22s;
       animation-delay: 1s;
     }
@@ -1052,7 +1083,11 @@
       left: 55%;
       width: vw(8);
       height: vw(8);
-      background: linear-gradient(135deg, #935116 0%, #6e2c00 100%);
+      background: linear-gradient(
+        135deg,
+        var(--kv-leaf-4-start) 0%,
+        var(--kv-leaf-4-end) 100%
+      );
       animation-duration: 28s;
       animation-delay: 4s;
       filter: blur(1px);
@@ -1062,7 +1097,11 @@
       left: 70%;
       width: vw(16);
       height: vw(16);
-      background: linear-gradient(135deg, #e74c3c 0%, #e67e22 100%);
+      background: linear-gradient(
+        135deg,
+        var(--kv-leaf-5-start) 0%,
+        var(--kv-leaf-5-end) 100%
+      );
       animation-duration: 18s;
       animation-delay: 0.5s;
     }
@@ -1071,7 +1110,11 @@
       left: 85%;
       width: vw(9);
       height: vw(9);
-      background: linear-gradient(135deg, #f1c40f 0%, #e67e22 100%);
+      background: linear-gradient(
+        135deg,
+        var(--kv-leaf-6-start) 0%,
+        var(--kv-leaf-6-end) 100%
+      );
       animation-duration: 26s;
       animation-delay: 3s;
       filter: blur(0.5px);
@@ -1080,7 +1123,11 @@
       left: 5%;
       width: vw(7);
       height: vw(7);
-      background: linear-gradient(135deg, #d35400 0%, #935116 100%);
+      background: linear-gradient(
+        135deg,
+        var(--kv-leaf-7-start) 0%,
+        var(--kv-leaf-7-end) 100%
+      );
       animation-duration: 30s;
       animation-delay: 5s;
       filter: blur(1px);
@@ -1089,7 +1136,11 @@
       left: 60%;
       width: vw(13);
       height: vw(13);
-      background: linear-gradient(135deg, #c0392b 0%, #e67e22 100%);
+      background: linear-gradient(
+        135deg,
+        var(--kv-leaf-8-start) 0%,
+        var(--kv-leaf-8-end) 100%
+      );
       animation-duration: 24s;
       animation-delay: 2.5s;
       filter: blur(1px);
@@ -1174,6 +1225,45 @@
       .progressBarContainer {
         bottom: vw(290);
       }
+    }
+  }
+
+  /* 모바일 가로: 뷰포트 높이가 작을 때 텍스트·컨트롤이 잘리지 않도록 압축 */
+  @media screen and (max-width: 768px) and (orientation: landscape) {
+    .content {
+      &__text {
+        bottom: vw(32);
+      }
+      &__title {
+        @include font-vw(28);
+      }
+      &__desc {
+        @include ellipsis(1);
+      }
+    }
+    .slider {
+      .buttonWrap {
+        bottom: vw(32);
+      }
+    }
+    .controls {
+      bottom: vw(24);
+    }
+    .news {
+      bottom: vw(20);
+    }
+    .progressBarContainer {
+      bottom: vw(48);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .petals,
+    .dandelions,
+    .leaves,
+    .snowflakes,
+    .snowGround {
+      display: none;
     }
   }
 }

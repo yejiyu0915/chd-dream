@@ -12,6 +12,7 @@ import type {
 import { unstable_cache } from 'next/cache';
 import { getCurrentSeason } from '@/common/utils/season';
 import { REVALIDATE_TIME } from '@/lib/revalidate.config';
+import { devLog } from '@/common/utils/devLog';
 
 export const notion = new Client({
   auth: process.env.NOTION_TOKEN,
@@ -92,9 +93,9 @@ export async function getNotionData<T extends GenericItem>(
         })
         .filter(Boolean) as T[]; // null 값 필터링 및 타입 단언
 
-      // 성공 시 재시도 로그 (프로덕션 모니터링용)
+      // 성공 시 재시도 로그 (개발 전용)
       if (attempt > 0) {
-        console.log(`[Notion] ${databaseIdEnvVar} 데이터 가져오기 성공 (재시도 ${attempt}회 후)`);
+        devLog(`[Notion] ${databaseIdEnvVar} 데이터 가져오기 성공 (재시도 ${attempt}회 후)`);
       }
 
       return items;
@@ -739,9 +740,7 @@ export async function getCLogData(): Promise<CLogItem[]> {
                 ],
               });
             } else {
-              console.log(
-                `[C-log] getCLogData: ${data.length}개의 항목을 가져왔습니다. (${duration}ms)`
-              );
+              devLog(`[C-log] getCLogData: ${data.length}개의 항목을 가져왔습니다. (${duration}ms)`);
             }
 
             return data;
@@ -1242,7 +1241,16 @@ async function getNotionPageAndContentBySlugInternal(
       dataSourceId = notionDatabaseId; // data_sources가 없거나 비어있는 경우, 이전처럼 database_id를 사용
     }
 
-    // 1. 슬러그로 페이지 찾기 (Published 또는 Draft 상태 허용)
+    // 1. 슬러그로 페이지 찾기
+    // News/Notice: Preview는 목록(getPublishedNotionData)에 안 나오지만 직접 URL로는 열람 가능
+    const statusOr: Array<{ property: 'Status'; select: { equals: string } }> = [
+      { property: 'Status', select: { equals: 'Published' } },
+      { property: 'Status', select: { equals: 'Draft' } },
+    ];
+    if (databaseIdEnvVar === 'NOTION_NEWS_ID' || databaseIdEnvVar === 'NOTION_NOTICE_ID') {
+      statusOr.push({ property: 'Status', select: { equals: 'Preview' } });
+    }
+
     const response: any = await notion.dataSources.query({
       data_source_id: dataSourceId as string,
       filter: {
@@ -1252,10 +1260,7 @@ async function getNotionPageAndContentBySlugInternal(
             rich_text: { equals: slug },
           },
           {
-            or: [
-              { property: 'Status', select: { equals: 'Published' } },
-              { property: 'Status', select: { equals: 'Draft' } },
-            ],
+            or: statusOr,
           },
         ],
       },

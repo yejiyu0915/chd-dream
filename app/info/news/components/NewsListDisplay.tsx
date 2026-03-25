@@ -9,6 +9,7 @@ import n from '@/app/info/news/NewsList.module.scss'; // NewsList.module.scss �
 import { NewsItem } from '@/lib/notion'; // NewsItem 인터페이스 임포트
 import Button from '@/common/components/utils/Button'; // Button 컴포넌트 임포트
 import { isNewPost } from '@/common/utils/dateUtils'; // NEW 배지 판별 함수
+import { FETCH_ERROR_NEWS, userFacingFetchError } from '@/common/utils/userFacingFetchError';
 
 // 임시 뉴스 아이템 타입 (page.tsx에서 정의된 NewsItem과 일치)
 interface NewsListDisplayProps {
@@ -125,13 +126,11 @@ export default function NewsListDisplay({
   }
 
   if (isError) {
-    let errorMessage = '뉴스 데이터를 가져오는 데 실패했습니다.';
-    if (error) {
-      errorMessage = error.message;
-    }
     return (
       <div className={n.newsList}>
-        <div className={n.error}>{errorMessage}</div>
+        <div className={n.error} role="alert">
+          {userFacingFetchError(FETCH_ERROR_NEWS, error)}
+        </div>
       </div>
     );
   }
@@ -205,7 +204,16 @@ export default function NewsListDisplay({
           </>
         ) : (
           // 로딩 중이 아니고, 전체 데이터가 로드되었지만 결과가 없을 때만 빈 메시지 표시
-          !isLoading && hasAllData && <p className={n.emptyMessage}>게시물이 없습니다.</p>
+          !isLoading &&
+          hasAllData && (
+            <div className={n.emptyWrap}>
+              <p className={n.emptyMessage}>등록된 소식이 없습니다.</p>
+              <p className={n.emptyHint}>
+                <Link href="/info/notice">공지사항</Link>과 <Link href="/info/schedule">교회 일정</Link>도 함께
+                확인해 보세요.
+              </p>
+            </div>
+          )
         )}
       </div>
     </div>

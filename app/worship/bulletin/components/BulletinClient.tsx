@@ -10,6 +10,13 @@ import {
   processHtmlTags,
 } from '@/app/worship/bulletin/utils/htmlConverter';
 import b from '@/app/worship/bulletin/Bulletin.module.scss';
+import { fetchJson, fetchJsonSilent } from '@/common/utils/safeFetchJson';
+import {
+  FETCH_ERROR_BULLETIN_PAGE,
+  userFacingFetchError,
+} from '@/common/utils/userFacingFetchError';
+
+type BulletinApiBody = { blocks?: unknown[] };
 
 interface BulletinItem {
   id: string;
@@ -99,6 +106,11 @@ export default function BulletinClient({
 
   // 프리로드 중인 주보 추적 (중복 프리로드 방지)
   const prefetchingBulletins = useRef<Set<string>>(new Set());
+
+  /** 진행 중인 본문 로드 취소 (다른 주보 선택 시 이전 요청 무시) */
+  const loadAbortRef = useRef<AbortController | null>(null);
+  /** 마지막으로 시작한 로드만 finally에서 로딩 해제 */
+  const loadEpochRef = useRef(0);
 
   // 서버 초기 콘텐츠 설정 완료 여부 (중복 loadBulletinContent 호출 방지)
   const hasSetContentFromInitialRef = useRef(false);
@@ -323,27 +335,19 @@ export default function BulletinClient({
       prefetchingBulletins.current.add(item.id);
 
       // 백그라운드에서 조용히 로드 (에러는 무시)
-      fetch(`/api/bulletin/${item.slug}`, {
+      fetchJsonSilent<BulletinApiBody>(`/api/bulletin/${item.slug}`, {
         headers: {
           'Cache-Control': 'max-age=3600',
         },
       })
-        .then((res) => res.json())
         .then((data) => {
-          if (data && data.blocks) {
-            // 변환 작업
+          if (data?.blocks) {
             const mdxHtml = convertBlocksToMdxHtml(data.blocks);
             const processedHtml = processHtmlTags(mdxHtml);
-
-            // 캐시에 저장 (사용자가 클릭하면 즉시 표시)
             bulletinContentCache.current.set(item.id, processedHtml);
           }
         })
-        .catch(() => {
-          // 프리로드 실패는 무시 (사용자가 클릭할 때 다시 시도)
-        })
         .finally(() => {
-          // 프리로드 완료 후 추적에서 제거
           prefetchingBulletins.current.delete(item.id);
         });
     });
@@ -366,8 +370,12 @@ export default function BulletinClient({
   // 캐싱 처리로 이미 로드한 주보는 즉시 표시
   const loadBulletinContent = useCallback(
     async (item: BulletinItem) => {
-      if (contentLoadingRef.current) return;
+      // 같은 항목을 이미 불러온 경우
       if (selectedBulletinIdRef.current === item.id && bulletinContentRef.current) {
+        return;
+      }
+      // 같은 항목을 이미 로딩 중이면 중복 요청 방지 (다른 항목이면 이전 요청 abort 후 진행)
+      if (contentLoadingRef.current && selectedBulletinIdRef.current === item.id) {
         return;
       }
 
@@ -382,54 +390,62 @@ export default function BulletinClient({
       }
 
       // 캐시에 없으면 API 요청
+      loadAbortRef.current?.abort();
+      const controller = new AbortController();
+      loadAbortRef.current = controller;
+      const loadEpoch = ++loadEpochRef.current;
+
       setSelectedBulletin(item);
       setContentLoading(true);
       setLoadingStep('주보 데이터를 가져오는 중...');
 
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+
       try {
         setLoadingStep('내용을 불러오는 중...');
 
-        // AbortController로 요청 취소 가능하게 설정
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10초 타임아웃
-
-        const response = await fetch(`/api/bulletin/${item.slug}`, {
+        const data = await fetchJson<BulletinApiBody>(`/api/bulletin/${item.slug}`, {
           signal: controller.signal,
           headers: {
-            'Cache-Control': 'max-age=3600', // 1시간 캐시
+            'Cache-Control': 'max-age=3600',
           },
         });
 
-        clearTimeout(timeoutId);
-        const data = await response.json();
+        if (selectedBulletinIdRef.current !== item.id) {
+          return;
+        }
 
-        if (data && data.blocks) {
+        if (data?.blocks) {
           setLoadingStep('내용을 변환하는 중...');
 
-          // 큰 블록 데이터의 경우 청크 단위로 처리
           const mdxHtml = convertBlocksToMdxHtml(data.blocks);
           const processedHtml = processHtmlTags(mdxHtml);
 
           setLoadingStep('완료!');
 
-          // 캐시에 저장 (다음에 같은 주보를 열 때 즉시 표시)
           bulletinContentCache.current.set(item.id, processedHtml);
-
           setBulletinContent(processedHtml);
+        } else {
+          setBulletinContent('내용을 불러올 수 없습니다.');
         }
       } catch (error) {
         if (error instanceof Error && error.name === 'AbortError') {
-          const errorMessage = '요청 시간이 초과되었습니다.';
-          setBulletinContent(errorMessage);
-          // 에러 메시지는 캐시에 저장하지 않음
+          if (selectedBulletinIdRef.current !== item.id) {
+            return;
+          }
+          setBulletinContent('요청 시간이 초과되었습니다.');
         } else {
-          const errorMessage = '내용을 불러올 수 없습니다.';
-          setBulletinContent(errorMessage);
-          // 에러 메시지는 캐시에 저장하지 않음
+          if (selectedBulletinIdRef.current !== item.id) {
+            return;
+          }
+          setBulletinContent('내용을 불러올 수 없습니다.');
         }
       } finally {
-        setContentLoading(false);
-        setLoadingStep('');
+        clearTimeout(timeoutId);
+        if (loadEpoch === loadEpochRef.current) {
+          setContentLoading(false);
+          setLoadingStep('');
+        }
       }
     },
     [] // dependency 제거하여 함수 재생성 방지 (ref 사용으로 최신 상태 접근)
@@ -450,25 +466,17 @@ export default function BulletinClient({
       // 프리로드 시작
       prefetchingBulletins.current.add(item.id);
 
-      // 백그라운드에서 조용히 로드
-      fetch(`/api/bulletin/${item.slug}`, {
+      fetchJsonSilent<BulletinApiBody>(`/api/bulletin/${item.slug}`, {
         headers: {
           'Cache-Control': 'max-age=3600',
         },
       })
-        .then((res) => res.json())
         .then((data) => {
-          if (data && data.blocks) {
-            // 변환 작업
+          if (data?.blocks) {
             const mdxHtml = convertBlocksToMdxHtml(data.blocks);
             const processedHtml = processHtmlTags(mdxHtml);
-
-            // 캐시에 저장
             bulletinContentCache.current.set(item.id, processedHtml);
           }
-        })
-        .catch(() => {
-          // 프리로드 실패는 무시
         })
         .finally(() => {
           prefetchingBulletins.current.delete(item.id);
@@ -540,16 +548,19 @@ export default function BulletinClient({
 
   // 에러 상태 처리
   if (isError) {
-    const errorMessage =
+    const message = userFacingFetchError(
+      FETCH_ERROR_BULLETIN_PAGE,
       error && typeof error === 'object' && 'message' in error
-        ? String((error as { message: string }).message)
-        : '알 수 없는 오류가 발생했습니다.';
+        ? new Error(String((error as { message: string }).message))
+        : null
+    );
     return (
       <div className={`${b.bulletin} detail-inner`}>
         <div className={b.inner}>
-          <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-            <p style={{ marginBottom: '10px' }}>주보 데이터를 가져오는데 실패했습니다.</p>
-            <p style={{ color: '#999', fontSize: '14px' }}>{errorMessage}</p>
+          <div style={{ textAlign: 'center', padding: '40px 20px' }} role="alert">
+            <p style={{ marginBottom: 0, color: 'var(--color-text-secondary)', fontSize: '16px' }}>
+              {message}
+            </p>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import React, { memo, useMemo } from 'react';
+import Link from 'next/link';
 import { ScheduleItem } from '@/lib/notion';
 import { formatTimeInfo } from '@/app/info/schedule/types/utils';
 import s from '@/app/info/schedule/Schedule.module.scss';
@@ -108,7 +109,12 @@ function EventPanel({ selectedDate, events }: EventPanelProps) {
         })}
         {events.length === 0 && (
           <div className={`${s.eventItem} ${s.noEventsItem}`}>
-            <div className={`${s.eventItemTitle} ${s.noEventsTitle}`}>일정이 없습니다</div>
+            <div className={`${s.eventItemTitle} ${s.noEventsTitle}`}>
+              이 날짜에 등록된 일정이 없습니다
+            </div>
+            <p className={s.noEventsHint}>
+              <Link href="/worship/timetable">예배 시간표</Link>에서 정기 집회를 확인해 보세요.
+            </p>
           </div>
         )}
       </div>
