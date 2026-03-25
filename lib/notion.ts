@@ -238,6 +238,14 @@ export interface BulletinItem {
   slug: string;
 }
 
+/** 주보 UI에서 성가대(찬양) 줄을 보여줄지 — 비었거나 예전 기본 문구면 숨김 */
+export function hasBulletinPraiseContent(praise: string | undefined | null): boolean {
+  const t = (praise ?? '').trim();
+  if (!t) return false;
+  if (t === '찬양 없음' || t === '찬양 정보 없음') return false;
+  return true;
+}
+
 // 뉴스 데이터 타입 정의
 export interface NewsItem {
   id: string;
@@ -450,7 +458,7 @@ const mapPageToBulletinItem: ItemMapper<BulletinItem> = (page) => {
     date: getFormattedDateWithWeek(dateProperty), // 주보 데이터에도 주차 정보 포함
     title: getPlainText(titleProperty) || '제목 없음',
     summary: getPlainText(summaryProperty) || '요약 없음',
-    praise: getPlainText(praiseProperty) || '찬양 없음',
+    praise: getPlainText(praiseProperty) || '',
     slug: getPlainText(slugProperty) || page.id,
   };
 };

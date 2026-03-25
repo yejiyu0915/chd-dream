@@ -6,6 +6,7 @@ import BulletinHeaderSkeleton from '@/app/worship/bulletin/components/BulletinHe
 import { getClientSeason } from '@/common/utils/season';
 import { motion } from 'framer-motion';
 import b from '@/app/worship/bulletin/Bulletin.module.scss';
+import { hasBulletinPraiseContent } from '@/lib/notion';
 import mdx from '@/common/styles/mdx/MdxContent.module.scss';
 
 interface BulletinItem {
@@ -237,10 +238,12 @@ const BulletinContent = memo(
                 <p className={b.latest__summary}>{displayBulletin.summary}</p>
               </div>
 
-              <div className={b.latest__section}>
-                <p className={b.latest__sectionTitle}>해피니스 성가대:</p>
-                <p className={b.latest__praise}>{displayBulletin.praise}</p>
-              </div>
+              {hasBulletinPraiseContent(displayBulletin.praise) && (
+                <div className={b.latest__section}>
+                  <p className={b.latest__sectionTitle}>해피니스 성가대:</p>
+                  <p className={b.latest__praise}>{displayBulletin.praise.trim()}</p>
+                </div>
+              )}
             </motion.div>
           </div>
 
@@ -268,6 +271,7 @@ const BulletinContent = memo(
                   <div
                     ref={contentBodyRef}
                     className={`${mdx.mdxContent} ${b.latest__contentBody}`}
+                    data-bulletin-mdx=""
                   >
                     {/* 
                     보안: rehype-sanitize로 이미 서버에서 정제된 HTML이지만,

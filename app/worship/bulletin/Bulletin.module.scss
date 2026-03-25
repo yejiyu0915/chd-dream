@@ -670,48 +670,145 @@
     }
     // 테이블 래퍼 (가로 스크롤 처리)
     [class^='table-wrapper'] {
-      // width: calc(100% + vw(120));
-      // padding-inline: vw(60);
-      // margin-inline: calc(vw(60) * -1);
       width: 100%;
       overflow: hidden;
       overflow-x: auto;
       margin-bottom: vw(16);
       -webkit-overflow-scrolling: touch; // 모바일에서 부드러운 스크롤
-      // @include mq(pc-sm) {
-      //   width: calc(100% + vw(80));
-      //   padding-inline: vw(40);
-      //   margin-inline: calc(vw(40) * -1);
-      // }
-      // @include mq(mo) {
-      //   width: calc(100% + vw(48));
-      //   padding-inline: vw(24);
-      //   margin-inline: calc(vw(24) * -1);
-      // }
     }
+    // Notion → HTML 테이블 전용 (MdxContent의 공지용 table 스타일과 분리)
     table {
       width: auto;
+      max-width: 100%;
       min-width: 100%;
       border-collapse: collapse;
       margin-bottom: 0;
-    }
-    th {
-      // min-width: vw(80);
-      white-space: nowrap; // 헤더 셀 내용이 줄바꿈되지 않도록
-      border-color: var(--table-border-color) !important;
-      background-color: var(--accent-brand) !important;
-      font-weight: 600 !important;
-      color: var(--text-inverse) !important;
-      line-height: 1.4;
-      padding: vw(12) vw(16);
-    }
-    td {
-      // min-width: vw(80);
-      white-space: nowrap; // 데이터 셀 내용이 줄바꿈되지 않도록
-      border-color: var(--table-border-color) !important;
-      background-color: var(--bg-page) !important;
-      line-height: 1.4;
-      padding: vw(12) vw(16);
+      border: vw(2) solid var(--accent-border);
+      background-color: var(--bg-main);
+
+      tbody tr {
+        border-bottom: vw(2) solid var(--accent-border);
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+
+      thead th {
+        padding: 1em;
+        text-align: center;
+        white-space: nowrap;
+        border: vw(2) solid var(--table-border-color);
+        background-color: var(--accent-brand);
+        line-height: 1.4;
+        @include font-vw(20, 32, $weight: 600, $color: var(--text-inverse));
+      }
+
+      tbody th,
+      tbody td {
+        padding: vw(16) 1em;
+        text-align: left;
+        white-space: nowrap;
+        line-height: 1.4;
+        border: vw(2) solid var(--table-border-color);
+      }
+
+      tbody th {
+        font-weight: 500 !important;
+        color: var(--text-inverse) !important;
+        background-color: var(--accent-brand) !important;
+        padding-inline: 1.25em;
+        @include font-vw(20, 32, $weight: 500, $color: var(--text-inverse));
+      }
+
+      tbody td {
+        font-weight: 500;
+        background-color: var(--bg-page) !important;
+        @include font-vw(20, 32, $color: var(--text-body));
+      }
+
+      a {
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0 0.1em;
+        padding: 0.35em 0.75em;
+        border: 1px solid var(--accent-tertiary);
+        border-radius: vw(6);
+        background-color: var(--accent-secondary);
+        color: var(--accent-brand);
+        font-weight: 600;
+        text-decoration: none;
+        transition:
+          background-color 0.2s ease,
+          color 0.2s ease;
+        @include font-vw(18, $weight: 600);
+      }
+
+      @include mq(pc-sm) {
+        thead th {
+          @include font-vw(18, 30, $weight: 600, $color: var(--text-inverse));
+        }
+
+        tbody th {
+          @include font-vw(18, 30, $weight: 500, $color: var(--text-inverse));
+        }
+
+        tbody td {
+          @include font-vw(18, 30, $color: var(--text-body));
+        }
+      }
+
+      @include mq(mo) {
+        border-width: 1px;
+
+        thead th {
+          padding: 0.85em 0.5em;
+          border-width: 1px;
+          @include font-vw(15, 28, $weight: 600, $color: var(--text-inverse));
+        }
+
+        tbody tr {
+          border-bottom-width: 1px;
+        }
+
+        tbody th,
+        tbody td {
+          padding: vw(10) 0.5em;
+          border-width: 1px;
+        }
+
+        tbody th {
+          @include font-vw(15, 28, $weight: 500, $color: var(--text-inverse));
+          padding-left: vw(26);
+          padding-right: vw(26);
+        }
+
+        tbody td {
+          @include font-vw(15, 28, $color: var(--text-body));
+          padding-left: 1em;
+          padding-right: 1em;
+        }
+
+        a {
+          padding: 0.3em 0.6em;
+          border-radius: vw(4);
+          @include font-vw(14, $weight: 600);
+        }
+      }
+
+      @include mq(mo-sm) {
+        thead th {
+          @include font-vw(14, $weight: 600, $color: var(--text-inverse));
+        }
+
+        tbody th {
+          @include font-vw(14, $weight: 500, $color: var(--text-inverse));
+        }
+
+        tbody td {
+          @include font-vw(14);
+        }
+      }
     }
   }
 

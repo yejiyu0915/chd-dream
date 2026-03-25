@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Icon from '@/common/components/utils/Icons';
 import s from '@/app/main/bulletin/Bulletin.module.scss';
-import { BulletinItem } from '@/lib/notion';
+import { BulletinItem, hasBulletinPraiseContent } from '@/lib/notion';
 import BulletinSkeleton from '@/app/main/bulletin/BulletinSkeleton';
 import { getClientSeason } from '@/common/utils/season';
 import { snsLinks } from '@/common/data/info';
@@ -132,10 +132,12 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
             <motion.p className={s.verse} variants={itemVariants}>
               {bulletinData.summary}
             </motion.p>
-            <motion.p className={s.desc} variants={itemVariants}>
-              해피니스 성가대&nbsp;&nbsp;:&nbsp;&nbsp;
-              <span className={s.praise}>{bulletinData.praise || '찬양 정보 없음'}</span>
-            </motion.p>
+            {hasBulletinPraiseContent(bulletinData.praise) && (
+              <motion.p className={s.desc} variants={itemVariants}>
+                해피니스 성가대&nbsp;&nbsp;:&nbsp;&nbsp;
+                <span className={s.praise}>{bulletinData.praise.trim()}</span>
+              </motion.p>
+            )}
           </motion.div>
 
           {/* 링크 버튼들 - 살짝 bounce하면서 등장 */}
