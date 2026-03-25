@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import '@/common/styles/globals.scss';
 import { Providers } from '@/app/providers';
 import { MobileMenuProvider } from '@/common/components/layouts/Header/MobileMenuContext';
@@ -110,6 +111,7 @@ export default async function RootLayout({
             <LayoutContent initialPopupData={popupData}>{children}</LayoutContent>
           </MobileMenuProvider>
         </Providers>
+        <SpeedInsights />
       </body>
     </html>
   );

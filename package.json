@@ -20,6 +20,7 @@
     "@stefanprobst/rehype-extract-toc": "^3.0.0",
     "@svgr/webpack": "8.1.0",
     "@types/mdx": "^2.0.13",
+    "@vercel/speed-insights": "^2.0.0",
     "babel-plugin-react-compiler": "^1.0.0",
     "clsx": "^2.1.1",
     "date-holidays": "^3.26.1",
