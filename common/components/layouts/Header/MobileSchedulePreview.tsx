@@ -15,7 +15,7 @@ const scheduleDataCache = {
 
 /**
  * D-day 라벨을 계산하는 헬퍼 함수
- * 미래 일정에만 D-3, D-2, D-1, D-day 표시
+ * 미래 일정에 D-nn, 당일은 D-day 표시
  */
 function getDDayLabel(event: ScheduleItem): string | null {
   const today = new Date();
@@ -39,8 +39,8 @@ function getDDayLabel(event: ScheduleItem): string | null {
     return 'D-day';
   }
 
-  // D-3, D-2, D-1만 표시 (그 이상은 표시 안 함)
-  if (diffDays <= 3 && diffDays > 0) {
+  // 미래 일정은 모두 D-nn 표시
+  if (diffDays > 0) {
     return `D-${diffDays}`;
   }
 
