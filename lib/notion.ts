@@ -1157,6 +1157,86 @@ export async function getNotionPageMetadataBySlug(
   )();
 }
 
+/**
+ * 뉴스·공지 DB의 Status 중, 목록(Published만)에는 안 나오지만 상세(직접 URL)에서 볼 값.
+ * Notion select 옵션명과 정확히 일치해야 함. 쉼표로 여러 개 (예: Notice 또는 Preview).
+ * 비우면 Slug 쿼리에는 Published/Draft만 쓰고, UUID 직접 열람은 아래 pageStatusAllowedForDetailLookup의 기본 허용값 참고.
+ */
+function getNewsNoticeDetailStatusExtras(): string[] {
+  const raw = process.env.NOTION_NEWS_NOTICE_DETAIL_STATUSES;
+  if (!raw?.trim()) return [];
+  return raw.split(',').map((s) => s.trim()).filter(Boolean);
+}
+
+function buildStatusOrForDetailQuery(
+  databaseIdEnvVar: string
+): Array<{ property: 'Status'; select: { equals: string } }> {
+  const base: Array<{ property: 'Status'; select: { equals: string } }> = [
+    { property: 'Status', select: { equals: 'Published' } },
+    { property: 'Status', select: { equals: 'Draft' } },
+  ];
+  if (databaseIdEnvVar === 'NOTION_NEWS_ID' || databaseIdEnvVar === 'NOTION_NOTICE_ID') {
+    for (const name of getNewsNoticeDetailStatusExtras()) {
+      base.push({ property: 'Status', select: { equals: name } });
+    }
+  }
+  return base;
+}
+
+/** Notion ID 비교용 (하이픈·대소문자 무시) */
+function normalizeNotionIdForCompare(id: string): string {
+  return id.replace(/-/g, '').toLowerCase();
+}
+
+/**
+ * Slug 미설정 시 목록 링크가 page.id(UUID)를 쓰는데, 상세는 Slug 속성만 조회하면 매칭 실패함 → UUID면 pages.retrieve 폴백
+ */
+function isLikelyNotionPageUuid(slug: string): boolean {
+  const n = normalizeNotionIdForCompare(slug.trim());
+  return n.length === 32 && /^[0-9a-f]{32}$/.test(n);
+}
+
+function pageParentMatchesDatabase(page: PageObjectResponse, notionDatabaseId: string): boolean {
+  const parent = page.parent;
+  if (!parent || parent.type !== 'database_id') return false;
+  return normalizeNotionIdForCompare(parent.database_id) === normalizeNotionIdForCompare(notionDatabaseId);
+}
+
+function pageStatusAllowedForDetailLookup(
+  page: PageObjectResponse,
+  databaseIdEnvVar: string
+): boolean {
+  const statusProp = page.properties.Status;
+  if (!statusProp || statusProp.type !== 'select' || !statusProp.select?.name) return false;
+  const name = statusProp.select.name;
+  if (name === 'Published' || name === 'Draft') return true;
+  if (databaseIdEnvVar === 'NOTION_NEWS_ID' || databaseIdEnvVar === 'NOTION_NOTICE_ID') {
+    const extras = getNewsNoticeDetailStatusExtras();
+    if (extras.includes(name)) return true;
+    // env 미설정 시 자주 쓰는 "목록 제외·URL만" 라벨 (필터에는 넣지 않음 → Notion 스키마 불일치 방지)
+    if (extras.length === 0 && (name === 'Preview' || name === 'Notice')) return true;
+  }
+  return false;
+}
+
+async function tryGetDatabasePageByNotionUuid(
+  slug: string,
+  notionDatabaseId: string,
+  databaseIdEnvVar: string
+): Promise<PageObjectResponse | null> {
+  if (!isLikelyNotionPageUuid(slug)) return null;
+  try {
+    const res = await notion.pages.retrieve({ page_id: slug });
+    if (res.object !== 'page' || !('properties' in res)) return null;
+    const page = res as PageObjectResponse;
+    if (!pageParentMatchesDatabase(page, notionDatabaseId)) return null;
+    if (!pageStatusAllowedForDetailLookup(page, databaseIdEnvVar)) return null;
+    return page;
+  } catch {
+    return null;
+  }
+}
+
 // 메타데이터만 가져오는 내부 함수 (blocks 제외)
 async function getNotionPageMetadataBySlugInternal(
   databaseIdEnvVar: string,
@@ -1182,6 +1262,8 @@ async function getNotionPageMetadataBySlugInternal(
       dataSourceId = notionDatabaseId;
     }
 
+    const statusOrMeta = buildStatusOrForDetailQuery(databaseIdEnvVar);
+
     // 슬러그로 페이지 찾기 (blocks 제외 - 빠른 조회)
     const response: any = await notion.dataSources.query({
       data_source_id: dataSourceId as string,
@@ -1194,20 +1276,7 @@ async function getNotionPageMetadataBySlugInternal(
             },
           },
           {
-            or: [
-              {
-                property: 'Status',
-                select: {
-                  equals: 'Published',
-                },
-              },
-              {
-                property: 'Status',
-                select: {
-                  equals: 'Draft',
-                },
-              },
-            ],
+            or: statusOrMeta,
           },
         ],
       },
@@ -1215,7 +1284,8 @@ async function getNotionPageMetadataBySlugInternal(
     });
 
     if (response.results.length === 0) {
-      return null;
+      const byId = await tryGetDatabasePageByNotionUuid(slug, notionDatabaseId, databaseIdEnvVar);
+      return byId;
     }
 
     return response.results[0] as PageObjectResponse;
@@ -1250,14 +1320,8 @@ async function getNotionPageAndContentBySlugInternal(
     }
 
     // 1. 슬러그로 페이지 찾기
-    // News/Notice: Preview는 목록(getPublishedNotionData)에 안 나오지만 직접 URL로는 열람 가능
-    const statusOr: Array<{ property: 'Status'; select: { equals: string } }> = [
-      { property: 'Status', select: { equals: 'Published' } },
-      { property: 'Status', select: { equals: 'Draft' } },
-    ];
-    if (databaseIdEnvVar === 'NOTION_NEWS_ID' || databaseIdEnvVar === 'NOTION_NOTICE_ID') {
-      statusOr.push({ property: 'Status', select: { equals: 'Preview' } });
-    }
+    // 뉴스·공지: 목록 제외 Status는 NOTION_NEWS_NOTICE_DETAIL_STATUSES에만 쿼리 필터로 포함 (Notion 옵션명과 일치 필요)
+    const statusOr = buildStatusOrForDetailQuery(databaseIdEnvVar);
 
     const response: any = await notion.dataSources.query({
       data_source_id: dataSourceId as string,
@@ -1275,11 +1339,16 @@ async function getNotionPageAndContentBySlugInternal(
       page_size: 1, // 슬러그는 고유해야 하므로 하나만 가져옵니다.
     });
 
-    if (response.results.length === 0) {
-      return null; // 페이지를 찾을 수 없으면 null 반환
+    let page: PageObjectResponse;
+    if (response.results.length > 0) {
+      page = response.results[0] as PageObjectResponse;
+    } else {
+      const pageById = await tryGetDatabasePageByNotionUuid(slug, notionDatabaseId, databaseIdEnvVar);
+      if (!pageById) {
+        return null;
+      }
+      page = pageById;
     }
-
-    const page = response.results[0];
 
     // 2. 페이지의 모든 블록 가져오기
     const getAllBlocksWithChildren = async (blockId: string, depth = 0): Promise<any[]> => {
