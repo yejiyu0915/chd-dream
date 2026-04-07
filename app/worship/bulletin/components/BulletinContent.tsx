@@ -240,7 +240,7 @@ const BulletinContent = memo(
 
               {hasBulletinPraiseContent(displayBulletin.praise) && (
                 <div className={b.latest__section}>
-                  <p className={b.latest__sectionTitle}>해피니스 성가대:</p>
+                  <p className={b.latest__sectionTitle}>성가 찬양:</p>
                   <p className={b.latest__praise}>{displayBulletin.praise.trim()}</p>
                 </div>
               )}

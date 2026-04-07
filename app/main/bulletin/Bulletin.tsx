@@ -134,7 +134,7 @@ export default function Bulletin({ initialBulletinData }: BulletinProps) {
             </motion.p>
             {hasBulletinPraiseContent(bulletinData.praise) && (
               <motion.p className={s.desc} variants={itemVariants}>
-                해피니스 성가대&nbsp;&nbsp;:&nbsp;&nbsp;
+                성가 찬양&nbsp;&nbsp;:&nbsp;&nbsp;
                 <span className={s.praise}>{bulletinData.praise.trim()}</span>
               </motion.p>
             )}
