@@ -124,9 +124,7 @@ export default function TimetablePage() {
                 <td>4, 5층</td>
               </tr>
               <tr className={t.borderBottom}>
-                <th className={t.assemblyTitle}>
-                  하소소 예배
-                </th>
+                <th className={t.assemblyTitle}>하소소 예배</th>
                 <td className={t.assemblyTime}>주일 오후 2:00</td>
                 <td>4층 본당</td>
               </tr>
@@ -167,10 +165,13 @@ export default function TimetablePage() {
             <tbody>
               <tr>
                 <th className={t.assemblyTitle}>중보기도</th>
-                <td rowSpan={2} className={t.assemblyTime}>
-                  화~금 오전 10:00
-                </td>
-                <td rowSpan={2}>4층 본당</td>
+                <td className={t.assemblyTime}>화~금 오전 10:00</td>
+                <td>4층 본당</td>
+              </tr>
+              <tr>
+                <th className={t.assemblyTitle}>전도활동</th>
+                <td className={t.assemblyTime}>화~금 오후 2:00</td>
+                <td>외부</td>
               </tr>
             </tbody>
           </motion.table>
