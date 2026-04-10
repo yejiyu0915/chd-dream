@@ -1175,6 +1175,10 @@ function buildStatusOrForDetailQuery(
     { property: 'Status', select: { equals: 'Published' } },
     { property: 'Status', select: { equals: 'Draft' } },
   ];
+  // C-log: 목록은 Published만이나, 상세 URL로 Preview·Draft 확인 가능 (뉴스·공지와 동일 취지)
+  if (databaseIdEnvVar === 'NOTION_CLOG_ID') {
+    base.push({ property: 'Status', select: { equals: 'Preview' } });
+  }
   if (databaseIdEnvVar === 'NOTION_NEWS_ID' || databaseIdEnvVar === 'NOTION_NOTICE_ID') {
     for (const name of getNewsNoticeDetailStatusExtras()) {
       base.push({ property: 'Status', select: { equals: name } });
@@ -1210,6 +1214,7 @@ function pageStatusAllowedForDetailLookup(
   if (!statusProp || statusProp.type !== 'select' || !statusProp.select?.name) return false;
   const name = statusProp.select.name;
   if (name === 'Published' || name === 'Draft') return true;
+  if (databaseIdEnvVar === 'NOTION_CLOG_ID' && name === 'Preview') return true;
   if (databaseIdEnvVar === 'NOTION_NEWS_ID' || databaseIdEnvVar === 'NOTION_NOTICE_ID') {
     const extras = getNewsNoticeDetailStatusExtras();
     if (extras.includes(name)) return true;
