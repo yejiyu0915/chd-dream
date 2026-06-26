@@ -9,7 +9,7 @@ const servantImages: Record<string, string> = {
   'pastor-2': '01.png', // 김선숙
   'pastor-3': '02.jpg', // 김준섭
   'license-pastor-1': '12.jpg', // 송순옥
-  'evangelist-1': '04.png', // 김미선
+  'senior-evangelist-1': '04.png', // 김미선
   'evangelist-2': '11.jpg', // 유정란
   'evangelist-3': '05.png', // 임선의
   'evangelist-4': '10.jpg', // 장은연
@@ -48,7 +48,7 @@ export function getDepartmentLink(department?: string): string | undefined {
 export interface ServantType {
   id: string; // 고유 ID
   name: string; // 이름
-  category: '총무목사' | '부목사' | '강도사' | '전도사'; // 카테고리
+  category: '총무목사' | '부목사' | '수석 전도사' | '교역자'; // 카테고리
   department?: string; // 담당 교구 (있는 경우만)
   image?: string; // 이미지 경로 (자동으로 설정됨)
   groupLink?: string; // 교구소개 페이지 링크 (자동으로 설정됨)
@@ -77,36 +77,20 @@ export const servantData: ServantType[] = [
     category: '부목사',
     image: getServantImage('pastor-3'),
   },
-  // 강도사
+  // 수석 전도사
   {
-    id: 'license-pastor-1',
-    name: '송순옥 강도사',
-    category: '강도사',
-    department: '새가족부',
-    image: getServantImage('license-pastor-1'),
-    groupLink: getDepartmentLink('새가족부'),
-  },
-  // 전도사
-  {
-    id: 'evangelist-8',
-    name: '주애순 전도사',
-    category: '전도사',
-    department: '남선교, 새가족부',
-    image: getServantImage('evangelist-8'),
-    groupLink: getDepartmentLink('남선교'),
-  },
-  {
-    id: 'evangelist-1',
+    id: 'senior-evangelist-1',
     name: '김미선 전도사',
-    category: '전도사',
+    category: '수석 전도사',
     department: '1여선교',
-    image: getServantImage('evangelist-1'),
+    image: getServantImage('senior-evangelist-1'),
     groupLink: getDepartmentLink('1여선교'),
   },
+  // 교역자
   {
     id: 'evangelist-3',
     name: '임선의 전도사',
-    category: '전도사',
+    category: '교역자',
     department: '2여선교',
     image: getServantImage('evangelist-3'),
     groupLink: getDepartmentLink('2여선교'),
@@ -114,7 +98,7 @@ export const servantData: ServantType[] = [
   {
     id: 'evangelist-4',
     name: '장은연 전도사',
-    category: '전도사',
+    category: '교역자',
     department: '3여선교',
     image: getServantImage('evangelist-4'),
     groupLink: getDepartmentLink('3여선교'),
@@ -122,31 +106,31 @@ export const servantData: ServantType[] = [
   {
     id: 'evangelist-5',
     name: '김하은 전도사',
-    category: '전도사',
+    category: '교역자',
     department: '청년부',
     image: getServantImage('evangelist-5'),
     groupLink: getDepartmentLink('청년부'),
   },
   {
-    id: 'evangelist-6',
-    name: '조은애 전도사',
-    category: '전도사',
-    department: '학생부',
-    image: getServantImage('evangelist-6'),
-    groupLink: getDepartmentLink('학생부'),
+    id: 'evangelist-8',
+    name: '주애순 전도사',
+    category: '교역자',
+    department: '남선교, 새가족부',
+    image: getServantImage('evangelist-8'),
+    groupLink: getDepartmentLink('남선교'),
   },
   {
-    id: 'evangelist-7',
-    name: '김지혜 전도사',
-    category: '전도사',
-    department: '예꿈부',
-    image: getServantImage('evangelist-7'),
-    groupLink: getDepartmentLink('예꿈부'),
+    id: 'license-pastor-1',
+    name: '송순옥 강도사',
+    category: '교역자',
+    department: '새가족부',
+    image: getServantImage('license-pastor-1'),
+    groupLink: getDepartmentLink('새가족부'),
   },
   {
     id: 'evangelist-9',
     name: '이민아 전도사',
-    category: '전도사',
+    category: '교역자',
     department: '새가족부',
     image: getServantImage('evangelist-9'),
     groupLink: getDepartmentLink('새가족부'),
@@ -154,10 +138,26 @@ export const servantData: ServantType[] = [
   {
     id: 'evangelist-2',
     name: '유정란 전도사',
-    category: '전도사',
+    category: '교역자',
     department: '새가족부',
     image: getServantImage('evangelist-2'),
     groupLink: getDepartmentLink('새가족부'),
+  },
+  {
+    id: 'evangelist-7',
+    name: '김지혜 전도사',
+    category: '교역자',
+    department: '예꿈부',
+    image: getServantImage('evangelist-7'),
+    groupLink: getDepartmentLink('예꿈부'),
+  },
+  {
+    id: 'evangelist-6',
+    name: '조은애 전도사',
+    category: '교역자',
+    department: '학생부',
+    image: getServantImage('evangelist-6'),
+    groupLink: getDepartmentLink('학생부'),
   },
 ];
 
@@ -166,8 +166,8 @@ export const categoryOrder: ServantType['category'][] = [
   // '담임목사',
   '총무목사',
   '부목사',
-  '강도사',
-  '전도사',
+  '수석 전도사',
+  '교역자',
 ];
 
 // 카테고리별로 그룹화하는 함수
@@ -176,8 +176,8 @@ export function groupServantsByCategory(servants: ServantType[]) {
     // 담임목사: [],
     총무목사: [],
     부목사: [],
-    강도사: [],
-    전도사: [],
+    '수석 전도사': [],
+    교역자: [],
   };
 
   servants.forEach((servant) => {
