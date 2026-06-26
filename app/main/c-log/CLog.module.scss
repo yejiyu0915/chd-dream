@@ -22,6 +22,8 @@
     gap: vw(10);
     width: fit-content;
     padding-inline: vw(36);
+    position: relative;
+    z-index: 1;
     border-radius: vw(20);
     background-color: var(--accent-brand);
     @include font-vw(24);
